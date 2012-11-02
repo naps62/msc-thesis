@@ -1,0 +1,88 @@
+\documentclass[abstract=on]{scrartcl}
+
+%
+% Packages
+%
+\usepackage[utf8]{inputenc} % encoding
+\usepackage{todonotes}      % to keep track of stuff
+\usepackage{graphicx}       % images
+\usepackage{epstopdf}       % support for EPS images
+\usepackage{indentfirst}    % indent first paragraph
+\usepackage{relsize}        % relative font sizes
+\usepackage{cleveref}       % better references
+\usepackage{datetime}       % date & time helpers
+\usepackage{xspace}         % spacing helper for macros
+
+% pseudo-code environments
+\usepackage{algpseudocode}
+\usepackage{algorithmicx}
+\usepackage{algorithm}
+
+% IEEE tools
+\usepackage[retainorgcmds]{IEEEtrantools}
+
+% pretty urls
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black]{hyperref}
+
+
+
+%
+% Configs
+%
+
+% use the images/ dir
+\graphicspath{{images/}}
+
+%
+% Custom commands
+%
+
+% todo[inline]
+\newcommand\todox[1]{\todo[inline]{#1}}
+
+% text aliases
+\newcommand{\GAMA}{\texttt{GAMA}\xspace}          % GAME
+\newcommand{\hetplat}{\textit{HetPlat}\xspace}    % HetPlat
+\newcommand{\hetplats}{\textit{HetPlats}\xpspace} % HetPlats
+
+%
+% Title Page data
+%
+
+%\titlehead{University of Minho\\Informatics Department}
+
+\title{XXXXXXXXXXXXXXXXXXX}
+
+\author{\\Miguel Palhas\\\texttt{\smaller pg19808@alunos.uminho.pt}}
+
+
+\date{Braga, November 2012}
+
+
+\begin{document}
+
+  %
+  % Title
+  %
+  \maketitle
+
+  %
+  % Content
+  %
+  \input{tex/000-abstract}
+  \input{tex/100-context}
+  \input{tex/200-objectives}
+  \input{tex/300-work_method}
+  \input{tex/400-calendar}
+
+  %
+  % Bibliography
+  %
+  \bibliographystyle{IEEEtran}
+  \nocite*{}
+  \bibliography{bib/gama,bib/photon_mapping}
+  \newpage
+
+  \input{tex/900-signatures}
+
+\end{document}
