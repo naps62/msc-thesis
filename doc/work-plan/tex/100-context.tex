@@ -1,6 +1,17 @@
 \section{Context}
 \todox{Context}
 
-Current high performance computing platforms consist of different architectures working together and sharing workload to deliver higher computational power. These platforms, usually called Heterogeneous Platforms, typically consist of one or more multi-core CPU, and other devices, such as massively parallel architectures like Graphical Processing Units (GPUs), or event more specialized architectures like Field-Programmable Gate Arrays (FPGAs) or Digital Signal Processors (DSPs).
+Current high performance computing platforms are composed of different architectures working together to deliver a higher computational power. These platforms, usually called Heterogeneous Platforms, typically consist of one or more multi-core CPU, and other types of devices, such as massively parallel architectures like Graphical Processing Units (GPUs), or event more specialized architectures like Field-Programmable Gate Arrays (FPGAs) or Digital Signal Processors (DSPs).
 
-The heterogeneous nature of this platforms difficults their efficient usage, since each different architecture possesses different characteristics, and requires a different programming model
+Coupling together different platforms like these can be a challenging task, and even more so when high efficiency is a requirement. Each different platform has different characteristics, and requires a different programming model. Algorithms often usually to be changed to run efficiently on a specific platform.
+
+\subsection{Photon Mapping as a Case Study}
+
+In order to properly analyse the \GAMA framework, the Photon Mapping algorithm was chosen as case study. This algorithm is a Ray Tracing method, and as such, attempts to solve the rendering equation \cite{kajiya1986rendering} by computing global illumination in two passes:
+
+\begin{enumerate}
+  \item First, rays are traced from set of light sources in the scene, in order to construct a photon map representing the global illumination distribution.
+  \item In the second pass, the previously generated photon map is used to compute the estimated radiance for each output pixel. Direct and indirect illumination
+\end{enumerate}
+
+This technique is used to realistically simulate light effects, and the interaction of light particles with different objects, allowing for effects such as Subsurface Scattering, or Caustics, to be faithfully represented. This was impossible, or very 
