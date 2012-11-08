@@ -3,15 +3,13 @@
 
 Current high performance computing platforms are composed of different architectures working together to deliver a higher computational power. These platforms, usually called Heterogeneous Platforms, typically consist of one or more multi-core CPU, and other types of devices, such as massively parallel architectures like Graphical Processing Units (GPUs), or event more specialized architectures like Field-Programmable Gate Arrays (FPGAs) or Digital Signal Processors (DSPs).
 
-Coupling together different platforms like these can be a challenging task, and even more so when high efficiency is a requirement. Each different platform has different characteristics, and requires a different programming model. Algorithms often usually to be changed to run efficiently on a specific platform.
+Using different devices to share the workload and achieve higher performance can be a challenging task, since each platform has very specific characteristics, and usually requires specific programming and memory models to get better performance. Algorithms often have to be adapted as well, to run efficiently on a specific platform. For some problems, one algorithm might be the most effecient on a given platform, but provide poor results on another.
 
-\subsection{Photon Mapping as a Case Study}
+%These problems present an onverview of the challenges associated with HetPlats. 
+Due to these issues, enabling an application to take advantage of all the available resources of a HetPlat becomes a harder problem. Since each platform will perform some tasks better than others, a balance must be achieved between the tasks and the resources, assigning each available task to the platform that will most likely achieve better performance at any given moment.
 
-In order to properly analyse the \GAMA framework, the Photon Mapping algorithm was chosen as case study. This algorithm is a Ray Tracing method, and as such, attempts to solve the rendering equation \cite{kajiya1986rendering} by computing global illumination in two passes:
+To tackle this problem, several frameworks have been proposed which  attempt to hide some of this difficulties. Some of these include StarPU \cite{augonnet2011starpu}, Harmony \cite{diamos2008harmony} and \GAMA \cite{joao2012gama}. These frameworks attempt to address problems such as memory management, or the scheduling of the multiple tasks issued for execution.
 
-\begin{enumerate}
-  \item First, rays are traced from set of light sources in the scene, in order to construct a photon map representing the global illumination distribution.
-  \item In the second pass, the previously generated photon map is used to compute the estimated radiance for each output pixel. Direct and indirect illumination
-\end{enumerate}
+Most of these frameworks however, provide mechanisms suited mostly for regular applications. When dealing with irregular applications, problems like scheduling become even more difficult, since memory usage patterns are less predictable. This directly affects the decisions of the scheduler, and as such must be taken into account by the performance model, as explained in \cite{artur2012gama}.
 
-This technique is used to realistically simulate light effects, and the interaction of light particles with different objects, allowing for effects such as Subsurface Scattering, or Caustics, to be faithfully represented. This was impossible, or very 
+\input{tex/110-gama}
