@@ -1,3 +1,9 @@
 \subsection{GAMA}
+\label{sec:gama}
 
-The GAMA (GPU And Multicore Aware) framework is a tool that provides the mechanisms required to efficiently execute data-parallel applications in a Heterogeneous Platform. It works as an abstraction layer above the hardware, moving the programmer away from the task of scheduling the workload across the multiple resources available. In GAMA, an application is a collection of ordered jobs, each of which is composed of several tasks that are applied to different data sets. All memory is abstracted into a global address space, working as a distributed shared memory system \cite{ricardo2012gama}
+The GPU And Multicore Aware (GAMA) framework is a tool that provides the mechanisms required to efficiently execute data-parallel applications in a Heterogeneous Platform. It works as an abstraction layer above the hardware, employing an execution and memory model that allows the developer to remain agnostic of the available devices and other resources, focusing more on the algorithm itself, while also allowing lower level tuning of the algorithms for each specific device, if required.
+
+The main goal of GAMA is not to provide a replacement to the current set of different programming models that are found on a HetPlat, but to create a layer above them to automatically deal with the more generic aspects such as task scheduling, memory management and coordination.
+
+\input{tex/111-gama_exec}
+\input{tex/112-gama_mem}

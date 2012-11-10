@@ -1,10 +1,16 @@
 \section{Objectives}
-\todox{Objectives}
 
-The main goal of this dissertation is to perform a deep study of the GAMA framework, and identify possible aspects that should be improved in its implementation. These comes down to two possible problems:
-\begin{itemize}
-  \item \textbf{Programming limitations:} Understand wether the framework enforces any limitation as to what the programmer is able to do, and if that can have any effect on the usability of the framework;
-  \item \textbf{Performance issues:} Assert wether or not the framework behaves poorly for any particular application, effectively reducing its efficiency, when compared to its non-GAMA counterpart? Why does it happen, and how can it be solved?
-\end{itemize}
+The GAMA framework is currently still in development, and supports only x86-64 processors and CUDA capable GPU's. Although it has been deeply dested for a wide variety of kernels in order to validate the correctness and efficiency of its memory and execution model, it currently lacks a more intensive usage, for a more robust application.
 
-To achieve this, a case study with appropriate complexity will be implemented using the framework. The selected case study is the Progressive Photon Mapping algorithm. This algorithm
+Small kernels have a wide range of applications, are deeply studied and optimized, and are a good source for an initial analysis on the performance results of the execution model. However, when considering more resource intensive applications, where possibly multiple kernels must share the available resources, other problems may arise.
+
+The main goal of this dissertation is to perform a quantitative and qualitative analysis of the GAMA framework, applied to a large scale irregular algorithm, in order to validate its effectiveness, and identify possible soft-spots, especially when compared to other similar frameworks. The work will be focused on fully understanding GAMA, how to better take advantage of it, and possibly how to improve it seven further. 
+
+This will be accomplished by using GAMA to implement a computational intensive, irregular application. The results will be used to evaluate the overall efficiency of the GAMA framework, applied to a large scale application, instead of only a single computational kernel. The selected test case for this dissertation was the Progressive Photon Mapping Algorithm, which is described in \Cref{sec:photon}
+
+A comparative analysis will be made between the developed implementation of the algorithm against existing implementations, to assert whether the GAMA framework does a good job at handling a resource intensive application like the Progressive Photon Mapping algorithm.
+
+The work will also be useful to understand how to better take advantage of GAMA, and where it should be improved. An analysis of the execution results of the application should provide insight about the way GAMA is handling the existing jobs and data structures, and from there, identify possible bottlenecks or situations where an improvement could be possible.
+The comparative analysis will also be of extreme usefulness in this process, as it will make it possible to know wether or not different implementations perform better than the GAMA implementation, and why. 
+
+\input{tex/210-photon}

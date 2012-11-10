@@ -1,15 +1,16 @@
 \section{Context}
-\todox{Context}
 
 Current high performance computing platforms are composed of different architectures working together to deliver a higher computational power. These platforms, usually called Heterogeneous Platforms, typically consist of one or more multi-core CPU, and other types of devices, such as massively parallel architectures like Graphical Processing Units (GPUs), or event more specialized architectures like Field-Programmable Gate Arrays (FPGAs) or Digital Signal Processors (DSPs).
 
-Using different devices to share the workload and achieve higher performance can be a challenging task, since each platform has very specific characteristics, and usually requires specific programming and memory models to get better performance. Algorithms often have to be adapted as well, to run efficiently on a specific platform. For some problems, one algorithm might be the most effecient on a given platform, but provide poor results on another.
+Using different devices to share the workload and achieve a higher performance can be a challenging task, since each platform has very specific characteristics, and usually requires specific programming and memory models to effectively take advantage of the specialized hardware. Algorithms often have to be adapted as well, or even replaced, to run efficiently on a specific platform. Input data may also play a role, as the same algorithm applied to different inputs may also have completely different behaviours.
 
-%These problems present an onverview of the challenges associated with HetPlats. 
-Due to these issues, enabling an application to take advantage of all the available resources of a HetPlat becomes a harder problem. Since each platform will perform some tasks better than others, a balance must be achieved between the tasks and the resources, assigning each available task to the platform that will most likely achieve better performance at any given moment.
+When dealing with a HetPlat, an additional concern arises, related to the memory space. In a HetPlat, each device usually has its own local memory space, and requires communication operations to transfer between the local memory and the global system memory. This means that the programmer must be careful not only to adapt the programming model to each device, but it also to be concerned about the cost to move data back and forth, which can introduce an additional bottleneck in the execution, and even hide completely.
 
-To tackle this problem, several frameworks have been proposed which  attempt to hide some of this difficulties. Some of these include StarPU \cite{augonnet2011starpu}, Harmony \cite{diamos2008harmony} and \GAMA \cite{joao2012gama}. These frameworks attempt to address problems such as memory management, or the scheduling of the multiple tasks issued for execution.
+Due to these issues, enabling an application to correctly take advantage of all the available resources of a HetPlat can become a challenging problem. A balance must be achieved between the tasks and the resources, assigning each available task to the platform that will most likely achieve better performance at any given moment.
 
-Most of these frameworks however, provide mechanisms suited mostly for regular applications. When dealing with irregular applications, problems like scheduling become even more difficult, since memory usage patterns are less predictable. This directly affects the decisions of the scheduler, and as such must be taken into account by the performance model, as explained in \cite{artur2012gama}.
+To tackle this problem, several frameworks have been proposed which  attempt to hide some of this difficulties. Some of these include StarPU \cite{augonnet2011starpu}, Harmony \cite{diamos2008harmony} and GAMA \cite{joao2012gama}. These frameworks attempt to address problems such as memory management, or the scheduling of the multiple tasks issued for execution.
+
+Most of these frameworks however, provide mechanisms suited mostly for regular applications. When dealing with irregular applications, problems like scheduling become even more difficult, in particular because memory usage patterns are less predictable. This directly affects the decisions of the scheduler, and as such must be taken into account by the performance model employed by the framework, as explained in \cite{artur2012gama}. Irregular applications are one of the targets of the GAMA framework, which will be the main focus of this dissertation, and is explained more deeply in \Cref{sec:gama}.
+
 
 \input{tex/110-gama}

@@ -3,15 +3,20 @@
 %
 % Packages
 %
+\usepackage[paper=a4paper,top=2cm,left=2cm,right=1.5cm,bottom=2cm,foot=1cm]{geometry} % Margins
 \usepackage[utf8]{inputenc} % encoding
+\usepackage[T1]{fontenc}    % language
+\usepackage[english]{babel} % language
 \usepackage{todonotes}      % to keep track of stuff
 \usepackage{graphicx}       % images
 \usepackage{epstopdf}       % support for EPS images
 \usepackage{indentfirst}    % indent first paragraph
 \usepackage{relsize}        % relative font sizes
-\usepackage{cleveref}       % better references
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black]{hyperref} % pretty urls
+\usepackage[noabbrev,capitalise]{cleveref}       % better references
 \usepackage{datetime}       % date & time helpers
 \usepackage{xspace}         % spacing helper for macros
+\usepackage{suffix}         % for making multi-versioned commands
 
 % pseudo-code environments
 \usepackage{algpseudocode}
@@ -21,8 +26,6 @@
 % IEEE tools
 \usepackage[retainorgcmds]{IEEEtrantools}
 
-% pretty urls
-\usepackage[colorlinks=true,linkcolor=black,citecolor=black]{hyperref}
 
 
 
@@ -31,7 +34,7 @@
 %
 
 % use the images/ dir
-\graphicspath{{images/}}
+\graphicspath{{../img/}}
 
 %
 % Custom commands
@@ -45,19 +48,36 @@
 \newcommand{\hetplat}{\textit{HetPlat}\xspace}    % HetPlat
 \newcommand{\hetplats}{\textit{HetPlats}\xpspace} % HetPlats
 
-%
-% Title Page data
-%
+% roles
+\newcommand{\role}[1]{\smaller{\textit{(#1)}}}
+\newcommand{\student}{\role{Student}}
+\newcommand{\advisor}{\role{Advisor}}
+\newcommand{\coadvisor}{\role{Co-Advisor}}
 
-%\titlehead{University of Minho\\Informatics Department}
+% Force paragraph indentation
+\newlength{\paragraphindentationlength}
+\setlength{\paragraphindentationlength}{\parindent}
+\newcommand\sudoindent{\hspace{\paragraphindentationlength}}
 
-\title{XXXXXXXXXXXXXXXXXXX}
+% email
+\newcommand{\linklike}[1]{{\smaller\smaller\ttfamily #1}}
+\newcommand\email[1]{\href{mailto:#1}{\linklike{#1}}}
+\WithSuffix\newcommand\email*[2]{\href{mailto:#1}{\linklike{#1}}}
 
-\author{\\Miguel Palhas\\\texttt{\smaller pg19808@alunos.uminho.pt}}
+% signature space
+\newcommand{\sigspace}[2]{
+
+\begin{minipage}{\textwidth}%
+\vspace{2cm}%
+\begin{tabular*}{.6\textwidth}{@{\extracolsep{\fill}}lr}
+\hline
+{#1} & #2
+\end{tabular*}%
+\end{minipage}%
+}
 
 
-\date{Braga, November 2012}
-
+\input{tex/000-title}
 
 \begin{document}
 
@@ -69,10 +89,10 @@
   %
   % Content
   %
-  \input{tex/000-abstract}
+  \input{tex/010-abstract}
   \input{tex/100-context}
   \input{tex/200-objectives}
-  \input{tex/300-work_method}
+  \input{tex/300-method}
   \input{tex/400-calendar}
 
   %
@@ -83,6 +103,7 @@
   \bibliography{bib/gama,bib/photon_mapping}
   \newpage
 
+  \appendix
   \input{tex/900-signatures}
 
 \end{document}
