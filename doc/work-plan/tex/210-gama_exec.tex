@@ -1,0 +1,15 @@
+\subsection{Execution Model}
+
+GAMA employs a task-based Unified Programming and Execution Model (UPEM) to create an abstraction of the different models of the underlying devices on a HetPlat. This model organizes available hardware using three concepts:
+
+\begin{description}
+  \item[Computational Unit] (CU) Name given to an individual processing element, capable of performing generic computations;
+
+  \item[Device] The group of all Computational Units with a common programming model and a common private memory address space;
+
+  \item[Host] The group of all Devices within a single computing node.
+\end{description}
+
+This organization of the execution model ensures that each device contains only CU's with the same memory address space, allowing for the usage of device-specific synchronization mechanisms to manage the coordination of concurrent executions within that device.
+
+A basic implementation of an algorithm with GAMA requires at least two methods: a kernel and a dice. These two method together form what is known by GAMA as a job. The kernel is analogous to a CUDA kernel, as it defines the code that will be executed in each thread. A dice method is a way to split the input domain across multiple tasks. It is somewhat analogous the ability of defining task granularity when using OpenMP, but it can employ more flexible solutions, to account for the irregularity of the algorithms.

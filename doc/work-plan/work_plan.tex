@@ -1,0 +1,111 @@
+\documentclass[a4paper,abstract=on]{scrartcl}
+
+%
+% Packages
+%
+\usepackage[paper=a4paper,top=2cm,left=2cm,right=1.5cm,bottom=2cm,foot=1cm]{geometry} % Margins
+\usepackage[utf8]{inputenc} % encoding
+\usepackage[T1]{fontenc}    % language
+\usepackage[english]{babel} % language
+\usepackage{todonotes}      % to keep track of stuff
+\usepackage{graphicx}       % images
+\usepackage{epstopdf}       % support for EPS images
+\usepackage{indentfirst}    % indent first paragraph
+\usepackage{relsize}        % relative font sizes
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black]{hyperref} % pretty urls
+\usepackage[noabbrev,capitalise]{cleveref}       % better references
+\usepackage{datetime}       % date & time helpers
+\usepackage{xspace}         % spacing helper for macros
+\usepackage{suffix}         % for making multi-versioned commands
+
+% pseudo-code environments
+\usepackage{algpseudocode}
+\usepackage{algorithmicx}
+\usepackage{algorithm}
+
+% IEEE tools
+\usepackage[retainorgcmds]{IEEEtrantools}
+
+
+
+
+%
+% Configs
+%
+
+% use the images/ dir
+\graphicspath{{../img/}}
+
+%
+% Custom commands
+%
+
+% todo[inline]
+\newcommand\todox[1]{\todo[inline]{#1}}
+
+% text aliases
+\newcommand{\GAMA}{\texttt{GAMA}\xspace}          % GAME
+\newcommand{\hetplat}{\textit{HetPlat}\xspace}    % HetPlat
+\newcommand{\hetplats}{\textit{HetPlats}\xpspace} % HetPlats
+
+% roles
+\newcommand{\role}[1]{\smaller{\textit{(#1)}}}
+\newcommand{\student}{\role{Student}}
+\newcommand{\advisor}{\role{Advisor}}
+\newcommand{\coadvisor}{\role{Co-Advisor}}
+
+% Force paragraph indentation
+\newlength{\paragraphindentationlength}
+\setlength{\paragraphindentationlength}{\parindent}
+\newcommand\sudoindent{\hspace{\paragraphindentationlength}}
+
+% email
+\newcommand{\linklike}[1]{{\smaller\smaller\ttfamily #1}}
+\newcommand\email[1]{\href{mailto:#1}{\linklike{#1}}}
+\WithSuffix\newcommand\email*[2]{\href{mailto:#1}{\linklike{#1}}}
+
+% signature space
+\newcommand{\sigspace}[2]{
+
+\begin{minipage}{\textwidth}%
+\vspace{2cm}%
+\begin{tabular*}{.6\textwidth}{@{\extracolsep{\fill}}lr}
+\hline
+{#1} & #2
+\end{tabular*}%
+\end{minipage}%
+}
+
+
+\input{tex/000-title}
+
+\begin{document}
+
+  %
+  % Title
+  %
+  \maketitle
+
+  %
+  % Content
+  %
+  \input{tex/010-abstract}
+  \input{tex/100-context}
+  \input{tex/200-gama}
+  \input{tex/300-photon}
+  \input{tex/400-objectives}
+  \input{tex/500-method}
+  \input{tex/600-timings}
+
+
+  %
+  % Bibliography
+  %
+  \bibliographystyle{../common/IEEE}
+  \nocite*{}
+  \bibliography{bib/gama,bib/photon_mapping}
+
+  \appendix
+  \input{tex/900-signatures}
+
+\end{document}

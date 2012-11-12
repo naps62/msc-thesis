@@ -1,0 +1,31 @@
+\section{Progressive Photon Mapping}
+\label{sec:photon}
+
+The realistic simulation of illumination of an environment is a complex problem. In theory, a simulation is truly realistic when it completely simulates, or closely approximates, the rendering equation \cite{kajiya1986rendering}. This equation is based on the laws of conservation of energy, and describes the total amount of emitted light from any given point, based on incoming light and reflection distribution, and is described as follows:
+
+\begin{figure}[!htp]
+  \begin{equation}
+    L_s(x, \Psi_r) = L_e(x, \Psi_r) + \int\limits_\Omega f_r(x, \Psi_i; \Psi_r) L_i(x, \Psi_i) cos\Theta_i \mathrm{d}\omega_i
+  \end{equation}
+  \label{eq:render}
+\end{figure}
+
+In short, the equation defines the surface radiance $L_s(x, \Psi_r)$, leaving the point $x$ in the direction $\Psi_r$ 
+This is given by $L_e$, which represents light emitted by a surface, and $L_i$, which is the radiance along the direction given by $\Psi_i$. $f_r$ is the Bidirectional Reflectance Distribution Function (or BRDF) and $\Theta$ is the domain of incoming directions, which is given by a sphere centered on the point $x$. 
+
+Prior to Photon Mapping, typical approaches would include more than one method to approximate the rendering equation, such as Ray Tracing or Radiosity. Each method attempts to simulate the travel of light particles across the scene, and model the various interactions with the environment, but with different approaches and limitations.
+
+Ray Tracing methods work by simulating light particles traveling from the eye into the scene, being reflected and refracted until they reach a light source. 
+
+Radiosity follows an opposite approach, and simulates the path light takes from the light source, until it reaches the eye. It only deals with diffuse interactions, however, and is commonly used in combination with other techniques.
+
+Photon Mapping is another method of approximating the rendering equation \cite{jensen1996global}, and works in a two pass way.
+In a first pass, a photon map is constructed by emitting photons from the light sources in the scene. This follows a method similar to Ray Tracing, but every interaction of a photon with the scene is stored in the photon map, creating a structure that roughly represents the entirety of light within the scene.
+In the second pass, the final image is rendered by using common Ray Tracing techniques (for example, Monte Carlo ray tracing). The photon map is then used to aid in the computation of the total radiance.
+The usage of the photon map is useful not only to increase performance, mostly by allowing a reduction in the number of samples to cast without affecting the final render, but also to allow the modeling of some light effects that are not present, or are inefficient, in other rendering methods, such as caustics or subsurface scattering.
+
+Lastly, Progressive Photon Mapping is an extension to the previous method, that allows arbitrary accuracy not limited by memory \cite{hachisuka2008progressive}. In this method, a multi-pass algorithm is employed, where the first pass consists of a ray tracing method, and all subsequent passes use photon tracing to compute a photon map which will contribute to the global illumination.
+
+The main advantage of this approach is that there is no actual need to store the entire photon map as it is created. Unlike standard photon mapping, it is possible to progressively arbitrarily increase the accuracy of the global illumination without being limited by the amount of memory.
+
+Rendering methods such as photon mapping are a common example of resource demanding, irregular applications, due to the amount of information required to accurately describe a three-dimensional scene, and to realistically simulate all of its lighting effects. Therefore, it should serve a suitable case study for the GAMA framework
