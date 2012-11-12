@@ -1,3 +1,8 @@
 \begin{abstract}
 
+This dissertation addresses the validation of the effectiveness of the GAMA framework, designed to deal with irregular applications on heterogeneous platforms, by unifying their multiple execution and memory models into a single, hardware independent model. GAMA handles the distribution of the workload accross the multiple computational resources available on a platform, and attempts to balance them by using a heuristic based on the measurements of previous executions of each task, with the main goal of maximizing efficiency. This framework has only been tested for standalone kernels running independently, for comparison with similar alternatives using standardized, well studied methods.
+
+However, for a better understanding of the capabilities and limitations provided by GAMA, a deeper study is required, using a larger case study, where several different tasks race must share resource usage. This can introduce new issues, or uncover different approaches for better handling the execution.
+
+The focus of this dissertation is to provide a more in-depth validation and analysis of GAMA, using as a case study the Progressive Photon Mapping algorithm.
 \end{abstract}
