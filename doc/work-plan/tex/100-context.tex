@@ -1,6 +1,6 @@
 \section{Context}
 
-Current high performance computing platforms are composed of different architectures working together to deliver a higher computational power. These platforms, usually called Heterogeneous Platforms (HetPlats), typically consist of one or more multi-core CPU, and other types of devices, such as massively parallel architectures like Graphical Processing Units (GPUs), or event more specialized architectures like Field-Programmable Gate Arrays (FPGAs) or Digital Signal Processors (DSPs).
+Current high performance computing platforms are composed of different architectures working together to deliver a higher computational power. These platforms, usually called Heterogeneous Platforms (HetPlats), typically consist of one or more multi-core CPU, and other types of devices, such as massively parallel architectures like Graphical Processing Units (GPUs), or even more specialized architectures like Digital Signal Processors (DSPs), Field-Programmable Gate Arrays (FPGAs), or the recent Intel Many Integrated Architecture (MIC).
 
 Using different devices to share the workload and achieve a higher performance can be a challenging task, since each platform has very specific characteristics, and usually requires specific programming and memory models to effectively take advantage of the specialized hardware. Algorithms often have to be adapted as well, or even replaced, to run efficiently on a specific platform. Input data may also play a role, as the same algorithm applied to different inputs may also have completely different behavior.
 
@@ -12,5 +12,6 @@ To tackle this problem, several frameworks have been proposed which  attempt to 
 
 Most of these frameworks however, provide mechanisms suited mostly for regular applications. When dealing with irregular applications, problems like scheduling become even more difficult, in particular because memory usage patterns are less predictable. This directly affects the decisions of the scheduler, and as such must be taken into account by the performance model employed by the framework, as explained in \cite{artur2012gama}. Irregular applications are one of the targets of the GAMA framework, which will be the main focus of this dissertation, and is explained more deeply in \Cref{sec:gama}.
 
+The GAMA framework is currently still in development, and supports only x86-64 processors and CUDA capable GPU's. Although it has been deeply tested for a wide variety of kernels in order to validate the correctness and efficiency of its memory and execution model, it currently lacks a more intensive usage, for a more robust application.
 
-\input{tex/110-gama}
+Small kernels have a wide range of applications, are deeply studied and optimized, and are a good source for an initial analysis on the performance results of the execution model. However, when considering a real, more resource intensive applications, where possibly multiple kernels must share the available resources, other problems may arise. Therefore, an evaluation of the framework with a real application, as opposed to the previously used synthetic benchmarks, is needed to understand its real effectiveness.

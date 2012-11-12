@@ -1,4 +1,4 @@
-\subsection{Progressive Photon Mapping}
+\section{Progressive Photon Mapping}
 \label{sec:photon}
 
 The realistic simulation of illumination of an environment is a complex problem. In theory, a simulation is truly realistic when it completely simulates, or closely approximates, the rendering equation \cite{kajiya1986rendering}. This equation is based on the laws of conservation of energy, and describes the total amount of emitted light from any given point, based on incoming light and reflection distribution, and is described as follows:
@@ -27,3 +27,5 @@ The usage of the photon map is useful not only to increase performance, mostly b
 Lastly, Progressive Photon Mapping is an extension to the previous method, that allows arbitrary accuracy not limited by memory \cite{hachisuka2008progressive}. In this method, a multi-pass algorithm is employed, where the first pass consists of a ray tracing method, and all subsequent passes use photon tracing to compute a photon map which will contribute to the global illumination.
 
 The main advantage of this approach is that there is no actual need to store the entire photon map as it is created. Unlike standard photon mapping, it is possible to progressively arbitrarily increase the accuracy of the global illumination without being limited by the amount of memory.
+
+Rendering methods such as photon mapping are a common example of resource demanding, irregular applications, due to the amount of information required to accurately describe a three-dimensional scene, and to realistically simulate all of its lighting effects. Therefore, it should serve a suitable case study for the GAMA framework

@@ -1,4 +1,4 @@
-\subsubsection{Memory Model}
+\subsection{Memory Model}
 
 While at the device level, synchronization is allowed via device-specific mechanics, that is not the case at the host level. When considering the whole host, or the entire group of available devices, a problem arises as each device possesses its own private memory address space, creating an obstacle to efficiently take advantage of the computational resources. Thus, a Global Memory System (GMS) is employed, using a relaxed consistency model requiring explicit memory fences to ensure full data consistency. 
 
