@@ -1,4 +1,5 @@
 # Latex
+*.pdf
 *.aux
 *.bbl
 *.blg
@@ -26,3 +27,4 @@
 *.maf
 *.mtc
 *.mtc0
+*.fls
