@@ -17,6 +17,7 @@
  */
 
 // Total number of devices to be used, regardless of type
+#error Did not check device list
 const unsigned TOTAL_DEVICES = 5;
 // Device type arrangement (eg: CPU_X86, GPU_CUDA)
 const DEVICE_TYPE DEVICE_TYPES[TOTAL_DEVICES]      = { CPU_X86, CPU_X86, CPU_X86, CPU_X86, GPU_CUDA };

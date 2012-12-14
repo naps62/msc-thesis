@@ -12,7 +12,7 @@
 
 
 //TODO
-//#error add function definitions here
+#error add function definitions here
 //example:
 // #include <saxpy.h>
 
@@ -25,7 +25,7 @@
 // eg: (executeFN)&saxpy::execute<CPU_X86>
 const executeFN WORK_CPU_TABLE[WORK_TOTAL] = {
 	&work::execute<CPU_X86>,
-	//#error add cpu work table
+	#error add cpu work table
 };
 #endif
 
@@ -33,21 +33,21 @@ const executeFN WORK_CPU_TABLE[WORK_TOTAL] = {
 // eg: (diceFN)&saxpy::dice<CPU_X86>
 const diceFN DICE_CPU_TABLE[WORK_TOTAL] = {
 	&work::dice<CPU_X86>,
-	//#error add cpu dice table
+	#error add cpu dice table
 };
 
 // CPU toCacheR table
 // eg: (toCacheRFN)&saxpy::toCacheR
 const toCacheRFN TOCACHER_CPU_TABLE[WORK_TOTAL] = {
 	&work::toCacheR,
-	//#error add cpu toCacheR cpu table
+	#error add cpu toCacheR cpu table
 };
 
 // CPU toCacheW table
 // eg: (toCacheWFN)&saxpy::toCacheW
 const toCacheRFN TOCACHEW_CPU_TABLE[WORK_TOTAL] = {
 	&work::toCacheR,
-	//#error add toCacheW cpu table
+	#error add toCacheW cpu table
 };
 
 #endif // __MY_VTABLE_H_
