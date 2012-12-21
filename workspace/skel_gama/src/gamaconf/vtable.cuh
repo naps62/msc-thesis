@@ -14,7 +14,9 @@
 // eg: (executeFN)&saxpy::execute<GPU_CUDA>
 __constant__ executeFN WORK_GPU_TABLE[WORK_TOTAL] = {
 	&work::execute<CPU_X86>,
-	//#error add gpu work table
+	#ifndef __GAMA_SKEL
+		#error add gpu work table
+	#endif
 };
 
 #endif // __MY_VTABLE_CUH_

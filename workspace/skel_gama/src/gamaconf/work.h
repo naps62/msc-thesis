@@ -17,7 +17,9 @@
 enum WORK_TYPE {
 	WORK_NONE = W_NONE, 	   /*!< Empty job description */
 
-	//#error Add your job descriptions here
+	#ifndef __GAMA_SKEL
+		#error Add your job descriptions here
+	#endif
 
 	WORK_TOTAL, 			   /*!< TOTAL NUMBER OF JOB DEFINTIONS */
 	WORK_RESERVED = W_RESERVED /*!< RESERVED BIT MASK JOB */
