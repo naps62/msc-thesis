@@ -4,7 +4,7 @@
 #include <gamalib/work/work.h>
 #include <config/vtable.h>
 
-#include <myconf/vtable.cuh>
+#include <gamaconf/vtable.cuh>
 //__constant__ executeFN WORK_GPU_TABLE[WORK_TOTAL] = {
 //	&work::execute<CPU_X86>,
 //	//TODO

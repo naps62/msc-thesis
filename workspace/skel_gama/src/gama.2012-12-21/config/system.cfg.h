@@ -26,7 +26,7 @@ enum MEM_TYPE {
 
 const unsigned long NTHREAD = 368;
 
-#include <myconf/devices.h>
+#include <gamaconf/devices.h>
 
 //#if (SCONF==0)
 //const unsigned TOTAL_DEVICES = 1;

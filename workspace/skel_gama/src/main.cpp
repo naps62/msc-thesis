@@ -5,6 +5,9 @@
  *      Author: Miguel Palhas
  */
 
+#include <cstdlib>
+#include <iostream>
+
 #include <gama.h>
 
 MemorySystem* LowLevelMemAllocator::_memSys = NULL;

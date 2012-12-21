@@ -24,7 +24,7 @@ typedef std::vector<pointerInfo>* (work::*toCacheWFN)();
 //typedef bool (work::*evictFN)(void);
 //typedef void (work::*destructorFN)(void);
 
-#include <myconf/vtable.h>
+#include <gamaconf/vtable.h>
 
 //#ifndef __CUDACC__
 //const executeFN WORK_CPU_TABLE[WORK_TOTAL] = {

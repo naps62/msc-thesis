@@ -27,7 +27,7 @@
 	/**
 	 * Work definitions moved to myconf/work.h
 	 */
-	#include <myconf/work.h>
+	#include <gamaconf/work.h>
 
 
 	/*!
