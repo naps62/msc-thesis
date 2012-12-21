@@ -36,6 +36,7 @@ void initCudaDevice(unsigned int deviceId, MemorySystem* mem) {
 	checkCudaErrors(cudaDeviceSynchronize());
 }
 
+// TODO what is this for??
 void callSaxpy(unsigned NBLOCKS, unsigned NTHREADS,smartPtr<float> X,smartPtr<float> Y,smartPtr<float> R, float alpha, unsigned long N) {
 	saxpy<<<ceil(N/SPLIT),NTHREADS>>>(X,Y,R,alpha,N);
 	//cutilCheckMsg("Running kernel kernel");

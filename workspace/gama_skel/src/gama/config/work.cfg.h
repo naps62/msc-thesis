@@ -24,20 +24,10 @@
 	#define W_RESERVED_CLASSIFY	0x00080000
 	#define W_RESERVED			(W_RESERVED_FLAGS | W_RESERVED_SIMD | W_RESERVED_CLASSIFY)
 
-	/*!
-	 * @brief Work type identification
-	 * @note DO NOT CHANGE W_NONE or W_RESERVED
+	/**
+	 * Work definitions moved to myconf/work.h
 	 */
-	enum WORK_TYPE {
-		 WORK_NONE = W_NONE, 	/*!< Empty job description */
-//#if (SAMPLE == 1)
-		 WORK_SAXPY,	/*!< SAXPY job definition */
-//#endif
-		/*TODO: Add you job descriptions here */
-		//#error Add your job descriptions here
-		 WORK_TOTAL, 			/*!< TOTAL NUMBER OF JOB DEFINTIONS */
-		 WORK_RESERVED = W_RESERVED /*!< RESERVED BIT MASK JOB */
-	};
+	#include <myconf/work.h>
 
 
 	/*!
