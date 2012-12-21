@@ -36,6 +36,9 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/gama}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/local/cuda/samples/common/inc"/>
 								</option>
+								<option id="nvcc.compiler.def.symbols.1526993847" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="__GAMA_SKEL"/>
+								</option>
 								<inputType id="nvcc.compiler.input.cu.589557538" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.11845370" superClass="nvcc.compiler.input.cpp"/>
 								<inputType id="nvcc.compiler.input.c.279562417" superClass="nvcc.compiler.input.c"/>
@@ -141,18 +144,18 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="gama.com.nvidia.cuda.ide.exe.1802076506" name="Executable" projectType="com.nvidia.cuda.ide.exe"/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="refreshScope"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.91925916;com.nvidia.cuda.ide.configuration.debug.91925916.;nvcc.compiler.base.424893488;nvcc.compiler.input.cpp.11845370">
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.91925916;com.nvidia.cuda.ide.configuration.debug.91925916.;nvcc.compiler.base.424893488;nvcc.compiler.input.c.279562417">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.91925916;com.nvidia.cuda.ide.configuration.debug.91925916.;nvcc.compiler.base.424893488;nvcc.compiler.input.cu.589557538">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.91925916;com.nvidia.cuda.ide.configuration.debug.91925916.;nvcc.compiler.base.424893488;nvcc.compiler.input.c.279562417">
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.91925916;com.nvidia.cuda.ide.configuration.debug.91925916.;nvcc.compiler.base.424893488;nvcc.compiler.input.cpp.11845370">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
-	<storageModule moduleId="refreshScope"/>
 </cproject>
