@@ -8,6 +8,10 @@
 #ifndef __GAMA_H
 #define __GAMA_H
 
+//TODO move this to a proper place
+// originally in config/common.h
+//#define GAMA_CACHE
+
 #include <config/common.h>
 #include <gamalib/gamalib.h>
 
