@@ -2,3 +2,6 @@ photonmap-master
 .metadata
 .DS_Store
 naps62_namespace
+Debug
+Release
+Profile
