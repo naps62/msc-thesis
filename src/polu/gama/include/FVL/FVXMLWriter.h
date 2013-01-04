@@ -24,6 +24,7 @@ using namespace std;
 #include "FVL/CFVArray.h"
 #include "rapidxml/rapidxml.hpp"
 #include "rapidxml/rapidxml_print.hpp"
+#include <gama.h>
 using namespace rapidxml;
 
 namespace FVL {
@@ -90,7 +91,9 @@ namespace FVL {
 			 ***********************************************/
 
 			// intended for output frame of an animation
-			template<class T> void append(CFVArray<T> &vec, double time=0.0, string name="noname");
+			template<class T> void append(CFVArray<T> &vec, double time=0.0, string name="noname");template<class T> void append(smartPtr<T> &vec, double time=0.0, string name="noname");
+			template<class T> void append(smartPtr<T> &vec, double time=0.0, string name="noname");
+
 			 
 			/**
 			 * Auxiliary functions to allocate and append attributes

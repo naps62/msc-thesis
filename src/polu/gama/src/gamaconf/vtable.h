@@ -15,6 +15,8 @@
 //#error add function definitions here
 //example:
 // #include <saxpy.h>
+#include <compute_flux.h>
+#include <update.h>
 
 /**
  * Virtual Tables
@@ -25,9 +27,8 @@
 // eg: (executeFN)&saxpy::execute<CPU_X86>
 const executeFN WORK_CPU_TABLE[WORK_TOTAL] = {
 	&work::execute<CPU_X86>,
-	#ifndef __GAMA_SKEL
-		#error add cpu work table
-	#endif
+	&ComputeFlux::execute<CPU_X86>,
+	&Update::execute<CPU_X86>
 };
 #endif
 
@@ -35,27 +36,22 @@ const executeFN WORK_CPU_TABLE[WORK_TOTAL] = {
 // eg: (diceFN)&saxpy::dice<CPU_X86>
 const diceFN DICE_CPU_TABLE[WORK_TOTAL] = {
 	&work::dice<CPU_X86>,
-	#ifndef __GAMA_SKEL
-		#error add cpu dice table
-	#endif
+	&ComputeFlux::dice<CPU_X86>,
+	&Update::dice<CPU_X86>
 };
 
 // CPU toCacheR table
 // eg: (toCacheRFN)&saxpy::toCacheR
 const toCacheRFN TOCACHER_CPU_TABLE[WORK_TOTAL] = {
 	&work::toCacheR,
-	#ifndef __GAMA_SKEL
-		#error add cpu toCacheR cpu table
-	#endif
+	#warning no toCacheR defined
 };
 
 // CPU toCacheW table
 // eg: (toCacheWFN)&saxpy::toCacheW
 const toCacheRFN TOCACHEW_CPU_TABLE[WORK_TOTAL] = {
 	&work::toCacheR,
-	#ifndef __GAMA_SKEL
-		#error add toCacheW cpu table
-	#endif
+	#warning no toCacheW defined
 };
 
 #endif // __MY_VTABLE_H_
