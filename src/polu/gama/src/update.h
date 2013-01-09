@@ -8,7 +8,6 @@
 #ifndef UPDATE_H_
 #define UPDATE_H_
 
-#include <gama.h>
 #include "GAMAFVMesh2D.h"
 
 class Update : public work {
@@ -17,20 +16,24 @@ class Update : public work {
 	smartPtr<double> flux;
 	smartPtr<double> polution;
 
-	unsigned start_cell;
-	unsigned end_cell;
+	const double delta_t;
+	const unsigned start_cell;
+	const unsigned end_cell;
 
-	__HYBRID__ Update(FVL::GAMAFVMesh2D& _mesh, smartPtr<double> _flux, smartPtr<double> _polution)
-	: mesh(_mesh), flux(_flux), polution(_polution)
+public:
+
+	__HYBRID__ Update(FVL::GAMAFVMesh2D& _mesh, smartPtr<double> _flux, smartPtr<double> _polution, const double _dt)
+	: mesh(_mesh), flux(_flux), polution(_polution),
+	  delta_t(_dt), start_cell(0), end_cell(mesh.num_cells)
 	{
 		WORK_TYPE_ID = WORK_UPDATE | W_REGULAR | W_WIDE;
 	}
 
-	__HYBRID__ Update(FVL::GAMAFVMesh2D& _mesh, smartPtr<double> _flux, smartPtr<double> _polution, unsigned _start, unsigned _end)
+	__HYBRID__ Update(FVL::GAMAFVMesh2D& _mesh, smartPtr<double> _flux, smartPtr<double> _polution, const double _dt, const unsigned _start, const unsigned _end)
 	: mesh(_mesh), flux(_flux), polution(_polution),
-	  start_cell(_start), end_cell(_end)
+	  delta_t(_dt), start_cell(_start), end_cell(_end)
 	{
-		WORK_TYPE_ID = WORK_COMPUTE_FLUX | W_REGULAR | W_WIDE;
+		WORK_TYPE_ID = WORK_UPDATE | W_REGULAR | W_WIDE;
 	}
 
 	template<DEVICE_TYPE>
@@ -49,7 +52,7 @@ class Update : public work {
 		List<work*>* L = new List<work*>(number);
 		for(unsigned k = 0; k < number; ++k) {
 			end = start + number_of_cells;
-			(*L)[k] = new Update(mesh, flux, polution, start, end);
+			(*L)[k] = new Update(mesh, flux, polution, delta_t, start, end);
 			start = end;
 		}
 
@@ -62,7 +65,20 @@ class Update : public work {
 
 		unsigned long tid = TID + start_cell;
 		for(; tid < end_cell; tid += TID_SIZE) {
-			//TODO
+			double global_var = 0;
+
+			for(unsigned e = 0; e < mesh.cell_edges_count[tid]; ++e) {
+				unsigned edge = mesh.cell_edges[e][tid];
+				double var = delta_t * 2 * mesh.edge_lengths[edge] / mesh.cell_areas[tid];
+
+				if (mesh.edge_left_cells[edge] == tid) {
+					global_var -= var;
+				} else {
+					global_var += var;
+				}
+			}
+
+			polution[tid] += global_var;
 		}
 	}
 };

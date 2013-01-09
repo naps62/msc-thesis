@@ -14,6 +14,8 @@
 
 MemorySystem* LowLevelMemAllocator::_memSys = NULL;
 
+#define N 100000
+
 //TODO add main function
 int main() {
 	RuntimeScheduler* rs = new RuntimeScheduler();

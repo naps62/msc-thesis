@@ -9,10 +9,6 @@
 #define _H_CFVRECONS2D
 
 #include "FVL/FVMesh2D_SOA.h"
-#ifndef __CUDACC__
-//#define CFVRecons2D FVMesh2D_SOA
-#error CFVRecons2D is not available outside of a CUDA environment
-#endif
 
 #include <string>
 #include <vector>

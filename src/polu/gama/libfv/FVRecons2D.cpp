@@ -234,6 +234,7 @@ switch(_ptr_s->getReferenceType())
     #endif        
     k=  ((FVCell2D *) _ptr_s->getReferenceGeometry())->label-1; 
     _ref_val=(*_Cell2DVect)[k];
+    break;
   }
 _ptr_s->beginGeometry();  
 while((ptr=_ptr_s->nextGeometry()))
@@ -272,6 +273,7 @@ while((ptr=_ptr_s->nextGeometry()))
        #endif    
        k=  ((FVCell2D *) ptr)->label-1;  
        geo_val=(*_Cell2DVect)[k];
+       break;
        }  
     B[_ptr_s->getIndex()]=geo_val-_ref_val;
     }
@@ -328,6 +330,7 @@ while((ptr=_ptr_s->nextGeometry()))
        #endif    
        k=  ((FVCell2D *) ptr)->label-1;  
        geo_val=(*_Cell2DVect)[k];
+       break;
        }  
     B[_ptr_s->getIndex()]=geo_val;
     }

@@ -5,10 +5,10 @@
  *      Author: naps62
  */
 
-#ifndef COMPUTE_FLUX_CUH_
-#define COMPUTE_FLUX_CUH_
+#ifndef COMPUTE_FLUX_H_
+#define COMPUTE_FLUX_H_
 
-#include <gama.h>
+#include "FVL/FVLib.h"
 #include "GAMAFVMesh2D.h"
 
 class ComputeFlux : public work {
@@ -18,26 +18,28 @@ class ComputeFlux : public work {
 	smartPtr<double> flux;
 	smartPtr<double> polution;
 
-	unsigned dc;
-	unsigned start_edge;
-	unsigned end_edge;
+	const unsigned dc;
+	const unsigned start_edge;
+	const unsigned end_edge;
 
-	__HYBRID__ ComputeFlux(FVL::GAMAFVMesh2D& _mesh, smartPtr<double> _velocity, smartPtr<double> _flux, smartPtr<double> _polution, unsigned _dc)
+public:
+
+	__HYBRID__ ComputeFlux(FVL::GAMAFVMesh2D& _mesh, smartPtr<double> _velocity, smartPtr<double> _flux, smartPtr<double> _polution, const unsigned _dc)
 	: mesh(_mesh), velocity(_velocity), flux(_flux), polution(_polution),
 	  dc(_dc), start_edge(0), end_edge(mesh.num_edges)
 	{
 		WORK_TYPE_ID = WORK_COMPUTE_FLUX | W_REGULAR | W_WIDE;
 	}
 
-	__HYBRID__ ComputeFlux(FVL::GAMAFVMesh2D& _mesh, smartPtr<double> _velocity, smartPtr<double> _flux, smartPtr<double> _polution, unsigned _dc, unsigned _start, unsigned _end)
-		: mesh(_mesh), velocity(_velocity), flux(_flux), polution(_polution),
-		  dc(_dc), start_edge(_start), end_edge(_end)
-		{
-			WORK_TYPE_ID = WORK_COMPUTE_FLUX | W_REGULAR | W_WIDE;
-		}
+	__HYBRID__ ComputeFlux(FVL::GAMAFVMesh2D& _mesh, smartPtr<double> _velocity, smartPtr<double> _flux, smartPtr<double> _polution, const unsigned _dc, const unsigned _start, const unsigned _end)
+	: mesh(_mesh), velocity(_velocity), flux(_flux), polution(_polution),
+	  dc(_dc), start_edge(_start), end_edge(_end)
+	{
+		WORK_TYPE_ID = WORK_COMPUTE_FLUX | W_REGULAR | W_WIDE;
+	}
 
 	template<DEVICE_TYPE>
-	__DEVICE__ List<work*>* dice(unsigned int& number) {
+	__DEVICE__ List<work*>* dice(unsigned int &number) {
 		unsigned range = (end_edge - start_edge);
 		unsigned number_of_edges = range / number;
 
@@ -52,7 +54,7 @@ class ComputeFlux : public work {
 		List<work*>* L = new List<work*>(number);
 		for(unsigned k = 0; k < number; ++k) {
 			end = start + number_of_edges;
-			(*L)[k] = new ComputeFlux(mesh, velocity, flux, polution, start, end);
+			(*L)[k] = new ComputeFlux(mesh, velocity, flux, polution, dc, start, end);
 			start = end;
 		}
 
@@ -64,9 +66,18 @@ class ComputeFlux : public work {
 		if (TID > (end_edge - start_edge)) return;
 
 		for(unsigned long tid = TID + start_edge; tid < end_edge; tid += TID_SIZE) {
-			// TODO
+
+			double polution_left = polution[mesh.edge_left_cells[tid]];
+			double polution_right =
+					(mesh.edge_right_cells[tid] == NO_RIGHT_CELL)
+					? dc
+					: polution[mesh.edge_right_cells[tid]];
+
+			flux[tid] = (velocity[tid] < 0)
+					? velocity[tid] * polution_left
+					: velocity[tid] * polution_right;
 		}
 	}
 };
 
-#endif /* COMPUTE_FLUX_CUH_ */
+#endif /* COMPUTE_FLUX_H_ */

@@ -4,7 +4,6 @@
  *  Created on: December 14, 2012
  *      Author: Miguel Palhas
  */
-#define __GAMA_SKEL
 
 // gama
 #include <gama.h>
@@ -17,6 +16,7 @@ using beast::program_options::parse_option_vars;
 // fvl
 #include "FVL/CFVMesh2D.h"
 #include "GAMAFVMesh2D.h"
+#include "FVL/CFVLib.h"
 
 // std
 #include <string>
@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
 	double h, t, dt, v_max = 0;
 
 	// load the mesh
-	FVL::GAMAFVMesh2D mesh(params.mesh_file);
+	FVL::GAMAFVMesh2D mesh(params.mesh_file());
 
 	// temporary vectors, before copying to smartPtr's
 	FVL::CFVArray<double>    old_polution(mesh.num_cells);		// polution arrays
@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
 
 
 	FVL::FVXMLWriter polution_writer(params.out_file());
-	polution_writer.append(polution, t, "polution");
+	polution_writer.append(polution, mesh.num_cells, t, "polution");
 
 	dt	= 1.0 / v_max * h;
 
@@ -164,21 +164,31 @@ int main(int argc, char **argv) {
 	while(!finished) {
 		cout << "time: " << t << "   iteration: " << i << "\r";
 
+		if (t + dt > params.final_time()) {
+			cout << endl << "Final iteration, adjusting dt" << endl;
+			dt = params.final_time() - t;
+			finished = true;
+		}
+
 		ComputeFlux* compute_flux = new ComputeFlux(mesh, vs, flux, polution, params.dirichlet());
 		rs->synchronize();
 		rs->submit(compute_flux);
 		rs->synchronize();
-		Update* update = new Update(mesh, flux, polution);
+		Update* update = new Update(mesh, flux, polution, dt);
 		rs->submit(update);
 		rs->synchronize();
 
 		t += dt;
 
 		if (t >= anim_next_step) {
-			polution_writer.append(polution, t, "polution");
+			polution_writer.append(polution, mesh.num_cells, t, "polution");
 			anim_next_step += params.anim_step();
 		}
+
+		++i;
 	}
 
+	polution_writer.save();
+	polution_writer.close();
 	delete rs;
 }

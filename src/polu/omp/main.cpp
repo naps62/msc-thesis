@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 
 //	double dirichlet = para.getDouble("DirichletCondition");
 
-	double time,final_time,dt,h,S;
+	double time,dt,h,S;
 //	size_t nbiter,nbjump;
 	FVMesh2D m;
 	FVCell2D *ptr_c;
@@ -94,7 +94,6 @@ int main(int argc, char *argv[])
 	velocity_file.get(V,time,name);
 	FVio polu_ini_file(para.initial_file.c_str(),FVREAD);
 	polu_ini_file.get(pol,time,name);
-	final_time=para.final_time;
 //	nbjump=para.getInteger("NbJump");
 	// compute the Mesh parameter
 	h=1.e20;

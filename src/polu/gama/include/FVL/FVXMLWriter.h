@@ -91,8 +91,8 @@ namespace FVL {
 			 ***********************************************/
 
 			// intended for output frame of an animation
-			template<class T> void append(CFVArray<T> &vec, double time=0.0, string name="noname");template<class T> void append(smartPtr<T> &vec, double time=0.0, string name="noname");
-			template<class T> void append(smartPtr<T> &vec, double time=0.0, string name="noname");
+			template<class T> void append(CFVArray<T> &vec, double time=0.0, string name="noname");
+			template<class T> void append(smartPtr<T> &vec, unsigned size, double time=0.0, string name="noname");
 
 			 
 			/**

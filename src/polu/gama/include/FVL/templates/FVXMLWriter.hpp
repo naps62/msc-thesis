@@ -51,11 +51,11 @@ namespace FVL {
 	}
 
 	template<class T>
-		void FVXMLWriter::append(smartPtr<T> &vec, double time, string name) {
+		void FVXMLWriter::append(smartPtr<T> &vec, unsigned size, double time, string name) {
 			stringstream ss;
 			ss << endl;
 			ss << scientific << setprecision(FV_PRECISION) << setw(FV_CHAMP);
-			for(unsigned int i = 0; i < vec.size(); ++i) {
+			for(unsigned int i = 0; i < size; ++i) {
 				ss << vec[i] << " ";
 			}
 			ss << endl;
@@ -66,7 +66,7 @@ namespace FVL {
 
 			// append attributes
 			unsigned int nbvec = 1;
-			this->add_attribute<unsigned int>	(node, string("size"), vec.size());
+			this->add_attribute<unsigned int>	(node, string("size"), size);
 			this->add_attribute<unsigned int>	(node, string("nbvec"), nbvec);
 			this->add_attribute<double>			(node, string("time"), time);
 			this->add_attribute<string>			(node, string("name"), name);

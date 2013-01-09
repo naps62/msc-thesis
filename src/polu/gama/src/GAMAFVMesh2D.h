@@ -8,8 +8,8 @@
 #ifndef GAMAFVMESH2D_H_
 #define GAMAFVMESH2D_H_
 
-#include <gama.h>
-#include "FVMesh2D.h"
+#include "FVL/FVMesh2D_SOA.h"
+#include <gamalib/memlib/smartpointer.h>
 
 namespace FVL {
 
@@ -32,6 +32,7 @@ namespace FVL {
 		smartPtr<unsigned> cell_edges_count;
 		smartPtr<unsigned> cell_edges[3];
 
+		GAMAFVMesh2D();
 		GAMAFVMesh2D(const string& filename);
 
 	private:

@@ -1,10 +1,12 @@
 #include "GAMAFVMesh2D.h"
+#include "FVL/CFVMesh2D.h"
+#include "FVL/FVErr.h"
 
 namespace FVL {
 
 
 	GAMAFVMesh2D::GAMAFVMesh2D(const string& filename) {
-		FVMesh2D mesh(filename);
+		FVMesh2D mesh(filename.c_str());
 		import_FVMesh2D(mesh);
 	}
 
@@ -70,6 +72,5 @@ namespace FVL {
 		}
 	}
 
-	}
 }
 

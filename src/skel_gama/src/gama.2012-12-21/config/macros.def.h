@@ -13,7 +13,8 @@
 #define __HYBRID__ __host__ __device__
 #define __DEVICE__ __device__
 
-#define __forceinline 	__forceinline__
+#define __forceinline 	
+//__forceinline__
 #define __noinline 		__noinline__
 
 #define SIMDserial for (int __SerialCode=0; __SerialCode < NTHREAD ; __SerialCode++) if(__SerialCode == (threadIdx.x & 31))
@@ -31,7 +32,8 @@
 #define __HYBRID__
 #define __DEVICE__
 
-#define __forceinline 	__inline__ __attribute__((__always_inline__))
+#define __forceinline
+//__inline__ __attribute__((__always_inline__))
 #define __noinline
 
 #define SIMDserial

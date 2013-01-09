@@ -1855,6 +1855,7 @@ namespace rapidxml
                 // Other character, skip it
                 default:
                     ++text;
+                    break;
 
                 }
             }
@@ -2151,6 +2152,7 @@ namespace rapidxml
                         text += 9;      // skip '!DOCTYPE '
                         return parse_doctype<Flags>(text);
                     }
+                break;
 
                 }   // switch
 

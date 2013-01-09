@@ -9,10 +9,6 @@
 #define _H_CFVMESH2D
 
 #include "FVL/FVMesh2D_SOA.h"
-#ifndef __CUDACC__
-//#define CFVMesh2D FVMesh2D_SOA
-#error CFVMesh2D is not available outside of a CUDA environment
-#endif
 
 #include <string>
 #include <vector>

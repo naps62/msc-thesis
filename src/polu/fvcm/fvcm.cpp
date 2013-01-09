@@ -131,14 +131,17 @@ extension parse_extension (string ext_str)
 						default:
 						return UNKNOWN_EXT;
 					}
+					break;
 
 					default:
 					return UNKNOWN_EXT;
 				}
+			    break;
 
 				default:
 				return UNKNOWN_EXT;
 			}
+			break;
 
 			case 'x':
 			switch ( s[2] )
@@ -155,18 +158,22 @@ extension parse_extension (string ext_str)
 						default:
 						return UNKNOWN_EXT;
 					}
+					break;
 
 					default:
 					return UNKNOWN_EXT;
 				}
+				break;
 
 				default:
 				return UNKNOWN_EXT;
 			}
+			break;
 
 			default:
 			return UNKNOWN_EXT;
 		}
+		break;
 
 		default:
 		return UNKNOWN_EXT;
@@ -222,6 +229,7 @@ void msh2xml (string filename_in, string filename_out)
 			<< dim
 			<< ')'
 			<< endl;
+		break;
 	}
 }
 
