@@ -69,7 +69,7 @@ public:
 
 			for(unsigned e = 0; e < mesh.cell_edges_count[tid]; ++e) {
 				unsigned edge = mesh.cell_edges[e][tid];
-				double var = delta_t * 2 * mesh.edge_lengths[edge] / mesh.cell_areas[tid];
+				double var = delta_t * flux[edge] * mesh.edge_lengths[edge] / mesh.cell_areas[tid];
 
 				if (mesh.edge_left_cells[edge] == tid) {
 					global_var -= var;
@@ -77,8 +77,7 @@ public:
 					global_var += var;
 				}
 			}
-
-			polution[tid] += global_var;
+//			polution[tid] = delta_t;
 		}
 	}
 };

@@ -74,8 +74,8 @@ public:
 					: polution[mesh.edge_right_cells[tid]];
 
 			flux[tid] = (velocity[tid] < 0)
-					? velocity[tid] * polution_left
-					: velocity[tid] * polution_right;
+					? velocity[tid] * polution_right
+					: velocity[tid] * polution_left;
 		}
 	}
 };

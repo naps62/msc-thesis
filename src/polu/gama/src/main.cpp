@@ -83,6 +83,7 @@ double compute_mesh_parameter(FVL::GAMAFVMesh2D& mesh) {
 			double length = mesh.edge_lengths[edge];
 			if (h * length > S)
 				h = S / length;
+			cout << "S[" << cell << "]: " << S << "  " << "length " << length << "  " << h << endl;
 		}
 	}
 
@@ -153,14 +154,15 @@ int main(int argc, char **argv) {
 
 
 	FVL::FVXMLWriter polution_writer(params.out_file());
-	polution_writer.append(polution, mesh.num_cells, t, "polution");
+//	polution_writer.append(polution, mesh.num_cells, t, "polution");
 
-	dt	= 1.0 / v_max * h;
+	dt	= h / v_max;
+	cout << "h: " << h << endl;
+	cout << "v_max: " << v_max << endl;
 
 	// loop control vars
 	bool   finished       = false;
-	double anim_next_step = params.anim_step();
-
+	cout << "dt: " << dt << endl;
 	while(!finished) {
 		cout << "time: " << t << "   iteration: " << i << "\r";
 
@@ -179,14 +181,11 @@ int main(int argc, char **argv) {
 		rs->synchronize();
 
 		t += dt;
-
-		if (t >= anim_next_step) {
-			polution_writer.append(polution, mesh.num_cells, t, "polution");
-			anim_next_step += params.anim_step();
-		}
-
 		++i;
+		break;
 	}
+
+	polution_writer.append(polution, mesh.num_cells, t, "polution");
 
 	polution_writer.save();
 	polution_writer.close();

@@ -14,6 +14,7 @@
 //#define DYNAMIC
 //#define ADAPTIVE
 //#define SSD
+#include <gamaconf/scheduler.h>
 
 #ifdef STATIC
 #define SC_SELECTED
