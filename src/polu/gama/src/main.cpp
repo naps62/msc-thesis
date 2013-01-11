@@ -75,15 +75,20 @@ double compute_mesh_parameter(FVL::GAMAFVMesh2D& mesh) {
 	double h;
 	double S;
 
+
+//	for(unsigned int edge = 0; edge < mesh.num_edges; ++edge) {
+//		cout << mesh.edge_lengths[edge] << endl;
+//	}
+
 	h = 1.e20;
 	for(unsigned int cell = 0; cell < mesh.num_cells; ++cell) {
 		S = mesh.cell_areas[cell];
 
-		for(unsigned int edge = 0; edge < mesh.cell_edges_count[cell]; ++edge) {
+		for(unsigned int e = 0; e < mesh.cell_edges_count[cell]; ++e) {
+			double edge   = mesh.cell_edges[e][cell];
 			double length = mesh.edge_lengths[edge];
 			if (h * length > S)
 				h = S / length;
-			cout << "S[" << cell << "]: " << S << "  " << "length " << length << "  " << h << endl;
 		}
 	}
 
@@ -157,12 +162,9 @@ int main(int argc, char **argv) {
 //	polution_writer.append(polution, mesh.num_cells, t, "polution");
 
 	dt	= h / v_max;
-	cout << "h: " << h << endl;
-	cout << "v_max: " << v_max << endl;
 
 	// loop control vars
 	bool   finished       = false;
-	cout << "dt: " << dt << endl;
 	while(!finished) {
 		cout << "time: " << t << "   iteration: " << i << "\r";
 
@@ -182,7 +184,6 @@ int main(int argc, char **argv) {
 
 		t += dt;
 		++i;
-		break;
 	}
 
 	polution_writer.append(polution, mesh.num_cells, t, "polution");

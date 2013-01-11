@@ -47,6 +47,13 @@ namespace FVL {
 
 			// count of edges for this cell
 			cell_edges_count[i] = cell->nb_edge;
+
+			int e = 0;
+			cell->beginEdge();
+			while((edge = cell->nextEdge())) {
+				cell_edges[e][i] = edge->label - 1;
+				++e;
+			}
 		}
 	}
 

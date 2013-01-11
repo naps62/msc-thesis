@@ -77,7 +77,7 @@ public:
 					global_var += var;
 				}
 			}
-//			polution[tid] = delta_t;
+			polution[tid] += global_var;
 		}
 	}
 };

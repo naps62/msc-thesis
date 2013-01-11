@@ -97,6 +97,7 @@ int main(int argc, char *argv[])
 //	nbjump=para.getInteger("NbJump");
 	// compute the Mesh parameter
 	h=1.e20;
+
 	m.beginCell();
 	while((ptr_c=m.nextCell()))
 	{
@@ -105,7 +106,6 @@ int main(int argc, char *argv[])
 		while((ptr_e=ptr_c->nextEdge()))
 		{
 			if(h*ptr_e->length>S) h=S/ptr_e->length;
-			cout << "S: " << S << "length " << ptr_e->length << "  " <<"  " << h << endl;
 		}
 	}
 
@@ -160,8 +160,6 @@ int main(int argc, char *argv[])
 
 
 	dt = h / max_vel;
-	cout << "h: " << h << endl;
-	cout << "max_vel: " << max_vel << endl;
 
 
 
@@ -210,8 +208,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	cout << "dt: " << dt << endl;
-
 
 	// the main loop
 #ifdef PROFILE_LIMITED
@@ -242,7 +238,7 @@ int main(int argc, char *argv[])
 			cell_count)
 		;
 
-		break;
+//		break;
 	}
 
 	for ( unsigned c = 0; c < cell_count ; ++c )
