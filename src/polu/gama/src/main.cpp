@@ -13,6 +13,9 @@
 using beast::program_options::option_var;
 using beast::program_options::parse_option_vars;
 
+#include <beast/time/timer.hpp>
+using beast::time::timer;
+
 // fvl
 #include "FVL/CFVMesh2D.h"
 #include "GAMAFVMesh2D.h"
@@ -26,30 +29,30 @@ using std::string;
 //
 // Parameter structure
 //
-struct Params {
-	option_var<string> mesh_file;
-	option_var<string> out_file;
-	option_var<string> velocity_file;
-	option_var<string> ini_file;
-	option_var<string> potential_file;
-	option_var<int>    factor_norm;
-	option_var<int>    max_concentration;
-	option_var<double> dirichlet;
-	option_var<int>    final_time;
-	option_var<double> anim_step;
+struct Params : public beast::program_options::options {
+	string mesh_file;
+	string out_file;
+	string velocity_file;
+	string ini_file;
+	string potential_file;
+	int    factor_norm;
+	int    max_concentration;
+	double dirichlet;
+	int    final_time;
+	double anim_step;
 
-	Params()
-	: mesh_file     ("mesh",      "mesh.xml",              "Mesh filename"),
-	  out_file      ("output",    "polution.xml",          "Output filename"),
-	  velocity_file ("velocity",  "velocity.xml",          "Velocity filename"),
-	  ini_file      ("ini",       "concentration_ini.xml", "Initial polution file"),
-	  potential_file("potential", "v_potential.xml",       "Potential filename"),
-	  factor_norm   ("factor",               1,   "Factor Norm"),
-	  max_concentration("max_concentration", 1,   "Max concentration"),
-	  dirichlet     ("dirichlet",            1.0, "Dirichlet condition"),
-	  final_time    ("final",                10,  "Final time"),
-	  anim_step     ("anim_step",            1,   "Animation time step")
-	  { }
+	Params() : beast::program_options::options() {
+		value("mesh",              mesh_file,      string("mesh.xml"),              "Mesh filename");
+		value("output",            out_file,       string("polution.xml"),          "Output filename");
+		value("velocity",          velocity_file,  string("velocity.xml"),          "Velocity filename");
+		value("ini",               ini_file,       string("concentration_ini.xml"), "Initial polution file");
+		value("potential",         potential_file, string("v_potential.xml"),       "Potential filename");
+		value("factor",            factor_norm,       1,   "Factor Norm");
+		value("max_concentration", max_concentration, 1,   "Max concentration");
+		value("dirichlet",         dirichlet,         1.0, "Dirichlet condition");
+		value("final",             final_time,        10,  "Final time");
+		value("anim_step",         anim_step,         1.0, "Animation time step");
+	}
 };
 
 void compute_edge_velocities(FVL::GAMAFVMesh2D& mesh, FVL::CFVPoints2D<double>& velocities, smartPtr<double>& vs, double &v_max) {
@@ -123,15 +126,15 @@ int main(int argc, char **argv) {
 	double h, t, dt, v_max = 0;
 
 	// load the mesh
-	FVL::GAMAFVMesh2D mesh(params.mesh_file());
+	FVL::GAMAFVMesh2D mesh(params.mesh_file);
 
 	// temporary vectors, before copying to smartPtr's
 	FVL::CFVArray<double>    old_polution(mesh.num_cells);		// polution arrays
 	FVL::CFVPoints2D<double> old_velocities(mesh.num_cells);	// velocities by cell (to calc vs array)
 
 	// read other input files
-	FVL::FVXMLReader velocity_reader(params.velocity_file());
-	FVL::FVXMLReader polu_ini_reader(params.ini_file());
+	FVL::FVXMLReader velocity_reader(params.velocity_file);
+	FVL::FVXMLReader polu_ini_reader(params.ini_file);
 	string name;
 	velocity_reader.getPoints2D(old_velocities, t, name);
 	polu_ini_reader.getVec(old_polution, t, name);
@@ -158,8 +161,8 @@ int main(int argc, char **argv) {
 	compute_length_area_ratio(mesh, length_area_ratio);
 
 
-	FVL::FVXMLWriter polution_writer(params.out_file());
-//	polution_writer.append(polution, mesh.num_cells, t, "polution");
+	FVL::FVXMLWriter polution_writer(params.out_file);
+	polution_writer.append(polution, mesh.num_cells, t, "polution");
 
 	dt	= h / v_max;
 
@@ -168,13 +171,13 @@ int main(int argc, char **argv) {
 	while(!finished) {
 		cout << "time: " << t << "   iteration: " << i << "\r";
 
-		if (t + dt > params.final_time()) {
+		if (t + dt > params.final_time) {
 			cout << endl << "Final iteration, adjusting dt" << endl;
-			dt = params.final_time() - t;
+			dt = params.final_time - t;
 			finished = true;
 		}
 
-		ComputeFlux* compute_flux = new ComputeFlux(mesh, vs, flux, polution, params.dirichlet());
+		ComputeFlux* compute_flux = new ComputeFlux(mesh, vs, flux, polution, params.dirichlet);
 		rs->synchronize();
 		rs->submit(compute_flux);
 		rs->synchronize();
