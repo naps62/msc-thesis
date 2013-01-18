@@ -41,6 +41,9 @@
 									<listOptionValue builtIn="false" value="__GAMA_SKEL"/>
 									<listOptionValue builtIn="false" value="_${ConfigName}"/>
 								</option>
+								<option id="nvcc.compiler.compileroptions.642375679" superClass="nvcc.compiler.compileroptions" valueType="stringList">
+									<listOptionValue builtIn="false" value=" -std=c++0x"/>
+								</option>
 								<inputType id="nvcc.compiler.input.cu.589557538" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.11845370" superClass="nvcc.compiler.input.cpp"/>
 								<inputType id="nvcc.compiler.input.c.279562417" superClass="nvcc.compiler.input.c"/>
@@ -51,7 +54,7 @@
 									<listOptionValue builtIn="false" value="beast"/>
 									<listOptionValue builtIn="false" value="lapackpp"/>
 								</option>
-								<option id="nvcc.linker.option.paths.728294684" superClass="nvcc.linker.option.paths" valueType="libPaths">
+								<option id="nvcc.linker.option.paths.728294684" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/beast/${ConfigName}}&quot;"/>
 								</option>
 								<inputType id="nvcc.linker.input.1370878421" superClass="nvcc.linker.input">
@@ -118,6 +121,9 @@
 									<listOptionValue builtIn="false" value="__GAMA_SKEL"/>
 									<listOptionValue builtIn="false" value="_${ConfigName}"/>
 								</option>
+								<option id="nvcc.compiler.compileroptions.255142727" superClass="nvcc.compiler.compileroptions" valueType="stringList">
+									<listOptionValue builtIn="false" value="-std=c++0x"/>
+								</option>
 								<inputType id="nvcc.compiler.input.cu.1206260103" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.1303866609" superClass="nvcc.compiler.input.cpp"/>
 								<inputType id="nvcc.compiler.input.c.893686353" superClass="nvcc.compiler.input.c"/>
@@ -128,7 +134,7 @@
 									<listOptionValue builtIn="false" value="beast"/>
 									<listOptionValue builtIn="false" value="lapackpp"/>
 								</option>
-								<option id="nvcc.linker.option.paths.2135311992" superClass="nvcc.linker.option.paths" valueType="libPaths">
+								<option id="nvcc.linker.option.paths.2135311992" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/beast/${ConfigName}}&quot;"/>
 								</option>
 								<inputType id="nvcc.linker.input.1403784871" superClass="nvcc.linker.input">
@@ -194,6 +200,9 @@
 									<listOptionValue builtIn="false" value="__GAMA_SKEL"/>
 									<listOptionValue builtIn="false" value="_${ConfigName}"/>
 								</option>
+								<option id="nvcc.compiler.compileroptions.1938215108" superClass="nvcc.compiler.compileroptions" valueType="stringList">
+									<listOptionValue builtIn="false" value="-std=c++0x"/>
+								</option>
 								<inputType id="nvcc.compiler.input.cu.1328161995" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.1326267451" superClass="nvcc.compiler.input.cpp"/>
 								<inputType id="nvcc.compiler.input.c.1147253772" superClass="nvcc.compiler.input.c"/>
@@ -204,7 +213,7 @@
 									<listOptionValue builtIn="false" value="beast"/>
 									<listOptionValue builtIn="false" value="lapackpp"/>
 								</option>
-								<option id="nvcc.linker.option.paths.892195646" superClass="nvcc.linker.option.paths" valueType="libPaths">
+								<option id="nvcc.linker.option.paths.892195646" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/beast/${ConfigName}}&quot;"/>
 								</option>
 								<inputType id="nvcc.linker.input.774193440" superClass="nvcc.linker.input">
