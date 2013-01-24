@@ -1,3 +1,5 @@
+output/
+
 # Latex
 *.pdf
 *.aux
