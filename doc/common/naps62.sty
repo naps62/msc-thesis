@@ -5,15 +5,13 @@
 %
 % page geometry
 %
-%\usepackage[paper=a4paper,top=2cm,left=2cm,right=1.5cm,bottom=2cm,foot=1cm]{geometry}
+\usepackage[paper=a4paper,top=2cm,left=2cm,right=1.5cm,bottom=2cm,foot=1cm]{geometry}
 
 %
 % random stuff
 %
 \usepackage{subfiles}    % for modular documents awesomeness
 \usepackage{indentfirst} % indent first paragraph
-\usepackage{graphicx}    % images
-\usepackage{epstopdf}    % EPS images support
 \usepackage{amsmath}     % math stuff
 \usepackage{fancyhdr}    % headers and footers
 \usepackage{verbatim}    % code include
@@ -25,6 +23,13 @@
 \usepackage{relsize}     % relative font sizes
 \usepackage{color}       % colors
 \usepackage{xcolor}      % more colors
+
+%
+% images and plots stuff
+%
+\usepackage{graphicx}    % images
+\usepackage{epstopdf}    % EPS images support
+\usepackage{gnuplottex}
 
 %
 % references
@@ -43,7 +48,12 @@
 %
 % IEEE tools
 %
-\usepackage[retainorgcmd]{IEEEtrantools}
+\usepackage[retainorgcmds]{IEEEtrantools}
+
+
+
+
+
 
 %
 % look-up paths
