@@ -23,6 +23,7 @@
 \usepackage{relsize}     % relative font sizes
 \usepackage{color}       % colors
 \usepackage{xcolor}      % more colors
+\usepackage{xparse}      % command parser
 
 %
 % images and plots stuff
@@ -58,4 +59,14 @@
 %
 % look-up paths
 %
-\graphicspath{ {./img} {../../common/img} {./} }
+\graphicspath{ {./} {./img} {../../common/img} }
+
+%
+% different todos
+%
+\newcommand{\todoil}[2][orange]{\todo[inline,color=#1]{#2}}
+
+%\newcommand{\todoilcolor}[2]{\todo[inline,color=#1]{#2}}
+%\newcommand{\tododone}[1]{\todoilcolor{green!40}{#1}}
+%\newcommand{\todoshaky}[1]{\todoilcolor{red!40!blue!40}{#1}}
+%\newcommand{\todolow}[1]{\todoilcolor{blue!40}{#1}}
