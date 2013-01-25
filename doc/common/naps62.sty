@@ -26,13 +26,15 @@
 \usepackage{xparse}      % command parser
 \usepackage{pgffor}      % foreach loop
 \usepackage{bashful}     % bash magic
+\usepackage{pdfpages}    % enables \includepdf
+\usepackage{acronym}     % list of acronyms
 
 %
 % images and plots stuff
 %
 \usepackage{graphicx}    % images
 \usepackage{epstopdf}    % EPS images support
-\usepackage{gnuplottex}
+\usepackage{gnuplottex}  % embed gnuplot in latex
 
 %
 % references
@@ -40,6 +42,7 @@
 \usepackage{varioref}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
 \usepackage[noabbrev,capitalise]{cleveref}
+\usepackage{breakurl}
 
 %
 % pseudocode environments
@@ -66,9 +69,37 @@
 %
 % different todos
 %
-\newcommand{\itodo}[2][blue]{\todo[inline,color=#1!40]{#2}}
+\newcommand{\itodo}[2][orange]{\todo[inline,color=#1!40]{#2}}
+\newcommand{\tododone}[1]{\itodo[green]{#1}}
 
 
 %
-% auto include ./tex directory or other specified by optional parameter
+% include an svg file, cheking it for updates
 %
+\newcommand{\executeiffilenewer}[3]{%
+  \ifnum\pdfstrcmp{\pdffilemoddate{#1}}%
+  {\pdffilemoddate{#2}}>0%
+  {\immediate\write18{#3}}\fi%
+}
+\newcommand{\includesvg}[1]{%
+  \executeiffilenewer{#1.svg}{#1.pdf}{inkscape -z -D --file=#1.svg --export-pdf=#1.pdf export-latex}%
+  \input{#1.pdf_tex}
+}
+
+%
+% misc shortcuts
+%
+
+% roles for titles
+\newcommand{\role}[1]{\smaller{\textit{(#1)}}}
+\newcommand{\student}{\role{Student}}
+\newcommand{\advisor}{\role{Advisor}}
+\newcommand{\coadvisor}{\role{Co-Advisor}}
+
+% email
+\newcommand{\linklike}[1]{{\smaller\smaller\ttfamily #1}}
+\newcommand\email[1]{\href{mailto:#1}{\linklike{#1}}}
+\WithSuffix\newcommand\email*[2]{\href{mailto:#1}{\linklike{#1}}}
+
+% better nomenclature usage
+\newcommand*{\nom}[2]{#1\nomenclature{#1}{#2}}

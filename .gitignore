@@ -1,9 +1,13 @@
 .DS_Store
 inputs/
 doc/*/main.sh
+*.tmp
+
 
 # Latex
 _inputs.tex
+_sections.tex
+_appendixes.tex
 bash.out
 *.pdf
 *.aux
@@ -34,3 +38,4 @@ bash.out
 *.mtc
 *.mtc0
 *.fls
+*.nls
