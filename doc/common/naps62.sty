@@ -87,6 +87,15 @@
 }
 
 %
+% add "Appendix" to the appendixes titles, but not to the references
+%
+\let\oldappendix\appendix
+\renewcommand{\appendix}{%
+  \oldappendix
+  \gdef\thechapter{Appendix \Alph{chapter}}
+}
+
+%
 % misc shortcuts
 %
 
