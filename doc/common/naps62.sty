@@ -24,6 +24,8 @@
 \usepackage{color}       % colors
 \usepackage{xcolor}      % more colors
 \usepackage{xparse}      % command parser
+\usepackage{pgffor}      % foreach loop
+\usepackage{bashful}     % bash magic
 
 %
 % images and plots stuff
@@ -64,9 +66,9 @@
 %
 % different todos
 %
-\newcommand{\todoil}[2][orange]{\todo[inline,color=#1]{#2}}
+\newcommand{\itodo}[2][blue]{\todo[inline,color=#1!40]{#2}}
 
-%\newcommand{\todoilcolor}[2]{\todo[inline,color=#1]{#2}}
-%\newcommand{\tododone}[1]{\todoilcolor{green!40}{#1}}
-%\newcommand{\todoshaky}[1]{\todoilcolor{red!40!blue!40}{#1}}
-%\newcommand{\todolow}[1]{\todoilcolor{blue!40}{#1}}
+
+%
+% auto include ./tex directory or other specified by optional parameter
+%

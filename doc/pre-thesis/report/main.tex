@@ -2,8 +2,21 @@
 
 \usepackage{todonotes}
 \usepackage{../../common/naps62}
+\usepackage{bashful}     % bash magic
+
+\newcommand{\texdira}[1][./tex]{%
+%\immediate\write18{for file in `ls tex/ | grep '^[^_]'`; do echo "\\subfile{$file}" >> tex/_inputs.tex; done;} 
+%\immediate\write18{ ls #1/ | grep '^[^_]' | sed "s/.tex/&/" > #1/_inputs.tex }
+}
+
+
+%sed 's\/\\(.*\\)\\.tex\/\\subfile{\\1}\/'
 
 \begin{document}
-\subfile{tex/000_abstract}
+asd
+
+\texdira[tex]
+
+asd
 
 \end{document}
