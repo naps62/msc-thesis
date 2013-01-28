@@ -1,3 +1,14 @@
+\ProvidesPackage{naps}
+
+\usepackage{kvoptions}
+
+\SetupKeyvalOptions{
+  family=naps,
+  prefix=naps@
+}
+\DeclareBoolOption[false]{todo}
+\ProcessKeyvalOptions*
+
 \usepackage[utf8]{inputenc} % encoding
 \usepackage[T1]{fontenc}    % font encoding
 \usepackage[english]{babel} % language
@@ -28,6 +39,16 @@
 \usepackage{bashful}     % bash magic
 \usepackage{pdfpages}    % enables \includepdf
 \usepackage{acronym}     % list of acronyms
+\usepackage{booktabs}    % better tables
+
+%
+% todonotes, optionally disabled
+%
+\ifnaps@todo
+  \RequirePackage{todonotes}
+\else
+  \RequirePackage[disable]{todonotes}
+\fi
 
 %
 % images and plots stuff
@@ -40,7 +61,7 @@
 % references
 %
 \usepackage{varioref}
-\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+\usepackage[a4paper,pdftex,bookmarks=true,colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
 \usepackage[noabbrev,capitalise]{cleveref}
 \usepackage{breakurl}
 \usepackage[hyperpageref]{backref}
@@ -56,10 +77,6 @@
 % IEEE tools
 %
 \usepackage[retainorgcmds]{IEEEtrantools}
-
-
-
-
 
 
 %
@@ -87,6 +104,7 @@
   \input{#1.pdf_tex}
 }
 
+
 %
 % add "Appendix" to the appendixes titles, but not to the references
 %
@@ -95,6 +113,7 @@
   \oldappendix
   \gdef\thechapter{Appendix \Alph{chapter}}
 }
+
 
 %
 % backref configuration
@@ -111,6 +130,7 @@
 \renewcommand*{\backrefsep}{, }
 \renewcommand*{\backreftwosep}{ and~}
 \renewcommand*{\backreflastsep}{ and~}
+
 
 %
 % misc shortcuts
