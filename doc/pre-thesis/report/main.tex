@@ -1,13 +1,12 @@
 \documentclass[a4paper,abstract=on,twoside]{scrreprt}
 
-\usepackage{todonotes}
-\usepackage{../../common/naps62}
+\usepackage[todo]{../../common/naps62}
 
 \hypersetup{pdfauthor={Miguel Branco Palhas}}
 \hypersetup{pdftitle={Pre-Thesis: An Evaluation of the GAMA Framework for Heterogeneous Platforms: The Progressive Photon Mapping Algorithm}}
 
 % reduce chapter margins
-\renewcommand{\chapterheadstartvskip}{\vspace*{-2\baselineskip}}
+\renewcommand{\chapterheadstartvskip}{\vspace*{-1.6\baselineskip}}
 
 \begin{document}
 \pagenumbering{roman}
@@ -36,5 +35,11 @@
 ls tex/ | egrep ^[^_] | sed "s/\([^.]*\)\.tex/\\\\subfile{tex\/\1}/" > tex/_inputs.tex
 \END
 \input{tex/_inputs}
+
+
+
+\bibliographystyle{../../common/IEEE}
+\nocite{*}
+\bibliography{../../common/bib/gama}
 
 \end{document}
