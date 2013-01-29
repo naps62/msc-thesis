@@ -5,7 +5,20 @@
 
 
 \itodo{Contextualization}
-High performance computing platforms are increasingly more heterogeneous, taking advantage of accelerator devices to provide higher peak performance and lower \cite{compute-efficiency2012}
+High performance computing platforms are increasingly more heterogeneous, taking advantage of accelerator devices to provide higher peak performance at lower costs. These accelerators possess characteristics that makes them suitable to perform different tasks, and as such are useful as co-processors that complement the work of conventional \acp{CPU}.
+
+Accelerators first started to appear with \acp{GPU}, which gradually evolved from specific hardware dedicated to graphics rendering, to fully featured general programming devices, capable of massive data paralelism and performance, at lower power consumptions. As of 2012, over 50 of the \footnote{A list of the most powerful supercomputers in the world, updated twice a year (\url{http://www.top500.org/})}{TOP500's} list are powered by \acp{GPU}, which indicates an exponential growth in usage when compared to previous years. This increased usage is motivated by the effectiveness of these devices for general-purpose computing. \todo{insert referecen here}
+
+Other types of accelerators since emerged, like the recent \intel \ac{MIC} Architecture, and while all of them differ from the traditional \ac{CPU} architecture, they also differ between themselves, providing different hardware specifications, along with different memory and programming models. \todo{modelo de memoria e modelo de programaçao?}
+
+Development of applications targeting this devices tends to be harder, or at least different from conventional programming. One has to take into account the differences of the underlying architecture, as well as the programming model being used, in order to produce code that is not only correct in terms of the specification of that model, but also efficient. Efficient code targeted at one device might not be (and as a general rule, is not) adequate to a different device. As a result, developers have to take into account the characteristics of each different device they are using within their applications.
+
+Each accelerator can also be programmed in a variety of ways, ranging from low level programming models such as \cuda for \nvidia's \acp{GPU} to higher level libraries like \acp{OpenMP}, \acp{OpenACC}, or \intel's \acp{TBB}. Each of these provides a different method of writing parallel programs, and have a different level of abstraction about the underlying architecture. \todo{refs, refs, refs}
+
+These different types of devices are most commonly used (in the context of general-computing) as accelerators, in a system where at least one \ac{CPU} manages the main execution flow, and delegates specific tasks to the available resources. A system that takes uses different computational units is commonly referred to as a \ac{HetPlat}. More formally, a \ac{HetPlat} can be defined as a computing system with processors using different \acp{ISA} 
+
+%A platform that takes advantages of these co-processors is commonly referred to as \acp{HetPlat}
+%These platforms are more and more common nowadays, and due to their heterogenous nature, they are commonly referred to as \acp{HetPlat}.
 
 
 \itodo{Background}

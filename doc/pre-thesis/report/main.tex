@@ -1,4 +1,5 @@
-\documentclass[a4paper,abstract=on,twoside]{scrreprt}
+\documentclass[a4paper,abstract=on,twoside,parskip=full]{scrreprt}
+\setlength\parindent{1.5em}
 
 \usepackage[todo]{../../common/naps62}
 
@@ -44,6 +45,6 @@ ls tex/ | egrep ^[^_] | sed "s/\([^.]*\)\.tex/\\\\subfile{tex\/\1}/" > tex/_inpu
 %\nocite{*}
 \newpage % force the bookmark to go to the new page
 \pdfbookmark{References}{references}
-\printbibliography
+\printbibliography[title=References]
 
 \end{document}
