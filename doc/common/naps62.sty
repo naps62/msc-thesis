@@ -1,4 +1,4 @@
-\ProvidesPackage{naps}
+\ProvidesPackage{naps62}
 
 \usepackage{kvoptions}
 
@@ -61,10 +61,11 @@
 % references
 %
 \usepackage{varioref}
-\usepackage[a4paper,pdftex,bookmarks=true,colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+\usepackage[breaklinks,pdftex,bookmarks=true,colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
 \usepackage[noabbrev,capitalise]{cleveref}
-\usepackage{breakurl}
-\usepackage[hyperpageref]{backref}
+%\usepackage[hyperpageref]{backref}
+\usepackage{csquotes} % biblatex asks for this
+\usepackage[hyperref=true,backref=true,url=true]{biblatex}    % better references
 
 %
 % pseudocode environments
@@ -118,18 +119,18 @@
 %
 % backref configuration
 %
-\renewcommand*{\backref}[1]{}
-\renewcommand*{\backrefalt}[4]{%
-\ifcase #1 %
-(Not cited.)%
-\or
- \textbf{Cited} on page~#2.%
-\else
- \textbf{Cited} on pages~#2.%
-\fi}
-\renewcommand*{\backrefsep}{, }
-\renewcommand*{\backreftwosep}{ and~}
-\renewcommand*{\backreflastsep}{ and~}
+%\renewcommand*{\backref}[1]{}
+%\renewcommand*{\backrefalt}[4]{%
+%\ifcase #1 %
+%(Not cited.)%
+%\or
+% \textbf{Cited} on page~#2.%
+%\else
+% \textbf{Cited} on pages~#2.%
+%\fi}
+%\renewcommand*{\backrefsep}{, }
+%\renewcommand*{\backreftwosep}{ and~}
+%\renewcommand*{\backreflastsep}{ and~}
 
 
 %

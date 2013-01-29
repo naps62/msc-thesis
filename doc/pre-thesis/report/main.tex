@@ -5,10 +5,13 @@
 \hypersetup{pdfauthor={Miguel Branco Palhas}}
 \hypersetup{pdftitle={Pre-Thesis: An Evaluation of the GAMA Framework for Heterogeneous Platforms: The Progressive Photon Mapping Algorithm}}
 
+\bibliography{../../common/bib/gama,../../common/bib/gpu,../../common/bib/photon_mapping}
+
 % reduce chapter margins
 \renewcommand{\chapterheadstartvskip}{\vspace*{-1.6\baselineskip}}
 
 \begin{document}
+\pdfbookmark{Cover}{cover}
 \pagenumbering{roman}
 \includepdf[pages=-]{misc/cover-mei}
 
@@ -37,9 +40,10 @@ ls tex/ | egrep ^[^_] | sed "s/\([^.]*\)\.tex/\\\\subfile{tex\/\1}/" > tex/_inpu
 \input{tex/_inputs}
 
 
-
-\bibliographystyle{../../common/IEEE}
-\nocite{*}
-\bibliography{../../common/bib/gama}
+%\bibliographystyle{../../common/IEEE}
+%\nocite{*}
+\newpage % force the bookmark to go to the new page
+\pdfbookmark{References}{references}
+\printbibliography
 
 \end{document}

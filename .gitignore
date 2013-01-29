@@ -1,6 +1,7 @@
 .DS_Store
 inputs/
 doc/*/main.sh
+doc/*/*/main.run.xml
 *.tmp
 
 
@@ -13,6 +14,7 @@ bash.out
 *.aux
 *.bbl
 *.blg
+*.bcf
 *.dvi
 *.fdb_latexmk
 *.glg
