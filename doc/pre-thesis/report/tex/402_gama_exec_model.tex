@@ -1,0 +1,33 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\section{Programming and Execution Model}
+
+To better understand the programming and execution model employed in \ac{GAMA}, some key concepts are introduced in this section:
+
+\begin{description}
+  \item[\acf{CU}] \hfill \\
+    In \ac{GAMA}, a \acl{CU} is an individual execution unit, capable of executing a general-purpose application. In the context of a \ac{CPU}, a \acl{CU} represents a single core, while on a \ac{GPU}, in the current implementation represents a single \acf{SM}. Thus the terms \ac{CU} and core may be used with the same meaning.
+
+  \item[Device or Worker] \hfill \\
+    Represents a collection of \aclp{CU} that share some level of memory (e.g.\ the CPU cores on the same machine, or the \acp{SM}  of a single \ac{GPU}).
+
+  \item[Domain] \hfill \\
+    A global view of a particular data structure that enables developers to access any memory location usign the global address space, and hiding the complexity of the underlying memory system. At the application level, the user is able to define filters of partial views of a single domain, allowing the system to identify the required communication primitives and enforce the global address space, the memory consistency model, and cache and synchronization mechanisms.
+
+  \item[Job] \hfill \\
+    A tuple associating data domains with the corresponding computations associated with it, and a specialized dicing function that defines the best strategy for job granularity, recursively spliting the job into smaller tasks across the data domains.
+
+  \item[Taks] \hfill \\
+    \itodo{This}
+
+  \item[Kernel] \hfill \\
+    The computation associated with a job. In a best-case scenario, a computational kernel can be mapped directly to a given device simply with the help of the toolkit supporting that device. In most cases however, the kernel needs to be tailored to a specific device's programming model. This is achievable by extending the job description with the addition of the specialized kernel for a specific device. This feature also enhances the programming model by enabling developers to tailer specific computational kernels for each platform, taking advantage of architecture-specific features.
+
+
+\end{description}
+
+An application in GAMA is a collection of jobs submitted to a run-time system for scheduling among the available computational resources. Dependencies among jobs can be specified with explicit synchronization barriers. The main goal of the runtime scheduler is to reduce the overall time to solution of any given application. The scheduler uses information provided by each job in order to determine the best scheduling policy, based on current runtime states, as well as execution history. If the granularity of a job is too coarse the enable a balanced scheduling policy, \ac{GAMA} will recursively employ the dicing function of a job to adjust it to the capabilities of the device.
+
+\end{document}

@@ -1,0 +1,11 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\chapter{GAMA}
+
+The \acf{GAMA} is a framework to aid computational scientists in the development or porting of data-parallel applications to heterogeneous computing platforms. Currently \ac{HetPlat} support includes only systems composed of tradicional \acp{CPU} cores and one or several CUDA-capable \ac{GPU} devices.
+
+\ac{GAMA} provides an abstraction of the hardware platform, attempting to free the programmer from the workload scheduling and data movement issues accross the differente resources. In \ac{GAMA}, an application is composed of a collection of jobs, each defined as a set of tasks applied to a different input data set. Every job shares a global address space, instead of directly using the private memory of each device.
+
+\end{document}

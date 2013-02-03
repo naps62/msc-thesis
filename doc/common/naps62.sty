@@ -6,7 +6,7 @@
   family=naps,
   prefix=naps@
 }
-\DeclareBoolOption[false]{todo}
+\DeclareBoolOption[false]{final}
 \ProcessKeyvalOptions*
 
 \usepackage[utf8]{inputenc} % encoding
@@ -41,14 +41,6 @@
 \usepackage{acronym}     % list of acronyms
 \usepackage{booktabs}    % better tables
 
-%
-% todonotes, optionally disabled
-%
-\ifnaps@todo
-  \RequirePackage{todonotes}
-\else
-  \RequirePackage[disable]{todonotes}
-\fi
 
 %
 % images and plots stuff
@@ -79,17 +71,28 @@
 %
 \usepackage[retainorgcmds]{IEEEtrantools}
 
+%
+% draft options, optionally disabled
+%
+\ifnaps@final
+  \RequirePackage[disable]{todonotes}
+\else
+  \RequirePackage{todonotes}
+  \RequirePackage{showlabels}
+\fi
+
 
 %
 % look-up paths
 %
-\graphicspath{ {./} {./img} {../../common/img} }
+\graphicspath{{./}{./img/}{../../common/img/}}
 
 %
 % different todos
 %
 \newcommand{\itodo}[2][orange]{\todo[inline,color=#1!40]{#2}}
 \newcommand{\tododone}[1]{\itodo[green]{#1}}
+\newcommand{\itododone}[1]{\tododone{#1}}
 
 
 %

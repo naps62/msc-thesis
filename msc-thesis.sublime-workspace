@@ -1,0 +1,1031 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"authen",
+				"authentication_token"
+			],
+			[
+				"v",
+				"vertical-align"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "doc/pre-thesis/report/tex/400_gama.tex",
+			"settings":
+			{
+				"buffer_size": 810,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "doc/pre-thesis/report/tex/402_gama_exec_model.tex",
+			"settings":
+			{
+				"buffer_size": 4550,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "doc/pre-thesis/report/tex/401_gama_memory.tex",
+			"settings":
+			{
+				"buffer_size": 235,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "doc/pre-thesis/report/tex/403_gama_tutorial.tex",
+			"settings":
+			{
+				"buffer_size": 101,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "doc/pre-thesis/report/main.tex",
+			"settings":
+			{
+				"buffer_size": 1379,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "doc/pre-thesis/report/tex/009_before.tex",
+			"settings":
+			{
+				"buffer_size": 1066,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "doc/common/naps62.sty",
+			"settings":
+			{
+				"buffer_size": 3945,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 330.0,
+		"selected_items":
+		[
+			[
+				"Inst",
+				"Package Control: Install Package"
+			],
+			[
+				"Packa",
+				"Package Control: Remove Package"
+			],
+			[
+				"Ins",
+				"Package Control: Install Package"
+			],
+			[
+				"Insta",
+				"Package Control: Install Package"
+			],
+			[
+				"Remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"Instal",
+				"Package Control: Install Package"
+			],
+			[
+				"Install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 462.0
+	},
+	"console":
+	{
+		"height": 118.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/101_background.tex",
+		"/home/naps62/projects/msc-thesis/doc/common/naps62.sty",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/_inputs.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/main.fdb_latexmk",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/main.out",
+		"/home/naps62/.latexmkrc",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/100_introduction.tex",
+		"/home/naps62/.config/sublime-text-2/Packages/User/LaTeX.sublime-settings",
+		"/home/naps62/projects/plazr/plazr_store/app/controllers/plazr_store/application_controller.rb",
+		"/home/naps62/projects/plazr/plazr_store/test/dummy/app/controllers/application_controller.rb",
+		"/home/naps62/projects/plazr/plazr_store_template/app/controllers/application_controller.rb",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/009_before.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/104_structure.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/103_asd.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/102_context.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/main.tex",
+		"/home/naps62/projects/msc-thesis/doc/common/bib/gpu.bib",
+		"/home/naps62/projects/msc-thesis/.gitignore",
+		"/home/naps62/projects/minho.rb-plazr/grunt.js",
+		"/home/naps62/projects/minho.rb-plazr/css/custom.css",
+		"/home/naps62/projects/minho.rb-plazr/index.html",
+		"/home/naps62/projects/minho.rb-plazr/README.md",
+		"/home/naps62/projects/minho.rb-plazr/css/theme/night.css",
+		"/home/naps62/projects/minho.rb-plazr/plugin/print-pdf/print-pdf.js",
+		"/home/naps62/projects/minho.rb-plazr/css/print/pdf.css",
+		"/home/naps62/projects/minho.rb-plazr/server.js",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/objects/route_point.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/objects/route_points.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/objects/route.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/objects/player.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/objects/raphael_backbone.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/objects/routes.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/objects/players.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/objects/play.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/lib/backbone-relational.js",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/objects/playbook.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/playbook_data.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/toolbox/player_tool.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/config.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/objects/playbooks.coffee",
+		"/home/naps62/projects/coachme/vendor/storage_server/migrations/20130122165104-add-teamid-to-playbooks.js",
+		"/home/naps62/projects/coachme/vendor/storage_server/migrations/20130121215309-modify-passpoints.js",
+		"/home/naps62/projects/coachme/vendor/storage_server/app.js",
+		"/home/naps62/projects/coachme/vendor/storage_server/migrations/20130115145601-camelcase-tables.js",
+		"/home/naps62/projects/coachme/app/views/apps/plays/new.html.erb",
+		"/home/naps62/projects/coachme/vendor/storage_server/api_1/models/playbook.js",
+		"/home/naps62/projects/coachme/vendor/storage_server/api_1/controllers/playbooks.js",
+		"/home/naps62/projects/coachme/vendor/storage_server/package.json",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/002_abstract.tex",
+		"/home/naps62/projects/msc-thesis/doc/work-plan/main.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/300_hetplats.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/400_photon.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/500_conclusions.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/Z_bib.tex",
+		"/home/naps62/projects/msc-thesis/doc/common/bib/gama.bib",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/001_acknowledgments.tex",
+		"/home/naps62/downloads/chrome/RPD/rpd.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/200_test.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/A_glossary.tex",
+		"/home/naps62/projects/msc-thesis/doc/work-plan/work_plan.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/999_before_appendix.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/_sections.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/999_appendixes",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/misc/cover.pdf",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/001_next.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/000_abstract.tex",
+		"/home/naps62/sandbox/svg_latex/main.aux",
+		"/home/naps62/sandbox/svg_latex/main.log",
+		"/home/naps62/sandbox/svg_latex/main.pdf",
+		"/home/naps62/sandbox/svg_latex/main.tex",
+		"/home/naps62/sandbox/svg_latex/Makefile",
+		"/home/naps62/sandbox/svg_latex/plot.R",
+		"/home/naps62/sandbox/svg_latex/svg.pdf",
+		"/home/naps62/sandbox/svg_latex/svg.pdf_tex",
+		"/home/naps62/sandbox/svg_latex/svg.svg",
+		"/usr/bin/latexmk",
+		"/home/naps62/projects/msc-thesis/doc/work-plan/tex/000-title.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/Makefile",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/1_teste.te",
+		"/home/naps62/downloads/chrome/configure (2).sh",
+		"/home/naps62/projects/plazr/plazr_store/lib/plazr_store/engine.rb",
+		"/home/naps62/projects/plazr/plazr_store/app/assets/javascripts/plazr_store.js",
+		"/home/naps62/downloads/chrome/configure.sh",
+		"/home/naps62/projects/plazr/plazr_store/app/assets/stylesheets/plazr_store.css",
+		"/home/naps62/projects/plazr/plazr_store/app/assets/stylesheets/plazr_store/application.css.scss.erb",
+		"/home/naps62/projects/plazr/plazr_store/app/assets/javascripts/plazr_store/application.js",
+		"/home/naps62/projects/plazr/plazr_store/test/dummy/app/assets/stylesheets/application.css",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/toolbox/route_tool.coffee",
+		"/home/naps62/projects/coachme/db/migrate/20121116192728_add_playbook_storage.rb",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/lib/main.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/objects/plays.coffee",
+		"/home/naps62/projects/coachme/app/controllers/admin/playbook_controller.rb",
+		"/home/naps62/projects/coachme/config/routes.rb",
+		"/home/naps62/projects/coachme/.gitignore",
+		"/home/naps62/projects/coachme/app/controllers/application_controller.rb",
+		"/home/naps62/projects/coachme/app/controllers/playbook_controller.rb",
+		"/home/naps62/projects/coachme/vendor/storage_server/coachme_functions.js",
+		"/home/naps62/projects/coachme/vendor/storage_server/config/clients.js",
+		"/home/naps62/projects/coachme/vendor/storage_server/certs/server.key",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/objects/main.coffee",
+		"/home/naps62/projects/coachme/vendor/storage_server/certs/server.crt",
+		"/home/naps62/Desktop/my-ca.crt",
+		"/home/naps62/projects/coachme/db/seeds.rb",
+		"/home/naps62/projects/coachme/app/models/team.rb",
+		"/home/naps62/projects/coachme/app/views/devise/registrations/edit.html.erb",
+		"/home/naps62/projects/coachme/app/views/forem/shared/_user_details.html.erb",
+		"/home/naps62/projects/coachme/Gemfile",
+		"/home/naps62/projects/coachme/Gemfile.lock",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/lib/backbone.js",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/drawables.coffee",
+		"/home/naps62/projects/coachme/app/views/playbook/index.html.erb",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/views/playbook.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/views/play.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/views/plays.coffee",
+		"/home/naps62/projects/coachme/vendor/storage_server/api_1/controllers/routePoints.js",
+		"/home/naps62/projects/coachme/app/assets/stylesheets/playbook.sass",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/views/playbooks.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/main.coffee",
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/playbook_interface.coffee",
+		"/home/naps62/projects/coachme/vendor/storage_server/config/server.js",
+		"/home/naps62/projects/coachme/vendor/storage_server/config/db.js",
+		"/home/naps62/projects/plazr/plazr_store/app/models/plazr_store/feedback_product.rb",
+		"/home/naps62/projects/plazr/plazr_store/app/models/plazr_store/variant.rb",
+		"/home/naps62/projects/plazr/plazr_store/app/models/plazr_store/product.rb",
+		"/home/naps62/projects/plazr/plazr_store/doc/PlazrStore/Variant.html",
+		"/home/naps62/projects/beast/blotter/input1.csv",
+		"/home/naps62/projects/beast/blotter/input2.csv",
+		"/home/naps62/projects/beast/blotter/input3.csv"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/objects",
+			"/home/naps62/projects/coachme/vendor/storage_server/api_1",
+			"/home/naps62/projects/coachme/vendor/storage_server/api_1/controllers",
+			"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook",
+			"/home/naps62/projects/coachme/vendor/assets/javascripts",
+			"/media/data/downloads/chrome/gtest-1.6.0",
+			"/home/naps62/projects/coachme",
+			"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook",
+			"/home/naps62/projects/coachme/vendor/assets/javascripts",
+			"/home/naps62/projects/coachme/vendor",
+			"/home/naps62/projects/coachme/vendor/storage_server/api_1/controllers",
+			"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook",
+			"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/toolbox",
+			"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook",
+			"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/lib",
+			"/home/naps62/projects/plazr/plazr_store",
+			"/home/naps62/projects/plazr/plazr_store/app/controllers",
+			"/home/naps62/projects/plazr/plazr_store/app/views",
+			"/home/naps62/projects/coachme/vendor/storage_server",
+			"/home/naps62/projects/plazr/plazr_auth",
+			"/home/naps62/downloads/chrome/boost_1_52_0/boost/program_options",
+			"/home/naps62/projects/coachme",
+			"/home/naps62/projects/coachme/vendor",
+			"/home/naps62/remotes/cg/cuda-workspace/GAMA/src",
+			"/home/naps62/remotes/cg/cuda-workspace/GAMA/src/gama",
+			"/home/naps62/remotes/cg/cuda-workspace/GAMA/src",
+			"/home/naps62/projects/citygate",
+			"/home/naps62/projects/PlazrAuth",
+			"/home/naps62/projects/PlazrUsers/*",
+			"/home/naps62/projects/PlazrUsers",
+			"/home/naps62/projects/tipster",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"todo",
+			"backref",
+			"\"initialize\"",
+			"\"url\"",
+			"initialize",
+			"fetchRelated",
+			"usepackage",
+			"fancyhdr",
+			"include",
+			"\\include",
+			"include",
+			"usepa",
+			"playbook",
+			"createdAt",
+			"console.log",
+			"log",
+			"clicked",
+			"price",
+			"image",
+			"rating",
+			"GetAnsiColorCode",
+			"SetConsoleTextAttribute",
+			"ColoredPrintf",
+			"ShouldUseColor",
+			"      ShouldUseColor(posix::IsATTY(posix::FileNo(stdout)) != 0);\nColoredPrintf",
+			"ColoredPrintf",
+			"PASSED",
+			"BadReq",
+			"https",
+			"http",
+			"https",
+			"RRR",
+			"collection:",
+			"log",
+			"reset",
+			"collect",
+			"dc.js",
+			"images",
+			"User Management",
+			"User Manage",
+			"feedb",
+			"omp",
+			"Nope",
+			"admin?",
+			"program_options_easy",
+			"value",
+			"value {",
+			"options_description_easy_init",
+			"add_options",
+			"options_description_easy_init",
+			"add_options",
+			"User",
+			"seque",
+			"best_available_avatar",
+			"cx",
+			"The specified content-type",
+			"The specified",
+			"events.js",
+			"DTraceProviderBindings",
+			"lines",
+			"line",
+			"vtable.h",
+			"-c",
+			"-c ",
+			"-c",
+			"CUDA_NVCC_FLAGS",
+			"CUDA_ADD_EXE",
+			"atomicCAS",
+			"CUDA_ADD_EXE",
+			"CUDA_ADD_LIBRARY",
+			"FLAGS",
+			"constant.cuda.cu",
+			"precompile",
+			"creates a new instance",
+			"Authorization",
+			"\"",
+			"	",
+			"\"",
+			"robj",
+			"raphael:",
+			"dblclick",
+			"play_auth",
+			"PlayAuth",
+			"^-",
+			"^[A-Z]",
+			"^-",
+			"-",
+			"naviga",
+			"flash",
+			"Users",
+			"User",
+			"before_filter",
+			"switch",
+			"tab",
+			"\n    ",
+			"flash",
+			"token",
+			"programm",
+			"behavior",
+			"add_participations",
+			"add_player team, \"\", \"\"\n  add_player team, \"\", \"\"\n  add_player team, \"\", \"\"\n  add_player team, \"\", \"\"\n  add_player team, \"\", \"\"\n  ",
+			"add_player",
+			"add_player_team",
+			"debugger",
+			"home_team",
+			"home_",
+			"todo",
+			"@group",
+			"@Phase",
+			"Group"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"RequirePackage",
+			"routes",
+			"route",
+			"'",
+			"  ",
+			"'",
+			"plazr_auth",
+			"PlazrAuth",
+			"add_player team",
+			"@phase",
+			"@group",
+			"Phase"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 4,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "doc/pre-thesis/report/tex/400_gama.tex",
+					"settings":
+					{
+						"buffer_size": 810,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								810,
+								810
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "doc/pre-thesis/report/tex/402_gama_exec_model.tex",
+					"settings":
+					{
+						"buffer_size": 4550,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4550,
+								4550
+							]
+						],
+						"settings":
+						{
+							"is_xml": false,
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "doc/pre-thesis/report/tex/401_gama_memory.tex",
+					"settings":
+					{
+						"buffer_size": 235,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								192,
+								192
+							]
+						],
+						"settings":
+						{
+							"is_xml": false,
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "doc/pre-thesis/report/tex/403_gama_tutorial.tex",
+					"settings":
+					{
+						"buffer_size": 101,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								85,
+								85
+							]
+						],
+						"settings":
+						{
+							"is_xml": false,
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "doc/pre-thesis/report/main.tex",
+					"settings":
+					{
+						"buffer_size": 1379,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								422,
+								422
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 5,
+					"file": "doc/pre-thesis/report/tex/009_before.tex",
+					"settings":
+					{
+						"buffer_size": 1066,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								365,
+								365
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 90.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "doc/common/naps62.sty",
+					"settings":
+					{
+						"buffer_size": 3945,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1956,
+								1956
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/TeX.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 855.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 30.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				0,
+				1,
+				1,
+				2
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			0.413555992141,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 90.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 343.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"migratepla",
+				"db/migrate/20121116192728_add_playbook_storage.rb"
+			],
+			[
+				"controadminpla",
+				"app/controllers/admin/playbook_controller.rb"
+			],
+			[
+				"play",
+				"db/migrate/20121116192728_add_playbook_storage.rb"
+			],
+			[
+				"views/play",
+				"app/views/playbook/index.html.erb"
+			],
+			[
+				"varian",
+				"app/models/plazr_store/variant.rb"
+			],
+			[
+				"variant.",
+				"doc/PlazrStore/Variant.html"
+			],
+			[
+				"produc",
+				"app/models/plazr_store/product.rb"
+			],
+			[
+				"specsharedadmin",
+				"test/dummy/spec/support/shared_examples_for_default_admin_index_method.rb"
+			],
+			[
+				"specshared",
+				"test/dummy/spec/support/shared_examples_for_admin_role.rb"
+			],
+			[
+				"aminprospe",
+				"test/dummy/spec/controllers/admin/products_controller_spec.rb"
+			],
+			[
+				"procontrspe",
+				"test/dummy/spec/controllers/products_controller_spec.rb"
+			],
+			[
+				"procontr",
+				"app/controllers/plazr_store/products_controller.rb"
+			],
+			[
+				"searchcontrsp",
+				"test/dummy/spec/controllers/search_controller_spec.rb"
+			],
+			[
+				"search_spe",
+				"test/dummy/spec/models/search_spec.rb"
+			],
+			[
+				"search.rb",
+				"app/models/plazr_store/search.rb"
+			],
+			[
+				"playi",
+				"app/views/playbook/index.html.erb"
+			],
+			[
+				"playbo",
+				"app/controllers/playbook_controller.rb"
+			],
+			[
+				"routes",
+				"config/routes.rb"
+			],
+			[
+				"route",
+				"config/routes.rb"
+			],
+			[
+				"application_contr",
+				"app/controllers/plazr_store/admin/application_controller.rb"
+			],
+			[
+				"fact",
+				"test/dummy/spec/factories.rb"
+			],
+			[
+				"deco",
+				"app/decorators/models/plazr_auth/user_decorator.rb"
+			],
+			[
+				"cart_c",
+				"app/controllers/plazr_store/cart_controller.rb"
+			],
+			[
+				"seeds",
+				"db/seeds.rb"
+			],
+			[
+				"players.",
+				"vendor/storage_server/api_1/controllers/players.js"
+			],
+			[
+				"app.js",
+				"vendor/storage_server/app.js"
+			],
+			[
+				"config-me/p",
+				"vendor/storage_server/node_modules/config-me/package.json"
+			],
+			[
+				"lingo/pac",
+				"vendor/storage_server/node_modules/lingo/package.json"
+			],
+			[
+				"pac",
+				"vendor/storage_server/package.json"
+			],
+			[
+				"application.ht",
+				"app/views/layouts/application.html.erb"
+			],
+			[
+				"abili",
+				"app/models/plazr_store/ability.rb"
+			],
+			[
+				"gemsp",
+				"plazr_store.gemspec"
+			],
+			[
+				"gem",
+				"Gemfile"
+			],
+			[
+				"seed",
+				"db/seeds.rb"
+			],
+			[
+				"rou",
+				"config/routes.rb"
+			],
+			[
+				"shared/",
+				"plazr_store/app/views/plazr_store/shared/_nav.html.erb"
+			],
+			[
+				"shipment",
+				"db/migrate/20121114153906_create_plazr_store_shipment_conditions.rb"
+			],
+			[
+				"shipme",
+				"plazr_store_template/db/migrate/20121218105123_create_plazr_store_shipment_conditions.plazr_store.rb"
+			],
+			[
+				"layo",
+				"app/views/layouts/plazr_store/application.html.erb"
+			],
+			[
+				"se",
+				"db/seeds.rb"
+			],
+			[
+				"see",
+				"coachme/db/seeds.rb"
+			],
+			[
+				"tips/sho",
+				"tipster/app/views/tips/show.html.erb"
+			],
+			[
+				"users_",
+				"app/controllers/play_auth/users_controller.rb"
+			],
+			[
+				"pl",
+				"app/models/playbook.rb"
+			],
+			[
+				"_grou",
+				"app/views/play_futsal/groups/_group.html.erb"
+			],
+			[
+				"_group",
+				"app/views/play_futsal/groups/_group.html.erb"
+			],
+			[
+				"show",
+				"app/views/play_futsal/athletes/show.html.erb"
+			],
+			[
+				"_pha",
+				"app/views/play_futsal/phases/_phase.html.erb"
+			],
+			[
+				"match",
+				"app/models/play_futsal/match.rb"
+			],
+			[
+				"_na",
+				"app/views/layouts/play_futsal/_navigation.html.erb"
+			],
+			[
+				"new_eve",
+				"app/views/play_futsal/matches/_new_event_form.html.erb"
+			],
+			[
+				"team",
+				"app/models/play_futsal/team.rb"
+			],
+			[
+				"phase",
+				"app/models/play_futsal/phase.rb"
+			],
+			[
+				"matc",
+				"app/models/play_futsal/match.rb"
+			],
+			[
+				"group",
+				"app/models/play_futsal/group.rb"
+			],
+			[
+				"_nav",
+				"app/views/layouts/play_futsal/_navigation.html.erb"
+			],
+			[
+				"_form",
+				"app/views/play_futsal/phases/_form.html.erb"
+			],
+			[
+				"_navig",
+				"app/views/layouts/play_futsal/_navigation.html.erb"
+			],
+			[
+				"parti",
+				"app/models/play_futsal/participation.rb"
+			],
+			[
+				"grou",
+				"app/controllers/play_futsal/groups_controller.rb"
+			],
+			[
+				"groups",
+				"app/controllers/play_futsal/groups_controller.rb"
+			],
+			[
+				"matches",
+				"app/controllers/play_futsal/matches_controller.rb"
+			],
+			[
+				"play_futsal_mat",
+				"db/migrate/20120828132208_create_play_futsal_matches.rb"
+			],
+			[
+				"phases_",
+				"app/controllers/play_futsal/phases_controller.rb"
+			],
+			[
+				"phase.",
+				"app/models/play_futsal/phase.rb"
+			],
+			[
+				"_phase",
+				"app/views/play_futsal/phases/_phase.html.erb"
+			],
+			[
+				"index",
+				"app/views/play_futsal/phases/index.html.erb"
+			],
+			[
+				"create_",
+				"db/migrate/20120828132208_create_play_futsal_matches.rb"
+			],
+			[
+				"index.",
+				"app/views/play_futsal/phases/index.html.erb"
+			],
+			[
+				"navi",
+				"app/views/layouts/play_futsal/_navigation.html.erb"
+			],
+			[
+				"phases_c",
+				"app/controllers/play_futsal/phases_controller.rb"
+			],
+			[
+				"phases",
+				"app/controllers/play_futsal/phases_controller_controller.rb"
+			],
+			[
+				"create_pla",
+				"db/migrate/20121016231228_create_play_futsal_phases.rb"
+			],
+			[
+				"mat",
+				"app/models/play_futsal/match.rb"
+			],
+			[
+				"event",
+				"app/models/play_futsal/event.rb"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"/home/naps62/projects/coachme/coachme.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 195.0,
+	"status_bar_visible": true
+}
