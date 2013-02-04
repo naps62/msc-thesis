@@ -16,34 +16,54 @@
 	"buffers":
 	[
 		{
-			"file": "doc/pre-thesis/report/tex/400_gama.tex",
+			"file": "doc/pre-thesis/report/tex/220_hardware.tex",
 			"settings":
 			{
-				"buffer_size": 810,
+				"buffer_size": 1901,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "doc/pre-thesis/report/tex/402_gama_exec_model.tex",
+			"contents": "\\documentclass[main.tex]{subfiles}\n\\begin{document}\n\n\\section{Software}\n\nSeveral software facilities already exist to assist in the production of parallel code. These softwares range from low level drivers, which are sometimes required to access hardware-level features (e.g.\\ \\acs{CUDA} or \\acs{OpenCL}, which act as an bridge between the programmer and the \\acs{GPU} driver) to fully features libraries that attempt to provide higher level directives to developers, providing more flexibility to work on the algorithm itself rather than on hardware specific details and optimizations, which are sometimes hidden away.\n\nMost of these libraries however, limit themselves to a specific set, such as shared memory systems like multi-core \\acsp{CPU}. This section presents an overview on some of the existing software available for programming in paralle environments. While some the examples presented here may not be directly used throughout the dissertation, it should prove useful to analyse different software approaches, and understand where exactly can \\acs{GAMA} prove itsel usefull.\n\n\n\\subsection{\\acs{OpenMP}}\n\n\\ac{OpenMP} can be described as a set of compiler directives and routines applicable to Fortran and C/C+ code in order to express shared memory parallelism \\cite{dagum1998openmp}. It provides a high-level API with a wide range of processors supporting it.\nUsing the defined directives, the programmer is able to describe how section of an algorithm should be parallelized without introducing too much additional complexity within the code. The programmer is only left with the task of ensuring there are no data races or dependencies within a parallel task. More advanced options like specifying task granularity, private variables, or explicit barriers is also possible, enabling more control over the parallel region of the code.\n\nThis has been one of the standards for parallelization on \\textit{x86} \\acsp{CPU}, including the recent \\intel \\acf{MIC} architecture.\n\n\\subsection{\\acs{CUDA}}\n\nThe parallel computing programming model created by \\nvidia to be used along with their \\acsp{GPU}. \n\n\\acs{CUDA} is used by \\acs{GAMA} to \n\n\\subsection{\\acs{OpenACC}}\n\n\\acs{OpenACC} aims to to provide a standard for programming parallel devices, and simplify the programming of heterogeneous systems.\nThe programming model introduced by this standard is similar in many ways to \\acs{OpenMP}, especially in the usage of compiler directives to specify the parallelism rules. Unlike \\acs{OpenMP} however, code produced by \\acs{OpenACC} may also be targeted at different devices, such as \\acsp{GPU}, and more recently the new \\intel Xeon Phi \\cite{openacc-phi2012}.\n\nCurrently the major disadvantage of \\acs{OpenACC} is the lack of compiler support, with only commercial solutions providing compatibility with it.\n\n\n\\subsection{Galois}\n\nThe Galois project aims to\n\n\\end{document}\n",
+			"file": "doc/pre-thesis/report/tex/230_software.tex",
+			"file_size": 2850,
+			"file_write_time": 1359945842000000,
 			"settings":
 			{
-				"buffer_size": 4550,
+				"buffer_size": 2888,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "doc/pre-thesis/report/tex/401_gama_memory.tex",
+			"contents": "\\documentclass[main.tex]{subfiles}\n\\begin{document}\n\n\n\n\\end{document}\n",
+			"file": "doc/pre-thesis/report/tex/221_fermi.tex",
+			"file_size": 265,
+			"file_write_time": 1359942438000000,
 			"settings":
 			{
-				"buffer_size": 235,
+				"buffer_size": 70,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "doc/pre-thesis/report/tex/403_gama_tutorial.tex",
+			"contents": "\\documentclass[main.tex]{subfiles}\n\\begin{document}\n\n\n\n\\end{document}\n",
+			"file": "doc/pre-thesis/report/tex/223_mic.tex",
+			"file_size": 108,
+			"file_write_time": 1359942988000000,
 			"settings":
 			{
-				"buffer_size": 101,
+				"buffer_size": 70,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "\\documentclass[main.tex]{subfiles}\n\\begin{document}\n\n\n\n\\end{document}\n",
+			"file": "doc/pre-thesis/report/tex/222_kepler.tex",
+			"file_size": 269,
+			"file_write_time": 1359942995000000,
+			"settings":
+			{
+				"buffer_size": 70,
 				"line_ending": "Unix"
 			}
 		},
@@ -51,23 +71,23 @@
 			"file": "doc/pre-thesis/report/main.tex",
 			"settings":
 			{
-				"buffer_size": 1379,
+				"buffer_size": 1405,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "doc/pre-thesis/report/tex/009_before.tex",
+			"file": "doc/common/bib/photon_mapping.bib",
 			"settings":
 			{
-				"buffer_size": 1066,
+				"buffer_size": 1997,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "doc/common/naps62.sty",
+			"file": "doc/common/bib/gama.bib",
 			"settings":
 			{
-				"buffer_size": 3945,
+				"buffer_size": 1470,
 				"line_ending": "Unix"
 			}
 		}
@@ -75,9 +95,21 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 330.0,
+		"height": 375.0,
 		"selected_items":
 		[
+			[
+				"P I",
+				"Package Control: Install Package"
+			],
+			[
+				"Install",
+				"Package Control: Install Package"
+			],
+			[
+				"Insta",
+				"Package Control: Install Package"
+			],
 			[
 				"Inst",
 				"Package Control: Install Package"
@@ -91,10 +123,6 @@
 				"Package Control: Install Package"
 			],
 			[
-				"Insta",
-				"Package Control: Install Package"
-			],
-			[
 				"Remo",
 				"Package Control: Remove Package"
 			],
@@ -104,10 +132,6 @@
 			],
 			[
 				"Instal",
-				"Package Control: Install Package"
-			],
-			[
-				"Install",
 				"Package Control: Install Package"
 			]
 		],
@@ -128,23 +152,41 @@
 	},
 	"file_history":
 	[
-		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/101_background.tex",
+		"/home/naps62/projects/msc-thesis/doc/common/bib/parallel.bib",
+		"/home/naps62/projects/msc-thesis/doc/common/bib/gpu.bib",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/009_before.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/420_gama_exec_model.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/110_motivation.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/240_hetplats.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/210_parallel_computing.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/230_hetplats.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/120_case-study.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/430_gama_tutorial.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/100_introduction.tex",
+		"/home/naps62/projects/msc-thesis/doc/common/bib/photon_mapping.bib",
 		"/home/naps62/projects/msc-thesis/doc/common/naps62.sty",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/401_gama_memory.aux",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/401_gama_memory.fdb_latexmk",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/200_state_of_the_art.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/401_gama_memory.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/main.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/400_gama.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/201_background.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/202_hetplats.tex",
 		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/_inputs.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/403_gama_tutorial.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/402_gama_exec_model.tex",
+		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/101_background.tex",
 		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/main.fdb_latexmk",
 		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/main.out",
 		"/home/naps62/.latexmkrc",
-		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/100_introduction.tex",
 		"/home/naps62/.config/sublime-text-2/Packages/User/LaTeX.sublime-settings",
 		"/home/naps62/projects/plazr/plazr_store/app/controllers/plazr_store/application_controller.rb",
 		"/home/naps62/projects/plazr/plazr_store/test/dummy/app/controllers/application_controller.rb",
 		"/home/naps62/projects/plazr/plazr_store_template/app/controllers/application_controller.rb",
-		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/009_before.tex",
 		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/104_structure.tex",
 		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/103_asd.tex",
 		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/tex/102_context.tex",
-		"/home/naps62/projects/msc-thesis/doc/pre-thesis/report/main.tex",
-		"/home/naps62/projects/msc-thesis/doc/common/bib/gpu.bib",
 		"/home/naps62/projects/msc-thesis/.gitignore",
 		"/home/naps62/projects/minho.rb-plazr/grunt.js",
 		"/home/naps62/projects/minho.rb-plazr/css/custom.css",
@@ -237,25 +279,7 @@
 		"/home/naps62/projects/coachme/Gemfile",
 		"/home/naps62/projects/coachme/Gemfile.lock",
 		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/lib/backbone.js",
-		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/drawables.coffee",
-		"/home/naps62/projects/coachme/app/views/playbook/index.html.erb",
-		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/views/playbook.coffee",
-		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/views/play.coffee",
-		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/views/plays.coffee",
-		"/home/naps62/projects/coachme/vendor/storage_server/api_1/controllers/routePoints.js",
-		"/home/naps62/projects/coachme/app/assets/stylesheets/playbook.sass",
-		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/views/playbooks.coffee",
-		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/main.coffee",
-		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/playbook_interface.coffee",
-		"/home/naps62/projects/coachme/vendor/storage_server/config/server.js",
-		"/home/naps62/projects/coachme/vendor/storage_server/config/db.js",
-		"/home/naps62/projects/plazr/plazr_store/app/models/plazr_store/feedback_product.rb",
-		"/home/naps62/projects/plazr/plazr_store/app/models/plazr_store/variant.rb",
-		"/home/naps62/projects/plazr/plazr_store/app/models/plazr_store/product.rb",
-		"/home/naps62/projects/plazr/plazr_store/doc/PlazrStore/Variant.html",
-		"/home/naps62/projects/beast/blotter/input1.csv",
-		"/home/naps62/projects/beast/blotter/input2.csv",
-		"/home/naps62/projects/beast/blotter/input3.csv"
+		"/home/naps62/projects/coachme/vendor/assets/javascripts/playbook/drawables.coffee"
 	],
 	"find":
 	{
@@ -444,27 +468,82 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "doc/pre-thesis/report/tex/400_gama.tex",
+					"file": "doc/pre-thesis/report/tex/220_hardware.tex",
 					"settings":
 					{
-						"buffer_size": 810,
+						"buffer_size": 1901,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								810,
-								810
+								1693,
+								1693
 							]
 						],
 						"settings":
 						{
+							"is_xml": false,
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 225.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "doc/pre-thesis/report/tex/230_software.tex",
+					"settings":
+					{
+						"buffer_size": 2888,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2011,
+								2011
+							]
+						],
+						"settings":
+						{
+							"is_xml": false,
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 135.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "doc/pre-thesis/report/tex/221_fermi.tex",
+					"settings":
+					{
+						"buffer_size": 70,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								53,
+								53
+							]
+						],
+						"settings":
+						{
+							"is_xml": false,
 							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
 						},
 						"translation.x": 0.0,
@@ -474,85 +553,25 @@
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "doc/pre-thesis/report/tex/402_gama_exec_model.tex",
-					"settings":
-					{
-						"buffer_size": 4550,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4550,
-								4550
-							]
-						],
-						"settings":
-						{
-							"is_xml": false,
-							"syntax": "Packages/LaTeX/LaTeX.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "doc/pre-thesis/report/tex/401_gama_memory.tex",
-					"settings":
-					{
-						"buffer_size": 235,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								192,
-								192
-							]
-						],
-						"settings":
-						{
-							"is_xml": false,
-							"syntax": "Packages/LaTeX/LaTeX.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
 					"buffer": 3,
-					"file": "doc/pre-thesis/report/tex/403_gama_tutorial.tex",
+					"file": "doc/pre-thesis/report/tex/223_mic.tex",
 					"settings":
 					{
-						"buffer_size": 101,
+						"buffer_size": 70,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								85,
-								85
+								53,
+								53
 							]
 						],
 						"settings":
 						{
 							"is_xml": false,
-							"syntax": "Packages/LaTeX/LaTeX.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -562,22 +581,23 @@
 				},
 				{
 					"buffer": 4,
-					"file": "doc/pre-thesis/report/main.tex",
+					"file": "doc/pre-thesis/report/tex/222_kepler.tex",
 					"settings":
 					{
-						"buffer_size": 1379,
+						"buffer_size": 70,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								422,
-								422
+								53,
+								53
 							]
 						],
 						"settings":
 						{
+							"is_xml": false,
 							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
 						},
 						"translation.x": 0.0,
@@ -589,61 +609,87 @@
 			]
 		},
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 5,
-					"file": "doc/pre-thesis/report/tex/009_before.tex",
+					"file": "doc/pre-thesis/report/main.tex",
 					"settings":
 					{
-						"buffer_size": 1066,
+						"buffer_size": 1405,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								365,
-								365
+								331,
+								331
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/LaTeX/LaTeX.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/LaTeX/LaTeX.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 90.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 6,
-					"file": "doc/common/naps62.sty",
+					"file": "doc/common/bib/photon_mapping.bib",
 					"settings":
 					{
-						"buffer_size": 3945,
+						"buffer_size": 1997,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1956,
-								1956
+								1433,
+								1433
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/LaTeX/TeX.tmLanguage",
+							"syntax": "Packages/LaTeX/Bibtex.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 855.0,
+						"translation.y": 675.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "doc/common/bib/gama.bib",
+					"settings":
+					{
+						"buffer_size": 1470,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								355,
+								355
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/Bibtex.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -684,7 +730,7 @@
 		"rows":
 		[
 			0.0,
-			0.413555992141,
+			0.660622532265,
 			1.0
 		]
 	},
@@ -1026,6 +1072,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 195.0,
+	"side_bar_width": 232.0,
 	"status_bar_visible": true
 }

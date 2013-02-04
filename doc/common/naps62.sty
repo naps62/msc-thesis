@@ -53,7 +53,7 @@
 % references
 %
 \usepackage{varioref}
-\usepackage[breaklinks,pdftex,bookmarks=true,colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+\usepackage[breaklinks,pdftex,bookmarks=true,colorlinks=true,citecolor=blue]{hyperref}
 \usepackage[noabbrev,capitalise]{cleveref}
 %\usepackage[hyperpageref]{backref}
 \usepackage{csquotes} % biblatex asks for this
@@ -76,9 +76,11 @@
 %
 \ifnaps@final
   \RequirePackage[disable]{todonotes}
+  \hypersetup{linkcolor=black}
 \else
   \RequirePackage{todonotes}
   \RequirePackage{showlabels}
+  \hypersetup{linkcolor=blue}
 \fi
 
 
@@ -120,23 +122,6 @@
 
 
 %
-% backref configuration
-%
-%\renewcommand*{\backref}[1]{}
-%\renewcommand*{\backrefalt}[4]{%
-%\ifcase #1 %
-%(Not cited.)%
-%\or
-% \textbf{Cited} on page~#2.%
-%\else
-% \textbf{Cited} on pages~#2.%
-%\fi}
-%\renewcommand*{\backrefsep}{, }
-%\renewcommand*{\backreftwosep}{ and~}
-%\renewcommand*{\backreflastsep}{ and~}
-
-
-%
 % misc shortcuts
 %
 
@@ -162,3 +147,10 @@
 \newcommand{\intel}{Intel\registered\xspace}
 \newcommand{\nvidia}{NVIDIA\registered\xspace}
 \newcommand{\cuda}{CUDA\trademark\xspace}
+
+%
+% roman numbers
+%
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother

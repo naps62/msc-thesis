@@ -1,0 +1,34 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\section{Software}
+
+Several software facilities already exist to assist in the production of parallel code. These softwares range from low level drivers, which are sometimes required to access hardware-level features (e.g.\ \acs{CUDA} or \acs{OpenCL}, which act as an bridge between the programmer and the \acs{GPU} driver) to fully features libraries that attempt to provide higher level directives to developers, providing more flexibility to work on the algorithm itself rather than on hardware specific details and optimizations, which are sometimes hidden away.
+
+Most of these libraries however, limit themselves to a specific set, such as shared memory systems like multi-core \acsp{CPU}. This section presents an overview on some of the existing software available for programming in paralle environments. While some the examples presented here may not be directly used throughout the dissertation, it should prove useful to analyse different software approaches, and understand where exactly can \acs{GAMA} prove itsel usefull.
+
+
+\subsection{\acs{OpenMP}}
+
+\ac{OpenMP} can be described as a set of compiler directives and routines applicable to Fortran and C/C+ code in order to express shared memory parallelism \cite{dagum1998openmp}. It provides a high-level API with a wide range of processors supporting it.
+Using the defined directives, the programmer is able to describe how section of an algorithm should be parallelized without introducing too much additional complexity within the code. The programmer is only left with the task of ensuring there are no data races or dependencies within a parallel task. More advanced options like specifying task granularity, private variables, or explicit barriers is also possible, enabling more control over the parallel region of the code.
+
+This has been one of the standards for parallelization on \textit{x86} \acsp{CPU}, including the recent \intel \acf{MIC} architecture.
+
+\subsection{\acs{CUDA}}
+
+The parallel computing programming model created by \nvidia to be used along with their \acsp{GPU}. 
+
+\subsection{\acs{OpenACC}}
+
+\acs{OpenACC} aims to to provide a standard for programming parallel devices, and simplify the programming of heterogeneous systems.
+The programming model introduced by this standard is similar in many ways to \acs{OpenMP}, especially in the usage of compiler directives to specify the parallelism rules. Unlike \acs{OpenMP} however, code produced by \acs{OpenACC} may also be targeted at different devices, such as \acsp{GPU}, and more recently the new \intel Xeon Phi \cite{openacc-phi2012}.
+
+Currently the major disadvantage of \acs{OpenACC} is the lack of compiler support, with only commercial solutions providing compatibility with it.
+
+
+\subsection{Galois}
+
+The Galois project aims to
+
+\end{document}

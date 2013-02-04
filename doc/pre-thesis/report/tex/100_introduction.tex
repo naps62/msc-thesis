@@ -3,7 +3,7 @@
 
 \chapter{Introduction}
 
-\itododone{Contextualization}
+\itodo{Contextualization - refs refs refs}
 High performance computing platforms are increasingly more heterogeneous, taking advantage of accelerator devices to provide higher peak performance at lower costs. These accelerators possess characteristics that makes them suitable to perform different tasks, and as such are useful as co-processors that complement the work of conventional \acp{CPU}.
 
 Accelerators first started to appear with \acp{GPU}, which gradually evolved from specific hardware dedicated to graphics rendering, to fully featured general programming devices, capable of massive data parallelism and performance, at lower power consumptions. As of 2012, over 50 of the \footnote{A list of the most powerful supercomputers in the world, updated twice a year (\url{http://www.top500.org/})}{TOP500's} list are powered by \acp{GPU}, which indicates an exponential growth in usage when compared to previous years. This increased usage is motivated by the effectiveness of these devices for general-purpose computing. \todo{insert reference here}
@@ -19,6 +19,8 @@ These different types of devices are most commonly used (in the context of gener
 As the dimension of applications increases, so does the difficulty of managing the different resources efficiently. In a \ac{HetPlat}, resource management is a key problem that depends on several different factors, and can be a difficult one to solve, especially for more complex applications. This is an even greater problem for irregular applications, where memory access patterns and task execution times are not easily predictable.
 
 To address this problem, several frameworks have been in proposed in the last recent years. These frameworks are usually targeted specifically at \acp{HetPlat}, and are designed with a focus on their specific scheduling issues, which are considered a key issue. These frameworks include StartPU, Harmony, Merge, and GAMA. \todo{a cena coreana que o zuca tinha dito a uns tempos} \todo{refs refs refs}
+
+These frameworks attempt to provide a bridge for programmers do develop applications suited to \acp{HetPlat}, by addressing problems such as memory management or the scheduling of multiple tasks issued for execution. Most of them however, provide mechanisms suited mostly for regular applications. When dealing with irregular applications, problems like scheduling become even more difficult, in particular because execution times am memory usage patterns are less predictable. This directly affects the decisions of the scheduler, and as such must be taken into account b the performance model employed by the framekwork, as explained in \todo{falta qui uma ref}. Irregular applications are one of the targets of the \ac{GAMA} framekwork, which will be object of study throughout this dissertation, through the implementation of an irregular algorithm as a case study.
 
 
 \end{document}
