@@ -3,7 +3,8 @@ inputs/
 doc/*/main.sh
 doc/*/*/main.run.xml
 *.tmp
-
+msc-thesis.sublime-project
+msc-thesis.sublime-workspace
 
 # Latex
 _inputs.tex
