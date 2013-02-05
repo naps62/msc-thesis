@@ -4,13 +4,13 @@
 
 \section{Memory Model}
 
-\acs{GAMA} uses a unified programming model that assumes a hierarchy composed of multiple devices (both \acsp{CPU} and \acsp{GPU}), where each device has access to a private address space (shared by all computational units, or cores, within that device), and a distributed memory system between devices. The framework assumes that multiple computational units of an individual device can cooperate and communicate through a shared memory space, and that the underlying programming and execution model of that device provides synchronization mechanisms (barriers, atomics and memory fences).
-To abstract the distributed memory model that is used between devices, \acs{GAMA} introduces a global address space. \Cref{fig:gama_memory_model} illustrates how \acs{GAMA} understands the memory hierarchy of a \acs{HetPlat}.
+\gama uses a unified programming model that assumes a hierarchy composed of multiple devices (both \cpus and \gpus), where each device has access to a private address space (shared by all computational units, or cores, within that device), and a distributed memory system between devices. The framework assumes that multiple computational units of an individual device can cooperate and communicate through a shared memory space, and that the underlying programming and execution model of that device provides synchronization mechanisms (barriers, atomics and memory fences).
+To abstract the distributed memory model that is used between devices, \gama introduces a global address space. \Cref{fig:gama_memory_model} illustrates how \gama understands the memory hierarchy of a \hetplat.
 
 
 \subsection{Memory Consistency}
 
-Communication between the different memory spaces of each device is expensive due to the need of synchronization and communication between the host \ac{CPU} and the devices. Due to this, a relaxed consistency model is used, which enables the system to optimize data movements between devices, offering the developer a single synchronization primitive to enforce memory consistency.
+Communication between the different memory spaces of each device is expensive due to the need of synchronization and communication between the host \cpu and the devices. Due to this, a relaxed consistency model is used, which enables the system to optimize data movements between devices, offering the developer a single synchronization primitive to enforce memory consistency.
 
 \subsection{Software Cache}
 
@@ -19,7 +19,7 @@ Some applications require safe exclusive access to specific partitions of a data
 \begin{figure}[!htp]
   \centering
   \includegraphics[width=0.5\textwidth]{gama_model}
-  \caption{\acs{GAMA} Memory Model \label{fig:gama_memory_model}}
+  \caption{\gama Memory Model \label{fig:gama_memory_model}}
 \end{figure}
 
 \end{document}
