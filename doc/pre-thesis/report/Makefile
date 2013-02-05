@@ -12,3 +12,4 @@ once:
 
 clean:
 	latexmk -C
+	$(RM) *.bbl *.bib *.glo *.nls *.nlo *.tmp *.run.xml *.out

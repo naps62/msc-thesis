@@ -8,19 +8,26 @@ With the increasing demand for highly data-parallel algorithms, and the increasi
 \acs{SIMD} is also the programming model behind \acsp{GPU}, which gradually started to gain more attention for their general purpose computing capabilites. Although the hardware of a \acs{GPU} is still tightly coupled with graphics processing and rendering, there have also been several advances in their usage as \acp{GPGPU}.
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{\nvidia Fermi Architecture}
 
-The Fermi architecture was an important milestone
+The Fermi architecture was an important milestone of \acs{GPU} technology, as it was one of the first generations target directly towards \acs{GPGPU} and high performance computing, rather than just graphics rendering. The first Fermi devices were released in 2010, and were the first \nvidia products to include support for double precision floating point number, which was an important feature for high performance computing to provide more accurate results. Fermi devices also included a GDDR5 memory controller with support for \ac{DMA} through the \acs{PCI-e} bus, and up to 16 \acf{SM}, for a total of up to 512 \acs{CUDA} Cores.
 
-\begin{figure}
+Each \ac{SM} has a total of $64KB$ of private memory available, which can be configured to be split between Shared Memory and L1 cache, although configuration was restricted to either $48KB + 16KB$ or $16KB + 48KB$. This provided some flexibility to the devices, since some problems would benefit more from the extra Shared memory and not so much from cache, and vice-versa.
+
+Additionally, all \acsp{SM} share a common $768KB$ L2 cache, and a final level of global memory, that can go up to 6GB of GDDR5, with a bandwidth of 192.6 GB/s in the Tesla C2070 \cite{leischner2009fermi}.
+
+\begin{figure}[!htp]
   \centering
   \includegraphics[width=0.4\textwidth]{arch_fermi}
   \caption{Overview of the Fermi architecture \label{fig:fermi}}
 \end{figure}
 
+This architecture is backed by a hardware-based thread scheduler, located within each \acs{SM}, that attempt to feed the execution unit with threads grouped in blocks of 32, or \textit{warps}. All threads within a warp are considered to be independent from each other, so there is no need for dependency checking. Any thread that is waiting for memory accesses to be finished will remain unscheduled until the required data is available. Since the scheduling is made directly via hardware, the switch between threads is nearly free, at least when compared with thread scheduling on a \acs{CPU}. As a result, this strategy works better when the total amount of threads competing for resources is much higher than the amount of execution units, allowing for the latency of memory accesses to be hidden away by instanly scheduling a different \textit{warp}, effectively hiding memory latency while still keeping execution units busy. This is very different from \acs{CPU} scheduling policies, where switching between threads requires a switch of context, a takes considerably more time, making that approach not as viable as for a \acs{GPU}.
 
 
+
+&%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{\nvidia Kepler Architecture}
 
 \begin{figure}
