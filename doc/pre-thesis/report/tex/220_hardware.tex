@@ -15,7 +15,7 @@ The Fermi architecture was an important milestone of \acs{GPU} technology, as it
 
 Each \ac{SM} has a total of $64KB$ of private memory available, which can be configured to be split between Shared Memory and L1 cache, although configuration was restricted to either $48KB + 16KB$ or $16KB + 48KB$. This provided some flexibility to the devices, since some problems would benefit more from the extra Shared memory and not so much from cache, and vice-versa.
 
-Additionally, all \acsp{SM} share a common $768KB$ L2 cache, and a final level of global memory, that can go up to 6GB of GDDR5, with a bandwidth of 192.6 GB/s in the Tesla C2070 \cite{leischner2009fermi}.
+Additionally, all \acsp{SM} share a common $768KB$ L2 cache, and a final level of global memory, that can go up to 6GB of GDDR5, with a bandwidth of 192.6 GB/s in the Tesla C2070 \cite{NVIDIA:fermi}.
 
 \begin{figure}[!htp]
   \centering
@@ -29,6 +29,12 @@ This architecture is backed by a hardware-based thread scheduler, located within
 
 &%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{\nvidia Kepler Architecture}
+
+The follow-up generation to Fermi is in many ways similar to its predecessor. One of the most notorious change is the increase in the total amount of \acs{CUDA} Cores available, capable of going up to 2880 in high-end devices, due to the new redesign of \acl{SM} which was named \acs{SMX}, each one featuring 192 \acs{CUDA} Cores.
+
+Memory was also upgraded over the previous generations, wiht the maximum amount of registers going from 63 to 255, the addition of an extra $48KB$ L1 read-only cache, while still maintaning the original L1 cache, and L2 cache going up to a maximum of $1.5MB$ with increased bandwidth \cite{NVIDIA:kepler}.
+
+The programming model has been extended with the addition of Dynamic Parallelism, allowing \acs{CUDA} thread to spawn new threads, a feature not possible with previous versions. This is an important feature for irregular algorithms, such as Ray Tracing or graph based problems.
 
 \begin{figure}
   \centering
