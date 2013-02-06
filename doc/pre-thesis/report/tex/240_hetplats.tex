@@ -15,7 +15,7 @@ These frameworks attempt to provide a bridge for programmers do develop applicat
 
 It is hard enough to debug multi-threaded \cpu applications, and the addition of an extra device, with a different architecture, and possibly different mechanisms to handle debugging, introduces yet another layer of complexity to the development process. Conceptually, it is much harder for the programmer to keep track of the debugging process, since there is not as much control over what is happening. For instance, unless threads are fully synchronous, a breakpoint inserted at any given point of a parallel region might result in different threads stopping at arbitrarily different regions, affecting the global state of the application.
 
-\subsection{Scheduling on \hetplats}
+\subsection{Scheduling}
 
 Perhaps the biggest issue about the usage of accelerators is the ability to fully take advantage of the resources. It is extremely important to not overload one processor with too much data while others remain idle, or to offload work to a different device when the execution time together with the cost of data transfers will result in no benefit, or possibly in even worse results. In irregular algorithms this is an even more difficult problem, due to the increased unpredictability.
 For those reasons, in order for any \hetplat framework to properly manage the executions of multiple tasks, the scheduling policy is one the most important aspects. In \gama, the scheduling policy is also backed up by the global memory system, which handles memory utilization and data transfers, which are also taken into account by the scheduler \cite{thesisMariano12,artur2012gama,ricardo2012gama}.

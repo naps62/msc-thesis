@@ -1,0 +1,11 @@
+%
+% the rendering equation
+%
+
+\begin{figure}[!htp]
+  \begin{equation}
+    \surfaceRadiance = \emittedLight +
+      \int\limits_{\Omega} \brdf(x, \incidenceDir, \radianceDir)\incidentLight (\vec\omega_i \cdot \vec{n}) d \omega_i
+  \end{equation}
+  \label{eq:render}
+\end{figure}

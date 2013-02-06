@@ -19,7 +19,7 @@ Additionally, all \acsp{SM} share a common $768KB$ L2 cache, and a final level o
 
 \begin{figure}[!htp]
   \centering
-  \includegraphics[width=0.4\textwidth,angle=90]{arch_fermi}
+  \includegraphics[width=0.4\textwidth]{arch_fermi}
   \caption{Overview of the Fermi architecture \label{fig:fermi}}
 \end{figure}
 
@@ -30,15 +30,15 @@ This architecture is backed by a hardware-based thread scheduler, located within
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{\nvidia Kepler Architecture}
 
-The follow-up generation to Fermi is in many ways similar to its predecessor. One of the most notorious change is the increase in the total amount of \cuda Cores available, capable of going up to 2880 in high-end devices, due to the new redesign of \acl{SM} which was named \smx, each one featuring 192 \cuda Cores.
+The follow-up generation to Fermi is in many ways similar to its predecessor. One of the most notorious change is the increase in the total amount of \cuda Cores available, capable of going up to 2880 in high-end devices, due to the new redesign of \acl{SM} which was named \smx, each one featuring 192 \cuda Cores, although working at lower frequencies than before, due to the removal of shader frequency, a compromise to make room for the extra \cuda Cores. The entire chip now works based on the core frequency. Overall, individual core efficiency is lowered, but the global system becomes more efficient.
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.4\textwidth,angle=90]{arch_kepler}
+  \includegraphics[width=0.4\textwidth]{arch_kepler}
   \caption{Overview of the Kepler architecture \label{fig:kepler}}
 \end{figure}
 
-Memory was also upgraded over the previous generations, with the maximum amount of registers going from 63 to 255, the addition of an extra $48KB$ L1 read-only cache, while still maintaining the original L1 cache, and L2 cache going up to a maximum of $1.5MB$ with increased bandwidth. Memory reads have been upgraded to allow for 256 blocks to be read, as opposed to 128 bits in Fermi \cite{NVIDIA:kepler}.
+Memory was also upgraded over the previous generations, with the maximum amount of registers going from 63 to 255, the addition of an extra $48KB$ L1 read-only cache, while still maintaining the original L1 cache (which now also allows a configuration of $32KB$ Shared $+ 32KB$ Cache), and L2 cache going up to a maximum of $1.5MB$ with increased bandwidth. Memory reads have been upgraded to allow for blocks if 256 bits to be read, as opposed to 128 bits in Fermi \cite{NVIDIA:kepler}.
 
 The programming model has been extended with the addition of Dynamic Parallelism, allowing \acs{CUDA} thread to spawn new threads, a feature not possible with previous versions. This is an important feature for irregular algorithms, such as Photon Mapping. It is also possible to invoke multiple kernels for a single \gpu, transparently dividing them between the available \smxs.
 

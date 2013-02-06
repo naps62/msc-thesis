@@ -1,7 +1,12 @@
 \documentclass[a4paper,abstract=on,twoside,halfparskip-]{scrreprt}
 \setlength\parindent{1.2em}
 
-\usepackage[final=true]{../../common/naps62}
+\usepackage[final=false]{../../common/naps62}
+
+\newcommand{\common}[1]{\input{../../common/#1}}
+
+% include custom mathematical definitions
+\common{equations/defs}
 
 \hypersetup{pdfauthor={Miguel Branco Palhas}}
 \hypersetup{pdftitle={Pre-Thesis: An Evaluation of the GAMA Framework for Heterogeneous Platforms: The Progressive Photon Mapping Algorithm}}
