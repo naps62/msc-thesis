@@ -10,6 +10,7 @@ _inputs.tex
 _sections.tex
 _appendixes.tex
 bash.out
+main-blx.bib
 *.pdf
 *.aux
 *.bbl
