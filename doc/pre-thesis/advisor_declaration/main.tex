@@ -1,0 +1,58 @@
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%
+% Author:
+%  Miguel Palhas, mpalhas@gmail.com
+%
+% Credits to:
+%  André Pereira
+%  Pedro Costa
+
+\documentclass[a4paper,abstract=on,parskip=full]{scrreprt}
+
+
+\usepackage[utf8]{inputenc} % encoding
+\usepackage[T1]{fontenc}    % language
+
+% roles
+\newcommand{\role}[1]{\textit{(#1)}}
+\newcommand{\student}{\role{Student}}
+\newcommand{\advisor}{\role{Advisor}}
+\newcommand{\coadvisor}{\role{Co-Advisor}}
+
+
+\newcommand{\sigspace}[2]{%
+  \begin{minipage}{\columnwidth}%
+  \vspace{2cm}%
+  \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lr}%
+  \hline \\ [-10pt]%
+  {#1} & #2%
+  \end{tabular*}%
+  \end{minipage}%
+}
+
+
+\begin{document}
+
+
+\chapter*{Parecer de Conformidade}
+
+Declara-se que este documento foi revisto pelo orientador e co-orientador desta dissertação e que se encontra em conformidade com o Plano de Trabalhos já submetido.
+
+\setlength{\columnwidth}{10cm}
+\sigspace{\advisor}{Alberto~Proença}\\
+\sigspace{\coadvisor}{Luis~Paulo~Santos}
+
+\thispagestyle{empty}
+
+\end{document}
