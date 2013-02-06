@@ -1,5 +1,5 @@
 default:
-	latexmk -pvc
+	latexmk -pvc -quiet
 
 clean:
 	latexmk -C
