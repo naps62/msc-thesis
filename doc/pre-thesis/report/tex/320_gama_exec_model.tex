@@ -22,8 +22,8 @@ To better understand the programming and execution model employed in \gama, some
   \item[Job] \hfill \\
     A tuple associating data domains with the corresponding computations associated with it (the computational kernel), and a specialized dicing function that defines the best strategy for job granularity, recursively splitting the job into smaller tasks across the data domains. This dicing function is somewhat analogous to the ability of defining task granularity with tools such as \acs{OpenMP}, but it can employ more flexible solutions, to account for the irregularity of the algorithms.
 
-  \item[Taks] \hfill \\
-    \itodo{This}
+  %\item[Taks] \hfill \\
+  %  \itodo{This}
 
   \item[Kernel] \hfill \\
     The computation associated with a job. In a best-case scenario, a computational kernel can be mapped directly to a given device simply with the help of the toolkit supporting that device. In most cases however, the kernel needs to be tailored to a specific device's programming model. This is achievable by extending the job description with the addition of the specialized kernel for a specific device. This feature also enhances the programming model by enabling developers to tailer specific computational kernels for each platform, taking advantage of architecture-specific features.

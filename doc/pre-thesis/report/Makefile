@@ -1,5 +1,5 @@
 CMD=latexmk
-FLAGS=-pvc
+FLAGS=-pvc -quiet
 
 default:
 	$(CMD) $(FLAGS)

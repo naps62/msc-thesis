@@ -3,7 +3,7 @@
 
 \section{Software}
 
-Several technologies already exist to assist in the production of parallel code. These softwares range from low level drivers, which are sometimes required to access hardware-level features (e.g.\ \cuda or \acs{OpenCL}, which act as an bridge between the programmer and the \gpu driver) to fully features libraries that attempt to provide higher level directives to developers, providing more flexibility to work on the algorithm itself rather than on hardware specific details and optimizations, which are sometimes hidden away.
+Several technologies already exist to assist in the production of parallel code. These softwares range from low level drivers, which are sometimes required to access hardware-level features (e.g.\ \cuda or \acs{OpenCL}, which acts as a bridge between the programmer and the \gpu driver) to fully features libraries that attempt to provide higher level directives to developers, providing more flexibility to work on the algorithm itself rather than on hardware specific details and optimizations, which are sometimes hidden away.
 
 Most of these libraries however, limit themselves to a specific set, such as shared memory systems like multi-core \cpus\xspace. This section presents an overview on some of the existing software available for programming in parallel environments. While some the examples presented here may not be directly used throughout the dissertation, it should prove useful to analyze different software approaches, and understand where exactly can \acs{GAMA} prove itself useful.
 
@@ -20,14 +20,16 @@ This has been one of the standards for parallelization on \textit{86} \cpus, inc
 %%%%%%%%%%%%%%%%%%%%%%%
 \subsection{\cuda}
 
-The parallel computing programming model created by \nvidia to be used along with their \gpus. 
-\cuda is used by \gama to 
+The platform created by \nvidia to be used along with their \gpus. The complete \cuda toolkit provides a driver, a compiler and a set of tools and libraries to assist in the development of highly parallel \gpu code in either C/C++ or Fortran. Wrappers for other languages are also available, as a result of third party work.
+
+\cuda programmers are usually required to pay attention to architectural details of their code, in order to best take advantage of the platform. Unlike OpenMP for instance, where the parallelism is mostly abstracted away from the developer, in \cuda one has to consider the correct use of the available resources, and how to structure the algorithm to fit them. As a result, some higher level wrappers are starting to emerge (e.g.\ \openacc). Despite the added complexity, \cuda has been used extensively in scientific fields such as computational biology, cryptography and many others \cite{manavski2008cuda,vasiliadis2008gnort,manavski2007cuda}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%
 \subsection{\mpi}
 
-The \acf{MPI} is a specification for a language-independent communication protocol, used in the parallelization of programs with a distributed memory paradigm. This standard defines the rules of a library that enables message passing capabilities, allowing programs to spawn several processes, and communicate between each other by sending and receiving messages. The processes created can be physycally located on different machines (hosts), with the communication being made across the available network connections. The main goals of \mpi are towards high performance, scalability and portability, and is one of the most dominant parallelization models in current high performance computing \cite{sur2006high}.
+The \acf{MPI} is a specification for a language-independent communication protocol, used in the parallelization of programs with a distributed memory paradigm. This standard defines the rules of a library that enables message passing capabilities, allowing programs to spawn several processes, and communicate between each other by sending and receiving messages. The processes created can be physically located on different machines (hosts), with the communication being made across the available network connections. The main goals of \mpi are towards high performance, scalability and portability, and is one of the most dominant parallelization models in current high performance computing \cite{sur2006high}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
