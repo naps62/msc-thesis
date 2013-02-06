@@ -3,6 +3,8 @@
 
 \chapter{Introduction}
 
+\section{Context}
+
 \itodo{Contextualization - refs refs refs}
 High performance computing platforms are increasingly more heterogeneous, taking advantage of accelerator devices to provide higher peak performance at lower costs. These accelerators possess characteristics that makes them suitable to perform different tasks, and as such are useful as co-processors that complement the work of conventional \cpus.
 
@@ -16,11 +18,7 @@ Each accelerator can also be programmed in a variety of ways, ranging from low l
 
 These different types of devices are most commonly used (in the context of general-computing) as accelerators, in a system where at least one \cpu manages the main execution flow, and delegates specific tasks to the available resources. A system that takes uses different computational units is commonly referred to as a \hetplat. More formally, a \hetplat can be defined as a computing system with processors using different \acp{ISA}.
 
-As the dimension of applications increases, so does the difficulty of managing the different resources efficiently. In a \ac{HetPlat}, resource management is a key problem that depends on several different factors, and can be a difficult one to solve, especially for more complex applications. This is an even greater problem for irregular applications, where memory access patterns and task execution times are not easily predictable.
 
-To address this problem, several frameworks have been in proposed in the last recent years. These frameworks are usually targeted specifically at \acp{HetPlat}, and are designed with a focus on their specific scheduling issues, which are considered a key issue. These frameworks include StartPU, Harmony, Merge, and GAMA. \todo{a cena coreana que o zuca tinha dito a uns tempos} \todo{refs refs refs}
-
-These frameworks attempt to provide a bridge for programmers do develop applications suited to \hetplat, by addressing problems such as memory management or the scheduling of multiple tasks issued for execution. Most of them however, provide mechanisms suited mostly for regular applications. When dealing with irregular applications, problems like scheduling become even more difficult, in particular because execution times am memory usage patterns are less predictable. This directly affects the decisions of the scheduler, and as such must be taken into account b the performance model employed by the framekwork, as explained in \todo{falta qui uma ref}. Irregular applications are one of the targets of the \gama framekwork, which will be object of study throughout this dissertation, through the implementation of an irregular algorithm as a case study.
 
 
 \end{document}

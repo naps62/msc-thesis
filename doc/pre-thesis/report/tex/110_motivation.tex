@@ -5,6 +5,10 @@
 
 \itododone{Motivation \& Goals}
 
+As the dimension of applications increases, so does the difficulty of managing the different resources efficiently. In a \ac{HetPlat}, resource management is a key problem that depends on several different factors, and can be a difficult one to solve, especially for more complex applications. This is an even greater problem for irregular applications, where memory access patterns and task execution times are not easily predictable.
+
+\gama is a framework that attempts to provide the means for developers to create dynamic applications, capable of running efficiently on these high performance computing platforms \cite{joao2012gama}.
+
 The \gama framework is currently still in development, and supports only x86-64 \cpus and \cuda-capable \gpus. Although it has been deeply tested for a wide variety of kernels in order to validate the correctness and efficiency of its memory and execution model, it currently lacks a more intensive usage, with a more robust and realistic application.
 
 Small kernels have a wide range of applications, are deeply studied and optimized, and are a good source for an initial analysis on the performance results of the execution model. However, when considering a real, more resource intensive application, where possibly multiple tasks must share the available resources, other problems may arise. Therefore, an evaluation of the framework with a real application, as opposed to the previously used synthetic benchmarks, is needed to understand its real effectiveness.
