@@ -5,6 +5,10 @@
 \newpage
 \section{Conclusions and Future Work} \label{section:conc}
 
-\itodo{What am i going to do?}
+This report presented the initial literature search and contextualization of the dissertation, and presented an overview of the case study and the \gama framework for irregular applications on \hetplats, that will be used throughout the work. The main goal is to evaluate \gama by providing a study using a computational intensive algorithm. With that in mind, the progressive photon mapping algorithm was selected, providing both the irregular characteristics, parallelism possibilities and irregularities that are desired to properly validate \gama.
+
+The next stage will involve the implementation of the case study using \gama to handle work distribution between the available \cpus and \gpus. Based on the performance results of the implemented algorithm, it will be possible to better understand how the existing jobs and data structures are being managed, and where improvements should be made. It will also be interesting to see how the implemented algorithm behaves, performance-wise, against similar implementations without the framework, and evaluate wheter the effort of using \gama payed off. The development effort taken into the implementation will also be taken into account, since it is also important for frameworks to work as a good \textit{middle-ware} to assist the programmer and reduce development effort, without compromising application performance.
+
+It will also be interesting, to analyze the possibilities and limitations of extending \gama by providing support for additional accelerator architectures other than \gpus.
 
 \end{document}
