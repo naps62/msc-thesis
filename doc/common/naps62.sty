@@ -57,7 +57,7 @@
 \usepackage[noabbrev,capitalise]{cleveref}
 %\usepackage[hyperpageref]{backref}
 \usepackage{csquotes} % biblatex asks for this
-\usepackage[hyperref=true,backref=true,url=true]{biblatex}    % better references
+\usepackage[hyperref=true,url=true,sorting=none]{biblatex}    % better references
 
 %
 % pseudocode environments
@@ -144,16 +144,16 @@
 %
 \newcommand{\registered}{\textsuperscript{\smaller\textregistered}}
 \newcommand{\trademark}{\textsuperscript{\smaller\texttrademark}}
-\newcommand{\intel}{Intel\registered\xspace}
-\newcommand{\nvidia}{NVIDIA\registered\xspace}
+\newcommand{\intel}{Intel\xspace}
+\newcommand{\nvidia}{NVIDIA\xspace}
 
 \newcommand{\cuda}{\acs{CUDA}\xspace}
 \newcommand{\openmp}{\acs{OpenMP}\xspace}
 \newcommand{\openacc}{\acs{OpenACC}\xspace}
 \newcommand{\mpi}{\acs{MPI}\xspace}
 \newcommand{\gama}{\acs{GAMA}\xspace}
-\newcommand{\cpu}{\ac{CPU}\xspace}
-\newcommand{\cpus}{\acp{CPU}\xspace}
+\newcommand{\cpu}{\acs{CPU}\xspace}
+\newcommand{\cpus}{\acsp{CPU}\xspace}
 \newcommand{\gpu}{\ac{GPU}\xspace}
 \newcommand{\gpus}{\acp{GPU}\xspace}
 \newcommand{\gpgpu}{\ac{GPGPU}\xspace}

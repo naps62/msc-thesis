@@ -3,8 +3,8 @@
 \begin{document}
 
 
-\pdfbookmark{Resumo}{resumo}
-\chapter*{Resumo}
+\pdfbookmark[1]{Resumo}{resumo}
+\section*{Resumo}
 
 A área de computação de alto desempenho foi alvo de uma grande evolução nos últimos anos, com a cada vez maior utilização de plataformas heterogéneas, nas quais são utilizados vários dispositivos que diferem não só na arquitectura, mas também nas caracteristicas, e no modelo de programação, trabalho em colaboração partilhando o conjunto de tarefas de uma aplicação com o objectivo final de melhorar o desempenho global.
 
@@ -13,19 +13,17 @@ Várias \textit{frameworks} têm sido desenvolvidas com o intuito de facilitar a
 Uma destas frameworks é o \gama, desenhado para lidar com aplicações irregulares, nas quais ó escalonamento de tarefas e a gestão de recursos é uma tarefa mais complicada. O \gama propõe um modelo unificado de programação e e memória, agnóstico ao modelo usado internamento por cada dispositivo. A framework gere a carga de trabalho das várias unidades de computação, e tenta balanceá-la com base numa politica de escalonamento e em informação obtida automaticamente em tempo de execução. Até agora, esta framework apenas foi testada para um pequeno conjunto de \textit{kernels} típicos de \textit{benchmarking}, para comparação com alternativas idênticas através de resultados baseados em algoritmos standardizados para o efeito. Mas necessita ainda de um estudo mais intensivo, usando um caso de estudo mais realista e robusto, para melhor entender as suas potencialidades, e as suas limitações.
 
 Esta dissertação propõe-se a disponibilizar uma avaliação mais intensiva do \gama, usando o algoritmo irregular de \textit{Progressive Photon Mapping} como caso de estudo. O principal objectivo é validar a eficácia da framework para uma aplicação robusta, onde os problemas de gestão de recursos são mais evidentes, e identificar possíveis possibilidades para este projecto.
-\itododone{Resumir isto, tuga style}
 
-\newpage \pdfbookmark{Abstract}{abstract}
-\chapter*{Abstract}
+\newpage \pdfbookmark[1]{Abstract}{abstract}
+\section*{Abstract}
 
-High performance computing has suffered several changes in recent years, with the increasingly prominent evolution and usage of heterogeneous platforms: multiple devices with different architectures, characteristics, and programming models share the workload of an application with the overall goal of increasing performance.
+High performance computing has suffered several changes in recent years, with the increasingly prominent evolution and usage of heterogeneous platforms: multiple devices with different architectures, characteristics, and programming models share application workload targetting an increased performance.
 
-Several frameworks have been in development, to aid the programmer in using these platforms, by dynamically scheduling the workload across the available resources and dealing with the inherent difficulties that come associated with the increased complexity of the system.
+Several frameworks have been under development, to aid the programmer to efficiently explore these platforms, by dynamically scheduling the workload across the available resources and dealing with the inherent difficulties that come associated with the increased complexity of the system.
 
-One of these is the \gama framework, designed to deal with irregular applications, where task scheduling and resource management is a more difficult problem. \gama proposed to unify the multiple execution and memory models of each device into a single, hardware agnostic model. It handles the workload distribution across multiple computational resources, and attempts to balance them based on a scheduling policy as well as runtime information. So far, this framework has only been tested for small benchmark kernels, for comparison with similar alternatives using standardized algorithms, but still lacks a deeper study, using a more realistic case study, to better understand its potential, and limitations.
+One of these is the \gama framework, designed to deal with irregular applications and addressing task scheduling and resources management. \gama aims to unify the multiple execution and memory models of each device into a single, hardware agnostic model. It handles the workload distribution across multiple computational resources, and attempts to balance them based on a scheduling policy as well as runtime information. So far, this framework has only been tested with benchmark kernels, for comparison with similar alternatives using standard algorithms, but it still lacks a deeper study, using a more realistic case study, to better understand its potential, and limitations.
 
-The subject of this dissertation is to provide a more in-depth evaluation of \gama, using the Progressive Photon Mapping irregular algorithm as a case study. The goal is to validate its effectiveness with a robust irregular application, where resource management problems are more easily seen, and identify possible points of improvement for this project.
-\itododone{Abstract the s*** out of this}
+The subject of this dissertation is to provide a more in-depth evaluation of \gama, using the progressive photon mapping irregular algorithm as a case study. The goal is to validate its effectiveness with a robust irregular application, where resource management problems are more easily seen, and identify possible points of improvement for this project.
 
 \newpage
 \pagenumbering{arabic}

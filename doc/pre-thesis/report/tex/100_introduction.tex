@@ -1,24 +1,22 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\chapter{Introduction}
+\newpage
+\section{Introduction}
 
-\section{Context}
+\subsection{Contextualization}
 
 \itodo{Contextualization - refs refs refs}
-High performance computing platforms are increasingly more heterogeneous, taking advantage of accelerator devices to provide higher peak performance at lower costs. These accelerators possess characteristics that makes them suitable to perform different tasks, and as such are useful as co-processors that complement the work of conventional \cpus.
+Heterogeneous high performance computing platforms are becoming popular, taking advantage of accelerator devices to provide higher performance at lower costs. These accelerators have characteristics that makes them suitable to perform different tasks, and as such are useful as co-processors that complement the work of conventional \cpus.
 
-Accelerators first started to appear with \gpus, which gradually evolved from specific hardware dedicated to graphics rendering, to fully featured general programming devices, capable of massive data parallelism and performance, at lower power consumptions. As of 2012, over 50 of the \footnote{A list of the most powerful supercomputers in the world, updated twice a year (\url{http://www.top500.org/})}{TOP500's} list are powered by \gpus, which indicates an exponential growth in usage when compared to previous years. This increased usage is motivated by the effectiveness of these devices for general-purpose computing. \todo{insert reference here}
+Accelerators first started to appear with \gpus, which gradually evolved from specific hardware dedicated to graphics rendering, to fully featured general programming devices, capable of massive data parallelism and performance, at lower power consumptions. As of 2012, over 50 of the \footnote{A list of the most powerful supercomputers in the world, updated twice a year (\url{http://www.top500.org/})}{TOP500's} list are powered by \gpus, which indicates an exponential growth in usage when compared to previous years. This increased usage is motivated by the effectiveness of these devices for general-purpose computing.
 
-Other types of accelerators since emerged, like the recent \intel \mic Architecture, and while all of them differ from the traditional \cpu architecture, they also differ between themselves, providing different hardware specifications, along with different memory and programming models. \todo{modelo de memoria e modelo de programaçao?}
+Other types of accelerators since emerged, like the recent Intel \mic architecture, and while all of them differ from the traditional \cpu architecture, they also differ between themselves, providing different hardware specifications, along with different memory and programming models.
 
 Development of applications targeting this devices tends to be harder, or at least different from conventional programming. One has to take into account the differences of the underlying architecture, as well as the programming model being used, in order to produce code that is not only correct in terms of the specification of that model, but also efficient. Efficient code targeted at one device might not be (and as a general rule, is not) adequate to a different device. As a result, developers have to take into account the characteristics of each different device they are using within their applications. In addition, the parallel nature of these accelerators introduces yet another difficulty layer for developers.
 
-Each accelerator can also be programmed in a variety of ways, ranging from low level programming models such as \cuda for \nvidia's \gpus to higher level libraries like \openmp, or \openacc. Each of these provides a different method of writing parallel programs, and has a different level of abstraction about the underlying architecture. \todo{refs, refs, refs}
+Each accelerator can also be programmed in a variety of ways, ranging from low level programming models such as \cuda to higher level libraries like \openmp, or \openacc. Each of these provides a different method of writing parallel programs, and has a different level of abstraction about the underlying architecture.
 
-These different types of devices are most commonly used (in the context of general-computing) as accelerators, in a system where at least one \cpu manages the main execution flow, and delegates specific tasks to the available resources. A system that takes uses different computational units is commonly referred to as a \hetplat. More formally, a \hetplat can be defined as a computing system with processors using different \acp{ISA}.
-
-
-
+These different types of devices are most commonly used (in the context of general-computing) as accelerators, in a system where at least one \cpu manages the main execution flow, and delegates specific tasks to the remaining computing resources. A system that uses different computational units is commonly referred to as a heterogeneous platform, here ferred to as a \hetplat.
 
 \end{document}

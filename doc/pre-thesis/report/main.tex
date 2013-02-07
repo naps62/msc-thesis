@@ -1,9 +1,13 @@
-\documentclass[a4paper,abstract=on,twoside,halfparskip-]{scrreprt}
+\documentclass[a4paper,abstract=on,twoside,halfparskip-]{scrartcl}
 \setlength\parindent{1.2em}
 
 \usepackage[final=false]{../../common/naps62}
 
 \newcommand{\common}[1]{\input{../../common/#1}}
+
+\newcommand{\subsubsubsection}[1]{\paragraph{#1\hfill}\hfill
+
+}
 
 % include custom mathematical definitions
 \common{equations/defs}
@@ -17,7 +21,7 @@
 \renewcommand{\chapterheadstartvskip}{\vspace*{-1.6\baselineskip}}
 
 \begin{document}
-\pdfbookmark{Cover}{cover}
+\subpdfbookmark{Cover}{cover}
 \pagenumbering{roman}
 \includepdf[pages=-]{misc/cover-mei}
 
@@ -49,7 +53,7 @@ ls tex/ | egrep ^[^_] | sed "s/\([^.]*\)\.tex/\\\\subfile{tex\/\1}/" > tex/_inpu
 %\bibliographystyle{../../common/IEEE}
 %\nocite{*}
 \newpage % force the bookmark to go to the new page
-\pdfbookmark{References}{references}
+\pdfbookmark[1]{References}{references}
 \printbibliography[title=References]
 
 \end{document}

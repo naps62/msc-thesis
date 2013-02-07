@@ -1,0 +1,41 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\subsection{Software}
+
+Several technologies already exist to assist in the production of parallel code. These softwares range from low level drivers, which are sometimes required to access hardware-level features (e.g.\ \cuda or \acs{OpenCL}, which acts as a bridge between the programmer and the \gpu driver) to fully featured libraries that aim to provide higher level directives to developers, providing more flexibility to work on the algorithm itself rather than on hardware specific details and optimizations, which are sometimes hidden away.
+
+However, most of these libraries are limited to a specific programming model, such as shared memory systems like multi-core \cpus\xspace. This subsection presents an overview on some of the existing software development tools to program in parallel environments. While some examples presented here may not be directly used throughout the dissertation, they were useful to analyze different software approaches, and understand how to explore the capabilites and potential of \gama.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{\openmp}
+
+\openmp can be described as a set of compiler directives and routines applicable to Fortran and C/C+ code in order to express shared memory parallelism \cite{dagum1998openmp}. It provides a high-level API with a wide range of processors supporting it.
+Using the defined directives, the programmer is able to describe how subsection of an algorithm should be parallelized without introducing too much additional complexity within the code. The programmer is only left with the task of ensuring there are no data races or dependencies within a parallel task. More advanced options like specifying task granularity, private variables, or explicit barriers is also possible, enabling more control over the parallel region of the code.
+
+This has been one of the standards for parallelization on \textit{86} \cpus, including the recent \intel \mic architecture.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{CUDA}
+
+CUDA is the platform created by NVIDIA to be used along with their \gpus. The complete \cuda toolkit provides a driver, a compiler and a set of tools and libraries to assist in the development of highly parallel \gpu code in either C/C++ or Fortran. Wrappers for other languages are also available, as a result of third party work.
+
+\cuda programmers are usually required to pay attention to architectural details of their code, in order to best take advantage of the platform. Unlike OpenMP for instance, where the parallelism is mostly abstracted away from the developer, in \cuda one has to consider the correct use of the available resources, and how to structure the algorithm to fit them. As a result, some higher level wrappers are starting to emerge (e.g.\ \openacc). Despite the added complexity, \cuda has been extensively used in scientific fields such as computational biology, cryptography and many others \cite{manavski2008cuda,vasiliadis2008gnort,manavski2007cuda}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{\mpi}
+
+The \acf{MPI} is a specification for a language-independent communication protocol, used in the parallelization of programs with a distributed memory paradigm. This standard defines the rules of a library that enables message passing capabilities, allowing programs to spawn several processes, and communicate between each other by sending and receiving messages. The processes created can be physically located on different machines (hosts), with the communication being made across the available network connections. It is also possible to use \mpi to communicate with accelerator devices that support it, such as the Intel Xeon Phi. The main goals of \mpi are towards high performance, scalability and portability, and is one of the most dominant parallelization models in current high performance computing \cite{sur2006high}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{\openacc}
+\openacc aims to to provide a standard for programming parallel devices, and simplify the programming of heterogeneous systems.
+The programming model introduced by this standard is similar in many ways to \openmp, especially in the usage of compiler directives to specify the parallelism rules. Unlike \acs{OpenMP} however, code produced by \openacc may also be targeted at different devices, such as \gpus, and more recently the new \intel Xeon Phi \cite{openacc-phi2012}.
+
+
+\end{document}

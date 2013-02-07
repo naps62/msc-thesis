@@ -2,17 +2,17 @@
 
 \begin{document}
 
-\pdfbookmark{Contents}{contents}
+\pdfbookmark[1]{Contents}{contents}
 \tableofcontents
 
-\newpage \pdfbookmark{Glossary}{glossary}
-\chapter*{Glossary}
+\newpage \pdfbookmark[1]{Glossary}{glossary}
+\section*{Glossary}
 \begin{acronym}
-  \acro{AVX}{Advanced Vector Extensions, an extension to the \textit{x86} instruction set to }
+  \acro{AVX}{Advanced Vector Extensions}
   \acro{BRDF}{Bidirectional Reflectance Distribution Function)}
   \acro{CPU}{Central Processing Unit}
   \acro{CU}{Computing Unit}
-  \acro{CUDA}{formerly Compute Unified Device Architecture. A parallel computing platform for \nvidia \acs{GPU}}s
+  \acro{CUDA}{Compute Unified Device Architecture. A parallel computing platform for \acs{GPU}}s
   \acro{DMA}{Direct Memory Access}
   \acro{DSP}{Digital Signal Processor}
   \acro{GAMA}{GPU And Multi-core Aware}
@@ -22,19 +22,21 @@
   \acro{ISA}{Instruction Set Architecture}
   \acro{MIC}{Many Integrated Core}
   \acro{MPI}{Message Passing Interface}
-  \acro{OpenACC}{A programming standard for parallel computing}
+  \acro{OpenACC}{Open Accelerator API}
   \acro{OpenCL}{Open Computing Language}
   \acro{OpenMP}{Open Multi-Processing}
   \acro{PCI-e}{Peripheral Component Interconnect Express}
-  \acro{SIMD}{Single Instruction Multiple Data}
+  \acro{SIMD}{Single Instruction, Multiple Data}
+  \acro{SIMT}{Single Instruction, Multiple Threads}
   \acro{SM}{Streaming Multiprocessor}
   \acro{SMX}{Kepler Streaming Multiprocessor. A redesign of the original \acs{SM}}
-  \acro{TBB}{Threading Building Blocks. A C++ template library for task parallelism, developed by \intel}
+  \acro{TBB}{Threading Building Blocks: C++ template library for task parallelism}
 \end{acronym}
 
 %\newpage \pdfbookmark{List of Tables}{tables}
 %\listoftables
-\newpage \pdfbookmark{List of Figures}{figures}
+\newpage \pdfbookmark[1]{List of Figures}{figures}
 \listoffigures
+\newpage
 
 \end{document}
