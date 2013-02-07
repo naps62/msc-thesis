@@ -3,8 +3,38 @@
 \begin{document}
 
 
+
+%
+% english abstract
+%
+\pdfbookmark[1]{Abstract}{abstract}
+\begin{abstract}
+
+High performance computing has suffered several changes in recent years, with the increasingly prominent evolution and usage of heterogeneous platforms: multiple devices with different architectures, characteristics, and programming models share application workload targetting an increased performance.
+
+Several frameworks have been under development, to aid the programmer to efficiently explore these platforms, by dynamically scheduling the workload across the available resources and dealing with the inherent difficulties that come associated with the increased complexity of the system.
+
+One of these is the \gama framework, designed to deal with irregular applications and addressing task scheduling and resources management. \gama aims to unify the multiple execution and memory models of each device into a single, hardware agnostic model. It handles the workload distribution across multiple computational resources, and attempts to balance them based on a scheduling policy as well as runtime information. So far, this framework has only been tested with benchmark kernels, for comparison with similar alternatives using standard algorithms, but it still lacks a deeper study, using a more realistic case study, to better understand its potential, and limitations.
+
+The subject of this dissertation is to provide a more in-depth evaluation of \gama, using the progressive photon mapping irregular algorithm as a case study. The goal is to validate its effectiveness with a robust irregular application, where resource management problems are more easily seen, and identify possible points of improvement for this project.
+
+\end{abstract}
+
+%
+% portuguese abstract
+%
+\newpage
+\begin{otherlanguage}{portuguese}
 \pdfbookmark[1]{Resumo}{resumo}
-\section*{Resumo}
+\begin{abstract} 
+
+  \begin{center}
+    \parbox{.8\textwidth}{\bfseries\larger\larger
+      \begin{center}
+        Uma avaliação da framework GAMA para Plataformas Heterogéneas: O algoritmo de Progressive Photon Mapping
+      \end{center}
+    }
+  \end{center}
 
 A área de computação de alto desempenho foi alvo de uma grande evolução nos últimos anos, com a cada vez maior utilização de plataformas heterogéneas, nas quais são utilizados vários dispositivos que diferem não só na arquitectura, mas também nas caracteristicas, e no modelo de programação, trabalho em colaboração partilhando o conjunto de tarefas de uma aplicação com o objectivo final de melhorar o desempenho global.
 
@@ -14,16 +44,8 @@ Uma destas frameworks é o \gama, desenhado para lidar com aplicações irregula
 
 Esta dissertação propõe-se a disponibilizar uma avaliação mais intensiva do \gama, usando o algoritmo irregular de \textit{Progressive Photon Mapping} como caso de estudo. O principal objectivo é validar a eficácia da framework para uma aplicação robusta, onde os problemas de gestão de recursos são mais evidentes, e identificar possíveis possibilidades para este projecto.
 
-\newpage \pdfbookmark[1]{Abstract}{abstract}
-\section*{Abstract}
-
-High performance computing has suffered several changes in recent years, with the increasingly prominent evolution and usage of heterogeneous platforms: multiple devices with different architectures, characteristics, and programming models share application workload targetting an increased performance.
-
-Several frameworks have been under development, to aid the programmer to efficiently explore these platforms, by dynamically scheduling the workload across the available resources and dealing with the inherent difficulties that come associated with the increased complexity of the system.
-
-One of these is the \gama framework, designed to deal with irregular applications and addressing task scheduling and resources management. \gama aims to unify the multiple execution and memory models of each device into a single, hardware agnostic model. It handles the workload distribution across multiple computational resources, and attempts to balance them based on a scheduling policy as well as runtime information. So far, this framework has only been tested with benchmark kernels, for comparison with similar alternatives using standard algorithms, but it still lacks a deeper study, using a more realistic case study, to better understand its potential, and limitations.
-
-The subject of this dissertation is to provide a more in-depth evaluation of \gama, using the progressive photon mapping irregular algorithm as a case study. The goal is to validate its effectiveness with a robust irregular application, where resource management problems are more easily seen, and identify possible points of improvement for this project.
+\end{abstract}
+\end{otherlanguage}
 
 \newpage
 \pagenumbering{arabic}
