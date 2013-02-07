@@ -21,7 +21,7 @@
 \renewcommand{\chapterheadstartvskip}{\vspace*{-1.6\baselineskip}}
 
 \begin{document}
-\subpdfbookmark{Cover}{cover}
+\pdfbookmark[1]{Cover}{cover}
 \pagenumbering{roman}
 \includepdf[pages=-]{misc/cover-mei}
 
@@ -55,5 +55,9 @@ ls tex/ | egrep ^[^_] | sed "s/\([^.]*\)\.tex/\\\\subfile{tex\/\1}/" > tex/_inpu
 \newpage % force the bookmark to go to the new page
 \pdfbookmark[1]{References}{references}
 \printbibliography[title=References]
+
+\newpage
+\pdfbookmark[1]{Signatures}{signatures}
+\includepdf[pages=-]{../advisor_declaration/main}
 
 \end{document}
