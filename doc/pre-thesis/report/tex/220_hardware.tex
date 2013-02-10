@@ -3,7 +3,7 @@
 
 \subsection{The \gpu as a Computing Accelerator}
 
-With the increasing demand for highly data-parallel algorithms, and the increasing amount of data to process, hardware development started shifting towards the goal of solving that problem. Initially, that started with the increased support for vector instructions in common \acsp{CPU}, and the \acs{SIMD} model. This allowed a single instruction to operate on a set of elements at once, effectively achieving a kind of parallelism which was extremely useful with highly data-parallel applications. Modern Intel processors, starting with the Sandy Bridge family, already support \ac{AVX}, an extension to the \textit{x86} instruction set allowing \acs{SIMD} instructions capable of handling 256 bits registers. This extension also introduces three-operand \acs{SIMD} instructions that allow more general $c = a + b$ operations to be handled with a single instruction, in addition to the previous instructions which only allowed two operands ($a = a + b$).
+With the increasing demand for highly data-parallel algorithms, and the growing amount of data to process, hardware development started shifting towards the goal of solving that problem. Initially, that started with the increased support for vector instructions in common \acsp{CPU}, and the \acs{SIMD} model. This allowed a single instruction to operate on a set of elements at once, effectively achieving a kind of parallelism which was extremely useful with highly data-parallel applications. Modern Intel processors, starting with the Sandy Bridge family, already support \ac{AVX}, an extension to the \textit{x86} instruction set allowing \acs{SIMD} instructions capable of handling 256 bits registers. This extension also introduces three-operand \acs{SIMD} instructions that allow more general $c = a + b$ operations to be handled with a single instruction, in addition to the previous instructions which only allowed two operands ($a = a + b$).
 
 A similar and more flexible model is the usage of a single instruction across multiple threads running concurrently, called \ac{SIMT}. This is the programming model behind \gpus, which gradually started to gain more attention for their general purpose computing capabilities. Although the hardware of a \gpus is still tightly coupled with graphics processing and rendering, there have also been several advances in their usage as \gpgpus.
 
@@ -11,15 +11,15 @@ A similar and more flexible model is the usage of a single instruction across mu
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Fermi Architecture}
 
-The Fermi architecture was an important milestone of \gpus technology, as it was one of the first generations target directly towards \gpgpu and high performance computing, rather than just graphics rendering. The first Fermi devices were released in 2010, and were the first NVIDIA products to include support for double precision floating point number, which was an important feature for high performance computing to provide more accurate results. Fermi devices also included a GDDR5 memory controller with support for \ac{DMA} through the \acs{PCIe} bus, and up to 16 \acf{SM}, for a total of up to 512 \acs{CUDA} Cores.
+The Fermi architecture was an important milestone of \gpus technology, as it was one of the first generations target directly towards \gpgpu and high performance computing, rather than just graphics rendering. The first Fermi devices were released in 2010, and were the first NVidia products to include support for double precision floating point number, which was an important feature for high performance computing to provide more accurate results. Fermi devices also included a GDDR5 memory controller with support for \ac{DMA} through the \acs{PCIe} bus, and up to 16 \acf{SM}, for a total of up to 512 \acs{CUDA} Cores.
 
-Each \sm can access a total of 64KB of private memory available, which can be configured to be split between shared memory and L1 cache, although configuration was restricted to either 48KB + 16KB or 16KB + 48KB. This provided some flexibility to the devices, since some problems would benefit more from the extra shared memory and not so much from cache, and vice-versa.
+Each \sm can access a total of 64KB of private memory, which can be configured to be split between shared memory and L1 cache, although configuration was restricted to either 48KB + 16KB or 16KB + 48KB. This provided some flexibility to the devices, since some problems would benefit more from the extra shared memory and not so much from cache, and vice-versa.
 
 Additionally, all \acsp{SM} share a common 768KB L2 cache, and a final level of global memory, external to the chip, that can go up to 6GB of GDDR5, with a bandwidth of 192.6 GB/s in the Tesla C2070 \cite{NVIDIA:fermi}.
 
 \begin{figure}[!htp]
   \centering
-  \includegraphics[width=0.4\textwidth]{arch_fermi}
+  \includegraphics[width=0.6\textwidth]{arch_fermi}
   \caption{Overview of the Fermi architecture \label{fig:fermi}}
 \end{figure}
 
@@ -34,7 +34,7 @@ The follow-up generation to Fermi is in many ways similar to its predecessor. On
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.4\textwidth]{arch_kepler}
+  \includegraphics[width=0.6\textwidth]{arch_kepler}
   \caption{Overview of the Kepler architecture \label{fig:kepler}}
 \end{figure}
 

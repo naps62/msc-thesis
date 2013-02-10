@@ -5,9 +5,9 @@
 
 As the complexity of applications increases, so does the difficulty of efficiently managing the different available resources. In a \ac{HetPlat}, resource management is a key problem that depends on several different factors, and can be a difficult one to solve, especially for more complex applications. This is an even greater problem for irregular applications, where memory access patterns and task execution times are not always predictable.
 
-\gama is a framework that attempts to provide the tools for developers to create dynamic applications, capable of efficiently running on these high performance computing platforms \cite{joao2012gama}.
+\gama is a framework that aims to provide the tools for developers to create dynamic applications, capable of efficiently running on these high performance computing platforms \cite{joao2012gama}.
 
-The \gama framework is currently still in development, and supports only x86-64 \cpus and \cuda-capable \gpus. Although it has been deeply tested for a wide variety of kernels in order to validate the correctness and efficiency of its memory and execution model, it currently lacks a more intensive assessment, with a more robust and realistic application.
+The \gama framework is currently still in development, and supports only x86-64 \cpus and \cuda-capable \gpus. Although it has been deeply tested for a wide variety of kernels to validate the correctness and efficiency of its memory and execution model, it currently lacks a more intensive assessment, with a more robust and realistic application.
 
 Small kernels have a wide range of applications, are deeply studied and optimized, and are a good source for an initial analysis on the performance results of the execution model. However, when considering a real and more resource intensive application, where possibly multiple tasks must share the available resources, other problems may arise. Therefore, an evaluation of the framework with a realistic application, as opposed to the previously used synthetic benchmarks, is needed to understand its effectiveness.
 
@@ -15,6 +15,6 @@ The main goal of this work is to perform a quantitative and qualitative analysis
 
 This will be accomplished by using \gama to implement a computational intensive irregular application. The result will be used to evaluate the overall efficiency of the \gama framework, applied to a large scale application, instead of only a single computational kernel.
 
-The work will also be useful to understand how to better take advantage of \gama, and where it should be improved. An analysis of the execution results of the application should provide insight about the way \gama is handling the existing jobs and data sets, and from there, identify possible bottlenecks or situations where an improvement could be possible. The comparative analysis will also be extremely useful in this process, as it will make it possible to know whether or not different implementations perform better than \gama, and why.
+The work will also be useful to understand how to better take advantage of \gama, and where it should be improved. An analysis of the execution results of the application should provide insight about the way \gama is handling the existing jobs and data sets, and from there identify possible bottlenecks or situations where an improvement could be possible. The comparative analysis will also be extremely useful in this process, as it will make it possible to know whether or not different implementations perform better than \gama, and why.
 
 \end{document}

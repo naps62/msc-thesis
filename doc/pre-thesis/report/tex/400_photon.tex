@@ -2,7 +2,6 @@
 
 \begin{document}
 
-\newpage
 \section{Progressive Photon Mapping as a Case Study} \label{section:photon}
 
 
@@ -30,9 +29,9 @@ Radiosity follows an opposite approach, and simulates the path light takes from 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Photon Mapping}
 
-Photon mapping is based on another method to approximate the rendering equation, first proposed in 1996 \cite{jensen1996global}, and works as two-pass algorithm. In a first pass, photons are traced from the light sources into the scene and stored in a photon map as they interact with the surfaces. This creates a structure that roughly represents the entirety of light within the scene. The second pass is rendering, in which the photon map is used to estimate the illumination in the scene, using common Ray Tracing techniques (for example, Monte Carlo ray tracing). The photon map is used to aid the computation of the total radiance. It is useful not only to increase performance, mostly by allowing a reduction in the number of samples to cast while still providing accurate results, but also to allow the modeling of some light effects that are not preset, or are inefficient to process in other rendering methods.
+Photon mapping is based on another method to approximate the rendering equation, first proposed in 1996 \cite{jensen1996global}, and works as a two-pass algorithm. In a first pass, photons are traced from the light sources into the scene and stored in a photon map as they interact with the surfaces. This creates a structure that roughly represents the light distribution within the scene. The second pass is rendering, in which the photon map is used to estimate the illumination in the scene, using common Ray Tracing techniques (for example, Monte Carlo ray tracing). The photon map is used to aid the computation of the total radiance. It is useful not only to increase performance, mostly by allowing a reduction in the number of samples to cast while still providing accurate results, but also to allow the modeling of some light effects that are not preset, or are inefficient to process in other rendering methods.
 
-One case in particular is when light is being transported along a specular to diffuse to specular path (SDS path) illustrated in \cref{fig:sdspath} before reaching the eye. This is what is commonly known as a caustic, such as, for example, the shimmering light seen of the bottom of a pool, or any light source enclosed in glass. This scenario is very common since most artificial light sources are enclosed in glass, but is particularly hard to simulate, particularly when the light source is small, making the sampling probability very low when using Monte Carlo methods.
+One case in particular is when light is being transported along a specular-to-diffuse-to-specular path (SDS path) illustrated in \cref{fig:sdspath} before reaching the eye. This is what is commonly known as a caustic, such as, for example, the shimmering light seen of the bottom of a pool, or any light source enclosed in glass. This scenario is very common since most artificial light sources are enclosed in glass, but is particularly hard to simulate, particularly when the light source is small, making the sampling probability very low when using Monte Carlo methods.
 
 \begin{figure}[!htp]
   \centering
@@ -48,7 +47,7 @@ Another example of a typically hard to simulate effect is Subsurface Scattering,
   \caption{Subsurface Scattering \label{fig:subscat}}
 \end{figure}
 
-Both of these can be simulated well by Photon Mapping algorithms, although a high amount of caustics will hinder performance a lot.
+Both of these can be simulated well by Photon Mapping algorithms, although a high amount of caustics will hinder performance considerably.
 
 
 \subsection{Extensions to Photon Mapping}
@@ -59,6 +58,6 @@ In 2005, a proposed version introduced the concept of Reverse photon mapping \ci
 
 In 2000, Suykens and Willems \cite{suykens2000adaptive}, and later in Hachisuka, Ogaki and Jensen 2008 \cite{hachisuka2008progressive} attempted an algorithm that would asymptotically converge to a solution, by gradually reducing the search radius of the radiance estimate based on the number of photons already found.
 
-A new formulation of photon Mapping was proposed in 2011 \cite{knaus2011progressive}, which used a probabilistic formulation that allows for a memoryless algorithm, without requiring statistics to be maintained, and removes dependencies between each individual step, allowing them to be calculated independently, and thus being able to run in parallel.
+A new formulation of photon mapping was proposed in 2011 \cite{knaus2011progressive}, which used a probabilistic formulation that allows for a memoryless algorithm, without requiring statistics to be maintained, and removes dependencies between each individual step, allowing them to be independently calculated, and thus being able to run in parallel.
 
 \end{document}
