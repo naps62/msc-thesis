@@ -1,4 +1,5 @@
 .DS_Store
+scenes/
 inputs/
 doc/*/main.sh
 doc/*/*/main.run.xml
