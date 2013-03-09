@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef RENDER_TINY
-	alpha = alpha;
+	//alpha = alpha;
 	width = 640;
 	height = 480;
 	superSampling = 1;
