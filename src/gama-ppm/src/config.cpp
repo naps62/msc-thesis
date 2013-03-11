@@ -14,7 +14,7 @@ Config::Config(const char *desc, int _argc, char **_argv)
 	value("title,t",  title,  string("gama-ppm"), "window title");
 
 	// render
-	value("alpha,a", alpha, float(0.7), "(???) still don't know what this is for");
+	value("alpha,a", alpha, float(0.7), "??? still don't know what this is for");
 	value("spp",     spp,   uint(4),    "samples per pixel (supersampling)");
 
 	// now parse the arguments
