@@ -18,9 +18,12 @@ struct Config : public beast::program_options::options {
 
 	// scene
 	string scene_name;
+	string scene_file;
 	string scene_cfg;
 
 	// window
+	bool no_display;
+	bool use_display;  // derived from no_display
 	uint width;
 	uint height;
 	string title;
@@ -28,8 +31,6 @@ struct Config : public beast::program_options::options {
 	// render
 	float alpha;
 	uint spp;
-	int val_a, val_b;
-	bool flag_1, flag_2;
 
 	Config(const char *desc, int _argc, char **_argv);
 };

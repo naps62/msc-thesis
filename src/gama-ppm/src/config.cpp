@@ -11,13 +11,15 @@ Config :: Config(
 //*************************
 
 	// scene
-	value("scene_name", scene_name, string("kitchen"), "used to find scenes/<scene_name>/ directory");
-	value("scene_cfg",  scene_cfg,  string("render.cfg"), "cfg file inside scene directory");
+	value("scene_name", scene_name, string("kitchen"),     "to find scenes/<scene_name>/ directory");
+	value("scene_file", scene_file, string("kitchen.scn"), "to find scenes/<scene_name>/<scene_file>");
+	value("scene_cfg",  scene_cfg,  string("render.cfg"),  "to find scenes/<scene_name>/<scene_cfg>");
 
 	// window
-	value("width,w",  width,  uint(640), "window width");
-	value("height,h", height, uint(480), "window height");
-	value("title,t",  title,  string("gama-ppm"), "window title");
+	flag("no-display", no_display, "Supress realtime display?");
+	value("width,w",   width,  uint(640),          "window width");
+	value("height,h",  height, uint(480),          "window height");
+	value("title,t",   title,  string("gama-ppm"), "window title");
 
 	// render
 	value("alpha,a", alpha, float(0.7), "??? still don't know what this is for");
@@ -25,4 +27,7 @@ Config :: Config(
 
 	// now parse the arguments
 	parse(_argc, _argv);
+
+	// derived values
+	use_display = ! no_display;
 }
