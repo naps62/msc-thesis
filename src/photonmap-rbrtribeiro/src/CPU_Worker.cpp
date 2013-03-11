@@ -473,7 +473,7 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 
 	rayBuffer->Reset();
 
-	size_t initc = min(rayBuffer->GetSize(), photonTarget);
+	size_t initc = min((int) rayBuffer->GetSize(), (int) photonTarget);
 
 	double start = WallClockTime();
 

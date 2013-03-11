@@ -46,9 +46,7 @@
 									<listOptionValue builtIn="false" value="GL"/>
 									<listOptionValue builtIn="false" value="glut"/>
 								</option>
-								<option id="nvcc.linker.option.paths.2002140744" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="/usr/local/boost/current/lib"/>
-								</option>
+								<option id="nvcc.linker.option.paths.2002140744" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths"/>
 								<inputType id="nvcc.linker.input.986443243" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -96,7 +94,7 @@
 						<toolChain id="com.nvidia.cuda.ide.toolchain.exe.release.897132406" name="CUDA Toolkit 5.0" superClass="com.nvidia.cuda.ide.toolchain.exe.release">
 							<targetPlatform archList="all" binaryParser="com.nvidia.cuda.ide.elf;com.nvidia.cuda.ide.macho;com.nvidia.cuda.ide.cubin" id="com.nvidia.cuda.ide.targetPlatform.1894184236" isAbstract="false" name="Debug Platform" osList="linux,macosx" superClass="com.nvidia.cuda.ide.targetPlatform"/>
 							<builder buildPath="${workspace_loc:/photonmap-master/Release}" id="com.nvidia.cuda.ide.builder.1221282977" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CUDA Toolkit 5.0 Builder" parallelBuildOn="true" parallelizationNumber="-1" superClass="com.nvidia.cuda.ide.builder"/>
-							<tool id="nvcc.compiler.base.1301451505" name="NVCC Compiler" superClass="nvcc.compiler.base">
+							<tool command="nvcc" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX} ${OUTPUT} ${INPUTS}" id="nvcc.compiler.base.1301451505" name="NVCC Compiler" superClass="nvcc.compiler.base">
 								<option id="nvcc.compiler.deviceDebug.2098556943" name="Generate device debug information (-G)" superClass="nvcc.compiler.deviceDebug"/>
 								<option id="nvcc.compiler.option.level.1763681748" name="Generate host debug information (-g)" superClass="nvcc.compiler.option.level"/>
 								<option defaultValue="nvcc.compiler.optimization.level.most" id="nvcc.compiler.optimization.level.1801988550" name="Optimization Level" superClass="nvcc.compiler.optimization.level" valueType="enumerated"/>
@@ -118,9 +116,7 @@
 									<listOptionValue builtIn="false" value="GL"/>
 									<listOptionValue builtIn="false" value="glut"/>
 								</option>
-								<option id="nvcc.linker.option.paths.1139810456" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="/usr/local/boost/current/lib"/>
-								</option>
+								<option id="nvcc.linker.option.paths.1139810456" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths"/>
 								<inputType id="nvcc.linker.input.2082974224" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

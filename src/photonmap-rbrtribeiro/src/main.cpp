@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
 	devID = 100;
 
 	size_t WORK_BUCKET_SIZE_CPU = 1024 * 256;
-	c = max(hitPointTotal, WORK_BUCKET_SIZE_CPU);
+	c = max((int)hitPointTotal, (int)WORK_BUCKET_SIZE_CPU);
 	seedBuffer = new Seed[c];
 
 	for (uint i = 0; i < c; i++)
