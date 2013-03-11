@@ -1,9 +1,15 @@
 #include "config.h"
 
-Config::Config(const char *desc, int _argc, char **_argv)
+// constructor receiving a config struct
+//*************************
+Config :: Config(
+		const char *desc,	// command line help description
+		int _argc,			// number of args
+		char **_argv)		// args list, c-style
 : beast::program_options::options(desc),
-  argc(_argc), argv((const char**)_argv)
-{
+  argc(_argc), argv((const char**)_argv) {
+//*************************
+
 	// scene
 	value("scene_name", scene_name, string("kitchen"), "used to find scenes/<scene_name>/ directory");
 	value("scene_cfg",  scene_cfg,  string("render.cfg"), "cfg file inside scene directory");

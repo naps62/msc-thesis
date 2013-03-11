@@ -10,10 +10,20 @@
 
 #include <gama.h>
 
+#include "config.h"
+#include "display.h"
+
 MemorySystem* LowLevelMemAllocator::_memSys = NULL;
 
-int main() {
+int main(int argc, char** argv) {
+	// load configurations
+	Config config("Options", argc, argv);
+
 	RuntimeScheduler* rs = new RuntimeScheduler();
 
-	cout << "oh look. it works!" << endl;
+	// create display
+	Display display(config);
+	display.start();
+	display.join();
+	delete rs;
 }

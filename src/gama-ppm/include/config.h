@@ -1,3 +1,10 @@
+/*
+ * config.h
+ *
+ *  Created on: Mar 11, 2013
+ *      Author: Miguel Palhas
+ */
+
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
@@ -27,4 +34,4 @@ struct Config : public beast::program_options::options {
 	Config(const char *desc, int _argc, char **_argv);
 };
 
-#endif
+#endif // CONFIG_H_
