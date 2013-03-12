@@ -20,7 +20,7 @@ MemorySystem* LowLevelMemAllocator::_memSys = NULL;
 Engine :: Engine(const Config& _config)
 : config(_config),                       // store reference to global configs
   gama(new RuntimeScheduler()),          // pre-load GAMA runtime scheduler
-  scene(new PointerFreeScene(config)) {  // pre-load input scene
+  scene(new PtrFreeScene(config)) {  // pre-load input scene
 //************************
 	// load display if necessary
 	if (config.use_display) {

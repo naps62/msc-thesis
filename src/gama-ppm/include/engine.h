@@ -10,7 +10,7 @@
 
 #include "config.h"
 #include "display.h"
-#include "pointerfreescene.h"
+#include "ptrfreescene.h"
 
 #include <gama.h>
 
@@ -21,10 +21,10 @@ public:
 	~Engine();
 
 private:
-	const Config& config;			// global configs
-	RuntimeScheduler* const gama;	// const pointer, not const data
-	PointerFreeScene* const scene;	// the input scene
-	Display* display;      			// async display system
+	const Config& config;         // reference to global configs
+	RuntimeScheduler* const gama; // const pointer, not const data
+	PtrFreeScene* const scene;    // the input scene
+	Display* display;             // async display system
 };
 
 #endif // ENGINE_H_

@@ -1,11 +1,11 @@
 /*
- * scene.cpp
+ * ptrfreescene.cpp
  *
  *  Created on: Mar 11, 2013
  *      Author: Miguel Palhas
  */
 
-#include "pointerfreescene.h"
+#include "ptrfreescene.h"
 #include <GL/freeglut.h>
 
 //
@@ -14,10 +14,8 @@
 
 // constructor receiving a config struct
 //*************************
-PointerFreeScene :: PointerFreeScene(const Config& _config)
-: config(_config) {
+PtrFreeScene :: PtrFreeScene(const Config& _config)
+: config(_config),
+  original_scene(new slg::Scene(config.scene_file, -1)) { // TODO what is this -1?
 //************************
-
-	scene = new slg::Scene(config.scene_file, -1); // TODO what is this -1?
-
 }
