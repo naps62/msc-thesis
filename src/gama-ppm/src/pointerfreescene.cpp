@@ -5,7 +5,7 @@
  *      Author: Miguel Palhas
  */
 
-#include "scene.h"
+#include "pointerfreescene.h"
 #include <GL/freeglut.h>
 
 //
@@ -14,7 +14,10 @@
 
 // constructor receiving a config struct
 //*************************
-Scene :: Scene(const Config& _config)
+PointerFreeScene :: PointerFreeScene(const Config& _config)
 : config(_config) {
 //************************
+
+	scene = new slg::Scene(config.scene_file, -1); // TODO what is this -1?
+
 }

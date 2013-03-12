@@ -10,18 +10,20 @@
 
 #include "config.h"
 #include "display.h"
+#include "pointerfreescene.h"
 
 #include <gama.h>
 
 class Engine {
 
 public:
-	Engine(const Config& config);
+	Engine(const Config& _config);
 	~Engine();
 
 private:
 	const Config& config;			// global configs
 	RuntimeScheduler* const gama;	// const pointer, not const data
+	PointerFreeScene* const scene;	// the input scene
 	Display* display;      			// async display system
 };
 

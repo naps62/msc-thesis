@@ -18,9 +18,11 @@ MemorySystem* LowLevelMemAllocator::_memSys = NULL;
 // constructor receiving a config struct
 //*************************
 Engine :: Engine(const Config& _config)
-: config(_config),
-  gama(new RuntimeScheduler()) {
+: config(_config),                       // store reference to global configs
+  gama(new RuntimeScheduler()),          // pre-load GAMA runtime scheduler
+  scene(new PointerFreeScene(config)) {  // pre-load input scene
 //************************
+	// load display if necessary
 	if (config.use_display) {
 		display = new Display(config);
 		display->start();

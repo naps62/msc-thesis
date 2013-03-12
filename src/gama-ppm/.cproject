@@ -50,6 +50,7 @@
 							<tool id="nvcc.linker.base.1133921334" name="NVCC Linker" superClass="nvcc.linker.base">
 								<option id="nvcc.linker.option.libs.538013974" name="Libraries (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="cublas"/>
+									<listOptionValue builtIn="false" value="freeimage"/>
 									<listOptionValue builtIn="false" value="glut"/>
 									<listOptionValue builtIn="false" value="GL"/>
 									<listOptionValue builtIn="false" value="boost_program_options"/>
@@ -138,6 +139,7 @@
 							<tool id="nvcc.linker.base.185539866" name="NVCC Linker" superClass="nvcc.linker.base">
 								<option id="nvcc.linker.option.libs.1952258124" name="Libraries (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="cublas"/>
+									<listOptionValue builtIn="false" value="freeimage"/>
 									<listOptionValue builtIn="false" value="glut"/>
 									<listOptionValue builtIn="false" value="GL"/>
 									<listOptionValue builtIn="false" value="boost_program_options"/>
@@ -225,6 +227,7 @@
 							<tool id="nvcc.linker.base.1421248392" name="NVCC Linker" superClass="nvcc.linker.base">
 								<option id="nvcc.linker.option.libs.93938281" name="Libraries (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="cublas"/>
+									<listOptionValue builtIn="false" value="freeimage"/>
 									<listOptionValue builtIn="false" value="glut"/>
 									<listOptionValue builtIn="false" value="GL"/>
 									<listOptionValue builtIn="false" value="boost_program_options"/>
