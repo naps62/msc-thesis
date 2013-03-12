@@ -38,7 +38,7 @@ class ActionList {
 
 public:
 	// constructors / destructors
-	ActionList(const Config& config);
+	ActionList();
 	~ActionList();
 
 	// reset the list
@@ -63,7 +63,6 @@ public:
 	friend ostream& operator<< (ostream& os, const ActionList& list);
 
 private:
-	const Config& config; // reference to global configs
 	set<Action> actions;  // the list of stored actions
 
 	// convert from int to action

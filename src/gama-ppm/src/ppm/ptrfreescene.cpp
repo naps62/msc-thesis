@@ -48,7 +48,8 @@ void PtrFreeScene :: recompile(const ActionList& actions) {
  */
 
 void PtrFreeScene :: compile_camera() {
-
+	slg::PerspectiveCamera original = *(original_scene->camera);
+	camera.compile(original);
 }
 
 void PtrFreeScene :: compile_geometry() {

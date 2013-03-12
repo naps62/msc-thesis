@@ -9,7 +9,9 @@
 #define _PPM_PTRFREESCENE_H_
 
 #include "utils/config.h"
+#include "ppm/types.h"
 #include "slg/sdl/scene.h"
+#include "utils/action_list.h"
 
 #include <gama.h>
 
@@ -25,6 +27,7 @@ public:
 private:
 	const Config& config;				// reference to global configs
 	const slg::Scene* original_scene;	// original scene structure
+	Camera camera;                      // compiled camera
 
 	void compile_camera();
 	void compile_geometry();

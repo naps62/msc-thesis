@@ -13,8 +13,7 @@ using std::ostringstream;
 /*
  * constructors / destructors
  */
-ActionList :: ActionList(const Config& _config)
-: config(_config) { }
+ActionList :: ActionList() { }
 
 ActionList :: ~ActionList() { }
 
@@ -51,11 +50,11 @@ uint ActionList :: size() const {
 }
 
 // ostream
-friend ostream& operator<< (ostream& os, const ActionList& list) {
+ostream& operator<< (ostream& os, const ActionList& list) {
 	ostringstream ss;
 	ss << "ActionList[ ";
 	bool sep = false;
-	for (auto it = list.actions.begin(); it != list.actions.end(); ++it) {
+	for (set<Action>::iterator it = list.actions.begin(); it != list.actions.end(); ++it) {
 		if (sep) ss << ", ";
 		ss << list.action_to_string(*it);
 	}
