@@ -120,9 +120,9 @@ Scene::~Scene() {
 	delete dataSet;
 }
 
-void Scene::UpdateDataSet(Context *ctx) {
+DataSet* Scene::UpdateDataSet(/*Context *ctx*/) {
 	delete dataSet;
-	dataSet = new DataSet(ctx);
+	dataSet = new DataSet(/*ctx*/);
 
 	// Check the type of accelerator to use
 	switch (accelType) {
@@ -150,6 +150,7 @@ void Scene::UpdateDataSet(Context *ctx) {
 		dataSet->Add(*obj);
 
 	dataSet->Preprocess();
+	return dataSet;
 }
 
 Properties Scene::ToProperties(const std::string &directoryName) {

@@ -11,6 +11,7 @@
 #include "utils/config.h"
 #include "ppm/types.h"
 #include "slg/sdl/scene.h"
+#include "luxrays/core/dataset.h"
 #include "utils/action_list.h"
 
 #include <gama.h>
@@ -26,7 +27,8 @@ public:
 
 private:
 	const Config& config;				// reference to global configs
-	const slg::Scene* original_scene;	// original scene structure
+	slg::Scene* original_scene;	// original scene structure
+	luxrays::DataSet* data_set;   // original data_set structure
 	Camera camera;                      // compiled camera
 
 	void compile_camera();

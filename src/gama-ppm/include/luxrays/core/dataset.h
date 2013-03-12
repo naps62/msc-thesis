@@ -32,7 +32,7 @@ namespace luxrays {
 
 class DataSet {
 public:
-	DataSet(const Context *luxRaysContext);
+	DataSet(/*const Context *luxRaysContext*/);
 	~DataSet();
 
 	TriangleMeshID Add(const Mesh *mesh);

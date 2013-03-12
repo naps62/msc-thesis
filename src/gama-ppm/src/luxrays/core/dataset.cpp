@@ -37,12 +37,12 @@ using namespace luxrays;
 static unsigned int DataSetID = 0;
 static boost::mutex DataSetIDMutex;
 
-DataSet::DataSet(const Context *luxRaysContext) {
+DataSet::DataSet(/*const Context *luxRaysContext*/) {
 	{
 		boost::unique_lock<boost::mutex> lock(DataSetIDMutex);
 		dataSetID = DataSetID++;
 	}
-	context = luxRaysContext;
+//	context = luxRaysContext;
 
 	totalVertexCount = 0;
 	totalTriangleCount = 0;

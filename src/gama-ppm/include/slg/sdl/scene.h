@@ -37,6 +37,7 @@
 #include "slg/sdl/texture.h"
 #include "slg/sdl/bsdf.h"
 #include "slg/sdl/mapping.h"
+#include "luxrays/core/dataset.h"
 
 namespace slg {
 
@@ -57,7 +58,7 @@ public:
 		const float u0, luxrays::Ray *ray, luxrays::RayHit *rayHit,
 		BSDF *bsdf, Spectrum *connectionThroughput) const;
 
-	void UpdateDataSet(luxrays::Context *ctx);
+	luxrays::DataSet* UpdateDataSet(/*luxrays::Context *ctx*/);
 
 	luxrays::Properties ToProperties(const std::string &directoryName);
 

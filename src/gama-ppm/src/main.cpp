@@ -9,8 +9,8 @@
 #include <iostream>
 
 
-#include "config.h"
-#include "engine.h"
+#include "utils/config.h"
+#include "ppm/engine.h"
 
 #include "unistd.h"
 #include <iostream>

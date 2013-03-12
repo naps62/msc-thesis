@@ -14,9 +14,14 @@
 // constructor receiving a config struct
 //*************************
 PtrFreeScene :: PtrFreeScene(const Config& _config)
-: config(_config),
-  original_scene(new slg::Scene(config.scene_file, -1)) { // TODO what is this -1?
+: config(_config) {
 //************************
+	// load input scene in luxrays format
+	// TODO what is this -1? Is it the accelerator structure?
+	original_scene = new slg::Scene(config.scene_file, -1);
+	data_set = original_scene->UpdateDataSet();
+
+	// recompile the entire scene
 	ActionList actions;
 	actions.add_all();
 	recompile(actions);
@@ -53,27 +58,27 @@ void PtrFreeScene :: compile_camera() {
 }
 
 void PtrFreeScene :: compile_geometry() {
-
+	// TODO
 }
 
 void PtrFreeScene :: compile_materials() {
-
+	// TODO
 }
 
 void PtrFreeScene :: compile_area_lights() {
-
+	// TODO
 }
 
 void PtrFreeScene :: compile_infinite_light() {
-
+	// TODO
 }
 
 void PtrFreeScene :: compile_sun_light() {
-
+	// TODO
 }
 
 void PtrFreeScene :: compile_sky_light() {
-
+	// TODO
 }
 
 void PtrFreeScene :: compile_texture_maps() {
