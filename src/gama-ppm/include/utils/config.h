@@ -5,8 +5,8 @@
  *      Author: Miguel Palhas
  */
 
-#ifndef CONFIG_H_
-#define CONFIG_H_
+#ifndef _UTILS_CONFIG_H_
+#define _UTILS_CONFIG_H_
 
 #include <beast/program_options.hpp>
 #include <string>
@@ -35,4 +35,4 @@ struct Config : public beast::program_options::options {
 	Config(const char *desc, int _argc, char **_argv);
 };
 
-#endif // CONFIG_H_
+#endif // _UTILS_CONFIG_H_

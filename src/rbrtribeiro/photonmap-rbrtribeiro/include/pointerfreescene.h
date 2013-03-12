@@ -119,7 +119,7 @@ public:
 
 	//void CopyAcc();
 
-	void Recompile(const EditActionList &editActions);
+	void Recompile(const ActionList &editActions);
 	//bool IsMaterialCompiled(const MaterialType t) const;
 
 

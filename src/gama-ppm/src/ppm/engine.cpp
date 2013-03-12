@@ -5,8 +5,7 @@
  *      Author: Miguel Palhas
  */
 
-#include "engine.h"
-#include <GL/freeglut.h>
+#include "ppm/engine.h"
 
 // this should be a gama internal
 MemorySystem* LowLevelMemAllocator::_memSys = NULL;

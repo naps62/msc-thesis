@@ -5,11 +5,11 @@
  *      Author: Miguel Palhas
  */
 
-#ifndef DISPLAY_H_
-#define DISPLAY_H_
+#ifndef _PPM_DISPLAY_H_
+#define _PPM_DISPLAY_H_
 
 #include <beast/gl/async_window.hpp>
-#include "config.h"
+#include "utils/config.h"
 
 #include <string>
 using std::string;
@@ -22,4 +22,4 @@ struct Display : public beast::gl::async_window {
 	void render();
 };
 
-#endif // DISPLAY_H_
+#endif // _PPM_DISPLAY_H_

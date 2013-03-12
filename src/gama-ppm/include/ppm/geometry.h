@@ -5,8 +5,8 @@
  *      Author: Miguel Palhas
  */
 
-#ifndef GEOMETRY_H_
-#define GEOMETRY_H_
+#ifndef _PPM_GEOMETRY_H_
+#define _PPM_GEOMETRY_H_
 
 //#include "geometry/vector.h"
 //#include "geometry/normal.h"
@@ -18,4 +18,4 @@
 //#include "geometry/bbox.h"
 //#include "geometry/triangle.h"
 
-#endif // GEOMETRY_H_
+#endif // _PPM_GEOMETRY_H_

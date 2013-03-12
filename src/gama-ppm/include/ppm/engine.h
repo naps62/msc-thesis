@@ -5,12 +5,12 @@
  *      Author: Miguel Palhas
  */
 
-#ifndef ENGINE_H_
-#define ENGINE_H_
+#ifndef _PPM_ENGINE_H_
+#define _PPM_ENGINE_H_
 
-#include "config.h"
-#include "display.h"
-#include "ptrfreescene.h"
+#include "utils/config.h"
+#include "ppm/display.h"
+#include "ppm/ptrfreescene.h"
 
 #include <gama.h>
 
@@ -27,4 +27,4 @@ private:
 	Display* display;             // async display system
 };
 
-#endif // ENGINE_H_
+#endif // _PPM_ENGINE_H_

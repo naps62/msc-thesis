@@ -1,4 +1,11 @@
-#include "config.h"
+/*
+ * config.cpp
+ *
+ *  Created on: Mar 11, 2013
+ *      Author: Miguel Palhas
+ */
+
+#include "utils/config.h"
 
 // constructor receiving a config struct
 //*************************

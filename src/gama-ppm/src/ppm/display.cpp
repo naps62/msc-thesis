@@ -5,7 +5,7 @@
  *      Author: Miguel Palhas
  */
 
-#include "display.h"
+#include "ppm/display.h"
 #include <GL/freeglut.h>
 
 //
