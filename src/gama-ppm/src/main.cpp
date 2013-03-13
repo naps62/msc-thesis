@@ -21,5 +21,5 @@ int main(int argc, char** argv) {
 	Config config("Options", argc, argv);
 
 	// load render engine
-	Engine engine(config);
+	ppm::Engine engine(config);
 }

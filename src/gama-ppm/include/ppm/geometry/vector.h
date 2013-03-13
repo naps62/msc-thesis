@@ -99,7 +99,7 @@ struct Vector : Point {
 	}
 
 	__HYBRID__ Vector normalize() const {
-		return this / this->length();
+		return *this / this->length();
 	}
 
 	__HYBRID__ float spherical_theta() const {
@@ -163,7 +163,6 @@ __HYBRID__ __forceinline ostream& operator<<(ostream& os, const Vector& v) {
 __HYBRID__ __forceinline Vector operator*(const float f, const Vector &v) {
 	return v * f;
 }
-
 
 }
 

@@ -82,11 +82,12 @@ struct Point {
 	}
 
 	__HYBRID__ float distance(const Point& p) {
-		return Vector(this - p).length();
+		return sqrt(distance_squared(p));
 	}
 
 	__HYBRID__ float distance_squared(const Point& p) {
-		return Vector(this - p).length_squared();
+		const Point diff = *this - p;
+		return diff.x * diff.x + diff.y * diff.y + diff.z * diff.z;
 	}
 };
 
