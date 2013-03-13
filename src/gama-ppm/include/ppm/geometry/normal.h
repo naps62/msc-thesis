@@ -27,6 +27,7 @@ struct Normal : Point {
 			float z = 0.f)
 	: Normal(x, y, z) { }
 
+	// copy constructor
 	__HYBRID__ Normal(const Point& v)
 	: Point(v) { }
 

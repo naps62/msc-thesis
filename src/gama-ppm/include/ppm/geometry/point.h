@@ -24,6 +24,7 @@ struct Point {
 	__HYBRID__ Point(float _x = 0.f, float _y = 0.f, float _z = 0.f)
 	: x(_x), y(_y), z(_z) { }
 
+	// copy constructor
 	__HYBRID__ Point(const Point& p)
 	: x(p.x), y(p.y), z(p.z) { }
 

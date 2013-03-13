@@ -37,7 +37,7 @@ private:
 	gama::vector<Point>       vertices;
 	gama::vector<Normal>      normals;
 	gama::vector<Spectrum>    colors;
-//	gama::vector<UV>          uvs;
+	gama::vector<UV>          uvs;
 //	gama::vector<Triangle>    triangles;
 //	gama::vector<PtrFreeMesh> meshDescs;
 

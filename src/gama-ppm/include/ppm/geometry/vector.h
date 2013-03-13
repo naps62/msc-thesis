@@ -27,6 +27,7 @@ struct Vector : Point {
 			float z = 0.f)
 	: Point(x, y, z) { }
 
+	// copy constructor
 	__HYBRID__ Vector(const Point& v)
 	: Point(v) { }
 
