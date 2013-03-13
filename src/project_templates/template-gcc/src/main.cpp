@@ -11,7 +11,7 @@
 #include <iostream>
 int main() {
 
-	_debug(std::cout << "debug \n");
-	_profile(std::cout << "profile\n");
+	_if_dbg(std::cout << "debug \n");
+	_if_prof(std::cout << "profile\n");
 
 }
