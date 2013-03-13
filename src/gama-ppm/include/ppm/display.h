@@ -14,6 +14,8 @@
 #include <string>
 using std::string;
 
+namespace ppm {
+
 struct Display : public beast::gl::async_window {
 
 	Display(const string name, const uint w, const uint h);
@@ -21,5 +23,7 @@ struct Display : public beast::gl::async_window {
 
 	void render();
 };
+
+}
 
 #endif // _PPM_DISPLAY_H_

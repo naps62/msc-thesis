@@ -7,6 +7,8 @@
 
 #include "ppm/ptrfreescene.h"
 
+namespace ppm {
+
 //
 // constructors
 //
@@ -58,7 +60,11 @@ void PtrFreeScene :: compile_camera() {
 }
 
 void PtrFreeScene :: compile_geometry() {
-	// TODO
+	const uint n_vertices  = data_set->GetTotalVertexCount();
+	const uint n_triangles = data_set->GetTotalTriangleCount();
+
+	// clear vectors
+
 }
 
 void PtrFreeScene :: compile_materials() {
@@ -82,5 +88,7 @@ void PtrFreeScene :: compile_sky_light() {
 }
 
 void PtrFreeScene :: compile_texture_maps() {
+
+}
 
 }

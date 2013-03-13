@@ -83,16 +83,16 @@ void DataSet::Preprocess() {
 
 	// Build the Acceleretor
 	switch (accelType) {
-		case ACCEL_BVH: {
-			const int treeType = 4; // Tree type to generate (2 = binary, 4 = quad, 8 = octree)
-			const int costSamples = 0; // Samples to get for cost minimization
-			const int isectCost = 80;
-			const int travCost = 10;
-			const float emptyBonus = 0.5f;
-
-			accel = new BVHAccel(context, treeType, costSamples, isectCost, travCost, emptyBonus);
-			break;
-		}
+//		case ACCEL_BVH: {
+//			const int treeType = 4; // Tree type to generate (2 = binary, 4 = quad, 8 = octree)
+//			const int costSamples = 0; // Samples to get for cost minimization
+//			const int isectCost = 80;
+//			const int travCost = 10;
+//			const float emptyBonus = 0.5f;
+//
+//			accel = new BVHAccel(context, treeType, costSamples, isectCost, travCost, emptyBonus);
+//			break;
+//		}
 		case ACCEL_QBVH: {
 			const int maxPrimsPerLeaf = 4;
 			const int fullSweepThreshold = 4 * maxPrimsPerLeaf;
@@ -102,13 +102,13 @@ void DataSet::Preprocess() {
 					maxPrimsPerLeaf, fullSweepThreshold, skipFactor);
 			break;
 		}
-		case ACCEL_MQBVH: {
-			const int fullSweepThreshold = 4;
-			const int skipFactor = 1;
-
-			accel = new MQBVHAccel(context, fullSweepThreshold, skipFactor);
-			break;
-		}
+//		case ACCEL_MQBVH: {
+//			const int fullSweepThreshold = 4;
+//			const int skipFactor = 1;
+//
+//			accel = new MQBVHAccel(context, fullSweepThreshold, skipFactor);
+//			break;
+//		}
 		default:
 			assert (false);
 	}
@@ -125,8 +125,8 @@ void DataSet::UpdateMeshes() {
 	assert (preprocessed);
 	assert (accelType == ACCEL_MQBVH);
 
-	MQBVHAccel *mqbvh = (MQBVHAccel *)accel;
-	mqbvh->Update();
+//	MQBVHAccel *mqbvh = (MQBVHAccel *)accel;
+//	mqbvh->Update();
 }
 
 bool DataSet::Intersect(const Ray *ray, RayHit *hit) const {

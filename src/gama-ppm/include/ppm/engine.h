@@ -14,6 +14,8 @@
 
 #include <gama.h>
 
+namespace ppm {
+
 class Engine {
 
 public:
@@ -26,5 +28,7 @@ private:
 	PtrFreeScene* const scene;    // the input scene
 	Display* display;             // async display system
 };
+
+}
 
 #endif // _PPM_ENGINE_H_

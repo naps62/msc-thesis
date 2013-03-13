@@ -10,6 +10,8 @@
 // this should be a gama internal
 MemorySystem* LowLevelMemAllocator::_memSys = NULL;
 
+namespace ppm {
+
 //
 // constructors
 //
@@ -44,3 +46,5 @@ Engine :: ~Engine() {
 //
 // public methods
 //
+
+}
