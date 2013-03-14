@@ -21,6 +21,8 @@
 #include "ppm/geometry/bbox.h"
 #include "ppm/geometry/bsphere.h"
 #include "ppm/geometry/triangle.h"
+#include "ppm/geometry/matrix4x4.h"
+#include "ppm/geometry/mesh.h"
 
 #include "ppm/pixel/spectrum.h"
 
