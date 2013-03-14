@@ -84,20 +84,6 @@ struct Vector : Point {
 		return sqrt(length_squared());
 	}
 
-	__HYBRID__ float dot(const Vector& v) const {
-		return x * v.x + y * v.y + z * v.z;
-	}
-
-	__HYBRID__ float abs_dot(const Vector& v) const {
-		return fabsf(this->dot(v));
-	}
-
-	__HYBRID__ Vector cross(const Vector &v) const {
-		return Vector((y * v.z) - (z * v.y),
-					(z * v.x) - (x * v.z),
-					(x * v.y) - (y * v.x));
-	}
-
 	__HYBRID__ Vector normalize() const {
 		return *this / this->length();
 	}
@@ -136,7 +122,21 @@ struct Vector : Point {
 		return z * v.z > 0.f;
 	}
 
-	static __HYBRID__ void coordinate_system(const Vector& v1, Vector* v2, Vector* v3) {
+	__HYBRID__ static float dot(const Vector& v1, const Vector& v2) {
+		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+	}
+
+	__HYBRID__ static float abs_dot(const Vector& v1, const Vector& v2) {
+		return fabsf(dot(v1, v2));
+	}
+
+	__HYBRID__ static Vector cross(const Vector& v1, const Vector &v2) {
+		return Vector((v1.y * v2.z) - (v1.z * v2.y),
+					(v1.z * v2.x) - (v1.x * v2.z),
+					(v1.x * v2.y) - (v1.y * v2.x));
+	}
+
+	__HYBRID__ static void coordinate_system(const Vector& v1, Vector* v2, Vector* v3) {
 		if (fabsf(v1.x) > fabsf(v1.y)) {
 			float inv_len = 1.f / sqrtf(v1.x * v1.x + v1.z * v1.z);
 			*v2 = Vector(-v1.z * inv_len, 0.f, v1.x * inv_len);
@@ -144,14 +144,14 @@ struct Vector : Point {
 			float inv_len = 1.f / sqrtf(v1.y * v1.y + v1.z * v1.z);
 			*v2 = Vector(0.f, v1.z * inv_len, -v1.y * inv_len);
 		}
-		*v3 = v1.cross(*v2);
+		*v3 = cross(v1, *v2);
 	}
 
-	static __HYBRID__ Vector spherical_direction(float sintheta, float costheta, float phi) {
+	__HYBRID__ static Vector spherical_direction(float sintheta, float costheta, float phi) {
 		return Vector(sintheta * cosf(phi), sintheta * sinf(phi), costheta);
 	}
 
-	static __HYBRID__ Vector spherical_direction(float sintheta, float costheta, float phi, const Vector& x, const Vector& y, const Vector& z) {
+	__HYBRID__ static Vector spherical_direction(float sintheta, float costheta, float phi, const Vector& x, const Vector& y, const Vector& z) {
 		return sintheta * cosf(phi) * x + sintheta * sinf(phi) * y + costheta * z;
 	}
 };

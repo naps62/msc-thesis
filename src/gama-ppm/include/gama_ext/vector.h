@@ -23,7 +23,10 @@ struct vector : public smartPtr<T> {
 	 */
 
 	// empty construtor (no allocation)
-//	__HYBRID__ __forceinline vector();
+	__HYBRID__ __forceinline vector()
+	: smartPtr<T>(size_t(0)) {
+		n = 0;
+	}
 
 	// allocs space for `size` elements of type T
 	__HYBRID__ __forceinline vector(const uint size)

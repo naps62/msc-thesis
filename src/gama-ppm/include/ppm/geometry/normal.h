@@ -25,7 +25,7 @@ struct Normal : Point {
 			float x = 0.f,
 			float y = 0.f,
 			float z = 0.f)
-	: Normal(x, y, z) { }
+	: Point(x, y, z) { }
 
 	// copy constructor
 	__HYBRID__ Normal(const Point& v)
@@ -85,7 +85,7 @@ struct Normal : Point {
 	}
 
 	__HYBRID__ Normal normalize() const {
-		return this / this->length();
+		return *this / this->length();
 	}
 
 	__HYBRID__ float dot(const Normal& n) const {
@@ -97,12 +97,12 @@ struct Normal : Point {
 	}
 };
 
-__HYBRID__ __forceinline ostream& operator<<(ostream& os, const Vector& v) {
-	return os << "Normal[" << v.x << ", " << v.y << ", " << v.z << "]";
+__HYBRID__ __forceinline ostream& operator<<(ostream& os, const Normal& n) {
+	return os << "Normal[" << n.x << ", " << n.y << ", " << n.z << "]";
 }
 
-__HYBRID__ __forceinline Vector operator*(const float f, const Vector &v) {
-	return v * f;
+__HYBRID__ __forceinline Vector operator*(const float f, const Normal &n) {
+	return n * f;
 }
 
 

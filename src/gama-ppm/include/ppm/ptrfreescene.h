@@ -38,7 +38,7 @@ private:
 	gama::vector<Normal>      normals;
 	gama::vector<Spectrum>    colors;
 	gama::vector<UV>          uvs;
-//	gama::vector<Triangle>    triangles;
+	gama::vector<Triangle>    triangles;
 //	gama::vector<PtrFreeMesh> meshDescs;
 
 	void compile_camera();

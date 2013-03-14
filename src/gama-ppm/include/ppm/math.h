@@ -13,6 +13,8 @@
 
 namespace ppm { namespace math {
 
+#define RAY_EPSILON 1e-4f
+
 template<class T> __HYBRID__ T clamp(T val, T low, T high);
 template<class T> __HYBRID__ T max(T a, T b);
 template<class T> __HYBRID__ T min(T a, T b);
