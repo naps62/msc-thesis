@@ -122,15 +122,21 @@ struct Vector : Point {
 		return z * v.z > 0.f;
 	}
 
-	__HYBRID__ static float dot(const Vector& v1, const Vector& v2) {
+	/*
+	 * dot, abs_dot and cross receive Points as arguments instead of Vector
+	 * This allows them to be more generic, and receive Normals as well instead of Vectors
+	 * while the calculations remain the same
+	 */
+
+	__HYBRID__ static float dot(const Point& v1, const Point& v2) {
 		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 	}
 
-	__HYBRID__ static float abs_dot(const Vector& v1, const Vector& v2) {
+	__HYBRID__ static float abs_dot(const Point& v1, const Point& v2) {
 		return fabsf(dot(v1, v2));
 	}
 
-	__HYBRID__ static Vector cross(const Vector& v1, const Vector &v2) {
+	__HYBRID__ static Vector cross(const Point& v1, const Point &v2) {
 		return Vector((v1.y * v2.z) - (v1.z * v2.y),
 					(v1.z * v2.x) - (v1.x * v2.z),
 					(v1.x * v2.y) - (v1.y * v2.x));
