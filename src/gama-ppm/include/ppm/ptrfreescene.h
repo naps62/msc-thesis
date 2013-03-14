@@ -39,7 +39,10 @@ private:
 	gama::vector<Spectrum> colors;
 	gama::vector<UV>       uvs;
 	gama::vector<Triangle> triangles;
-	gama::vector<Mesh>     meshDescs;
+	gama::vector<Mesh>     mesh_descs;
+
+	const uint* mesh_ids;
+	BSphere bsphere;
 
 	void compile_camera();
 	void compile_geometry();

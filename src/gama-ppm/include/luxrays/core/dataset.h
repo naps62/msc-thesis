@@ -28,6 +28,8 @@
 #include "luxrays/core/accelerator.h"
 #include "luxrays/core/trianglemesh.h"
 
+#include "ppm/geometry/bsphere.h"
+
 namespace luxrays {
 
 class DataSet {
@@ -52,6 +54,10 @@ public:
 
 	const BBox &GetBBox() const { return bbox; }
 	const BSphere &GetBSphere() const { return bsphere; }
+	const ppm::BSphere GetPPMBSphere() const {
+		ppm::Point center(bsphere.center.x, bsphere.center.y, bsphere.center.z);
+		return ppm::BSphere(center, bsphere.rad);
+	}
 
 	unsigned int GetTotalVertexCount() const { return totalVertexCount; }
 	unsigned int GetTotalTriangleCount() const { return totalTriangleCount; }

@@ -7,6 +7,8 @@
 
 #include "ppm/ptrfreescene.h"
 
+#include "luxrays/core/accelerator.h"
+
 namespace ppm {
 
 //
@@ -64,6 +66,22 @@ void PtrFreeScene :: compile_geometry() {
 	const uint n_triangles = data_set->GetTotalTriangleCount();
 
 	// clear vectors
+	vertices.resize(0);
+	normals.resize(0);
+	colors.resize(0);
+	uvs.resize(0);
+	triangles.resize(0);
+	mesh_descs.resize(0);
+
+	mesh_ids = data_set->GetMeshIDTable();
+
+	// get scene bsphere
+	bsphere = data_set->GetPPMBSphere();
+
+	// check used accelerator type
+	if (data_set->GetAcceleratorType() == luxrays::ACCEL_QBVH) {
+
+	}
 
 }
 

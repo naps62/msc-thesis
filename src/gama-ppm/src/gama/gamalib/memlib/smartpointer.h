@@ -114,7 +114,7 @@ public:
 	}
 
 
-private:
+protected:
 
 	__DEVICE__ __forceinline
 	void alloc(size_t size) {
