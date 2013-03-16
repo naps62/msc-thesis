@@ -42,10 +42,10 @@ enum Action {
 	TEXTUREMAPS_EDIT // Use this for any TextureMaps related editing
 };
 
-class ActionList {
+class EditActionList {
 public:
 	EditActionList() { };
-	~ActionList() { };
+	~EditActionList() { };
 
 	void Reset() { actions.clear(); }
 	void AddAction(const Action a) { actions.insert(a); };
@@ -65,12 +65,12 @@ public:
 	bool Has(const Action a) const { return (actions.find(a) != actions.end()); };
 	size_t Size() const { return actions.size(); };
 
-	friend std::ostream &operator<<(std::ostream &os, const ActionList &eal);
+	friend std::ostream &operator<<(std::ostream &os, const EditActionList &eal);
 private:
 	set<Action> actions;
 };
 
-inline std::ostream &operator<<(std::ostream &os, const ActionList &eal) {
+inline std::ostream &operator<<(std::ostream &os, const EditActionList &eal) {
 	os << "EditActionList[";
 
 	bool sep = false;

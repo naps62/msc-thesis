@@ -46,7 +46,7 @@
 									<listOptionValue builtIn="false" value="GL"/>
 									<listOptionValue builtIn="false" value="glut"/>
 								</option>
-								<option id="nvcc.linker.option.paths.2002140744" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths"/>
+								<option id="nvcc.linker.option.paths.2002140744" name="Library search path (-L)" superClass="nvcc.linker.option.paths"/>
 								<inputType id="nvcc.linker.input.986443243" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -59,7 +59,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/accelerators/bvhaccel.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/renderEngine.cpp|src/accelerators/bvhaccel.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -116,7 +116,7 @@
 									<listOptionValue builtIn="false" value="GL"/>
 									<listOptionValue builtIn="false" value="glut"/>
 								</option>
-								<option id="nvcc.linker.option.paths.1139810456" name="Library search path (-L)" superClass="nvcc.linker.option.paths" valueType="libPaths"/>
+								<option id="nvcc.linker.option.paths.1139810456" name="Library search path (-L)" superClass="nvcc.linker.option.paths"/>
 								<inputType id="nvcc.linker.input.2082974224" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -129,7 +129,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/accelerators/bvhaccel.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/renderEngine.cpp|src/accelerators/bvhaccel.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

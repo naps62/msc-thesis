@@ -51,7 +51,7 @@ PointerFreeScene::PointerFreeScene(uint width, uint height, std::string sceneFil
 	//frameBuffer = NULL;
 	//alphaFrameBuffer = NULL;
 
-	ActionList editActions;
+	EditActionList editActions;
 	editActions.AddAllAction();
 	Recompile(editActions);
 	//delete scene_;
@@ -908,7 +908,7 @@ void PointerFreeScene::CompileTextureMaps() {
 
 }
 
-void PointerFreeScene::Recompile(const ActionList &editActions) {
+void PointerFreeScene::Recompile(const EditActionList &editActions) {
 	if (editActions.Has(FILM_EDIT) || editActions.Has(CAMERA_EDIT))
 		CompileCamera();
 	if (editActions.Has(GEOMETRY_EDIT))
