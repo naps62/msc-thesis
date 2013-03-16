@@ -22,7 +22,7 @@ PtrFreeScene :: PtrFreeScene(const Config& _config)
 //************************
 	// load input scene in luxrays format
 	// TODO what is this -1? Is it the accelerator structure?
-	original_scene = new slg::Scene(config.scene_file, -1);
+	original_scene = new slg::Scene(config.scene_file, config.accel_type);
 	data_set = original_scene->UpdateDataSet();
 
 	// recompile the entire scene
@@ -73,14 +73,21 @@ void PtrFreeScene :: compile_geometry() {
 	triangles.resize(0);
 	mesh_descs.resize(0);
 
+//	const luxrays::TriangleMeshID* original_mesh_ids = data_set->GetMeshIDTable();
+//	mesh_ids.resize(original_mesh_ids->size());
+
 	mesh_ids = data_set->GetMeshIDTable();
 
 	// get scene bsphere
 	bsphere = data_set->GetPPMBSphere();
 
 	// check used accelerator type
-	if (data_set->GetAcceleratorType() == luxrays::ACCEL_QBVH) {
-
+	if (config.accel_type == ppm::ACCEL_QBVH) {
+		lux_ext_mesh_list_t meshs = original_scene->meshDefs.GetAllMesh();
+		compile_mesh_first_triangle_offset(meshs);
+		translate_geometry(meshs);
+	} else {
+		throw string("Unsupported accelerator type ").append(config.accel_name);
 	}
 
 }
@@ -106,7 +113,68 @@ void PtrFreeScene :: compile_sky_light() {
 }
 
 void PtrFreeScene :: compile_texture_maps() {
+	// TODO
+}
 
+/*
+ * auxiliary compilation methods
+ */
+void PtrFreeScene :: compile_mesh_first_triangle_offset(lux_ext_mesh_list_t& meshs) {
+	mesh_first_triangle_offset.resize(meshs.size());
+	for(uint i = 0, current = 0; i < meshs.size(); ++i) {
+		luxrays::ExtMesh* mesh = meshs[i];
+		mesh_first_triangle_offset[i] = current;
+		current += mesh->GetTotalTriangleCount();
+	}
+}
+
+void PtrFreeScene :: translate_geometry(lux_ext_mesh_list_t& meshs) {
+	lux_defined_meshs_t defined_meshs(PtrFreeScene::mesh_ptr_compare);
+
+	Mesh new_mesh;
+	Mesh current_mesh;
+
+	for(lux_ext_mesh_list_t::iterator it = meshs.begin(); it != meshs.end(); ++it) {
+		luxrays::ExtMesh* mesh = *it;
+		bool is_existing_instance;
+		if (mesh->GetType() == luxrays::TYPE_EXT_TRIANGLE_INSTANCE) {
+			luxrays::ExtInstanceTriangleMesh* imesh = static_cast<luxrays::ExtInstanceTriangleMesh*>(mesh);
+
+			// check if is one of the already done meshes
+			lux_defined_meshs_t::iterator it = defined_meshs.find(imesh->GetExtTriangleMesh());
+			if (it == defined_meshs.end()) {
+				// it is a new one
+				current_mesh = new_mesh;
+
+				new_mesh.verts_offset += imesh->GetTotalVertexCount();
+				new_mesh.tris_offset  += imesh->GetTotalTriangleCount();
+				is_existing_instance = false;
+				const uint index = mesh_descs.size();
+				defined_meshs[imesh->GetExtTriangleMesh()] = index;
+			} else {
+				// it is not a new one
+				current_mesh = mesh_descs[it->second];
+				is_existing_instance = true;
+			}
+
+			luxrays::Transform trans = imesh->GetTransformation();
+			current_mesh.trans.set(trans.m);
+			current_mesh.inv_trans.set(trans.mInv);
+
+			mesh = imesh->GetExtTriangleMesh();
+		} else {
+			// not a luxrays::TYPE_EXT_TRIANGLE_INSTANCE
+			current_mesh = new_mesh;
+			new_mesh.verts_offset += mesh->GetTotalVertexCount();
+			new_mesh.tris_offset  += mesh->GetTotalTriangleCount();
+
+
+		}
+	}
+}
+
+bool PtrFreeScene :: mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1) {
+	return m0 < m1;
 }
 
 }

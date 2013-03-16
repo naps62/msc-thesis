@@ -20,6 +20,7 @@
 
 namespace ppm {
 
+
 class PtrFreeScene {
 
 public:
@@ -27,6 +28,10 @@ public:
 	~PtrFreeScene();
 
 	void recompile(const ActionList& actions);
+
+	typedef std::vector<luxrays::ExtMesh*> lux_ext_mesh_list_t;
+	typedef bool(*lux_mesh_comparator_t)(luxrays::Mesh*, luxrays::Mesh*);
+	typedef std::map<luxrays::ExtMesh*, uint, lux_mesh_comparator_t> lux_defined_meshs_t;
 
 private:
 	const Config& config;				// reference to global configs
@@ -41,7 +46,9 @@ private:
 	gama::vector<Triangle> triangles;
 	gama::vector<Mesh>     mesh_descs;
 
+	//gama::vector<uint> mesh_ids;
 	const uint* mesh_ids;
+	gama::vector<uint> mesh_first_triangle_offset;
 	BSphere bsphere;
 
 	void compile_camera();
@@ -52,6 +59,14 @@ private:
 	void compile_sun_light();
 	void compile_sky_light();
 	void compile_texture_maps();
+
+	// auxiliary compilation methods
+	void compile_mesh_first_triangle_offset(lux_ext_mesh_list_t& meshs);
+	void translate_geometry(lux_ext_mesh_list_t& meshs);
+public:
+//	static lux_mesh_comparator_t mesh_ptr_compare;
+	static bool mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1);
+
 };
 
 }

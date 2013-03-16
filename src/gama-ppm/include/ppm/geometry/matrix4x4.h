@@ -24,11 +24,17 @@ struct Matrix4x4 {
 				else        m[i][j] = 0.f;
 	}
 
+	// constructor from copy
+	__HYBRID__ Matrix4x4(const Matrix4x4 mat) {
+		set(mat);
+	}
+	__HYBRID__ Matrix4x4(const luxrays::Matrix4x4 mat) {
+		set(mat);
+	}
+
 	// constructor from array
 	__HYBRID__ Matrix4x4(const float mat[4][4]) {
-		for (int i = 0; i < 4; ++i)
-			for (int j = 0; j < 4; ++j)
-				m[i][j] = mat[i][j];
+		set(mat);
 	}
 
 	// constructor from values
@@ -40,6 +46,20 @@ struct Matrix4x4 {
 		m[1][0] = t10; m[1][1] = t11; m[1][2] = t12; m[1][3] = t13;
 		m[2][0] = t20; m[2][1] = t21; m[2][2] = t22; m[2][3] = t23;
 		m[3][0] = t30; m[3][1] = t31; m[3][2] = t32; m[3][3] = t33;
+	}
+
+	__HYBRID__ void set(const Matrix4x4 mat) {
+		set(mat.m);
+	}
+
+	__HYBRID__ void set(const luxrays::Matrix4x4 mat) {
+		set(mat.m);
+	}
+
+	__HYBRID__ void set(const float mat[4][4]) {
+		for (int i = 0; i < 4; ++i)
+			for (int j = 0; j < 4; ++j)
+				m[i][j] = mat[i][j];
 	}
 
 

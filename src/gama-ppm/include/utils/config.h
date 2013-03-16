@@ -12,6 +12,8 @@
 #include <string>
 using std::string;
 
+#include "ppm/types.h"
+
 struct Config : public beast::program_options::options {
 	const int argc;
 	const char** argv;
@@ -29,6 +31,8 @@ struct Config : public beast::program_options::options {
 	string title;
 
 	// render
+	string accel_name;
+	ppm::AcceleratorType accel_type;
 	float alpha;
 	uint spp;
 

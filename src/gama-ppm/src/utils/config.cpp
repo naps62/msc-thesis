@@ -29,12 +29,20 @@ Config :: Config(
 	value("title,t",   title,  string("gama-ppm"), "window title");
 
 	// render
-	value("alpha,a", alpha, float(0.7), "??? still don't know what this is for");
-	value("spp",     spp,   uint(4),    "samples per pixel (supersampling)");
+	value("alpha,a", alpha,      float(0.7), "??? still don't know what this is for");
+	value("spp",     spp,        uint(4),    "samples per pixel (supersampling)");
+	value("accel",   accel_name, string("QBVH"), "accelerator type [QBVH (default) | BVH | MQBVH)");
 
 	// now parse the arguments
 	parse(_argc, _argv);
 
 	// derived values
 	use_display = ! no_display;
+
+	if (accel_name == string("BVH"))
+		accel_type = ppm::ACCEL_BVH;
+	else if (accel_name == string("MQBVH"))
+		accel_type = ppm::ACCEL_MQBVH;
+	else
+		accel_type = ppm::ACCEL_QBVH;
 }
