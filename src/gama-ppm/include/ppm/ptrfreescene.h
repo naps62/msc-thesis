@@ -10,7 +10,6 @@
 
 #include "utils/config.h"
 #include "ppm/types.h"
-//#include "slg/sdl/scene.h"
 #include "luxrays/utils/sdl/scene.h"
 #include "luxrays/core/dataset.h"
 #include "utils/action_list.h"
@@ -35,10 +34,9 @@ public:
 	typedef std::map<luxrays::ExtMesh*, uint, lux_mesh_comparator_t> lux_defined_meshs_t;
 
 private:
-	const Config& config;				// reference to global configs
-	luxrays::Scene* original_scene;	// original scene structure
-	luxrays::DataSet* data_set;   // original data_set structure
-	Camera camera;                      // compiled camera
+	const Config& config;           // reference to global configs
+	luxrays::Scene* original_scene; // original scene structure
+	luxrays::DataSet* data_set;     // original data_set structure
 
 	gama::vector<Point>    vertices;
 	gama::vector<Normal>   normals;
@@ -47,10 +45,12 @@ private:
 	gama::vector<Triangle> triangles;
 	gama::vector<Mesh>     mesh_descs;
 
-	//gama::vector<uint> mesh_ids;
-	const uint* mesh_ids;
+	gama::vector<uint> mesh_ids;
+	//const uint* mesh_ids;
+
 	gama::vector<uint> mesh_first_triangle_offset;
-	BSphere bsphere;
+	smartPtr<BSphere> bsphere_sp; // bounding sphere of the scene
+	smartPtr<Camera> camera_sp;   // compiled camera
 
 	void compile_camera();
 	void compile_geometry();
@@ -63,7 +63,8 @@ private:
 
 	// auxiliary compilation methods
 	void compile_mesh_first_triangle_offset(lux_ext_mesh_list_t& meshs);
-	void translate_geometry(lux_ext_mesh_list_t& meshs);
+	void translate_geometry();
+	void translate_geometry_qbvh(lux_ext_mesh_list_t& meshs);
 public:
 //	static lux_mesh_comparator_t mesh_ptr_compare;
 	static bool mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1);

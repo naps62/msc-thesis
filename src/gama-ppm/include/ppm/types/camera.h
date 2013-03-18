@@ -11,6 +11,8 @@
 #include <cstring>
 #include "luxrays/utils/sdl/camera.h"
 
+namespace ppm {
+
 struct Camera {
 	float lens_radius;
 	float focal_distance;
@@ -31,5 +33,7 @@ struct Camera {
 
 	}
 };
+
+}
 
 #endif // _PPM_TYPES_CAMERA_H_

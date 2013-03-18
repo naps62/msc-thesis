@@ -25,19 +25,22 @@ struct vector : public smartPtr<T> {
 	// empty construtor (no allocation)
 	__HYBRID__ __forceinline vector()
 	: smartPtr<T>(size_t(0)) {
-		n = 0;
+		n(sizeof(uint));
+		n.set(0, 0);
 	}
 
 	// allocs space for `size` elements of type T
 	__HYBRID__ __forceinline vector(const uint size)
 	: smartPtr<T>(size * sizeof(T)) {
-		n = size;
+		n(sizeof(uint));
+		n[0] = size;
 	}
 
 	// copy constructor
-	__HYBRID__ __forceinline vector(const vector<T>& copy)
+	__HYBRID__ __forceinline vector(vector<T>& copy)
 	: smartPtr<T>(copy) {
-		n = copy.size();
+		n(sizeof(uint));
+		n[0] = copy.size();
 	}
 
 	/*
@@ -45,8 +48,8 @@ struct vector : public smartPtr<T> {
 	 */
 
 	// gets the current size of the array, in units of sizeof(T)
-	__HYBRID__ __forceinline uint size() const {
-		return n;
+	__HYBRID__ __forceinline uint size() {
+		return n[0];
 	}
 
 	// override operator() to support implicit sizeof(T) in space allocation
@@ -60,7 +63,7 @@ struct vector : public smartPtr<T> {
 	// TODO this is not HYBRID. Test this
 	void resize(const uint size) {
 		// backup old data
-		const uint old_n   = this->n;
+		const uint old_n   = this->n[0];
 		const T*   old_ptr = this->ptr;
 
 		// realloc
@@ -73,18 +76,18 @@ struct vector : public smartPtr<T> {
 
 	// increments size of the array, and places new elem at the end
 	void push_back(const T& t) {
-		const uint new_n = n + 1;
+		const uint new_n = n[0] + 1;
 		resize(new_n);
-		this->set(n, t);
-		n = new_n;
+		this->set(n[0], t);
+		n[0] = new_n;
 	}
 
 private:
-	uint n; // number of T elements currently allocated
+	smartPtr<uint> n; // number of T elements currently allocated
 
 	__HYBRID__ __forceinline void alloc(const uint size) {
-		smartPtr::alloc(size * sizeof(T));
-		n = size;
+		smartPtr<T>::alloc(size * sizeof(T));
+		n[0] = size;
 	}
 };
 

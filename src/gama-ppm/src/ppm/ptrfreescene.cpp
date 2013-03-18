@@ -57,36 +57,43 @@ void PtrFreeScene :: recompile(const ActionList& actions) {
  */
 
 void PtrFreeScene :: compile_camera() {
+	camera_sp(sizeof(ppm::Camera));
 	luxrays::PerspectiveCamera original = *(original_scene->camera);
-	camera.compile(original);
+	camera_sp->compile(original);
 }
 
 void PtrFreeScene :: compile_geometry() {
-	const uint n_vertices  = data_set->GetTotalVertexCount();
-	const uint n_triangles = data_set->GetTotalTriangleCount();
+//	const uint n_vertices  = data_set->GetTotalVertexCount();
+//	const uint n_triangles = data_set->GetTotalTriangleCount();
 
 	// clear vectors
+	mesh_ids.resize(0);
 	vertices.resize(0);
 	normals.resize(0);
 	colors.resize(0);
 	uvs.resize(0);
 	triangles.resize(0);
 	mesh_descs.resize(0);
+	mesh_first_triangle_offset.resize(0);
+	bsphere_sp(sizeof(ppm::BSphere));
 
-//	const luxrays::TriangleMeshID* original_mesh_ids = data_set->GetMeshIDTable();
-//	mesh_ids.resize(original_mesh_ids->size());
-
-	mesh_ids = data_set->GetMeshIDTable();
+	// copy mesh_id_table
+	// TODO check if this is valid
+	uint* original_mesh_ids = data_set->GetMeshIDTable();
+	mesh_ids.resize(data_set->GetTotalTriangleCount());
+	for(uint i = 0; i < data_set->GetTotalTriangleCount(); ++i)
+		mesh_ids[i] = original_mesh_ids[i]; // TODO probably change this to a memcpy
 
 	// get scene bsphere
-	bsphere = data_set->GetPPMBSphere();
+	bsphere_sp[0] = data_set->GetPPMBSphere();
 
 	// check used accelerator type
 	if (config.accel_type == ppm::ACCEL_QBVH) {
 		lux_ext_mesh_list_t meshs = original_scene->objects;
 		compile_mesh_first_triangle_offset(meshs);
-		translate_geometry(meshs);
+		translate_geometry_qbvh(meshs);
 	} else {
+		translate_geometry();
 		throw string("Unsupported accelerator type ").append(config.accel_name);
 	}
 
@@ -128,7 +135,7 @@ void PtrFreeScene :: compile_mesh_first_triangle_offset(lux_ext_mesh_list_t& mes
 	}
 }
 
-void PtrFreeScene :: translate_geometry(lux_ext_mesh_list_t& meshs) {
+void PtrFreeScene :: translate_geometry_qbvh(lux_ext_mesh_list_t& meshs) {
 	lux_defined_meshs_t defined_meshs(PtrFreeScene::mesh_ptr_compare);
 
 	Mesh new_mesh;
@@ -220,6 +227,53 @@ void PtrFreeScene :: translate_geometry(lux_ext_mesh_list_t& meshs) {
 				triangles[j] = ppm::Triangle(mtris[j]);
 		}
 	}
+}
+
+void PtrFreeScene :: translate_geometry() {
+	mesh_first_triangle_offset.resize(0);
+	const uint n_vertices  = data_set->GetTotalVertexCount();
+	const uint n_triangles = data_set->GetTotalTriangleCount();
+
+	// translate mesh normals, colors and uvs
+	normals.resize(n_vertices);
+	colors.resize(n_vertices);
+	uvs.resize(n_vertices);
+	uint index = 0;
+
+	// aux data to later translate triangles
+	uint *mesh_offsets = new uint[original_scene->objects.size()];
+	uint v_index = 0;
+
+	for (uint i = 0; i < original_scene->objects.size(); ++i) {
+		luxrays::ExtMesh* mesh = original_scene->objects[i];
+
+		mesh_offsets[i] = v_index;
+		for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j) {
+			normals[index]  = ppm::Normal(mesh->GetNormal(j));
+			colors[index]   = ppm::Spectrum(mesh->GetColor(j));
+			uvs[index]      = (mesh->HasUVs()) ? ppm::UV(mesh->GetUV(j)) : ppm::UV((0.f, 0.f));
+			vertices[index] = ppm::Point(mesh->GetVertex(j));
+			index++;
+		}
+		v_index += mesh->GetTotalVertexCount();
+	}
+
+	// translate mesh triangles
+	triangles.resize(n_triangles);
+	index = 0;
+	for(uint i = 0; i < original_scene->objects.size(); ++i) {
+		luxrays::ExtMesh* mesh   = original_scene->objects[i];
+		luxrays::Triangle *mtris = mesh->GetTriangles();
+		const uint moffset = mesh_offsets[i];
+		for (uint j = 0; j < mesh->GetTotalTriangleCount(); ++j) {
+			triangles[index++] = ppm::Triangle(
+					mtris[j].v[0] + moffset,
+					mtris[j].v[1] + moffset,
+					mtris[j].v[2] + moffset);
+		}
+	}
+
+	delete[] mesh_offsets;
 }
 
 bool PtrFreeScene :: mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1) {
