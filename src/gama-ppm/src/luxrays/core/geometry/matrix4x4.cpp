@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2010 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRays.                                         *
  *                                                                         *
@@ -24,10 +24,13 @@
 #include <cmath>
 #include <stdexcept>
 
+#include "luxrays/core.h"
+
 #include "luxrays/core/geometry/matrix4x4.h"
 #include "luxrays/core/utils.h"
 
 namespace luxrays {
+
 
 Matrix4x4::Matrix4x4(float mat[4][4]) {
 	memcpy(m, mat, 16 * sizeof (float));

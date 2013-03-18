@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2010 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRays.                                         *
  *                                                                         *
@@ -26,60 +26,51 @@
 #include <xmmintrin.h>
 #include <boost/cstdint.hpp>
 
-#include "luxrays/luxrays.h"
-#include "luxrays/core/accelerator.h"
+#include "core.h"
+#include "luxrays/core/acceleretor.h"
 #include "luxrays/accelerators/qbvhaccel.h"
 
 using boost::int32_t;
 
 namespace luxrays {
 
-class MQBVHAccel : public Accelerator {
+
+class MQBVHAccel  : public Accelerator {
 public:
 	MQBVHAccel(const Context *context, u_int fst, u_int sf);
-	virtual ~MQBVHAccel();
+	~MQBVHAccel();
 
-	virtual AcceleratorType GetType() const { return ACCEL_QBVH; }
-	virtual OpenCLKernel *NewOpenCLKernel(OpenCLIntersectionDevice *dev,
-		unsigned int stackSize, bool disableImageStorage) const;
-	virtual void Init(const std::deque<const Mesh *> &meshes,
-		const unsigned int totalVertexCount,
+	BBox WorldBound() const;
+
+	AcceleratorType GetType() const { return ACCEL_QBVH; }
+	void Init(const std::deque<Mesh *> &meshes, const unsigned int totalVertexCount,
 		const unsigned int totalTriangleCount);
 
-	virtual const TriangleMeshID GetMeshID(const unsigned int index) const {
-		return meshIDs[index];
-	}
-	virtual const TriangleMeshID *GetMeshIDTable() const { return meshIDs; }
-	virtual const TriangleID GetMeshTriangleID(const unsigned int index) const {
-		return meshTriangleIDs[index];
-	}
-	virtual const TriangleID *GetMeshTriangleIDTable() const {
-		return meshTriangleIDs;
-	}
-	unsigned int GetNNodes() const { return nNodes; }
-	QBVHNode *GetTree() const { return nodes; }
-	unsigned int GetNLeafs() const { return nLeafs; }
-	const Transform **GetTransforms() const { return leafsTransform; }
+	const TriangleMeshID GetMeshID(const unsigned int index) const { return meshIDs[index]; }
+	const TriangleMeshID *GetMeshIDTable() const { return meshIDs; }
+	const TriangleID GetMeshTriangleID(const unsigned int index) const { return meshTriangleIDs[index]; }
+	const TriangleID *GetMeshTriangleIDTable() const { return meshTriangleIDs; }
 
-	virtual bool Intersect(const Ray *ray, RayHit *hit) const;
+	bool Intersect(const Ray *ray, RayHit *hit) const;
 
 	void Update();
 
+	friend class OpenCLIntersectionDevice;
+
 private:
-	static bool MeshPtrCompare(const Mesh *, const Mesh *);
+	static bool MeshPtrCompare(Mesh *, Mesh *);
 
 	void BuildTree(u_int start, u_int end, u_int *primsIndexes,
 		BBox *primsBboxes, Point *primsCentroids, const BBox &nodeBbox,
-		const BBox &centroidsBbox, int32_t parentIndex,
-		int32_t childIndex, int depth);
+		const BBox &centroidsBbox, int32_t parentIndex, int32_t childIndex,
+		int depth);
 
 	void CreateLeaf(int32_t parentIndex, int32_t childIndex,
 		u_int start, const BBox &nodeBbox);
 
-	int32_t CreateNode(int32_t parentIndex, int32_t childIndex,
-		const BBox &nodeBbox);
+	int32_t CreateNode(int32_t parentIndex, int32_t childIndex, const BBox &nodeBbox);
 
-	std::deque<const Mesh *> meshList;
+	std::deque<Mesh *> meshList;
 
 	QBVHNode *nodes;
 	u_int nNodes, maxNodes;
@@ -89,9 +80,9 @@ private:
 	u_int skipFactor;
 
 	u_int nLeafs;
-	std::map<const Mesh *, QBVHAccel *, bool (*)(const Mesh *, const Mesh *)> accels;
+	std::map<Mesh *, QBVHAccel *, bool (*)(Mesh *, Mesh *)> accels;
 	QBVHAccel **leafs;
-	const Transform **leafsTransform;
+	const Transform **leafsInvTransform;
 	unsigned int *leafsOffset;
 	TriangleMeshID *meshIDs;
 	TriangleID *meshTriangleIDs;
@@ -101,5 +92,6 @@ private:
 };
 
 }
+
 
 #endif	/* _LUXRAYS_MQBVHACCEL_H */

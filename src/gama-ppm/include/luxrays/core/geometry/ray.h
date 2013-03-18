@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2009 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRender.                                       *
  *                                                                         *
@@ -23,45 +23,43 @@
 #ifndef _LUXRAYS_RAY_H
 #define _LUXRAYS_RAY_H
 
-#include "luxrays/core/epsilon.h"
 #include "luxrays/core/geometry/vector.h"
 #include "luxrays/core/geometry/point.h"
 
-#include <boost/math/special_functions/sign.hpp>
-
 namespace luxrays {
+
+
+#define RAY_EPSILON 1e-4f
 
 class  Ray {
 public:
 	// Ray Public Methods
-	Ray() : maxt(std::numeric_limits<float>::infinity()), time(0.f) {
-		mint = MachineEpsilon::E(1.f);
+	__HD__
+	Ray() : maxt(INFINITY) {
+		mint = RAY_EPSILON;
 	}
-
-	Ray(const Point &origin, const Vector &direction) : o(origin),
-		d(direction), maxt(std::numeric_limits<float>::infinity()),
-		time(0.f) {
-		mint = MachineEpsilon::E(origin);
+	__HD__
+	Ray(const Point &origin, const Vector &direction)
+		: o(origin), d(direction), maxt(INFINITY) {
+		mint = RAY_EPSILON;
 	}
 
 	Ray(const Point &origin, const Vector &direction,
-		float start, float end = std::numeric_limits<float>::infinity(),
-		float t = 0.f)
-		: o(origin), d(direction), mint(start), maxt(end), time(t) { }
-
+		float start, float end = std::numeric_limits<float>::infinity())
+		: o(origin), d(direction), mint(start), maxt(end) { }
+__HD__
 	Point operator()(float t) const { return o + d * t; }
+
 	void GetDirectionSigns(int signs[3]) const {
-		signs[0] = boost::math::signbit(d.x);
-		signs[1] = boost::math::signbit(d.y);
-		signs[2] = boost::math::signbit(d.z);
+		signs[0] = d.x < 0.f;
+		signs[1] = d.y < 0.f;
+		signs[2] = d.z < 0.f;
 	}
 
 	// Ray Public Data
 	Point o;
 	Vector d;
 	mutable float mint, maxt;
-	float time;
-	float pad[3]; // Add padding to avoid size discrepancies with OpenCL (TODO: remove)
 };
 
 inline std::ostream &operator<<(std::ostream &os, const Ray &r) {
@@ -76,6 +74,7 @@ public:
 	unsigned int index;
 
 	void SetMiss() { index = 0xffffffffu; };
+	__HD__
 	bool Miss() const { return (index == 0xffffffffu); };
 };
 

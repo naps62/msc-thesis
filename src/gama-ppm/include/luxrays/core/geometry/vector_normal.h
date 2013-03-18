@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2010 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRays.                                         *
  *                                                                         *
@@ -27,31 +27,33 @@
 
 namespace luxrays {
 
+
 // Geometry Inline Functions
+__HD__
 inline Vector Cross(const Vector &v1, const Normal &v2) {
 	return Vector((v1.y * v2.z) - (v1.z * v2.y),
                   (v1.z * v2.x) - (v1.x * v2.z),
                   (v1.x * v2.y) - (v1.y * v2.x));
 }
-
+__HD__
 inline Vector Cross(const Normal &v1, const Vector &v2) {
 	return Vector((v1.y * v2.z) - (v1.z * v2.y),
                   (v1.z * v2.x) - (v1.x * v2.z),
                   (v1.x * v2.y) - (v1.y * v2.x));
 }
-
+__HD__
 inline float Dot(const Normal &n1, const Vector &v2) {
 	return n1.x * v2.x + n1.y * v2.y + n1.z * v2.z;
 }
-
+__HD__
 inline float Dot(const Vector &v1, const Normal &n2) {
 	return v1.x * n2.x + v1.y * n2.y + v1.z * n2.z;
 }
-
+__HD__
 inline float AbsDot(const Vector &v1, const Normal &n2) {
 	return fabsf(v1.x * n2.x + v1.y * n2.y + v1.z * n2.z);
 }
-
+__HD__
 inline float AbsDot(const Normal &n1, const Vector &v2) {
 	return fabsf(n1.x * v2.x + n1.y * v2.y + n1.z * v2.z);
 }

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2010 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRays.                                         *
  *                                                                         *
@@ -22,9 +22,12 @@
 #ifndef _LUXRAYS_BSPHERE_H
 #define _LUXRAYS_BSPHERE_H
 
+#include "luxrays/core/geometry/vector.h"
 #include "luxrays/core/geometry/point.h"
+#include "luxrays/core/geometry/ray.h"
 
 namespace luxrays {
+
 
 class BSphere {
 public:
@@ -41,7 +44,6 @@ public:
 	// BSphere Public Data
 	Point center;
 	float rad;
-#define _LUXRAYS_BSPHERE_OCLDEFINE "typedef struct { Point center; float rad; } BSphere;\n"
 };
 
 inline std::ostream &operator<<(std::ostream &os, const BSphere &s) {

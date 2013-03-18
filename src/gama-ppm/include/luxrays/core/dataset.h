@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2010 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRays.                                         *
  *                                                                         *
@@ -24,7 +24,7 @@
 
 #include <deque>
 
-#include "luxrays/luxrays.h"
+#include "luxrays/core.h"
 #include "luxrays/core/accelerator.h"
 #include "luxrays/core/trianglemesh.h"
 
@@ -32,28 +32,31 @@
 
 namespace luxrays {
 
+
 class DataSet {
 public:
-	DataSet(/*const Context *luxRaysContext*/);
+	DataSet();
 	~DataSet();
 
-	TriangleMeshID Add(const Mesh *mesh);
+	TriangleMeshID Add(Mesh *mesh);
 	void Preprocess();
 	bool IsPreprocessed() const { return preprocessed; }
 
 	bool Intersect(const Ray *ray, RayHit *hit) const;
 
-	const TriangleMeshID GetMeshID(const unsigned int index) const { return accel->GetMeshID(index); }
-	const TriangleMeshID *GetMeshIDTable() const { return accel->GetMeshIDTable(); }
-	const TriangleID GetMeshTriangleID(const unsigned int index) const { return accel->GetMeshTriangleID(index); }
-	const TriangleID *GetMeshTriangleIDTable() const { return accel->GetMeshTriangleIDTable(); }
+	 TriangleMeshID GetMeshID(const unsigned int index) const { return accel->GetMeshID(index); }
+	 TriangleMeshID *GetMeshIDTable() const { return accel->GetMeshIDTable(); }
+	 TriangleID GetMeshTriangleID(const unsigned int index) const { return accel->GetMeshTriangleID(index); }
+	 TriangleID *GetMeshTriangleIDTable() const { return accel->GetMeshTriangleIDTable(); }
 
 	void SetAcceleratorType(AcceleratorType type) { accelType = type; }
 	AcceleratorType GetAcceleratorType() const { return accelType; }
 	const Accelerator *GetAccelerator() const { return accel; }
 
+
 	const BBox &GetBBox() const { return bbox; }
 	const BSphere &GetBSphere() const { return bsphere; }
+
 	const ppm::BSphere GetPPMBSphere() const {
 		ppm::Point center(bsphere.center.x, bsphere.center.y, bsphere.center.z);
 		return ppm::BSphere(center, bsphere.rad);
@@ -74,11 +77,11 @@ protected:
 private:
 	unsigned int dataSetID;
 
-	const Context *context;
+	//const Context *context;
 
 	unsigned int totalVertexCount;
 	unsigned int totalTriangleCount;
-	std::deque<const Mesh *> meshes;
+	std::deque<Mesh *> meshes;
 
 	bool preprocessed;
 
@@ -92,3 +95,4 @@ private:
 }
 
 #endif	/* _LUXRAYS_DATASET_H */
+

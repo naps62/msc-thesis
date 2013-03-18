@@ -9,7 +9,7 @@
 #define _PPM_TYPES_CAMERA_H_
 
 #include <cstring>
-#include "slg/camera/camera.h"
+#include "luxrays/utils/sdl/camera.h"
 
 struct Camera {
 	float lens_radius;
@@ -20,7 +20,7 @@ struct Camera {
 	float camera_to_world_matrix[4][4];
 
 	// recompiles camera coords
-	void compile(slg::PerspectiveCamera& original) {
+	void compile(luxrays::PerspectiveCamera& original) {
 		yon = original.clipYon;
 		hither = original.clipHither;
 		lens_radius = original.lensRadius;

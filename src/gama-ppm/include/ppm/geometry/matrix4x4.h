@@ -25,10 +25,10 @@ struct Matrix4x4 {
 	}
 
 	// constructor from copy
-	__HYBRID__ Matrix4x4(const Matrix4x4 mat) {
+	__HYBRID__ Matrix4x4(const Matrix4x4& mat) {
 		set(mat);
 	}
-	__HYBRID__ Matrix4x4(const luxrays::Matrix4x4 mat) {
+	__HYBRID__ Matrix4x4(const luxrays::Matrix4x4& mat) {
 		set(mat);
 	}
 
@@ -48,11 +48,11 @@ struct Matrix4x4 {
 		m[3][0] = t30; m[3][1] = t31; m[3][2] = t32; m[3][3] = t33;
 	}
 
-	__HYBRID__ void set(const Matrix4x4 mat) {
+	__HYBRID__ void set(const Matrix4x4& mat) {
 		set(mat.m);
 	}
 
-	__HYBRID__ void set(const luxrays::Matrix4x4 mat) {
+	__HYBRID__ void set(const luxrays::Matrix4x4& mat) {
 		set(mat.m);
 	}
 
@@ -98,6 +98,7 @@ struct Matrix4x4 {
 				A[i][k] = m[i][k];
 			++k;
 		}
+		return result;
 	}
 
 	__HYBRID__ Matrix4x4 inverse() const {
@@ -194,7 +195,7 @@ __HYBRID__ __forceinline std::ostream & operator<<(std::ostream &os, const Matri
 		}
 		os << " ] ";
 	}
-	os << " ] ";
+	return os << " ] ";
 }
 
 }

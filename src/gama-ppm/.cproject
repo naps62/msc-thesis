@@ -79,7 +79,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/luxrays/accelerators/mqbvhaccel.cpp|src/luxrays/accelerators/bvhaccel.cpp|src/gama.2012-12-21" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/old.slg|src/old.luxrays|include/old.slg|include/old.luxrays|src/luxrays/accelerators/mqbvhaccel.cpp|src/luxrays/accelerators/bvhaccel.cpp|src/gama.2012-12-21" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -169,7 +169,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/gama.2012-12-21" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/old.slg|src/old.luxrays|include/old.slg|include/old.luxrays|src/gama.2012-12-21" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -258,7 +258,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/gama.2012-12-21" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/old.slg|src/old.luxrays|include/old.slg|include/old.luxrays|src/gama.2012-12-21" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

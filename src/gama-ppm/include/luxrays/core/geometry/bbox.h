@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2010 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRays.                                         *
  *                                                                         *
@@ -22,17 +22,15 @@
 #ifndef _LUXRAYS_BBOX_H
 #define _LUXRAYS_BBOX_H
 
-#include <vector>
-using std::vector;
+
 
 #include "luxrays/core/geometry/vector.h"
 #include "luxrays/core/geometry/point.h"
+#include "luxrays/core/geometry/ray.h"
 #include "luxrays/core/geometry/bsphere.h"
+#include "luxrays/core/utils.h"
 
 namespace luxrays {
-
-class Normal;
-class Ray;
 
 class BBox {
 public:
@@ -45,7 +43,7 @@ public:
 
 	BBox(const Point &p) : pMin(p), pMax(p) {
 	}
-
+	__HD__
 	BBox(const Point &p1, const Point &p2) {
 		pMin = Point(Min(p1.x, p2.x),
 				Min(p1.y, p2.y),
@@ -55,12 +53,10 @@ public:
 				Max(p1.z, p2.z));
 	}
 
-	friend bool Overlaps(BBox &result, const BBox &b1, const BBox &b2);
-
 	bool Overlaps(const BBox &b) const {
-		const bool x = (pMax.x >= b.pMin.x) && (pMin.x <= b.pMax.x);
-		const bool y = (pMax.y >= b.pMin.y) && (pMin.y <= b.pMax.y);
-		const bool z = (pMax.z >= b.pMin.z) && (pMin.z <= b.pMax.z);
+		bool x = (pMax.x >= b.pMin.x) && (pMin.x <= b.pMax.x);
+		bool y = (pMax.y >= b.pMin.y) && (pMin.y <= b.pMax.y);
+		bool z = (pMax.z >= b.pMin.z) && (pMin.z <= b.pMax.z);
 		return (x && y && z);
 	}
 
@@ -68,12 +64,6 @@ public:
 		return (pt.x >= pMin.x && pt.x <= pMax.x &&
 				pt.y >= pMin.y && pt.y <= pMax.y &&
 				pt.z >= pMin.z && pt.z <= pMax.z);
-	}
-
-	bool Inside(const BBox &bb) const {
-		return (bb.pMin.x >= pMin.x && bb.pMax.x <= pMax.x &&
-				bb.pMin.y >= pMin.y && bb.pMax.y <= pMax.y &&
-				bb.pMin.z >= pMin.z && bb.pMax.z <= pMax.z);
 	}
 
 	void Expand(const float delta) {
@@ -107,17 +97,6 @@ public:
 			float *hitt0 = NULL,
 			float *hitt1 = NULL) const;
 
-	// Returns the list of vertices of the clipped polygon
-	// against this bounding box
-	vector<Point> ClipPolygon(const vector<Point> &vertexList) const;
-	bool IsValid() const {
-		return (pMin.x <= pMax.x) && (pMin.y <= pMax.y) && (pMin.z <= pMax.z);
-	}
-
-	Point Center() const {
-		return (pMin + pMax) * .5f;
-	}
-
 	friend inline std::ostream &operator<<(std::ostream &os, const BBox &b);
 	friend BBox Union(const BBox &b, const Point &p);
 	friend BBox Union(const BBox &b, const BBox &b2);
@@ -133,12 +112,6 @@ inline std::ostream &operator<<(std::ostream &os, const BBox &b) {
 	os << "BBox[" << b.pMin << ", " << b.pMax << "]";
 	return os;
 }
-
-extern Point PlaneClipEdge(const Point &planeOrig, const Normal &planeNormal,
-		const Point &a, const Point &b);
-extern vector<Point> PlaneClipPolygon(const Point &clippingPlaneOrigin,
-		const Normal &clippingPlaneNormal,
-		const vector<Point> &vertexList);
 
 }
 

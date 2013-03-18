@@ -22,7 +22,7 @@ PtrFreeScene :: PtrFreeScene(const Config& _config)
 //************************
 	// load input scene in luxrays format
 	// TODO what is this -1? Is it the accelerator structure?
-	original_scene = new slg::Scene(config.scene_file, config.accel_type);
+	original_scene = new luxrays::Scene(config.scene_file, config.width, config.height, config.accel_type);
 	data_set = original_scene->UpdateDataSet();
 
 	// recompile the entire scene
@@ -57,7 +57,7 @@ void PtrFreeScene :: recompile(const ActionList& actions) {
  */
 
 void PtrFreeScene :: compile_camera() {
-	slg::PerspectiveCamera original = *(original_scene->camera);
+	luxrays::PerspectiveCamera original = *(original_scene->camera);
 	camera.compile(original);
 }
 
@@ -83,7 +83,7 @@ void PtrFreeScene :: compile_geometry() {
 
 	// check used accelerator type
 	if (config.accel_type == ppm::ACCEL_QBVH) {
-		lux_ext_mesh_list_t meshs = original_scene->meshDefs.GetAllMesh();
+		lux_ext_mesh_list_t meshs = original_scene->objects;
 		compile_mesh_first_triangle_offset(meshs);
 		translate_geometry(meshs);
 	} else {
@@ -158,8 +158,8 @@ void PtrFreeScene :: translate_geometry(lux_ext_mesh_list_t& meshs) {
 			}
 
 			luxrays::Transform trans = imesh->GetTransformation();
-			current_mesh.trans.set(trans.m);
-			current_mesh.inv_trans.set(trans.mInv);
+			current_mesh.trans.set(imesh->GetTransformation().GetMatrix().m);
+			current_mesh.inv_trans.set(imesh->GetInvTransformation().GetMatrix().m);
 
 			mesh = imesh->GetExtTriangleMesh();
 		} else {

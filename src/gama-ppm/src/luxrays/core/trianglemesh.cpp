@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2010 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRays.                                         *
  *                                                                         *
@@ -25,9 +25,9 @@
 #include <deque>
 
 #include "luxrays/core/trianglemesh.h"
-#include "luxrays/core/exttrianglemesh.h"
+#include "luxrays/utils/core/exttrianglemesh.h"
 
-using namespace luxrays;
+namespace luxrays {
 
 BBox TriangleMesh::GetBBox() const {
 	BBox bbox;
@@ -39,17 +39,17 @@ BBox TriangleMesh::GetBBox() const {
 
 void TriangleMesh::ApplyTransform(const Transform &trans) {
 	for (unsigned int i = 0; i < vertCount; ++i)
-		vertices[i] *= trans;
+		vertices[i] = trans(vertices[i]);
 }
 
 TriangleMesh *TriangleMesh::Merge(
-	const std::deque<const Mesh *> &meshes,
+	const std::deque<Mesh *> &meshes,
 	TriangleMeshID **preprocessedMeshIDs,
 	TriangleID **preprocessedMeshTriangleIDs) {
 	unsigned int totalVertexCount = 0;
 	unsigned int totalTriangleCount = 0;
 
-	for (std::deque<const Mesh *>::const_iterator m = meshes.begin(); m < meshes.end(); m++) {
+	for (std::deque<Mesh *>::const_iterator m = meshes.begin(); m < meshes.end(); m++) {
 		totalVertexCount += (*m)->GetTotalVertexCount();
 		totalTriangleCount += (*m)->GetTotalTriangleCount();
 	}
@@ -60,7 +60,7 @@ TriangleMesh *TriangleMesh::Merge(
 TriangleMesh *TriangleMesh::Merge(
 	const unsigned int totalVertexCount,
 	const unsigned int totalTriangleCount,
-	const std::deque<const Mesh *> &meshes,
+	const std::deque<Mesh *> &meshes,
 	TriangleMeshID **preprocessedMeshIDs,
 	TriangleID **preprocessedMeshTriangleIDs) {
 	assert (totalVertexCount > 0);
@@ -78,10 +78,10 @@ TriangleMesh *TriangleMesh::Merge(
 	unsigned int vIndex = 0;
 	unsigned int iIndex = 0;
 	TriangleMeshID currentID = 0;
-	for (std::deque<const Mesh *>::const_iterator m = meshes.begin(); m < meshes.end(); m++) {
+	for (std::deque<Mesh *>::const_iterator m = meshes.begin(); m < meshes.end(); m++) {
 		const Triangle *tris;
 		switch ((*m)->GetType()) {
-			case TYPE_TRIANGLE: {
+			case MESH_TYPE_TRIANGLE: {
 				const TriangleMesh *mesh = (TriangleMesh *)*m;
 				// Copy the mesh vertices
 				memcpy(&v[vIndex], mesh->GetVertices(), sizeof(Point) * mesh->GetTotalVertexCount());
@@ -147,4 +147,6 @@ TriangleMesh *TriangleMesh::Merge(
 	}
 
 	return new TriangleMesh(totalVertexCount, totalTriangleCount, v, i);
+}
+
 }

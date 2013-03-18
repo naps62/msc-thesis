@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by David Bucciarelli (davibu@interfree.it)    *
+ *   Copyright (C) 1998-2009 by David Bucciarelli (davibu@interfree.it)    *
  *                                                                         *
  *   This file is part of SmallLuxGPU.                                     *
  *                                                                         *
@@ -23,30 +23,28 @@
 #ifndef _LUXRAYS_TRIANGLE_H
 #define	_LUXRAYS_TRIANGLE_H
 
-#include "luxrays/luxrays.h"
-#include "luxrays/core/geometry/point.h"
-#include "luxrays/core/geometry/vector.h"
-#include "luxrays/core/geometry/normal.h"
-#include "luxrays/core/geometry/ray.h"
-#include "luxrays/core/geometry/bbox.h"
+#include "luxrays/core.h"
 
 namespace luxrays {
 
+__HD__
 inline void UniformSampleTriangle(const float u0, const float u1, float *u, float *v) {
-	const float su1 = sqrtf(u0);
+	float su1 = sqrtf(u0);
 	*u = 1.f - su1;
 	*v = u1 * su1;
 }
 
 class Triangle {
 public:
+	__HD__
 	Triangle() { }
+	__HD__
 	Triangle(const unsigned int v0, const unsigned int v1, const unsigned int v2) {
 		v[0] = v0;
 		v[1] = v1;
 		v[2] = v2;
 	}
-
+	__HD__
 	BBox WorldBound(const Point *verts) const {
 		const Point &p0 = verts[v[0]];
 		const Point &p1 = verts[v[1]];
@@ -54,7 +52,7 @@ public:
 
 		return Union(BBox(p0, p1), p2);
 	}
-
+	__HD__
 	bool Intersect(const Ray &ray, const Point *verts, RayHit *triangleHit) const {
 		const Point &p0 = verts[v[0]];
 		const Point &p1 = verts[v[1]];
@@ -96,23 +94,15 @@ public:
 
 		return true;
 	}
-
+	__HD__
 	float Area(const Point *verts) const {
 		const Point &p0 = verts[v[0]];
 		const Point &p1 = verts[v[1]];
 		const Point &p2 = verts[v[2]];
 
-		return Area(p0, p1, p2);
+		return 0.5f * Cross(p1 - p0, p2 - p0).Length();
 	}
-
-	Normal GetGeometryNormal(const Point *verts) const {
-		const Point &p0 = verts[v[0]];
-		const Point &p1 = verts[v[1]];
-		const Point &p2 = verts[v[2]];
-
-		return Normal(Normalize(Cross(p1 - p0, p2 - p0)));
-	}
-
+	__HD__
 	void Sample(const Point *verts, const float u0,
 		const float u1, Point *p, float *b0, float *b1, float *b2) const {
 		UniformSampleTriangle(u0, u1, b0, b1);
@@ -124,50 +114,14 @@ public:
 		*b2 = 1.f - (*b0) - (*b1);
 		*p = (*b0) * p0 + (*b1) * p1 + (*b2) * p2;
 	}
-
-	bool GetUV(const Point *verts, const Point &hitPoint, float *b1, float *b2) const {
-		const Point &p0 = verts[v[0]];
-		const Point &p1 = verts[v[1]];
-		const Point &p2 = verts[v[2]];
-
-		return GetUV(p0, p1, p2, hitPoint, b1, b2);
-	}
-
+	__HD__
 	static float Area(const Point &p0, const Point &p1, const Point &p2) {
 		return 0.5f * Cross(p1 - p0, p2 - p0).Length();
 	}
 
-	static bool GetUV(const Point &p0, const Point &p1, const Point &p2,
-			const Point &hitPoint, float *b1, float *b2) {
-		const Vector u = p1 - p0;
-		const Vector v = p2 - p0;
-		const Vector w = hitPoint - p0;
-
-		const Vector vCrossW = Cross(v, w);
-		const Vector vCrossU = Cross(v, u);
-
-		if (Dot(vCrossW, vCrossU) < 0.f)
-			return false;
-
-		const Vector uCrossW = Cross(u, w);
-		const Vector uCrossV = Cross(u, v);
-
-		if (Dot(uCrossW, uCrossV) < 0.f)
-			return false;
-
-		const float denom = uCrossV.Length();
-		const float r = vCrossW.Length() / denom;
-		const float t = uCrossW.Length() / denom;
-		
-		*b1 = r;
-		*b2 = t;
-
-		return ((r <= 1.f) && (t <= 1.f) && (r + t <= 1.f));
-	}
-
 	unsigned int v[3];
 };
-
+__HD__
 inline std::ostream & operator<<(std::ostream &os, const Triangle &tri) {
 	os << "Triangle[" << tri.v[0] << ", " << tri.v[1] << ", " << tri.v[2] << "]";
 	return os;

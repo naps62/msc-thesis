@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2010 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRays.                                         *
  *                                                                         *
@@ -25,24 +25,23 @@
 #include <sstream>
 
 #include "luxrays/core/dataset.h"
-#include "luxrays/core/context.h"
 #include "luxrays/core/trianglemesh.h"
-#include "luxrays/accelerators/bvhaccel.h"
+//#include "luxrays/accelerators/bvhaccel.h"
 #include "luxrays/accelerators/qbvhaccel.h"
-#include "luxrays/accelerators/mqbvhaccel.h"
+//#include "luxrays/accelerators/mqbvhaccel.h"
 #include "luxrays/core/geometry/bsphere.h"
 
-using namespace luxrays;
+namespace luxrays {
 
 static unsigned int DataSetID = 0;
 static boost::mutex DataSetIDMutex;
 
-DataSet::DataSet(/*const Context *luxRaysContext*/) {
+DataSet::DataSet() {
 	{
 		boost::unique_lock<boost::mutex> lock(DataSetIDMutex);
 		dataSetID = DataSetID++;
 	}
-//	context = luxRaysContext;
+	//context = luxRaysContext;
 
 	totalVertexCount = 0;
 	totalTriangleCount = 0;
@@ -56,7 +55,7 @@ DataSet::~DataSet() {
 	delete accel;
 }
 
-TriangleMeshID DataSet::Add(const Mesh *mesh) {
+TriangleMeshID DataSet::Add(Mesh *mesh) {
 	assert (!preprocessed);
 
 	const TriangleMeshID id = meshes.size();
@@ -74,16 +73,16 @@ TriangleMeshID DataSet::Add(const Mesh *mesh) {
 void DataSet::Preprocess() {
 	assert (!preprocessed);
 
-	LR_LOG(context, "Preprocessing DataSet");
-	LR_LOG(context, "Total vertex count: " << totalVertexCount);
-	LR_LOG(context, "Total triangle count: " << totalTriangleCount);
+	LR_LOG( "Preprocessing DataSet");
+	LR_LOG("Total vertex count: " << totalVertexCount);
+	LR_LOG( "Total triangle count: " << totalTriangleCount);
 
 	if (totalTriangleCount == 0)
 		throw std::runtime_error("An empty DataSet can not be preprocessed");
 
 	// Build the Acceleretor
 	switch (accelType) {
-//		case ACCEL_BVH: {
+		case ACCEL_BVH: {
 //			const int treeType = 4; // Tree type to generate (2 = binary, 4 = quad, 8 = octree)
 //			const int costSamples = 0; // Samples to get for cost minimization
 //			const int isectCost = 80;
@@ -91,26 +90,27 @@ void DataSet::Preprocess() {
 //			const float emptyBonus = 0.5f;
 //
 //			accel = new BVHAccel(context, treeType, costSamples, isectCost, travCost, emptyBonus);
-//			break;
-//		}
+			break;
+		}
 		case ACCEL_QBVH: {
 			const int maxPrimsPerLeaf = 4;
 			const int fullSweepThreshold = 4 * maxPrimsPerLeaf;
 			const int skipFactor = 1;
 
-			accel = new QBVHAccel(context,
+			accel = new QBVHAccel(
 					maxPrimsPerLeaf, fullSweepThreshold, skipFactor);
 			break;
 		}
-//		case ACCEL_MQBVH: {
+		case ACCEL_MQBVH: {
 //			const int fullSweepThreshold = 4;
 //			const int skipFactor = 1;
 //
-//			accel = new MQBVHAccel(context, fullSweepThreshold, skipFactor);
-//			break;
-//		}
+//			//accel = new MQBVHAccel(context, fullSweepThreshold, skipFactor);
+			break;
+		}
 		default:
 			assert (false);
+			break;
 	}
 
 	accel->Init(meshes, totalVertexCount, totalTriangleCount);
@@ -135,4 +135,6 @@ bool DataSet::Intersect(const Ray *ray, RayHit *hit) const {
 
 bool DataSet::IsEqual(const DataSet *dataSet) const {
 	return (dataSet != NULL) && (dataSetID == dataSet->dataSetID);
+}
+
 }

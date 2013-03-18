@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2010 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRays.                                         *
  *                                                                         *
@@ -21,6 +21,8 @@
 
 #include <ostream>
 
+#include "luxrays/core.h"
+
 #include "luxrays/core/geometry/vector_normal.h"
 #include "luxrays/core/geometry/transform.h"
 
@@ -35,7 +37,7 @@ std::ostream & operator<<(std::ostream &os, const Transform &t) {
 	return os;
 }
 
-Transform Translate(const Vector &delta) {
+Transform TTranslate(const Vector &delta) {
 	Matrix4x4 m(1, 0, 0, delta.x,
 			0, 1, 0, delta.y,
 			0, 0, 1, delta.z,
@@ -155,11 +157,30 @@ bool Transform::HasScale() const {
 		return false;*/
 }
 
+BBox Transform::operator()(const BBox &b) const {
+	const Transform &M = *this;
+	BBox ret(M(Point(b.pMin.x, b.pMin.y, b.pMin.z)));
+	ret = Union(ret, M(Point(b.pMax.x, b.pMin.y, b.pMin.z)));
+	ret = Union(ret, M(Point(b.pMin.x, b.pMax.y, b.pMin.z)));
+	ret = Union(ret, M(Point(b.pMin.x, b.pMin.y, b.pMax.z)));
+	ret = Union(ret, M(Point(b.pMin.x, b.pMax.y, b.pMax.z)));
+	ret = Union(ret, M(Point(b.pMax.x, b.pMax.y, b.pMin.z)));
+	ret = Union(ret, M(Point(b.pMax.x, b.pMin.y, b.pMax.z)));
+	ret = Union(ret, M(Point(b.pMax.x, b.pMax.y, b.pMax.z)));
+	return ret;
+}
+
+Transform Transform::operator*(const Transform &t2) const {
+	Matrix4x4 m1 = Matrix4x4::Mul(m, t2.m);
+	Matrix4x4 m2 = Matrix4x4::Mul(t2.mInv, mInv);
+	return Transform(m1, m2);
+}
+
 void TransformAccordingNormal(const Normal &nn, const Vector &woL, Vector *woW) {
 	Vector sn, tn;
 	float zz = sqrtf(1.f - nn.z * nn.z);
 	sn.z = 0.f;
-	if (fabsf(zz) < 1e-6f) {
+	if (fabs(zz) < 1e-6f) {
 		sn.x = 1.f;
 		sn.y = 0.f;
 	} else {
@@ -172,7 +193,7 @@ void TransformAccordingNormal(const Normal &nn, const Vector &woL, Vector *woW) 
 
 Transform Orthographic(float znear, float zfar) {
 	return Scale(1.f, 1.f, 1.f / (zfar - znear)) *
-			Translate(Vector(0.f, 0.f, -znear));
+			TTranslate(Vector(0.f, 0.f, -znear));
 }
 
 Transform Perspective(float fov, float n, float f) {

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2010 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRays.                                         *
  *                                                                         *
@@ -20,37 +20,40 @@
  ***************************************************************************/
 
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <stdexcept>
+#include <fstream>
 #include <vector>
-#include <algorithm>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string/trim.hpp>
+
+#include "luxrays/core.h"
 
 #include "luxrays/utils/properties.h"
 #include "luxrays/core/utils.h"
 
-using namespace luxrays;
+namespace luxrays {
 
 Properties::Properties(const std::string &fileName) {
-	LoadFromFile(fileName);
+	LoadFile(fileName);
 }
 
 void Properties::Load(const Properties &p) {
-	const std::vector<std::string> &keys = p.GetAllKeys();
+	std::vector<std::string> keys = p.GetAllKeys();
 	for (std::vector<std::string>::const_iterator it = keys.begin(); it != keys.end(); ++it)
 		SetString(*it, p.GetString(*it, ""));
 }
 
-void Properties::Load(std::istream &stream) {
+void Properties::LoadFile(const std::string &fileName) {
+	std::ifstream file(fileName.c_str(), std::ios::in);
 	char buf[512];
-
+	if (file.fail()) {
+		sprintf(buf, "Unable to open file %s", fileName.c_str());
+		throw std::runtime_error(buf);
+	}
+	
 	for (int lineNumber = 1;; ++lineNumber) {
-		stream.getline(buf, 512);
-		if (stream.eof())
+		file.getline(buf, 512);
+		if (file.eof())
 			break;
 		// Ignore comments
 		if (buf[0] == '#')
@@ -65,48 +68,34 @@ void Properties::Load(std::istream &stream) {
 
 		// Check if it is a valid key
 		std::string key(line.substr(0, idx));
-		boost::trim(key);
+		StringTrim(key);
 		std::string value(line.substr(idx + 1));
 		// Check if the last char is a LF or a CR and remove that (in case of
 		// a DOS file red under Linux/MacOS)
 		if ((value.size() > 0) && ((value[value.size() - 1] == '\n') || (value[value.size() - 1] == '\r')))
 			value.resize(value.size() - 1);
-		boost::trim(value);
+		StringTrim(value);
 
 		props[key] = value;
-		keys.push_back(key);
 	}
 }
 
-void Properties::LoadFromFile(const std::string &fileName) {
-	std::ifstream file(fileName.c_str(), std::ios::in);
-	char buf[512];
-	if (file.fail()) {
-		sprintf(buf, "Unable to open file %s", fileName.c_str());
-		throw std::runtime_error(buf);
-	}
+std::vector<std::string> Properties::GetAllKeys() const {
+	std::vector<std::string> keys;
+	for (std::map<std::string, std::string>::const_iterator it = props.begin(); it != props.end(); ++it)
+		keys.push_back(it->first);
 
-	Load(file);
-}
-
-void Properties::LoadFromString(const std::string &propDefinitions) {
-	std::istringstream stream(propDefinitions);
-
-	Load(stream);
-}
-
-const std::vector<std::string> &Properties::GetAllKeys() const {
 	return keys;
 }
 
 std::vector<std::string> Properties::GetAllKeys(const std::string prefix) const {
-	std::vector<std::string> keysSubset;
-	for (std::vector<std::string>::const_iterator it = keys.begin(); it != keys.end(); ++it) {
-		if (it->find(prefix) == 0)
-			keysSubset.push_back(*it);
+	std::vector<std::string> keys;
+	for (std::map<std::string, std::string>::const_iterator it = props.begin(); it != props.end(); ++it) {
+		if (it->first.find(prefix) == 0)
+			keys.push_back(it->first);
 	}
 
-	return keysSubset;
+	return keys;
 }
 
 bool Properties::IsDefined(const std::string propName) const {
@@ -127,31 +116,13 @@ std::string Properties::GetString(const std::string propName, const std::string 
 		return it->second;
 }
 
-bool Properties::GetBoolean(const std::string propName, const bool defaultValue) const {
-	std::string s = GetString(propName, "");
-
-	if (s.compare("") == 0)
-		return defaultValue;
-	else
-		return boost::lexical_cast<bool>(s);
-}
-
 int Properties::GetInt(const std::string propName, const int defaultValue) const {
 	std::string s = GetString(propName, "");
 
 	if (s.compare("") == 0)
 		return defaultValue;
 	else
-		return boost::lexical_cast<int>(s);
-}
-
-size_t Properties::GetSize(const std::string propName, const size_t defaultValue) const {
-	std::string s = GetString(propName, "");
-
-	if (s.compare("") == 0)
-		return defaultValue;
-	else
-		return boost::lexical_cast<size_t>(s);
+		return atoi(s.c_str());
 }
 
 float Properties::GetFloat(const std::string propName, const float defaultValue) const {
@@ -160,7 +131,7 @@ float Properties::GetFloat(const std::string propName, const float defaultValue)
 	if (s.compare("") == 0)
 		return defaultValue;
 	else
-		return static_cast<float>(boost::lexical_cast<double>(s));
+		return static_cast<float>(atof(s.c_str()));
 }
 
 std::vector<std::string> Properties::GetStringVector(const std::string propName, const std::string &defaultValue) const {
@@ -192,12 +163,6 @@ std::vector<float> Properties::GetFloatVector(const std::string propName, const 
 
 void Properties::SetString(const std::string &propName, const std::string &value) {
 	props[propName] = value;
-
-	std::vector<std::string>::iterator it = std::find(keys.begin(), keys.end(), propName);
-	if (it == keys.end())
-		keys.push_back(propName);
-	else
-		*it = propName;
 }
 
 std::string Properties::SetString(const std::string &property) {
@@ -207,32 +172,11 @@ std::string Properties::SetString(const std::string &property) {
 	if (strs.size() != 2)
 		throw std::runtime_error("Syntax error in property definition");
 
-	boost::trim(strs[0]);
-	boost::trim(strs[1]);
+	StringTrim(strs[0]);
+	StringTrim(strs[1]);
 	SetString(strs[0], strs[1]);
 
 	return strs[0];
-}
-
-void Properties::Delete(const std::string &propName) {
-	std::vector<std::string>::iterator it = keys.begin();
-	while (it != keys.end()) {
-		if (*it == propName)
-			it = keys.erase(it);
-		else
-			++it;
-	}
-
-	props.erase(propName);
-}
-
-std::string Properties::ToString() const {
-	std::stringstream ss;
-
-	for (std::vector<std::string>::const_iterator i = keys.begin(); i != keys.end(); ++i)
-		ss << *i << " = " << GetString(*i, "") << "\n";
-
-	return ss.str();
 }
 
 std::string Properties::ExtractField(const std::string &value, const size_t index) {
@@ -271,10 +215,8 @@ std::vector<int> Properties::ConvertToIntVector(const std::string &values) {
 
 	std::vector<int> ints;
 	for (std::vector<std::string>::iterator it = strs.begin(); it != strs.end(); ++it) {
-		if (it->length() != 0) {
-			const int i = boost::lexical_cast<int>(*it);
-			ints.push_back(i);
-		}
+		if (it->length() != 0)
+			ints.push_back(atoi(it->c_str()));
 	}
 
 	return ints;
@@ -286,11 +228,11 @@ std::vector<float> Properties::ConvertToFloatVector(const std::string &values) {
 
 	std::vector<float> floats;
 	for (std::vector<std::string>::iterator it = strs.begin(); it != strs.end(); ++it) {
-		if (it->length() != 0) {
-			const double f = boost::lexical_cast<double>(*it);
-			floats.push_back(static_cast<float>(f));
-		}
+		if (it->length() != 0)
+			floats.push_back(static_cast<float>(atof(it->c_str())));
 	}
 
 	return floats;
+}
+
 }

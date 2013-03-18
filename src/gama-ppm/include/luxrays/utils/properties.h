@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2010 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRays.                                         *
  *                                                                         *
@@ -25,7 +25,6 @@
 #include <map>
 #include <vector>
 #include <string>
-#include <istream>
 
 namespace luxrays {
 
@@ -36,18 +35,14 @@ public:
 	~Properties() { }
 
 	void Load(const Properties &prop);
-	void Load(std::istream &stream);
-	void LoadFromFile(const std::string &fileName);
-	void LoadFromString(const std::string &propDefinitions);
+	void LoadFile(const std::string &fileName);
 
-	const std::vector<std::string> &GetAllKeys() const;
+	std::vector<std::string> GetAllKeys() const;
 	std::vector<std::string> GetAllKeys(const std::string prefix) const;
 
 	bool IsDefined(const std::string propName) const;
 	std::string GetString(const std::string propName, const std::string defaultValue) const;
-	bool GetBoolean(const std::string propName, const bool defaultValue) const;
 	int GetInt(const std::string propName, const int defaultValue) const;
-	size_t GetSize(const std::string propName, const size_t defaultValue) const;
 	float GetFloat(const std::string propName, const float defaultValue) const;
 
 	std::vector<std::string> GetStringVector(const std::string propName, const std::string &defaultValue) const;
@@ -56,9 +51,6 @@ public:
 
 	void SetString(const std::string &propName, const std::string &value);
 	std::string SetString(const std::string &property);
-	void Delete(const std::string &propName);
-
-	std::string ToString() const;
 
 	static std::string ExtractField(const std::string &value, const size_t index);
 	static std::vector<std::string> ConvertToStringVector(const std::string &values);
@@ -66,7 +58,6 @@ public:
 	static std::vector<float> ConvertToFloatVector(const std::string &values);
 
 private:
-	std::vector<std::string> keys;
 	std::map<std::string, std::string> props;
 };
 

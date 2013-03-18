@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2010 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRays.                                         *
  *                                                                         *
@@ -22,9 +22,8 @@
 #ifndef _LUXRAYS_UV_H
 #define _LUXRAYS_UV_H
 
-#include <ostream>
-
 namespace luxrays {
+
 
 class UV {
 public:
@@ -52,10 +51,6 @@ public:
 
 	UV operator+(const UV &p) const {
 		return UV(u + p.u, v + p.v);
-	}
-
-	UV operator-(const UV &p) const {
-		return UV(u - p.u, v - p.v);
 	}
 
 	UV operator*(float f) const {
@@ -102,5 +97,7 @@ inline UV operator*(float f, const UV &p) {
 }
 
 }
+
+
 
 #endif	/* _LUXRAYS_UV_H */

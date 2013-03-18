@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 1998-2013 by authors (see AUTHORS.txt)                  *
+ *   Copyright (C) 1998-2009 by authors (see AUTHORS.txt )                 *
  *                                                                         *
  *   This file is part of LuxRender.                                       *
  *                                                                         *
@@ -36,14 +36,17 @@
 
 namespace luxrays {
 
-
-#define RAYBUFFER_SIZE 65536
-
 class RayBuffer {
 public:
-	RayBuffer(const size_t bufferSize) : size(bufferSize), currentFreeRayIndex(0) {
+	RayBuffer(const size_t bufferSize) {
+
+		size = bufferSize;
+		currentFreeRayIndex = 0;
+
 		rays = new Ray[size];
 		rayHits = new RayHit[size];
+
+		fprintf(stderr, "Ray buffer created\n");
 	}
 
 	~RayBuffer() {
@@ -85,7 +88,11 @@ public:
 	}
 
 	size_t ReserveRay() {
-		assert (currentFreeRayIndex < size);
+		//assert (currentFreeRayIndex < size);
+
+		if (currentFreeRayIndex > size) {
+			fprintf(stderr, "%lu %lu \n", currentFreeRayIndex, size);
+		}
 		return currentFreeRayIndex++;
 	}
 
@@ -95,7 +102,7 @@ public:
 
 		return currentFreeRayIndex++;
 	}
-	
+
 	size_t AddRays(const Ray *ray, const size_t raysCount) {
 		assert ((raysCount == 0) || (currentFreeRayIndex + raysCount - 1 < size));
 
@@ -107,19 +114,15 @@ public:
 		return firstIndex;
 	}
 
-	const Ray *GetRay(const size_t index) const {
-		return &rays[index];
-	}
-
 	const RayHit *GetRayHit(const size_t index) const {
 		return &rayHits[index];
 	}
 
-	size_t GetSize() const {
+	inline size_t GetSize() const {
 		return size;
 	}
 
-	size_t GetRayCount() const {
+	inline size_t GetRayCount() const {
 		return currentFreeRayIndex;
 	}
 
@@ -140,8 +143,8 @@ public:
 	}
 
 private:
-	size_t size;
-	size_t currentFreeRayIndex;
+	volatile size_t currentFreeRayIndex;
+	volatile size_t size;
 	std::vector<size_t> userData;
 
 	Ray *rays;
@@ -151,7 +154,8 @@ private:
 // NOTE: this class must be thread safe
 class RayBufferQueue {
 public:
-	virtual ~RayBufferQueue() { }
+	virtual ~RayBufferQueue() {
+	}
 
 	virtual void Clear() = 0;
 	virtual size_t GetSizeToDo() = 0;
@@ -160,7 +164,8 @@ public:
 	virtual void PushToDo(RayBuffer *rayBuffer, const size_t index) = 0;
 	virtual RayBuffer *PopToDo() = 0;
 	// Pop up to 3 buffers out of a queue
-	virtual void Pop3xToDo(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) = 0;
+	virtual void
+			Pop3xToDo(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) = 0;
 
 	virtual void PushDone(RayBuffer *rayBuffer) = 0;
 	virtual RayBuffer *PopDone(const size_t index = 0) = 0;
@@ -219,25 +224,25 @@ public:
 		}
 
 		switch (queue.size()) {
-			default:
-			case 3:
-				*rayBuffer0 = queue[0];
-				*rayBuffer1 = queue[1];
-				*rayBuffer2 = queue[2];
-				queue.erase(queue.begin(), queue.begin() + 3);
-				break;
-			case 2:
-				*rayBuffer0 = queue[0];
-				*rayBuffer1 = queue[1];
-				*rayBuffer2 = NULL;
-				queue.erase(queue.begin(), queue.begin() + 2);
-				break;
-			case 1:
-				*rayBuffer0 = queue[0];
-				*rayBuffer1 = NULL;
-				*rayBuffer2 = NULL;
-				queue.pop_front();
-				break;
+		default:
+		case 3:
+			*rayBuffer0 = queue[0];
+			*rayBuffer1 = queue[1];
+			*rayBuffer2 = queue[2];
+			queue.erase(queue.begin(), queue.begin() + 3);
+			break;
+		case 2:
+			*rayBuffer0 = queue[0];
+			*rayBuffer1 = queue[1];
+			*rayBuffer2 = NULL;
+			queue.erase(queue.begin(), queue.begin() + 2);
+			break;
+		case 1:
+			*rayBuffer0 = queue[0];
+			*rayBuffer1 = NULL;
+			*rayBuffer2 = NULL;
+			queue.pop_front();
+			break;
 		}
 	}
 
@@ -271,6 +276,7 @@ public:
 			// Wait for a new buffer to arrive
 			condition.wait(lock);
 		}
+		return NULL;
 	}
 
 	//--------------------------------------------------------------------------
@@ -293,8 +299,8 @@ public:
 		for (;;) {
 			for (size_t i = 0; i < queue.size(); ++i) {
 				// Check if it matches the requested queueIndex and queueProgressive
-				if ((queue[i]->GetUserData(0) == queueIndex) &&
-					(queue[i]->GetUserData(1) == queueProgressive)) {
+				if ((queue[i]->GetUserData(0) == queueIndex) && (queue[i]->GetUserData(1)
+						== queueProgressive)) {
 					RayBuffer *rayBuffer = queue[i];
 					queue.erase(queue.begin() + i);
 					rayBuffer->PopUserData();
@@ -307,6 +313,7 @@ public:
 			// Wait for a new buffer to arrive
 			condition.wait(lock);
 		}
+		return NULL;
 	}
 
 private:
@@ -317,27 +324,41 @@ private:
 };
 
 // A one producer, one consumer queue
-class RayBufferQueueO2O : public RayBufferQueue {
+class RayBufferQueueO2O: public RayBufferQueue {
 public:
-	RayBufferQueueO2O() { }
-	~RayBufferQueueO2O() { }
+	RayBufferQueueO2O() {
+	}
+	~RayBufferQueueO2O() {
+	}
 
 	void Clear() {
 		todoQueue.Clear();
 		doneQueue.Clear();
 	}
 
-	size_t GetSizeToDo() { return todoQueue.GetSize(); }
-	size_t GetSizeDone() { return doneQueue.GetSize(); }
+	size_t GetSizeToDo() {
+		return todoQueue.GetSize();
+	}
+	size_t GetSizeDone() {
+		return doneQueue.GetSize();
+	}
 
-	void PushToDo(RayBuffer *rayBuffer, const size_t queueIndex) { todoQueue.Push(rayBuffer); }
-	RayBuffer *PopToDo() { return todoQueue.Pop(); }
+	void PushToDo(RayBuffer *rayBuffer, const size_t queueIndex) {
+		todoQueue.Push(rayBuffer);
+	}
+	RayBuffer *PopToDo() {
+		return todoQueue.Pop();
+	}
 	void Pop3xToDo(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) {
 		todoQueue.Pop3x(rayBuffer0, rayBuffer1, rayBuffer2);
 	}
 
-	void PushDone(RayBuffer *rayBuffer) { doneQueue.Push(rayBuffer); }
-	RayBuffer *PopDone(const size_t queueIndex) { return doneQueue.Pop(); }
+	void PushDone(RayBuffer *rayBuffer) {
+		doneQueue.Push(rayBuffer);
+	}
+	RayBuffer *PopDone(const size_t queueIndex) {
+		return doneQueue.Pop();
+	}
 
 private:
 	RayBufferSingleQueue todoQueue;
@@ -345,27 +366,41 @@ private:
 };
 
 // A many producers, one consumer queue
-class RayBufferQueueM2O : public RayBufferQueue {
+class RayBufferQueueM2O: public RayBufferQueue {
 public:
-	RayBufferQueueM2O() { }
-	~RayBufferQueueM2O() { }
+	RayBufferQueueM2O() {
+	}
+	~RayBufferQueueM2O() {
+	}
 
 	void Clear() {
 		todoQueue.Clear();
 		doneQueue.Clear();
 	}
 
-	size_t GetSizeToDo() { return todoQueue.GetSize(); }
-	size_t GetSizeDone() { return doneQueue.GetSize(); }
+	size_t GetSizeToDo() {
+		return todoQueue.GetSize();
+	}
+	size_t GetSizeDone() {
+		return doneQueue.GetSize();
+	}
 
-	void PushToDo(RayBuffer *rayBuffer, const size_t queueIndex) { todoQueue.Push(rayBuffer, queueIndex); }
-	RayBuffer *PopToDo() { return todoQueue.Pop(); }
+	void PushToDo(RayBuffer *rayBuffer, const size_t queueIndex) {
+		todoQueue.Push(rayBuffer, queueIndex);
+	}
+	RayBuffer *PopToDo() {
+		return todoQueue.Pop();
+	}
 	void Pop3xToDo(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) {
 		todoQueue.Pop3x(rayBuffer0, rayBuffer1, rayBuffer2);
 	}
 
-	void PushDone(RayBuffer *rayBuffer) { doneQueue.Push(rayBuffer); }
-	RayBuffer *PopDone(const size_t queueIndex) { return doneQueue.Pop(queueIndex); }
+	void PushDone(RayBuffer *rayBuffer) {
+		doneQueue.Push(rayBuffer);
+	}
+	RayBuffer *PopDone(const size_t queueIndex) {
+		return doneQueue.Pop(queueIndex);
+	}
 
 private:
 	RayBufferSingleQueue todoQueue;
@@ -373,7 +408,7 @@ private:
 };
 
 // A many producers, many consumers queue
-class RayBufferQueueM2M : public RayBufferQueue {
+class RayBufferQueueM2M: public RayBufferQueue {
 public:
 	RayBufferQueueM2M(const size_t consumersCount) {
 		queueToDoCounters.resize(consumersCount);
@@ -381,26 +416,35 @@ public:
 		queueDoneCounters.resize(consumersCount, 0);
 		std::fill(queueDoneCounters.begin(), queueDoneCounters.end(), 0);
 	}
-	~RayBufferQueueM2M() { }
+	~RayBufferQueueM2M() {
+	}
 
 	void Clear() {
 		todoQueue.Clear();
 		doneQueue.Clear();
 	}
 
-	size_t GetSizeToDo() { return todoQueue.GetSize(); }
-	size_t GetSizeDone() { return doneQueue.GetSize(); }
+	size_t GetSizeToDo() {
+		return todoQueue.GetSize();
+	}
+	size_t GetSizeDone() {
+		return doneQueue.GetSize();
+	}
 
 	void PushToDo(RayBuffer *rayBuffer, const size_t queueIndex) {
 		todoQueue.Push(rayBuffer, queueIndex, queueToDoCounters[queueIndex]);
 		queueToDoCounters[queueIndex]++;
 	}
-	RayBuffer *PopToDo() { return todoQueue.Pop(); }
+	RayBuffer *PopToDo() {
+		return todoQueue.Pop();
+	}
 	void Pop3xToDo(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) {
 		todoQueue.Pop3x(rayBuffer0, rayBuffer1, rayBuffer2);
 	}
 
-	void PushDone(RayBuffer *rayBuffer) { doneQueue.Push(rayBuffer); }
+	void PushDone(RayBuffer *rayBuffer) {
+		doneQueue.Push(rayBuffer);
+	}
 	RayBuffer *PopDone(const size_t queueIndex) {
 		RayBuffer *rb = doneQueue.Pop(queueIndex, queueDoneCounters[queueIndex]);
 		queueDoneCounters[queueIndex]++;
