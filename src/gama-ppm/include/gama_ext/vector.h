@@ -52,13 +52,7 @@ struct vector : public smartPtr<T> {
 	// override operator() to support implicit sizeof(T) in space allocation
 	// original operator asks only for total number of bytes
 	__HYBRID__ __forceinline void operator() (const uint size) {
-		this->realloc(size);
-	}
-
-	// reallocates entire vector, without persisting data
-	__HYBRID__ __forceinline void realloc(const uint size) {
 		this->alloc(size);
-		n = size;
 	}
 
 	// reallocates the array, but backs up all possible data
@@ -77,8 +71,21 @@ struct vector : public smartPtr<T> {
 		memcpy(this->ptr, old_ptr, copy_size * sizeof(T));
 	}
 
+	// increments size of the array, and places new elem at the end
+	void push_back(const T& t) {
+		const uint new_n = n + 1;
+		resize(new_n);
+		this->set(n, t);
+		n = new_n;
+	}
+
 private:
 	uint n; // number of T elements currently allocated
+
+	__HYBRID__ __forceinline void alloc(const uint size) {
+		smartPtr::alloc(size * sizeof(T));
+		n = size;
+	}
 };
 
 }

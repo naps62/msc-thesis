@@ -168,7 +168,56 @@ void PtrFreeScene :: translate_geometry(lux_ext_mesh_list_t& meshs) {
 			new_mesh.verts_offset += mesh->GetTotalVertexCount();
 			new_mesh.tris_offset  += mesh->GetTotalTriangleCount();
 
+			if (mesh->HasColors()) {
+				new_mesh.colors_offset += mesh->GetTotalVertexCount();
+				current_mesh.has_colors = true;
+			} else {
+				current_mesh.has_colors = false;
+			}
+			is_existing_instance = false;
+		}
 
+		mesh_descs.push_back(current_mesh);
+
+		if (!is_existing_instance) {
+
+			assert(mesh->GetType() == luxrays::TYPE_EXT_TRIANGLE);
+
+			// translate mesh normals and colors
+
+			normals.resize(mesh->GetTotalVertexCount());
+			for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
+				normals[j] = ppm::Normal(mesh->GetNormal(j));
+
+			if (mesh->HasColors()) {
+				colors.resize(mesh->GetTotalVertexCount());
+				for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
+					colors[j] = ppm::Spectrum(mesh->GetColor(j));
+			}
+
+			// translate vertex uvs
+
+			if (original_scene->texMapCache->GetSize()) {
+				// TODO: should check if the only texture map is used for infintelight
+				uvs.resize(mesh->GetTotalVertexCount());
+				if (mesh->HasUVs())
+					for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
+						uvs[j] = ppm::UV(0.f, 0.f);
+				else
+					for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
+						uvs[j] = ppm::UV(mesh->GetUV(j));
+			}
+
+			// translate mesh vertices
+			vertices.resize(mesh->GetTotalVertexCount());
+			for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
+				vertices[j] = ppm::Point(mesh->GetVertex(j));
+
+			// translate mesh indices
+			luxrays::Triangle *mtris = mesh->GetTriangles();
+			triangles.resize(mesh->GetTotalTriangleCount());
+			for(uint j = 0; j < mesh->GetTotalTriangleCount(); ++j)
+				triangles[j] = ppm::Triangle(mtris[j]);
 		}
 	}
 }

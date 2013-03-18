@@ -33,6 +33,13 @@ struct Triangle {
 		v[2] = v2;
 	}
 
+	// copy from luxrays constructor
+	Triangle(const luxrays::Triangle& tri) {
+		v[0] = tri.v[0];
+		v[1] = tri.v[1];
+		v[2] = tri.v[2];
+	}
+
 	__HYBRID__ BBox world_bound(const Point *verts) const {
 		const Point& p0 = verts[v[0]];
 		const Point& p1 = verts[v[1]];

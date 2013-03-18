@@ -31,6 +31,10 @@ struct Normal : Point {
 	__HYBRID__ Normal(const Point& v)
 	: Point(v) { }
 
+	// copy from luxrays constructor
+	Normal(const luxrays::Normal& v)
+	: Point(v.x, v.y, v.z) { }
+
 	/*
 	 * operators
 	 */

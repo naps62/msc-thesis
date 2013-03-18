@@ -140,6 +140,7 @@ public:
 	Normal GetNormal(const unsigned int vertIndex) const {
 		return normals[vertIndex];
 	}
+
 	Spectrum GetColor(const unsigned int vertIndex) const {
 		return colors[vertIndex];
 	}

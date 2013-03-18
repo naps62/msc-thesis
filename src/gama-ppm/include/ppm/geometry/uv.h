@@ -27,6 +27,10 @@ struct UV {
 	__HYBRID__ UV(const UV& uv)
 	: u(uv.u), v(uv.v) { }
 
+	// copy from luxrays constructor
+	UV(const luxrays::UV& uv)
+	: u(uv.u), v(uv.v) { }
+
 	// constructor from an array
 	__HYBRID__ UV(float uv[2])
 	: u(uv[0]), v(uv[1]) { }

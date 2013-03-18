@@ -28,6 +28,10 @@ struct Point {
 	__HYBRID__ Point(const Point& p)
 	: x(p.x), y(p.y), z(p.z) { }
 
+	// copy from luxrays constructor
+	Point(const luxrays::Point& p)
+	: x(p.x), y(p.y), z(p.z) { }
+
 	// constructor from an array
 	__HYBRID__ Point(float v[3])
 	: x(v[0]), y(v[1]), z(v[2]) { }

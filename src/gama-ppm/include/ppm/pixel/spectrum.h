@@ -25,7 +25,12 @@ struct Spectrum {
 	__HYBRID__ Spectrum(float _r = 0.f, float _g = 0.f, float _b = 0.f)
 	: r(_r), g(_g), b(_b) { }
 
+	// copy constructor
 	__HYBRID__ Spectrum(const Spectrum& s)
+	: r(s.r), g(s.g), b(s.b) { }
+
+	// copy from luxrays constructor
+	Spectrum(const luxrays::Spectrum& s)
 	: r(s.r), g(s.g), b(s.b) { }
 
 	// constructor from an array
