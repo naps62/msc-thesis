@@ -62,6 +62,7 @@ struct vector : public smartPtr<T> {
 	// if the new array size is lower than previous one, data at the end is discarded
 	// TODO this is not HYBRID. Test this
 	void resize(const uint size) {
+		if (n[0] == size) return;
 		// backup old data
 		const uint old_n   = this->n[0];
 		const T*   old_ptr = this->ptr;
@@ -86,6 +87,7 @@ private:
 	smartPtr<uint> n; // number of T elements currently allocated
 
 	__HYBRID__ __forceinline void alloc(const uint size) {
+		if (n[0] == size) return;
 		smartPtr<T>::alloc(size * sizeof(T));
 		n[0] = size;
 	}

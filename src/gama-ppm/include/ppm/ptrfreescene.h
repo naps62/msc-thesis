@@ -20,6 +20,20 @@
 
 namespace ppm {
 
+enum {
+	MAT_MATTE,
+	MAT_AREALIGHT,
+	MAT_MIRROR,
+	MAT_GLASS,
+	MAT_MATTEMIRROR,
+	MAT_METAL,
+	MAT_MATTEMETAL,
+	MAT_ALLOY,
+	MAT_ARCHGLASS,
+
+	MAT_MAX
+} CompiledMaterials_e;
+
 
 class PtrFreeScene {
 
@@ -51,6 +65,10 @@ private:
 	gama::vector<uint> mesh_first_triangle_offset;
 	smartPtr<BSphere> bsphere_sp; // bounding sphere of the scene
 	smartPtr<Camera> camera_sp;   // compiled camera
+
+	// materials
+	gama::vector<bool>     compiled_materials;
+	gama::vector<Material> materials;
 
 	void compile_camera();
 	void compile_geometry();

@@ -63,8 +63,6 @@ void PtrFreeScene :: compile_camera() {
 }
 
 void PtrFreeScene :: compile_geometry() {
-//	const uint n_vertices  = data_set->GetTotalVertexCount();
-//	const uint n_triangles = data_set->GetTotalTriangleCount();
 
 	// clear vectors
 	mesh_ids.resize(0);
@@ -94,13 +92,82 @@ void PtrFreeScene :: compile_geometry() {
 		translate_geometry_qbvh(meshs);
 	} else {
 		translate_geometry();
-		throw string("Unsupported accelerator type ").append(config.accel_name);
+//		throw string("Unsupported accelerator type ").append(config.accel_name);
 	}
 
 }
 
 void PtrFreeScene :: compile_materials() {
 	// TODO
+	// reset all materials to false
+	compiled_materials.resize(MAT_MAX);
+	for(uint i = 0; i < compiled_materials.size(); ++i)
+		compiled_materials[i] = false;
+
+	const uint materials_count = original_scene->materials.size();
+	materials.resize(materials_count);
+
+	for(uint i = 0; i < materials_count; ++i) {
+		luxrays::Material* m = original_scene->materials[i];
+		ppm::Material* ppm_m = &materials[i];
+
+		switch(m->GetType()) {
+		case luxrays::MATTE: {
+			compiled_materials[MAT_MATTE] = true;
+			luxrays::MatteMaterial* mm = static_cast<luxrays::MatteMaterial*>(m);
+
+			ppm_m->diffuse  = mm->IsDiffuse();
+			ppm_m->specular = mm->IsSpecular();
+			ppm_m->type = MAT_MATTE;
+			ppm_m->param.matte.kd = ppm::Spectrum(mm->GetKd());
+			break;
+		}
+		case luxrays::AREALIGHT: {
+			compiled_materials[MAT_AREALIGHT] = true;
+			luxrays::AreaLightMaterial* alm = static_cast<luxrays::AreaLightMaterial*>(m);
+
+			ppm_m->diffuse  = alm->IsDiffuse();
+			ppm_m->specular = alm->IsSpecular();
+			ppm_m->type = MAT_AREALIGHT;
+			ppm_m->param.area_light.gain = ppm::Spectrum(alm->GetGain());
+			break;
+		}
+		case luxrays::MIRROR: {
+			compiled_materials[MAT_MIRROR] = true;
+			luxrays::MirrorMaterial* mm = static_cast<luxrays::MirrorMaterial*>(m);
+
+			ppm_m->type = MAT_MIRROR;
+			ppm_m->param.mirror.kr = ppm::Spectrum(mm->GetKr());
+			ppm_m->param.mirror.specular_bounce = mm->HasSpecularBounceEnabled();
+			break;
+		}
+		case luxrays::GLASS: {
+			compiled_materials[MAT_GLASS] = true;
+			luxrays::GlassMaterial* gm = static_cast<luxrays::GlassMaterial*>(m);
+
+			ppm_m->diffuse  = gm->IsDiffuse();
+			ppm_m->specular = gm->IsSpecular();
+			throw string("Unsupported material type");
+		}
+		case luxrays::MATTEMIRROR: {
+			throw string("Unsupported material type");
+		}
+		case luxrays::METAL: {
+			throw string("Unsupported material type");
+		}
+		case luxrays::MATTEMETAL: {
+			throw string("Unsupported material type");
+		}
+		case luxrays::ALLOY: {
+			throw string("Unsupported material type");
+		}
+		case luxrays::ARCHGLASS: {
+			throw string("Unsupported material type");
+		}
+		default: /* MATTE */ {
+			throw string("Unsupported material type");
+		}
+	}
 }
 
 void PtrFreeScene :: compile_area_lights() {

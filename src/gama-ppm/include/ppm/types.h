@@ -21,6 +21,7 @@ typedef enum {
 }
 
 #include "ppm/types/camera.h"
+#include "ppm/types/material.h"
 
 #include "ppm/geometry/vector.h"
 #include "ppm/geometry/normal.h"
