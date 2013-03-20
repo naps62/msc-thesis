@@ -179,7 +179,7 @@ public:
 		}
 	}
 
-protected:
+//protected:
 	Vector sundir;
 	float turbidity;
 	float thetaS;
@@ -230,7 +230,7 @@ public:
 		*suncolorData = suncolor;
 	}
 
-protected:
+//protected:
 	Vector sundir;
 	Spectrum gain;
 	float turbidity;

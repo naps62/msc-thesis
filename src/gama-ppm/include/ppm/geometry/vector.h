@@ -31,6 +31,10 @@ struct Vector : Point {
 	__HYBRID__ Vector(const Point& v)
 	: Point(v) { }
 
+	// copy from luxrays constructor
+	Vector(const luxrays::Vector& v)
+	: Point(v.x, v.y, v.z) { }
+
 	// constructor from an array
 	__HYBRID__ Vector(float v[3])
 	: Point(v) { }

@@ -69,6 +69,27 @@ private:
 	// materials
 	gama::vector<bool>     compiled_materials;
 	gama::vector<Material> materials;
+	gama::vector<uint>     mesh_mats;
+
+	// lights
+	gama::vector<TriangleLight> area_lights;
+	smartPtr<InfiniteLight>     infinite_light;
+	smartPtr<SunLight>          sun_light;
+	smartPtr<SkyLight>          sky_light;
+
+	// textures
+	gama::vector<TexMap> tex_maps;
+	gama::vector<Spectrum> rgb_tex;
+	gama::vector<float> alpha_tex;
+	gama::vector<uint> mesh_texs;
+
+	// bump maps
+	gama::vector<uint> bump_map;
+	gama::vector<float> bump_map_scales;
+
+	// normal maps
+	gama::vector<uint> normal_map;
+
 
 	void compile_camera();
 	void compile_geometry();

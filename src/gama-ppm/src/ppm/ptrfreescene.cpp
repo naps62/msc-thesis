@@ -98,7 +98,6 @@ void PtrFreeScene :: compile_geometry() {
 }
 
 void PtrFreeScene :: compile_materials() {
-	// TODO
 	// reset all materials to false
 	compiled_materials.resize(MAT_MAX);
 	for(uint i = 0; i < compiled_materials.size(); ++i)
@@ -108,86 +107,424 @@ void PtrFreeScene :: compile_materials() {
 	materials.resize(materials_count);
 
 	for(uint i = 0; i < materials_count; ++i) {
-		luxrays::Material* m = original_scene->materials[i];
-		ppm::Material* ppm_m = &materials[i];
+		luxrays::Material* orig_m = original_scene->materials[i];
+		ppm::Material* m = &materials[i];
 
-		switch(m->GetType()) {
+		switch(orig_m->GetType()) {
 		case luxrays::MATTE: {
 			compiled_materials[MAT_MATTE] = true;
-			luxrays::MatteMaterial* mm = static_cast<luxrays::MatteMaterial*>(m);
+			luxrays::MatteMaterial* mm = static_cast<luxrays::MatteMaterial*>(orig_m);
 
-			ppm_m->diffuse  = mm->IsDiffuse();
-			ppm_m->specular = mm->IsSpecular();
-			ppm_m->type = MAT_MATTE;
-			ppm_m->param.matte.kd = ppm::Spectrum(mm->GetKd());
+			m->diffuse  = mm->IsDiffuse();
+			m->specular = mm->IsSpecular();
+			m->type = MAT_MATTE;
+			m->param.matte.kd = ppm::Spectrum(mm->GetKd());
 			break;
 		}
 		case luxrays::AREALIGHT: {
 			compiled_materials[MAT_AREALIGHT] = true;
-			luxrays::AreaLightMaterial* alm = static_cast<luxrays::AreaLightMaterial*>(m);
+			luxrays::AreaLightMaterial* alm = static_cast<luxrays::AreaLightMaterial*>(orig_m);
 
-			ppm_m->diffuse  = alm->IsDiffuse();
-			ppm_m->specular = alm->IsSpecular();
-			ppm_m->type = MAT_AREALIGHT;
-			ppm_m->param.area_light.gain = ppm::Spectrum(alm->GetGain());
+			m->diffuse  = alm->IsDiffuse();
+			m->specular = alm->IsSpecular();
+			m->type = MAT_AREALIGHT;
+			m->param.area_light.gain = ppm::Spectrum(alm->GetGain());
 			break;
 		}
 		case luxrays::MIRROR: {
 			compiled_materials[MAT_MIRROR] = true;
-			luxrays::MirrorMaterial* mm = static_cast<luxrays::MirrorMaterial*>(m);
+			luxrays::MirrorMaterial* mm = static_cast<luxrays::MirrorMaterial*>(orig_m);
 
-			ppm_m->type = MAT_MIRROR;
-			ppm_m->param.mirror.kr = ppm::Spectrum(mm->GetKr());
-			ppm_m->param.mirror.specular_bounce = mm->HasSpecularBounceEnabled();
+			m->type = MAT_MIRROR;
+			m->param.mirror.kr = ppm::Spectrum(mm->GetKr());
+			m->param.mirror.specular_bounce = mm->HasSpecularBounceEnabled();
 			break;
 		}
 		case luxrays::GLASS: {
 			compiled_materials[MAT_GLASS] = true;
-			luxrays::GlassMaterial* gm = static_cast<luxrays::GlassMaterial*>(m);
+			luxrays::GlassMaterial* gm = static_cast<luxrays::GlassMaterial*>(orig_m);
 
-			ppm_m->diffuse  = gm->IsDiffuse();
-			ppm_m->specular = gm->IsSpecular();
-			throw string("Unsupported material type");
+			m->diffuse  = gm->IsDiffuse();
+			m->specular = gm->IsSpecular();
+			m->type = MAT_GLASS;
+			m->param.glass.refl   = ppm::Spectrum(gm->GetKrefl());
+			m->param.glass.refrct = ppm::Spectrum(gm->GetKrefrct());
+			m->param.glass.outside_ior = gm->GetOutsideIOR();
+			m->param.glass.R0 = gm->GetIOR();
+			m->param.glass.reflection_specular_bounce   = gm->HasReflSpecularBounceEnabled();
+			m->param.glass.transmission_specular_bounce = gm->HasRefrctSpecularBounceEnabled();
+			break;
 		}
 		case luxrays::MATTEMIRROR: {
-			throw string("Unsupported material type");
+			compiled_materials[MAT_MATTEMIRROR] = true;
+			luxrays::MatteMirrorMaterial *mmm = static_cast<luxrays::MatteMirrorMaterial*>(orig_m);
+
+			m->diffuse  = mmm->IsDiffuse();
+			m->specular = mmm->IsSpecular();
+			m->type = MAT_MATTEMIRROR;
+			m->param.matte_mirror.matte.kd  = ppm::Spectrum(mmm->GetMatte().GetKd());
+			m->param.matte_mirror.mirror.kr = ppm::Spectrum(mmm->GetMirror().GetKr());
+			m->param.matte_mirror.mirror.specular_bounce = mmm->GetMirror().HasSpecularBounceEnabled();
+			m->param.matte_mirror.matte_filter = mmm->GetMatteFilter();
+			m->param.matte_mirror.tot_filter = mmm->GetTotFilter();
+			m->param.matte_mirror.matte_pdf = mmm->GetMattePdf();
+			m->param.matte_mirror.mirror_pdf = mmm->GetMirrorPdf();
+			break;
 		}
 		case luxrays::METAL: {
-			throw string("Unsupported material type");
+			compiled_materials[MAT_METAL] = true;
+			luxrays::MetalMaterial* mm = static_cast<luxrays::MetalMaterial*>(orig_m);
+
+			m->diffuse  = mm->IsDiffuse();
+			m->specular = mm->IsSpecular();
+			m->type = MAT_METAL;
+			m->param.metal.kr = Spectrum(mm->GetKr());
+			m->param.metal.exp = mm->GetExp();
+			m->param.metal.specular_bounce = mm->HasSpecularBounceEnabled();
+			break;
 		}
 		case luxrays::MATTEMETAL: {
-			throw string("Unsupported material type");
+			compiled_materials[MAT_MATTEMETAL] = true;
+			luxrays::MatteMetalMaterial* mmm = static_cast<luxrays::MatteMetalMaterial*>(orig_m);
+
+			m->diffuse  = mmm->IsDiffuse();
+			m->specular = mmm->IsSpecular();
+			m->type = MAT_METAL;
+			m->param.matte_metal.matte.kd  = ppm::Spectrum(mmm->GetMatte().GetKd());
+			m->param.matte_metal.metal.kr = ppm::Spectrum(mmm->GetMetal().GetKr());
+			m->param.matte_metal.metal.exp = mmm->GetMetal().GetExp();
+			m->param.matte_metal.metal.specular_bounce = mmm->GetMetal().HasSpecularBounceEnabled();
+			m->param.matte_metal.matte_filter = mmm->GetMatteFilter();
+			m->param.matte_metal.tot_filter = mmm->GetTotFilter();
+			m->param.matte_metal.matte_pdf = mmm->GetMattePdf();
+			m->param.matte_metal.metal_pdf = mmm->GetMetalPdf();
+			break;
 		}
 		case luxrays::ALLOY: {
-			throw string("Unsupported material type");
+			compiled_materials[MAT_ALLOY] = true;
+			luxrays::AlloyMaterial* am = static_cast<luxrays::AlloyMaterial*>(orig_m);
+
+			m->diffuse  = am->IsDiffuse();
+			m->specular = am->IsSpecular();
+			m->type = MAT_ALLOY;
+			m->param.alloy.refl  = ppm::Spectrum(am->GetKrefl());
+			m->param.alloy.refl  = ppm::Spectrum(am->GetKd());
+			m->param.alloy.exp = am->GetExp();
+			m->param.alloy.R0 = am->GetR0();
+			m->param.alloy.specular_bounce = am->HasSpecularBounceEnabled();
+			break;
 		}
 		case luxrays::ARCHGLASS: {
-			throw string("Unsupported material type");
+			compiled_materials[MAT_ARCHGLASS] = true;
+			luxrays::ArchGlassMaterial* agm = static_cast<luxrays::ArchGlassMaterial*>(orig_m);
+
+			m->diffuse  = agm->IsDiffuse();
+			m->specular = agm->IsSpecular();
+			m->type = MAT_ARCHGLASS;
+			m->param.arch_glass.refl = ppm::Spectrum(agm->GetKrefl());
+			m->param.arch_glass.refrct = ppm::Spectrum(agm->GetKrefrct());
+			m->param.arch_glass.trans_filter = agm->GetTransFilter();
+			m->param.arch_glass.tot_filter = agm->GetTotFilter();
+			m->param.arch_glass.refl_pdf = agm->GetReflPdf();
+			m->param.arch_glass.trans_pdf = agm->GetTransPdf();
+			break;
 		}
 		default: /* MATTE */ {
-			throw string("Unsupported material type");
+			compiled_materials[MAT_MATTE] = true;
+			m->type = MAT_MATTE;
+			m->param.matte = ppm::Spectrum(0.75f, 0.75f, 0.75f);
+			break;
+		}
+		}
+	}
+
+	// translate mesh material indexes
+	const uint mesh_count = original_scene->objectMaterials.size();
+	mesh_mats.resize(mesh_count);
+	for(uint i = 0; i < mesh_count; ++i) {
+		luxrays::Material* m = original_scene->objectMaterials[i];
+
+		// look for the index
+		uint index = 0;
+		for(uint j = 0; j < materials_count; ++j) {
+			if (m == original_scene->materials[j]) {
+				index = j;
+				break;
+			}
+		}
+		mesh_mats[i] = index;
+	}
+
+}
+
+void PtrFreeScene :: compile_area_lights() {
+	uint area_light_count;
+	for(uint i = 0; i < original_scene->lights.size(); ++i) {
+		if (original_scene->lights[i]->IsAreaLight())
+			++area_light_count;
+	}
+
+	area_lights.resize(area_light_count);
+	uint index = 0;
+	if (area_light_count) {
+		for(uint i = 0; i < original_scene->lights.size(); ++i) {
+			if (original_scene->lights[i]->IsAreaLight()) {
+				const luxrays::TriangleLight* tl = static_cast<luxrays::TriangleLight*>(original_scene->lights[i]);
+				const luxrays::ExtMesh* mesh = static_cast<luxrays::ExtMesh*>(original_scene->objects[tl->GetMeshIndex()]);
+				const luxrays::Triangle* tri = static_cast<luxrays::Triangle*>(mesh->GetTriangles()[tl->GetTriIndex()]);
+
+				ppm::TriangleLight* cpl = &area_lights[index];
+				cpl->v0 = ppm::Point(mesh->GetVertex(tri->v[0]));
+				cpl->v1 = ppm::Point(mesh->GetVertex(tri->v[1]));
+				cpl->v2 = ppm::Point(mesh->GetVertex(tri->v[2]));
+				cpl->mesh_index = tl->GetMeshIndex();
+				cpl->tri_index = tl->GetTriIndex();
+				cpl->normal = mesh->GetNormal(tri->v[0]);
+				cpl->area = tl->GetArea();
+
+				luxrays::AreaLightMaterial* alm = static_cast<luxrays::AreaLightMaterial*>(tl->GetMaterial());
+				cpl->gain = ppm::Spectrum(alm->GetGain());
+
+				++index;
+			}
 		}
 	}
 }
 
-void PtrFreeScene :: compile_area_lights() {
-	// TODO
-}
-
 void PtrFreeScene :: compile_infinite_light() {
-	// TODO
+	infinite_light = smartPtr(sizeof(ppm::InfiniteLight));
+
+	luxrays::InfiniteLight* il = NULL;
+	if (original_scene->infiniteLight && ((original_scene->infiniteLight->GetType() == luxrays::TYPE_IL_BF)
+			|| (original_scene->infiniteLight->GetType() == luxrays::TYPE_IL_PORTAL)
+			|| (original_scene->infiniteLight->GetType() == luxrays::TYPE_IL_IS))) {
+		il = original_scene->infiniteLight;
+	} else {
+		for(uint i = 0; i < original_scene->lights.size(); ++i) {
+			luxrays::LightSource* l = original_scene->lights[i];
+			if ((l->GetType() == luxrays::TYPE_IL_BF)
+					|| (l->GetType() == luxrays::TYPE_IL_PORTAL)
+					|| (l->GetType() == luxrays::TYPE_IL_IS)) {
+				il = static_cast<luxrays::InfiniteLight*>(l);
+				break;
+			}
+		}
+	}
+
+	if (il) {
+		infinite_light->exists = true;
+		infinite_light->gain = ppm::Spectrum(il->GetGain());
+		infinite_light->shiftU = il->GetShiftU();
+		infinite_light->shiftV = il->GetShiftV();
+
+		const luxrays::TextureMap* tex_map = il->GetTexture()->GetTexMap();
+		infinite_light->width  = tex_map->GetWidth();
+		infinite_light->height = tex_map->GetHeight();
+	} else {
+		infinite_light->exists = false;
+	}
 }
 
 void PtrFreeScene :: compile_sun_light() {
-	// TODO
+	sun_light = smartPtr(sizeof(ppm::SunLight));
+
+	luxrays::SunLight* sl = NULL;
+	for(uint i = 0; i < original_scene->lights.size(); ++i) {
+		luxrays::LightSource* l = original_scene->lights[i];
+		if (l->GetType() == luxrays::TYPE_SUN) {
+			sl = static_cast<luxrays::SunLight*>(l);
+			break;
+		}
+	}
+
+	if (sl) {
+		sun_light->exists = true;
+		sun_light->gain   = ppm::Spectrum(sl->GetGain);
+		sun_light->turbidity = sl->GetTubidity();
+		sun_light->rel_size = sl->GetRelSize();
+		float tmp;
+		sun_light->x = ppm::Vector(sl->x);
+		sun_light->y = ppm::Vector(sl->y);
+		sun_light->cos_theta_max = sl->cosThetaMax;
+		sun_light->color = ppm::Spectrum(sl->suncolor);
+	} else {
+		sun_light->exists = false;
+	}
 }
 
 void PtrFreeScene :: compile_sky_light() {
-	// TODO
+	sky_light = smartPtr(sizeof(ppm::SkyLight));
+
+	luxrays::SkyLight* sl = NULL;
+	if (original_scene->infiniteLight
+			&& (original_scene->infiniteLight->GetType() == luxrays::TYPE_IL_SKY)) {
+		sl = (SkyLight *) original_scene->infiniteLight;
+	} else {
+		for(uint i = 0; i < original_scene->lights.size(); ++i) {
+			luxrays::LightSource* l = original_scene->lights[i];
+			if (l->GetType() == luxrays::TYPE_IL_SKY) {
+				sl = static_cast<luxrays::SkyLight*>(l);
+				break;
+			}
+		}
+	}
+
+	if (sl) {
+		sky_light->exists = true;
+		sky_light->gain = ppm::Spectrum(sl->GetGain());
+		sky_light->theta_s = sl->thetaS;
+		sky_light->phi_s = sl->phiS;
+		sky_light->zenith_Y = sl->zenith_Y;
+		sky_light->zenith_x = sl->zenith_x;
+		sky_light->zenith_y = sl->zenith_y;
+		for(uint i = 0; i < 6; ++i) {
+			sky_light->perez_Y[i] = sl->perez_Y[i];
+			sky_light->perez_x[i] = sl->perez_x[i];
+			sky_light->perez_y[i] = sl->perez_y[i];
+		}
+	} else {
+		sky_light->exists = false;
+	}
 }
 
 void PtrFreeScene :: compile_texture_maps() {
-	// TODO
+	tex_maps.resize(0);
+	rgb_tex.resize(0);
+	alpha_tex.resize(0);
+	mesh_texs.resize(0);
+	bump_map.resize(0);
+	bump_map_scales.resize(0);
+	normal_maps.resize(0);
+
+	// translate mesh texture maps
+	std::vector<luxrays::TextureMap*> tms;
+	original_scene->texMapCache->GetTexMaps(tms);
+	// compute amount of RAM to allocate
+	uint rgb_tex_size = 0;
+	uint alpha_tex_size = 0;
+	for(uint i = 0; i < tms.size(); ++i) {
+		luxrays::TextureMap* tm = tms[i];
+		const uint pixel_count = tm->GetWidth() * tm->GetHeight();
+		rgb_tex_size += pixel_count;
+		if (tm->HasAlpha())
+			alpha_tex_size += pixel_count;
+	}
+
+	// allocate texture map
+	if ((rgb_tex_size > 0) || (alpha_tex_size) > 0) {
+		tex_maps.resize(tms.size());
+
+		if (rgb_tex_size > 0) {
+			uint rgb_offset = 0;
+			rgb_tex.resize(rgb_tex_size);
+			for(uint i = 0; i < tms.size(); ++i) {
+				luxrays::TextureMap* tm = tms[i];
+				const uint pixel_count = tm->GetWidth() * tm->GetHeight();
+				// TODO memcpy safe?
+				memcpy(&rgb_tex[rgb_offset], tm->GetPixels(), pixel_count * sizeof(ppm::Spectrum));
+				tex_maps[i].rgb_offset = rgb_offset;
+				rgb_offset += pixel_count;
+			}
+		}
+
+		if (alpha_tex_size > 0) {
+			uint alpha_offset = 0;
+			alpha_tex.resize(alpha_tex_size);
+			for(uint i = 0; i < tms.size(); ++i) {
+				luxrays::TextureMap* tm = tms[i];
+				const uint pixel_count = tm->GetWidth() * tm->GetHeight();
+
+				if (tm->HasAlpha()) {
+					memcpy(&alpha_tex[alpha_offset], tm->GetAlphas(), pixel_count * sizeof(float));
+					tex_maps[i].alpha_offset = alpha_offset;
+					alpha_offset += pixel_count;
+				} else {
+					tex_maps[i].alpha_offset = PPM_NONE;
+				}
+			}
+		}
+
+		// translate texture map description
+		for(uint i = 0; i < tms.size(); ++i) {
+			luxrays::TextureMap* tm = tms[i];
+			tex_maps[i].width = tm->GetWidth();
+			tex_maps[i].height = tm->GetHeight();
+		}
+
+		// translate mesh texture indexes
+		const uint mesh_count = mesh_mats.size();
+		mesh_texs.resize(mesh_count);
+		for(uint i = 0; i < mesh_count; ++i) {
+			luxrays::TexMapInstance* t = original_scene->objectTexMaps[i];
+
+			if (t) { // look for the index
+				uint index = 0;
+				for(uint j = 0; j < tms.size(); ++j) {
+					if (t->GetTexMap() == tms[j]) {
+						index = j;
+						break;
+					}
+				}
+				mesh_texs[i] = index;
+			} else {
+				mesh_texs[i] = PPM_NONE;
+			}
+		}
+
+		// translate mesh bump map indexes
+		bool has_bump_mapping = false;
+		bump_map.resize(mesh_count);
+		for(uint i = 0; i < mesh_count; +i) {
+			luxrays::BumpMapInstance* bm = original_scene->objectBumpMaps[i];
+
+			if (bm) { // look for the index
+				uint index = 0;
+				for(uint j = 0; j < tms.size(); ++j) {
+					if (bm->GetTexMap() == tms[j]) {
+						index = j;
+						break;
+					}
+				}
+				bump_map[i] = index;
+				has_bump_mapping = true;
+			} else {
+				bump_map[i] = PPM_NONE;
+			}
+		}
+
+		if (has_bump_mapping) {
+			bump_map_scales.resize(mesh_count);
+			for(uint i = 0; i < mesh_count; ++i) {
+				luxrays::BumpMapInstance* bm = original_scene->objectBumpMaps[i];
+
+				if (bm)
+					bump_map_scales[i] = bm->GetScale();
+				else
+					bump_map_scales[i] = 1.f;
+			}
+		}
+
+		// translate mesh normal map indices
+		bool has_normal_mapping = false;
+		normal_map.resize(mesh_count);
+		for(uint i = 0; i < mesh_count; ++i) {
+			luxrays::NormalMapInstance* nm = original_scene->objectNormalMaps[i];
+
+			if (nm) { // look for the index
+				uint index = 0;
+				for(uint j = 0; j < tms.size(); ++j) {
+					if (nm->GetTexMap() == tms[j]) {
+						index = j;
+						break;
+					}
+				}
+				normal_map[i] = index;
+				has_normal_mapping = true;
+			} else {
+				normal_map[i] = PPM_NONE;
+			}
+		}
+	}
 }
 
 /*

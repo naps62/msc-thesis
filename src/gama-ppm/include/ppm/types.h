@@ -18,10 +18,9 @@ typedef enum {
 	ACCEL_MQBVH = luxrays::ACCEL_MQBVH
 } AcceleratorType;
 
-}
+#define PPM_NONE 0xffffffffu
 
-#include "ppm/types/camera.h"
-#include "ppm/types/material.h"
+}
 
 #include "ppm/geometry/vector.h"
 #include "ppm/geometry/normal.h"
@@ -38,5 +37,10 @@ typedef enum {
 #include "ppm/geometry/mesh.h"
 
 #include "ppm/pixel/spectrum.h"
+
+#include "ppm/types/camera.h"
+#include "ppm/types/material.h"
+#include "ppm/types/light.h"
+#include "ppm/types/texture.h"
 
 #endif // _PPM_TYPES_H_

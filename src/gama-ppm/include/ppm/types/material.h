@@ -1,14 +1,12 @@
 /*
  * material.h
  *
- *  Created on: Mar 13, 2013
+ *  Created on: Mar 20, 2013
  *      Author: Miguel Palhas
  */
 
 #ifndef _PPM_TYPES_MATERIAL_H_
 #define _PPM_TYPES_MATERIAL_H_
-
-#include <cstring>
 
 namespace ppm {
 
@@ -16,22 +14,14 @@ struct MatteParam {
 	Spectrum kd;
 };
 
-struct AreaLightParam {
-	Spectrum gain;
-//	float gain_r, gain_g, gain_b;
-};
-
 struct MirrorParam {
 	Spectrum kr;
-//	float r, g, b;
 	int specular_bounce;
 };
 
 struct GlassParam {
 	Spectrum refl, refrct;
-//	float refl_r, refl_g, refl_b;
-//	float refrct_r, refrct_g, refrct_b;
-	float ouside_ior, ior; // TODO is this "outside_ior"?
+	float outside_ior, ior;
 	float R0;
 	int reflection_specular_bounce, transmission_specular_bounce;
 };
@@ -44,8 +34,7 @@ struct MatteMirrorParam {
 
 struct MetalParam {
 	Spectrum kr;
-//	float r, g, b;
-	float exponent;
+	float exp;
 	int specular_bounce;
 };
 
@@ -57,18 +46,14 @@ struct MatteMetalParam {
 
 struct AlloyParam {
 	Spectrum diff, refl;
-//	float diff_r, diff_g, diff_b;
-//	float refl_r, refl_g, refl_b;
-	float exponent;
+	float exp;
 	float R0;
 	int specular_bounce;
 };
 
 struct ArchGlassParam {
 	Spectrum refl, refrct;
-//	float refl_r, refl_g, refl_b;
-//	float refrct_r, refrct_g, refrct_b;
-	float trans_filter, tot_filter, refl_filter, trans_pdf;
+	float trans_filter, tot_filter, refl_pdf, trans_pdf;
 	bool reflection_specular_bounce, transmission_specular_bounce;
 };
 

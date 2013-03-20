@@ -66,7 +66,7 @@ public:
 	// Compiled AreaLights
 	vector<POINTERFREESCENE::TriangleLight> areaLights;
 
-	uint lightCount;
+	uint lightCount; // this is actually the number of area lights
 
 	// Compiled InfiniteLights
 	POINTERFREESCENE::InfiniteLight *infiniteLight;
