@@ -18,6 +18,10 @@ typedef enum {
 	ACCEL_MQBVH = luxrays::ACCEL_MQBVH
 } AcceleratorType;
 
+struct Color {
+	float r, g, b;
+};
+
 #define PPM_NONE 0xffffffffu
 
 }

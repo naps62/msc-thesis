@@ -87,7 +87,7 @@ void PtrFreeScene :: compile_geometry() {
 
 	// check used accelerator type
 	if (config.accel_type == ppm::ACCEL_QBVH) {
-		lux_ext_mesh_list_t meshs = original_scene->objects;
+		const lux_ext_mesh_list_t meshs = original_scene->objects;
 		compile_mesh_first_triangle_offset(meshs);
 		translate_geometry_qbvh(meshs);
 	} else {
@@ -99,7 +99,7 @@ void PtrFreeScene :: compile_geometry() {
 
 void PtrFreeScene :: compile_materials() {
 	// reset all materials to false
-	compiled_materials.resize(MAT_MAX);
+	compiled_materials.resize(ppm::MAT_MAX);
 	for(uint i = 0; i < compiled_materials.size(); ++i)
 		compiled_materials[i] = false;
 
@@ -107,48 +107,58 @@ void PtrFreeScene :: compile_materials() {
 	materials.resize(materials_count);
 
 	for(uint i = 0; i < materials_count; ++i) {
-		luxrays::Material* orig_m = original_scene->materials[i];
+		const luxrays::Material* orig_m = original_scene->materials[i];
 		ppm::Material* m = &materials[i];
 
 		switch(orig_m->GetType()) {
 		case luxrays::MATTE: {
-			compiled_materials[MAT_MATTE] = true;
-			luxrays::MatteMaterial* mm = static_cast<luxrays::MatteMaterial*>(orig_m);
+			compiled_materials[ppm::MAT_MATTE] = true;
+			const luxrays::MatteMaterial* mm = static_cast<const luxrays::MatteMaterial*>(orig_m);
 
 			m->diffuse  = mm->IsDiffuse();
 			m->specular = mm->IsSpecular();
-			m->type = MAT_MATTE;
-			m->param.matte.kd = ppm::Spectrum(mm->GetKd());
+			m->type = ppm::MAT_MATTE;
+			m->param.matte.kd.r = mm->GetKd().r;
+			m->param.matte.kd.g = mm->GetKd().g;
+			m->param.matte.kd.b = mm->GetKd().b;
 			break;
 		}
 		case luxrays::AREALIGHT: {
-			compiled_materials[MAT_AREALIGHT] = true;
-			luxrays::AreaLightMaterial* alm = static_cast<luxrays::AreaLightMaterial*>(orig_m);
+			compiled_materials[ppm::MAT_AREALIGHT] = true;
+			const luxrays::AreaLightMaterial* alm = static_cast<const luxrays::AreaLightMaterial*>(orig_m);
 
 			m->diffuse  = alm->IsDiffuse();
 			m->specular = alm->IsSpecular();
-			m->type = MAT_AREALIGHT;
-			m->param.area_light.gain = ppm::Spectrum(alm->GetGain());
+			m->type = ppm::MAT_AREALIGHT;
+			m->param.area_light.gain.r = alm->GetGain().r;
+			m->param.area_light.gain.g = alm->GetGain().g;
+			m->param.area_light.gain.b = alm->GetGain().b;
 			break;
 		}
 		case luxrays::MIRROR: {
-			compiled_materials[MAT_MIRROR] = true;
-			luxrays::MirrorMaterial* mm = static_cast<luxrays::MirrorMaterial*>(orig_m);
+			compiled_materials[ppm::MAT_MIRROR] = true;
+			const luxrays::MirrorMaterial* mm = static_cast<const luxrays::MirrorMaterial*>(orig_m);
 
-			m->type = MAT_MIRROR;
-			m->param.mirror.kr = ppm::Spectrum(mm->GetKr());
+			m->type = ppm::MAT_MIRROR;
+			m->param.mirror.kr.r = mm->GetKr().r;
+			m->param.mirror.kr.g = mm->GetKr().g;
+			m->param.mirror.kr.b = mm->GetKr().b;
 			m->param.mirror.specular_bounce = mm->HasSpecularBounceEnabled();
 			break;
 		}
 		case luxrays::GLASS: {
-			compiled_materials[MAT_GLASS] = true;
-			luxrays::GlassMaterial* gm = static_cast<luxrays::GlassMaterial*>(orig_m);
+			compiled_materials[ppm::MAT_GLASS] = true;
+			const luxrays::GlassMaterial* gm = static_cast<const luxrays::GlassMaterial*>(orig_m);
 
 			m->diffuse  = gm->IsDiffuse();
 			m->specular = gm->IsSpecular();
-			m->type = MAT_GLASS;
-			m->param.glass.refl   = ppm::Spectrum(gm->GetKrefl());
-			m->param.glass.refrct = ppm::Spectrum(gm->GetKrefrct());
+			m->type = ppm::MAT_GLASS;
+			m->param.glass.refl.r   = gm->GetKrefl().r;
+			m->param.glass.refl.g   = gm->GetKrefl().g;
+			m->param.glass.refl.b   = gm->GetKrefl().b;
+			m->param.glass.refrct.r = gm->GetKrefrct().r;
+			m->param.glass.refrct.g = gm->GetKrefrct().g;
+			m->param.glass.refrct.b = gm->GetKrefrct().b;
 			m->param.glass.outside_ior = gm->GetOutsideIOR();
 			m->param.glass.R0 = gm->GetIOR();
 			m->param.glass.reflection_specular_bounce   = gm->HasReflSpecularBounceEnabled();
@@ -156,14 +166,18 @@ void PtrFreeScene :: compile_materials() {
 			break;
 		}
 		case luxrays::MATTEMIRROR: {
-			compiled_materials[MAT_MATTEMIRROR] = true;
-			luxrays::MatteMirrorMaterial *mmm = static_cast<luxrays::MatteMirrorMaterial*>(orig_m);
+			compiled_materials[ppm::MAT_MATTEMIRROR] = true;
+			const luxrays::MatteMirrorMaterial *mmm = static_cast<const luxrays::MatteMirrorMaterial*>(orig_m);
 
 			m->diffuse  = mmm->IsDiffuse();
 			m->specular = mmm->IsSpecular();
-			m->type = MAT_MATTEMIRROR;
-			m->param.matte_mirror.matte.kd  = ppm::Spectrum(mmm->GetMatte().GetKd());
-			m->param.matte_mirror.mirror.kr = ppm::Spectrum(mmm->GetMirror().GetKr());
+			m->type = ppm::MAT_MATTEMIRROR;
+			m->param.matte_mirror.matte.kd.r  = mmm->GetMatte().GetKd().r;
+			m->param.matte_mirror.matte.kd.g  = mmm->GetMatte().GetKd().g;
+			m->param.matte_mirror.matte.kd.b  = mmm->GetMatte().GetKd().b;
+			m->param.matte_mirror.mirror.kr.r = mmm->GetMirror().GetKr().r;
+			m->param.matte_mirror.mirror.kr.g = mmm->GetMirror().GetKr().g;
+			m->param.matte_mirror.mirror.kr.b = mmm->GetMirror().GetKr().b;
 			m->param.matte_mirror.mirror.specular_bounce = mmm->GetMirror().HasSpecularBounceEnabled();
 			m->param.matte_mirror.matte_filter = mmm->GetMatteFilter();
 			m->param.matte_mirror.tot_filter = mmm->GetTotFilter();
@@ -172,26 +186,32 @@ void PtrFreeScene :: compile_materials() {
 			break;
 		}
 		case luxrays::METAL: {
-			compiled_materials[MAT_METAL] = true;
-			luxrays::MetalMaterial* mm = static_cast<luxrays::MetalMaterial*>(orig_m);
+			compiled_materials[ppm::MAT_METAL] = true;
+			const luxrays::MetalMaterial* mm = static_cast<const luxrays::MetalMaterial*>(orig_m);
 
 			m->diffuse  = mm->IsDiffuse();
 			m->specular = mm->IsSpecular();
-			m->type = MAT_METAL;
-			m->param.metal.kr = Spectrum(mm->GetKr());
+			m->type = ppm::MAT_METAL;
+			m->param.metal.kr.r = mm->GetKr().r;
+			m->param.metal.kr.g = mm->GetKr().g;
+			m->param.metal.kr.b = mm->GetKr().b;
 			m->param.metal.exp = mm->GetExp();
 			m->param.metal.specular_bounce = mm->HasSpecularBounceEnabled();
 			break;
 		}
 		case luxrays::MATTEMETAL: {
-			compiled_materials[MAT_MATTEMETAL] = true;
-			luxrays::MatteMetalMaterial* mmm = static_cast<luxrays::MatteMetalMaterial*>(orig_m);
+			compiled_materials[ppm::MAT_MATTEMETAL] = true;
+			const luxrays::MatteMetalMaterial* mmm = static_cast<const luxrays::MatteMetalMaterial*>(orig_m);
 
 			m->diffuse  = mmm->IsDiffuse();
 			m->specular = mmm->IsSpecular();
-			m->type = MAT_METAL;
-			m->param.matte_metal.matte.kd  = ppm::Spectrum(mmm->GetMatte().GetKd());
-			m->param.matte_metal.metal.kr = ppm::Spectrum(mmm->GetMetal().GetKr());
+			m->type = ppm::MAT_METAL;
+			m->param.matte_metal.matte.kd.r  = mmm->GetMatte().GetKd().r;
+			m->param.matte_metal.matte.kd.g  = mmm->GetMatte().GetKd().g;
+			m->param.matte_metal.matte.kd.b  = mmm->GetMatte().GetKd().b;
+			m->param.matte_metal.metal.kr.r = mmm->GetMetal().GetKr().r;
+			m->param.matte_metal.metal.kr.g = mmm->GetMetal().GetKr().g;
+			m->param.matte_metal.metal.kr.b = mmm->GetMetal().GetKr().b;
 			m->param.matte_metal.metal.exp = mmm->GetMetal().GetExp();
 			m->param.matte_metal.metal.specular_bounce = mmm->GetMetal().HasSpecularBounceEnabled();
 			m->param.matte_metal.matte_filter = mmm->GetMatteFilter();
@@ -201,28 +221,36 @@ void PtrFreeScene :: compile_materials() {
 			break;
 		}
 		case luxrays::ALLOY: {
-			compiled_materials[MAT_ALLOY] = true;
-			luxrays::AlloyMaterial* am = static_cast<luxrays::AlloyMaterial*>(orig_m);
+			compiled_materials[ppm::MAT_ALLOY] = true;
+			const luxrays::AlloyMaterial* am = static_cast<const luxrays::AlloyMaterial*>(orig_m);
 
 			m->diffuse  = am->IsDiffuse();
 			m->specular = am->IsSpecular();
-			m->type = MAT_ALLOY;
-			m->param.alloy.refl  = ppm::Spectrum(am->GetKrefl());
-			m->param.alloy.refl  = ppm::Spectrum(am->GetKd());
+			m->type = ppm::MAT_ALLOY;
+			m->param.alloy.refl.r  = am->GetKrefl().r;
+			m->param.alloy.refl.g  = am->GetKrefl().g;
+			m->param.alloy.refl.b  = am->GetKrefl().b;
+			m->param.alloy.refl.r  = am->GetKd().r;
+			m->param.alloy.refl.g  = am->GetKd().g;
+			m->param.alloy.refl.b  = am->GetKd().b;
 			m->param.alloy.exp = am->GetExp();
 			m->param.alloy.R0 = am->GetR0();
 			m->param.alloy.specular_bounce = am->HasSpecularBounceEnabled();
 			break;
 		}
 		case luxrays::ARCHGLASS: {
-			compiled_materials[MAT_ARCHGLASS] = true;
-			luxrays::ArchGlassMaterial* agm = static_cast<luxrays::ArchGlassMaterial*>(orig_m);
+			compiled_materials[ppm::MAT_ARCHGLASS] = true;
+			const luxrays::ArchGlassMaterial* agm = static_cast<const luxrays::ArchGlassMaterial*>(orig_m);
 
 			m->diffuse  = agm->IsDiffuse();
 			m->specular = agm->IsSpecular();
-			m->type = MAT_ARCHGLASS;
-			m->param.arch_glass.refl = ppm::Spectrum(agm->GetKrefl());
-			m->param.arch_glass.refrct = ppm::Spectrum(agm->GetKrefrct());
+			m->type = ppm::MAT_ARCHGLASS;
+			m->param.arch_glass.refl.r   = agm->GetKrefl().r;
+			m->param.arch_glass.refl.g   = agm->GetKrefl().g;
+			m->param.arch_glass.refl.b   = agm->GetKrefl().b;
+			m->param.arch_glass.refrct.r = agm->GetKrefrct().r;
+			m->param.arch_glass.refrct.g = agm->GetKrefrct().g;
+			m->param.arch_glass.refrct.b = agm->GetKrefrct().b;
 			m->param.arch_glass.trans_filter = agm->GetTransFilter();
 			m->param.arch_glass.tot_filter = agm->GetTotFilter();
 			m->param.arch_glass.refl_pdf = agm->GetReflPdf();
@@ -230,9 +258,11 @@ void PtrFreeScene :: compile_materials() {
 			break;
 		}
 		default: /* MATTE */ {
-			compiled_materials[MAT_MATTE] = true;
-			m->type = MAT_MATTE;
-			m->param.matte = ppm::Spectrum(0.75f, 0.75f, 0.75f);
+			compiled_materials[ppm::MAT_MATTE] = true;
+			m->type = ppm::MAT_MATTE;
+			m->param.matte.kd.r = 0.75f;
+			m->param.matte.kd.g = 0.75f;
+			m->param.matte.kd.b = 0.75f;
 			break;
 		}
 		}
@@ -242,7 +272,7 @@ void PtrFreeScene :: compile_materials() {
 	const uint mesh_count = original_scene->objectMaterials.size();
 	mesh_mats.resize(mesh_count);
 	for(uint i = 0; i < mesh_count; ++i) {
-		luxrays::Material* m = original_scene->objectMaterials[i];
+		const luxrays::Material* m = original_scene->objectMaterials[i];
 
 		// look for the index
 		uint index = 0;
@@ -269,9 +299,9 @@ void PtrFreeScene :: compile_area_lights() {
 	if (area_light_count) {
 		for(uint i = 0; i < original_scene->lights.size(); ++i) {
 			if (original_scene->lights[i]->IsAreaLight()) {
-				const luxrays::TriangleLight* tl = static_cast<luxrays::TriangleLight*>(original_scene->lights[i]);
-				const luxrays::ExtMesh* mesh = static_cast<luxrays::ExtMesh*>(original_scene->objects[tl->GetMeshIndex()]);
-				const luxrays::Triangle* tri = static_cast<luxrays::Triangle*>(mesh->GetTriangles()[tl->GetTriIndex()]);
+				const luxrays::TriangleLight* tl = static_cast<const luxrays::TriangleLight*>(original_scene->lights[i]);
+				const luxrays::ExtMesh* mesh = static_cast<const luxrays::ExtMesh*>(original_scene->objects[tl->GetMeshIndex()]);
+				const luxrays::Triangle* tri = static_cast<const luxrays::Triangle*>(&mesh->GetTriangles()[tl->GetTriIndex()]);
 
 				ppm::TriangleLight* cpl = &area_lights[index];
 				cpl->v0 = ppm::Point(mesh->GetVertex(tri->v[0]));
@@ -282,9 +312,8 @@ void PtrFreeScene :: compile_area_lights() {
 				cpl->normal = mesh->GetNormal(tri->v[0]);
 				cpl->area = tl->GetArea();
 
-				luxrays::AreaLightMaterial* alm = static_cast<luxrays::AreaLightMaterial*>(tl->GetMaterial());
+				const luxrays::AreaLightMaterial* alm = static_cast<const luxrays::AreaLightMaterial*>(tl->GetMaterial());
 				cpl->gain = ppm::Spectrum(alm->GetGain());
-
 				++index;
 			}
 		}
@@ -292,20 +321,20 @@ void PtrFreeScene :: compile_area_lights() {
 }
 
 void PtrFreeScene :: compile_infinite_light() {
-	infinite_light = smartPtr(sizeof(ppm::InfiniteLight));
+	infinite_light = smartPtr<ppm::InfiniteLight>(sizeof(ppm::InfiniteLight));
 
-	luxrays::InfiniteLight* il = NULL;
+	const luxrays::InfiniteLight* il = NULL;
 	if (original_scene->infiniteLight && ((original_scene->infiniteLight->GetType() == luxrays::TYPE_IL_BF)
 			|| (original_scene->infiniteLight->GetType() == luxrays::TYPE_IL_PORTAL)
 			|| (original_scene->infiniteLight->GetType() == luxrays::TYPE_IL_IS))) {
 		il = original_scene->infiniteLight;
 	} else {
 		for(uint i = 0; i < original_scene->lights.size(); ++i) {
-			luxrays::LightSource* l = original_scene->lights[i];
+			const luxrays::LightSource* l = original_scene->lights[i];
 			if ((l->GetType() == luxrays::TYPE_IL_BF)
 					|| (l->GetType() == luxrays::TYPE_IL_PORTAL)
 					|| (l->GetType() == luxrays::TYPE_IL_IS)) {
-				il = static_cast<luxrays::InfiniteLight*>(l);
+				il = static_cast<const luxrays::InfiniteLight*>(l);
 				break;
 			}
 		}
@@ -313,7 +342,7 @@ void PtrFreeScene :: compile_infinite_light() {
 
 	if (il) {
 		infinite_light->exists = true;
-		infinite_light->gain = ppm::Spectrum(il->GetGain());
+		infinite_light->gain   = ppm::Spectrum(il->GetGain());
 		infinite_light->shiftU = il->GetShiftU();
 		infinite_light->shiftV = il->GetShiftV();
 
@@ -326,9 +355,9 @@ void PtrFreeScene :: compile_infinite_light() {
 }
 
 void PtrFreeScene :: compile_sun_light() {
-	sun_light = smartPtr(sizeof(ppm::SunLight));
+	sun_light = smartPtr<ppm::SunLight>(sizeof(ppm::SunLight));
 
-	luxrays::SunLight* sl = NULL;
+	const luxrays::SunLight* sl = NULL;
 	for(uint i = 0; i < original_scene->lights.size(); ++i) {
 		luxrays::LightSource* l = original_scene->lights[i];
 		if (l->GetType() == luxrays::TYPE_SUN) {
@@ -339,7 +368,7 @@ void PtrFreeScene :: compile_sun_light() {
 
 	if (sl) {
 		sun_light->exists = true;
-		sun_light->gain   = ppm::Spectrum(sl->GetGain);
+		sun_light->gain   = ppm::Spectrum(sl->GetGain());
 		sun_light->turbidity = sl->GetTubidity();
 		sun_light->rel_size = sl->GetRelSize();
 		float tmp;
@@ -353,17 +382,17 @@ void PtrFreeScene :: compile_sun_light() {
 }
 
 void PtrFreeScene :: compile_sky_light() {
-	sky_light = smartPtr(sizeof(ppm::SkyLight));
+	sky_light = smartPtr<SkyLight>(sizeof(ppm::SkyLight));
 
-	luxrays::SkyLight* sl = NULL;
+	const luxrays::SkyLight* sl = NULL;
 	if (original_scene->infiniteLight
 			&& (original_scene->infiniteLight->GetType() == luxrays::TYPE_IL_SKY)) {
-		sl = (SkyLight *) original_scene->infiniteLight;
+		sl = static_cast<const luxrays::SkyLight*>(original_scene->infiniteLight);
 	} else {
 		for(uint i = 0; i < original_scene->lights.size(); ++i) {
-			luxrays::LightSource* l = original_scene->lights[i];
+			const luxrays::LightSource* l = original_scene->lights[i];
 			if (l->GetType() == luxrays::TYPE_IL_SKY) {
-				sl = static_cast<luxrays::SkyLight*>(l);
+				sl = static_cast<const luxrays::SkyLight*>(l);
 				break;
 			}
 		}
@@ -394,7 +423,7 @@ void PtrFreeScene :: compile_texture_maps() {
 	mesh_texs.resize(0);
 	bump_map.resize(0);
 	bump_map_scales.resize(0);
-	normal_maps.resize(0);
+	normal_map.resize(0);
 
 	// translate mesh texture maps
 	std::vector<luxrays::TextureMap*> tms;
@@ -530,26 +559,26 @@ void PtrFreeScene :: compile_texture_maps() {
 /*
  * auxiliary compilation methods
  */
-void PtrFreeScene :: compile_mesh_first_triangle_offset(lux_ext_mesh_list_t& meshs) {
+void PtrFreeScene :: compile_mesh_first_triangle_offset(const lux_ext_mesh_list_t& meshs) {
 	mesh_first_triangle_offset.resize(meshs.size());
 	for(uint i = 0, current = 0; i < meshs.size(); ++i) {
-		luxrays::ExtMesh* mesh = meshs[i];
+		const luxrays::ExtMesh* mesh = meshs[i];
 		mesh_first_triangle_offset[i] = current;
 		current += mesh->GetTotalTriangleCount();
 	}
 }
 
-void PtrFreeScene :: translate_geometry_qbvh(lux_ext_mesh_list_t& meshs) {
+void PtrFreeScene :: translate_geometry_qbvh(const lux_ext_mesh_list_t& meshs) {
 	lux_defined_meshs_t defined_meshs(PtrFreeScene::mesh_ptr_compare);
 
 	Mesh new_mesh;
 	Mesh current_mesh;
 
-	for(lux_ext_mesh_list_t::iterator it = meshs.begin(); it != meshs.end(); ++it) {
-		luxrays::ExtMesh* mesh = *it;
+	for(lux_ext_mesh_list_t::const_iterator it = meshs.begin(); it != meshs.end(); ++it) {
+		const luxrays::ExtMesh* mesh = *it;
 		bool is_existing_instance;
 		if (mesh->GetType() == luxrays::TYPE_EXT_TRIANGLE_INSTANCE) {
-			luxrays::ExtInstanceTriangleMesh* imesh = static_cast<luxrays::ExtInstanceTriangleMesh*>(mesh);
+			const luxrays::ExtInstanceTriangleMesh* imesh = static_cast<const luxrays::ExtInstanceTriangleMesh*>(mesh);
 
 			// check if is one of the already done meshes
 			lux_defined_meshs_t::iterator it = defined_meshs.find(imesh->GetExtTriangleMesh());
@@ -568,7 +597,7 @@ void PtrFreeScene :: translate_geometry_qbvh(lux_ext_mesh_list_t& meshs) {
 				is_existing_instance = true;
 			}
 
-			luxrays::Transform trans = imesh->GetTransformation();
+			const luxrays::Transform trans = imesh->GetTransformation();
 			current_mesh.trans.set(imesh->GetTransformation().GetMatrix().m);
 			current_mesh.inv_trans.set(imesh->GetInvTransformation().GetMatrix().m);
 
@@ -625,7 +654,7 @@ void PtrFreeScene :: translate_geometry_qbvh(lux_ext_mesh_list_t& meshs) {
 				vertices[j] = ppm::Point(mesh->GetVertex(j));
 
 			// translate mesh indices
-			luxrays::Triangle *mtris = mesh->GetTriangles();
+			const luxrays::Triangle *mtris = mesh->GetTriangles();
 			triangles.resize(mesh->GetTotalTriangleCount());
 			for(uint j = 0; j < mesh->GetTotalTriangleCount(); ++j)
 				triangles[j] = ppm::Triangle(mtris[j]);
@@ -649,7 +678,7 @@ void PtrFreeScene :: translate_geometry() {
 	uint v_index = 0;
 
 	for (uint i = 0; i < original_scene->objects.size(); ++i) {
-		luxrays::ExtMesh* mesh = original_scene->objects[i];
+		const luxrays::ExtMesh* mesh = original_scene->objects[i];
 
 		mesh_offsets[i] = v_index;
 		for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j) {
@@ -666,8 +695,8 @@ void PtrFreeScene :: translate_geometry() {
 	triangles.resize(n_triangles);
 	index = 0;
 	for(uint i = 0; i < original_scene->objects.size(); ++i) {
-		luxrays::ExtMesh* mesh   = original_scene->objects[i];
-		luxrays::Triangle *mtris = mesh->GetTriangles();
+		const luxrays::ExtMesh* mesh   = original_scene->objects[i];
+		const luxrays::Triangle *mtris = mesh->GetTriangles();
 		const uint moffset = mesh_offsets[i];
 		for (uint j = 0; j < mesh->GetTotalTriangleCount(); ++j) {
 			triangles[index++] = ppm::Triangle(

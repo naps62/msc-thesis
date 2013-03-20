@@ -11,12 +11,10 @@
 #include "ppm/geometry/point.h"
 #include "ppm/geometry/normal.h"
 #include "ppm/pixel/spectrum.h"
+#include "ppm/types/material.h"
+#include "ppm/types.h"
 
 namespace ppm {
-
-struct AreaLightParam {
-	Spectrum gain;
-};
 
 struct TriangleLight {
 	Point v0, v1, v2;

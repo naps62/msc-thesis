@@ -8,19 +8,39 @@
 #ifndef _PPM_TYPES_MATERIAL_H_
 #define _PPM_TYPES_MATERIAL_H_
 
+#include "ppm/types.h"
+
 namespace ppm {
 
+typedef enum {
+	MAT_MATTE,
+	MAT_AREALIGHT,
+	MAT_MIRROR,
+	MAT_GLASS,
+	MAT_MATTEMIRROR,
+	MAT_METAL,
+	MAT_MATTEMETAL,
+	MAT_ALLOY,
+	MAT_ARCHGLASS,
+
+	MAT_MAX
+} CompiledMaterials_e;
+
 struct MatteParam {
-	Spectrum kd;
+	Color kd;
+};
+
+struct AreaLightParam {
+	Color gain;
 };
 
 struct MirrorParam {
-	Spectrum kr;
+	Color kr;
 	int specular_bounce;
 };
 
 struct GlassParam {
-	Spectrum refl, refrct;
+	Color refl, refrct;
 	float outside_ior, ior;
 	float R0;
 	int reflection_specular_bounce, transmission_specular_bounce;
@@ -33,7 +53,7 @@ struct MatteMirrorParam {
 };
 
 struct MetalParam {
-	Spectrum kr;
+	Color kr;
 	float exp;
 	int specular_bounce;
 };
@@ -45,14 +65,14 @@ struct MatteMetalParam {
 };
 
 struct AlloyParam {
-	Spectrum diff, refl;
+	Color diff, refl;
 	float exp;
 	float R0;
 	int specular_bounce;
 };
 
 struct ArchGlassParam {
-	Spectrum refl, refrct;
+	Color refl, refrct;
 	float trans_filter, tot_filter, refl_pdf, trans_pdf;
 	bool reflection_specular_bounce, transmission_specular_bounce;
 };

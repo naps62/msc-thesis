@@ -20,20 +20,6 @@
 
 namespace ppm {
 
-enum {
-	MAT_MATTE,
-	MAT_AREALIGHT,
-	MAT_MIRROR,
-	MAT_GLASS,
-	MAT_MATTEMIRROR,
-	MAT_METAL,
-	MAT_MATTEMETAL,
-	MAT_ALLOY,
-	MAT_ARCHGLASS,
-
-	MAT_MAX
-} CompiledMaterials_e;
-
 
 class PtrFreeScene {
 
@@ -101,9 +87,9 @@ private:
 	void compile_texture_maps();
 
 	// auxiliary compilation methods
-	void compile_mesh_first_triangle_offset(lux_ext_mesh_list_t& meshs);
+	void compile_mesh_first_triangle_offset(const lux_ext_mesh_list_t& meshs);
 	void translate_geometry();
-	void translate_geometry_qbvh(lux_ext_mesh_list_t& meshs);
+	void translate_geometry_qbvh(const lux_ext_mesh_list_t& meshs);
 public:
 //	static lux_mesh_comparator_t mesh_ptr_compare;
 	static bool mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1);
