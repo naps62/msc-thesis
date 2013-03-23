@@ -38,7 +38,7 @@ private:
 	luxrays::Scene* original_scene; // original scene structure
 	luxrays::DataSet* data_set;     // original data_set structure
 
-	gama::vector<Point>    vertices;
+	gama::vector<Point>    vertexes;
 	gama::vector<Normal>   normals;
 	gama::vector<Spectrum> colors;
 	gama::vector<UV>       uvs;
@@ -59,9 +59,9 @@ private:
 
 	// lights
 	gama::vector<TriangleLight> area_lights;
-	smartPtr<InfiniteLight>     infinite_light;
-	smartPtr<SunLight>          sun_light;
-	smartPtr<SkyLight>          sky_light;
+	smartPtr<InfiniteLight>     infinite_light_sp;
+	smartPtr<SunLight>          sun_light_sp;
+	smartPtr<SkyLight>          sky_light_sp;
 
 	// textures
 	gama::vector<TexMap> tex_maps;
@@ -90,6 +90,8 @@ private:
 	void compile_mesh_first_triangle_offset(const lux_ext_mesh_list_t& meshs);
 	void translate_geometry();
 	void translate_geometry_qbvh(const lux_ext_mesh_list_t& meshs);
+
+	friend ostream& operator<< (ostream& os, const PtrFreeScene& scene);
 public:
 //	static lux_mesh_comparator_t mesh_ptr_compare;
 	static bool mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1);

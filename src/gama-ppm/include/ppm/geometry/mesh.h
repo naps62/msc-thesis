@@ -29,6 +29,17 @@ struct Mesh {
 	  inv_trans() { }
 };
 
+ostream& operator<< (ostream& os, const Mesh& m) {
+	return os  << "Mesh["
+		<< "verts_offset("  << m.verts_offset << "), "
+		<< "tris_offset("   << m.tris_offset << "), "
+		<< "colors_offset(" << m.colors_offset << "), "
+		<< "has_colors("    << m.has_colors << "), "
+		<< "trans:"         << m.trans << ", "
+		<< "inv_trans:"     << m.inv_trans
+		<< "]";
+}
+
 }
 
 #endif // _PPM_GEOMETRY_MESH_H_

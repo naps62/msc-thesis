@@ -66,7 +66,7 @@ void PtrFreeScene :: compile_geometry() {
 
 	// clear vectors
 	mesh_ids.resize(0);
-	vertices.resize(0);
+	vertexes.resize(0);
 	normals.resize(0);
 	colors.resize(0);
 	uvs.resize(0);
@@ -321,7 +321,7 @@ void PtrFreeScene :: compile_area_lights() {
 }
 
 void PtrFreeScene :: compile_infinite_light() {
-	infinite_light = smartPtr<ppm::InfiniteLight>(sizeof(ppm::InfiniteLight));
+	infinite_light_sp = smartPtr<ppm::InfiniteLight>(sizeof(ppm::InfiniteLight));
 
 	const luxrays::InfiniteLight* il = NULL;
 	if (original_scene->infiniteLight && ((original_scene->infiniteLight->GetType() == luxrays::TYPE_IL_BF)
@@ -341,21 +341,21 @@ void PtrFreeScene :: compile_infinite_light() {
 	}
 
 	if (il) {
-		infinite_light->exists = true;
-		infinite_light->gain   = ppm::Spectrum(il->GetGain());
-		infinite_light->shiftU = il->GetShiftU();
-		infinite_light->shiftV = il->GetShiftV();
+		infinite_light_sp->exists = true;
+		infinite_light_sp->gain   = ppm::Spectrum(il->GetGain());
+		infinite_light_sp->shiftU = il->GetShiftU();
+		infinite_light_sp->shiftV = il->GetShiftV();
 
 		const luxrays::TextureMap* tex_map = il->GetTexture()->GetTexMap();
-		infinite_light->width  = tex_map->GetWidth();
-		infinite_light->height = tex_map->GetHeight();
+		infinite_light_sp->width  = tex_map->GetWidth();
+		infinite_light_sp->height = tex_map->GetHeight();
 	} else {
-		infinite_light->exists = false;
+		infinite_light_sp->exists = false;
 	}
 }
 
 void PtrFreeScene :: compile_sun_light() {
-	sun_light = smartPtr<ppm::SunLight>(sizeof(ppm::SunLight));
+	sun_light_sp = smartPtr<ppm::SunLight>(sizeof(ppm::SunLight));
 
 	const luxrays::SunLight* sl = NULL;
 	for(uint i = 0; i < original_scene->lights.size(); ++i) {
@@ -367,22 +367,22 @@ void PtrFreeScene :: compile_sun_light() {
 	}
 
 	if (sl) {
-		sun_light->exists = true;
-		sun_light->gain   = ppm::Spectrum(sl->GetGain());
-		sun_light->turbidity = sl->GetTubidity();
-		sun_light->rel_size = sl->GetRelSize();
+		sun_light_sp->exists = true;
+		sun_light_sp->gain   = ppm::Spectrum(sl->GetGain());
+		sun_light_sp->turbidity = sl->GetTubidity();
+		sun_light_sp->rel_size = sl->GetRelSize();
 		float tmp;
-		sun_light->x = ppm::Vector(sl->x);
-		sun_light->y = ppm::Vector(sl->y);
-		sun_light->cos_theta_max = sl->cosThetaMax;
-		sun_light->color = ppm::Spectrum(sl->suncolor);
+		sun_light_sp->x = ppm::Vector(sl->x);
+		sun_light_sp->y = ppm::Vector(sl->y);
+		sun_light_sp->cos_theta_max = sl->cosThetaMax;
+		sun_light_sp->color = ppm::Spectrum(sl->suncolor);
 	} else {
-		sun_light->exists = false;
+		sun_light_sp->exists = false;
 	}
 }
 
 void PtrFreeScene :: compile_sky_light() {
-	sky_light = smartPtr<SkyLight>(sizeof(ppm::SkyLight));
+	sky_light_sp = smartPtr<SkyLight>(sizeof(ppm::SkyLight));
 
 	const luxrays::SkyLight* sl = NULL;
 	if (original_scene->infiniteLight
@@ -399,20 +399,20 @@ void PtrFreeScene :: compile_sky_light() {
 	}
 
 	if (sl) {
-		sky_light->exists = true;
-		sky_light->gain = ppm::Spectrum(sl->GetGain());
-		sky_light->theta_s = sl->thetaS;
-		sky_light->phi_s = sl->phiS;
-		sky_light->zenith_Y = sl->zenith_Y;
-		sky_light->zenith_x = sl->zenith_x;
-		sky_light->zenith_y = sl->zenith_y;
+		sky_light_sp->exists = true;
+		sky_light_sp->gain = ppm::Spectrum(sl->GetGain());
+		sky_light_sp->theta_s = sl->thetaS;
+		sky_light_sp->phi_s = sl->phiS;
+		sky_light_sp->zenith_Y = sl->zenith_Y;
+		sky_light_sp->zenith_x = sl->zenith_x;
+		sky_light_sp->zenith_y = sl->zenith_y;
 		for(uint i = 0; i < 6; ++i) {
-			sky_light->perez_Y[i] = sl->perez_Y[i];
-			sky_light->perez_x[i] = sl->perez_x[i];
-			sky_light->perez_y[i] = sl->perez_y[i];
+			sky_light_sp->perez_Y[i] = sl->perez_Y[i];
+			sky_light_sp->perez_x[i] = sl->perez_x[i];
+			sky_light_sp->perez_y[i] = sl->perez_y[i];
 		}
 	} else {
-		sky_light->exists = false;
+		sky_light_sp->exists = false;
 	}
 }
 
@@ -649,9 +649,9 @@ void PtrFreeScene :: translate_geometry_qbvh(const lux_ext_mesh_list_t& meshs) {
 			}
 
 			// translate mesh vertices
-			vertices.resize(mesh->GetTotalVertexCount());
+			vertexes.resize(mesh->GetTotalVertexCount());
 			for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
-				vertices[j] = ppm::Point(mesh->GetVertex(j));
+				vertexes[j] = ppm::Point(mesh->GetVertex(j));
 
 			// translate mesh indices
 			const luxrays::Triangle *mtris = mesh->GetTriangles();
@@ -685,7 +685,7 @@ void PtrFreeScene :: translate_geometry() {
 			normals[index]  = ppm::Normal(mesh->GetNormal(j));
 			colors[index]   = ppm::Spectrum(mesh->GetColor(j));
 			uvs[index]      = (mesh->HasUVs()) ? ppm::UV(mesh->GetUV(j)) : ppm::UV((0.f, 0.f));
-			vertices[index] = ppm::Point(mesh->GetVertex(j));
+			vertexes[index] = ppm::Point(mesh->GetVertex(j));
 			index++;
 		}
 		v_index += mesh->GetTotalVertexCount();
@@ -711,6 +711,93 @@ void PtrFreeScene :: translate_geometry() {
 
 bool PtrFreeScene :: mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1) {
 	return m0 < m1;
+}
+
+ostream& operator<< (ostream& os, const PtrFreeScene& scene) {
+	os << "Vertexes:\n\t";
+	for(uint i(0); i < scene.vertexes.size(); ++i)
+		os << ' ' << scene.vertexes[i];
+
+	os <<  "\n\nNormals:\n\t";
+	for(uint i(0); i < scene.normals.size(); ++i)
+		os << ' ' << scene.normals[i];
+
+	os <<  "\n\nColors:\n\t";
+	for(uint i(0); i < scene.colors.size(); ++i)
+		os << ' ' << scene.colors[i];
+
+	os << "\n\nUVs:\n\t";
+	for(uint i(0); i < scene.uvs.size(); ++i)
+		os << ' ' << scene.uvs[i];
+
+	os << "\n\nTriangles:\n\t";
+	for(uint i(0); i < scene.triangles.size(); ++i)
+		os << ' ' << scene.triangles[i];
+
+	os << "\n\nMeshDescs:\n\t";
+	for(uint i(0); i < scene.mesh_descs.size(); ++i)
+		os << ' ' << scene.mesh_descs[i];
+
+	os << "\n\nMeshIDs:\n\t";
+	for(uint i(0); i < scene.mesh_ids.size(); ++i)
+		os << ' ' << scene.mesh_ids[i];
+
+	os << "\n\nMeshFirstTriangleOffset:\n\t";
+	for(uint i(0); i < scene.mesh_first_triangle_offset.size(); ++i)
+		os << ' ' << scene.mesh_first_triangle_offset[i];
+
+	os << "\n\nBSphere:\n\t" << scene.bsphere_sp[0];
+	os << "\n\nCamera:\n\t" << scene.camera_sp[0];
+
+	os << "\n\nCompiledMaterials:\n\t";
+	for(uint i(0); i < scene.compiled_materials.size(); ++i)
+		os << ' ' << scene.compiled_materials[i];
+
+	os << "\n\nMaterials:\n\t";
+	for(uint i(0); i < scene.materials.size(); ++i)
+		os << ' ' << scene.materials[i];
+
+	os << "\n\nMeshMaterials:\n\t";
+	for(uint i(0); i < scene.mesh_mats.size(); ++i)
+		os << ' ' << scene.mesh_mats[i];
+
+	os << "\n\nAreaLights:\n\t";
+	for(uint i(0); i < scene.area_lights.size(); ++i)
+		os << ' ' << scene.area_lights[i];
+
+	os << "\n\nInfiniteLight:\n\t" << scene.infinite_light_sp[0];
+	os << "\n\nSunLight:\n\t" << scene.sun_light_sp[0];
+	os << "\n\nSkyLight:\n\t" << scene.sky_light_sp[0];
+
+	os << "\n\nTexMaps:\n\t";
+	for(uint i(0); i < scene.tex_maps.size(); ++i)
+		os << ' ' << scene.tex_maps[i];
+
+	os << "\n\nRGBTex:\n\t";
+	for(uint i(0); i < scene.rgb_tex.size(); ++i)
+		os << ' ' << scene.rgb_tex[i];
+
+	os << "\n\nAlphaTex:\n\t";
+	for(uint i(0); i < scene.alpha_tex.size(); ++i)
+		os << ' ' << scene.alpha_tex[i];
+
+	os << "\n\nMeshTexs:\n\t";
+	for(uint i(0); i < scene.mesh_texs.size(); ++i)
+		os << ' ' << scene.mesh_texs[i];
+
+	os << "\n\nBumpMap:\n\t";
+	for(uint i(0); i < scene.bump_map.size(); ++i)
+		os << ' ' << scene.bump_map[i];
+
+	os << "\n\nBumpMapScales:\n\t";
+	for(uint i(0); i < scene.bump_map_scales.size(); ++i)
+		os << ' ' << scene.bump_map_scales[i];
+
+	os << "\n\nNormalMap:\n\t";
+	for(uint i(0); i < scene.normal_map.size(); ++i)
+		os << ' ' << scene.normal_map[i];
+
+	return os;
 }
 
 }
