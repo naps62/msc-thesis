@@ -121,9 +121,7 @@ struct Spectrum {
 	}
 };
 
-__HYBRID__ __forceinline ostream& operator<<(ostream& os, const Spectrum& s) {
-	return os << "Spectrum[" << s.r << ", " << s.g << ", " << s.b << "]";
-}
+ostream& operator<<(ostream& os, const Spectrum& s);
 
 __HYBRID__ __forceinline Spectrum operator*(const float f, const Spectrum &s) {
 	return s * f;

@@ -121,9 +121,7 @@ struct Triangle {
 
 };
 
-__HYBRID__ __forceinline ostream& operator<<(ostream& os, const Triangle& tri) {
-	return os << "Triangle[" << tri.v[0] << ", " << tri.v[1] << ", " << tri.v[2] << "]";
-}
+ostream& operator<<(ostream& os, const Triangle& tri);
 
 
 

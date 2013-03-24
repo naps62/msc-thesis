@@ -91,7 +91,7 @@ private:
 	void translate_geometry();
 	void translate_geometry_qbvh(const lux_ext_mesh_list_t& meshs);
 
-	friend ostream& operator<< (ostream& os, const PtrFreeScene& scene);
+	friend ostream& operator<< (ostream& os, PtrFreeScene& scene);
 public:
 //	static lux_mesh_comparator_t mesh_ptr_compare;
 	static bool mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1);

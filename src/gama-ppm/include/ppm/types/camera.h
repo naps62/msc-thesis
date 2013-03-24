@@ -10,6 +10,8 @@
 
 #include <cstring>
 #include "luxrays/utils/sdl/camera.h"
+#include <ostream>
+using std::ostream;
 
 namespace ppm {
 
@@ -33,6 +35,8 @@ struct Camera {
 
 	}
 };
+
+ostream& operator<< (ostream& os, const Camera& c);
 
 }
 

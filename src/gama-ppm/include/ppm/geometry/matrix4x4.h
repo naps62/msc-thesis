@@ -9,7 +9,8 @@
 #define _PPM_GEOMETRY_MATRIX4X4_H_
 
 #include <gama.h>
-
+#include <ostream>
+using std::ostream;
 
 namespace ppm {
 
@@ -185,18 +186,7 @@ private:
 	}
 };
 
-__HYBRID__ __forceinline std::ostream & operator<<(std::ostream &os, const Matrix4x4 &mat) {
-	os << "Matrix4x4[ ";
-	for (int i = 0; i < 4; ++i) {
-		os << "[ ";
-		for (int j = 0; j < 4; ++j) {
-			os << mat.m[i][j];
-			if (j != 3) os << ", ";
-		}
-		os << " ] ";
-	}
-	return os << " ] ";
-}
+ostream & operator<<(ostream &os, const Matrix4x4 &mat);
 
 }
 

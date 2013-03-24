@@ -9,6 +9,8 @@
 #define _PPM_TYPES_H_
 
 #include "luxrays/core/accelerator.h"
+#include <ostream>
+using std::ostream;
 
 namespace ppm {
 
@@ -21,6 +23,8 @@ typedef enum {
 struct Color {
 	float r, g, b;
 };
+
+ostream& operator<< (ostream& os, const Color& c);
 
 #define PPM_NONE 0xffffffffu
 

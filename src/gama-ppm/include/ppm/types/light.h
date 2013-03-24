@@ -24,10 +24,6 @@ struct TriangleLight {
 	uint mesh_index, tri_index;
 };
 
-ostream& operator<< (ostream& os, const TriangleLight& l) {
-	return os << "TriangleLight[" << l.v0 << ", " << l.v1 << ", " << l.v2 << ", "
-			  << l.normal << ", " << l.area << ", " << l.gain << ", " << l.mesh_index << ", " << l.tri_index << "]";
-}
 
 struct InfiniteLight {
 	bool exists;
@@ -36,10 +32,6 @@ struct InfiniteLight {
 	uint width, height;
 };
 
-ostream& operator<< (ostream& os, const InfiniteLight& l) {
-	return os << "InfiniteLight[" << l.exists << "; " << l.shiftU << "; " << l.shiftV << ", " << l.gain
-			  << ", " << l.width << ", " << l.height << "]";
-}
 
 struct SunLight {
 	bool exists;
@@ -53,11 +45,6 @@ struct SunLight {
 	Spectrum color;
 };
 
-ostream& operator<< (ostream& os, const SunLight& l) {
-	return os << "SunLight[" << l.exists << ", " << l.dir << ", " << l.gain
-			  << ", " << l.turbidity << ", " << l.rel_size << ", " << l.x << ", " << l.y
-			  << ", " << l.cos_theta_max << ", " << l.color << "]";
-}
 
 struct SkyLight {
 	bool exists;
@@ -68,17 +55,10 @@ struct SkyLight {
 	float perez_Y[6], perez_x[6], perez_y[6];
 };
 
-ostream& operator<< (ostream& os, const SkyLight& l) {
-	return os << "SkyLight[" << l.exists << ", " << l.gain << ", " << l.theta_s << ", "
-			  << l.phi_s << "; " << l.zenith_Y << ", " << l.zenith_x << "; " << l.zenith_Y << ", "
-			  << "perez_Y["
-			      << l.perez_Y[0] << ' ' << l.perez_Y[1] << ' ' << l.perez_Y[2] << ' ' << l.perez_Y[3] << ' ' << l.perez_Y[4] << ' ' << l.perez_Y[5] << "], "
-			  << "perez_Y["
-			      << l.perez_x[0] << ' ' << l.perez_x[1] << ' ' << l.perez_x[2] << ' ' << l.perez_x[3] << ' ' << l.perez_x[4] << ' ' << l.perez_x[5] << "], "
-			  << "perez_Y["
-			      << l.perez_y[0] << ' ' << l.perez_y[1] << ' ' << l.perez_y[2] << ' ' << l.perez_y[3] << ' ' << l.perez_y[4] << ' ' << l.perez_y[5] << "] "
-			  << "]";
-}
+ostream& operator<< (ostream& os, const TriangleLight& l);
+ostream& operator<< (ostream& os, const InfiniteLight& l);
+ostream& operator<< (ostream& os, const SunLight& l);
+ostream& operator<< (ostream& os, const SkyLight& l);
 
 }
 

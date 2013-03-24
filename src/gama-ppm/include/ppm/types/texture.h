@@ -15,9 +15,7 @@ struct TexMap {
 	uint width, height;
 };
 
-ostream& operator<< (ostream& os, const TexMap& t) {
-	return os << "TexMap[" << t.rgb_offset << "; " << t.alpha_offset << ", " << t.width << "; " << t.height << "]";
-}
+ostream& operator<< (ostream& os, const TexMap& t);
 
 }
 

@@ -713,7 +713,7 @@ bool PtrFreeScene :: mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1) {
 	return m0 < m1;
 }
 
-ostream& operator<< (ostream& os, const PtrFreeScene& scene) {
+ostream& operator<< (ostream& os, PtrFreeScene& scene) {
 	os << "Vertexes:\n\t";
 	for(uint i(0); i < scene.vertexes.size(); ++i)
 		os << ' ' << scene.vertexes[i];

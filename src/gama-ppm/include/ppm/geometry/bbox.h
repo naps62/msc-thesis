@@ -136,9 +136,7 @@ struct BBox {
 
 };
 
-__HYBRID__ __forceinline ostream& operator<<(ostream& os, const BBox& bbox) {
-	return os << "BBox[" << bbox.pmin << ", " << bbox.pmax << "]";
-}
+ostream& operator<<(ostream& os, const BBox& bbox);
 
 
 

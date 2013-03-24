@@ -85,9 +85,7 @@ struct UV {
 	}
 };
 
-__HYBRID__ __forceinline ostream& operator<<(ostream& os, const UV& uv) {
-	return os << "UV[" << uv.u << ", " << uv.v << "]";
-}
+ostream& operator<<(ostream& os, const UV& uv);
 
 __HYBRID__ __forceinline UV operator*(const float f, const UV &uv) {
 	return uv * f;

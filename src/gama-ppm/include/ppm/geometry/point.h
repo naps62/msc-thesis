@@ -95,9 +95,7 @@ struct Point {
 	}
 };
 
-__HYBRID__ __forceinline ostream& operator<<(ostream& os, const Point& p) {
-	return os << "Point[" << p.x << ", " << p.y << ", " << p.z << "]";
-}
+ostream& operator<<(ostream& os, const Point& p);
 
 __HYBRID__ __forceinline Point operator*(const float f, const Point &p) {
 	return p * f;

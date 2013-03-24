@@ -26,6 +26,8 @@ struct RayHit {
 	}
 };
 
+ostream& operator<< (ostream& os, const RayHit& r);
+
 }
 
 #endif // _PPM_GEOMETRY_RAYHIT_H_

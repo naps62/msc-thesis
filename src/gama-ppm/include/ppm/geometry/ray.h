@@ -53,9 +53,7 @@ struct Ray {
 
 };
 
-__HYBRID__ __forceinline ostream& operator<<(ostream& os, const Ray& r) {
-	return os << "Ray[" << r.o << ", " << r.d << ", " << r.mint << ", " << r.maxt << "]";
-}
+ostream& operator<<(ostream& os, const Ray& r);
 
 
 

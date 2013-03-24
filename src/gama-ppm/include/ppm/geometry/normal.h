@@ -101,9 +101,7 @@ struct Normal : Point {
 	}
 };
 
-__HYBRID__ __forceinline ostream& operator<<(ostream& os, const Normal& n) {
-	return os << "Normal[" << n.x << ", " << n.y << ", " << n.z << "]";
-}
+ostream& operator<<(ostream& os, const Normal& n);
 
 __HYBRID__ __forceinline Vector operator*(const float f, const Normal &n) {
 	return n * f;

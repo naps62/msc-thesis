@@ -33,9 +33,7 @@ struct BSphere {
 	{ }
 };
 
-__HYBRID__ __forceinline ostream& operator<<(ostream& os, const BSphere& s) {
-	return os << "BSphere[" << s.center << ", " << s.radius << "]";
-}
+ostream& operator<<(ostream& os, const BSphere& s);
 
 }
 

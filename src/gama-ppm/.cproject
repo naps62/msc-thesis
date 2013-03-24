@@ -65,7 +65,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/beast/${ConfigName}}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/lib/x86_64-linux-gnu"/>
 									<listOptionValue builtIn="false" value="/usr/local/lib"/>
-									<listOptionValue builtIn="false" value="/usr/local/boost/current/lib"/>
 								</option>
 								<inputType id="nvcc.linker.input.1370878421" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -155,7 +154,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/beast/${ConfigName}}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/lib/x86_64-linux-gnu"/>
 									<listOptionValue builtIn="false" value="/usr/local/lib"/>
-									<listOptionValue builtIn="false" value="/usr/local/boost/current/lib"/>
 								</option>
 								<inputType id="nvcc.linker.input.1403784871" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -244,7 +242,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/beast/${ConfigName}}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/lib/x86_64-linux-gnu"/>
 									<listOptionValue builtIn="false" value="/usr/local/lib"/>
-									<listOptionValue builtIn="false" value="/usr/local/boost/current/lib"/>
 								</option>
 								<inputType id="nvcc.linker.input.774193440" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

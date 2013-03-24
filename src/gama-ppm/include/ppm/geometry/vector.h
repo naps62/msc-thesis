@@ -166,9 +166,7 @@ struct Vector : Point {
 	}
 };
 
-__HYBRID__ __forceinline ostream& operator<<(ostream& os, const Vector& v) {
-	return os << "Vector[" << v.x << ", " << v.y << ", " << v.z << "]";
-}
+ostream& operator<<(ostream& os, const Vector& v);
 
 __HYBRID__ __forceinline Vector operator*(const float f, const Vector &v) {
 	return v * f;
