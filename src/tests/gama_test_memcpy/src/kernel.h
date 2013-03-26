@@ -8,7 +8,8 @@
 #ifndef KERNEL_H
 #define KERNEL_H
 
-#include <gama.h>
+#include <gamalib/gamalib.h>
+//#include "gama_ext/vector.h"
 
 class kernel : public work {
 

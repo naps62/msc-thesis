@@ -5,12 +5,13 @@
  *      Author: Miguel Palhas
  */
 
-#include <gama.h>
+#include <gamalib/gamalib.h>
 #include <cstdlib>
 
 #include <cublas.h>
 
 #include "kernel.h"
+//#include "gama_ext/vector.h"
 
 MemorySystem* LowLevelMemAllocator::_memSys = NULL;
 
@@ -22,7 +23,7 @@ int main() {
 
 	// allocation
 	int cpu_arr[N];
-	smartPtr<int> arr(sizeof(int) * N);
+	smartPtr<int> arr(N*sizeof(int));
 	float alpha = 1.5f;
 
 	// initialize with random data
@@ -30,10 +31,9 @@ int main() {
 		cpu_arr[i] = i;
 	}
 
-	kernel* s = new kernel(arr, N, 0, N);
 	memcpy(arr.getPtr(), cpu_arr, sizeof(int) * N);
 	rs->synchronize();
-	rs->submit(s);
+	rs->submit(new kernel(arr, N, 0, N));
 	rs->synchronize();
 
 	unsigned int errors = 0;
@@ -44,6 +44,25 @@ int main() {
 			errors++;
 		}
 	}
+	std::cout << errors << " values were wrong" << std::endl;
+
+
+	// initialize with random data
+	for(int i = 0; i < N; ++i) {
+		arr[i] = 0;
+	}
+
+	rs->submit(new kernel(arr, N, 0, N));
+	rs->synchronize();
+
+	std::cout << "second round:" << std::endl;
+	for(int i = 0; i < N; ++i) {
+		if (arr[i] != 1) {
+			std::cout << "arr[" << i << "] expected " << 1 << ", got " << arr[i] << std::endl;
+			errors++;
+		}
+	}
+
 
 	std::cout << errors << " values were wrong" << std::endl;
 

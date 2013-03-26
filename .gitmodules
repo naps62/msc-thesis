@@ -1,0 +1,6 @@
+[submodule "gama"]
+	path = gama
+	url = git@github.com:naps62/gama
+[submodule "src/gama"]
+	path = src/gama
+	url = git@github.com:naps62/gama
