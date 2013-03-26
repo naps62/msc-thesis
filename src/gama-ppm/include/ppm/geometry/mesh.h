@@ -8,7 +8,7 @@
 #ifndef _PPM_GEOMETRY_MESH_H_
 #define _PPM_GEOMETRY_MESH_H_
 
-#include <gama.h>
+#include <gamalib/gamalib.h>
 #include <ostream>
 using std::ostream;
 

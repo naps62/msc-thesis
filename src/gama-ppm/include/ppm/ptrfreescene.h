@@ -13,10 +13,10 @@
 #include "luxrays/utils/sdl/scene.h"
 #include "luxrays/core/dataset.h"
 #include "utils/action_list.h"
-#include "gama_ext/vector.h"
 
 
-#include <gama.h>
+#include <gamalib/gamalib.h>
+#include <gama_ext/vector.h>
 
 namespace ppm {
 

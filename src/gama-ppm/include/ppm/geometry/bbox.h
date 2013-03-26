@@ -8,7 +8,7 @@
 #ifndef _PPM_GEOMETRY_BBOX_H_
 #define _PPM_GEOMETRY_BBOX_H_
 
-#include <gama.h>
+#include <gamalib/gamalib.h>
 #include "ppm/geometry/vector.h"
 #include "ppm/geometry/point.h"
 #include "ppm/geometry/ray.h"

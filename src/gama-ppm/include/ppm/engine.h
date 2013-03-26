@@ -12,7 +12,7 @@
 #include "ppm/display.h"
 #include "ppm/ptrfreescene.h"
 
-#include <gama.h>
+#include <gamalib/gamalib.h>
 
 namespace ppm {
 

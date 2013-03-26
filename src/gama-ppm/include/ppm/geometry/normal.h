@@ -8,7 +8,7 @@
 #ifndef _PPM_GEOMETRY_NORMAL_H_
 #define _PPM_GEOMETRY_NORMAL_H_
 
-#include <gama.h>
+#include <gamalib/gamalib.h>
 #include "ppm/geometry/point.h"
 #include "ppm/math.h"
 

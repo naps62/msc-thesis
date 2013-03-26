@@ -8,7 +8,7 @@
 #ifndef _PPM_GEOMETRY_RAYHIT_H_
 #define _PPM_GEOMETRY_RAYHIT_H_
 
-#include <gama.h>
+#include <gamalib/gamalib.h>
 
 namespace ppm {
 

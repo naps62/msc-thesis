@@ -8,7 +8,7 @@
 #ifndef _PPM_MATH_H_
 #define _PPM_MATH_H_
 
-#include <gama.h>
+#include <gamalib/gamalib.h>
 #include <cmath>
 
 namespace ppm { namespace math {

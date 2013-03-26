@@ -8,7 +8,7 @@
 #ifndef _PPM_GEOMETRY_TRIANGLE_H_
 #define _PPM_GEOMETRY_TRIANGLE_H_
 
-#include <gama.h>
+#include <gamalib/gamalib.h>
 #include "ppm/geometry/point.h"
 #include "ppm/geometry/ray.h"
 #include "ppm/geometry/rayhit.h"
