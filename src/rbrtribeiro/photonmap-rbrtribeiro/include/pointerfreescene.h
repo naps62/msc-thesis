@@ -34,6 +34,9 @@
 
 //#include "my_cutil_math.h"
 #include <float.h>
+#include <ostream>
+using std::ostream;
+using std::endl;
 
 using namespace std;
 
@@ -57,6 +60,7 @@ public:
 	vector<UV> uvs;
 	vector<Triangle> tris;
 	vector<POINTERFREESCENE::Mesh> meshDescs;
+	unsigned int meshIDs_size;
 	const unsigned int *meshIDs;
 
 	// One element for each mesh, it used to translate the RayBuffer currentTriangleIndex
@@ -134,6 +138,7 @@ private:
 	void CompileTextureMaps();
 
 public:
+	friend ostream& operator<< (ostream& os, PointerFreeScene& scene);
 
 	//------------------------------------------------------------------------------
 	// Auxiliar

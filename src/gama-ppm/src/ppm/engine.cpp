@@ -23,6 +23,11 @@ Engine :: Engine(const Config& _config)
   gama(new RuntimeScheduler()),          // pre-load GAMA runtime scheduler
   scene(new PtrFreeScene(config)) {  // pre-load input scene
 //************************
+
+	ofstream out("gama-ppm.scene.dump");
+	out << *scene << endl;
+	out.close();
+
 	// load display if necessary
 	if (config.use_display) {
 		display = new Display(config);

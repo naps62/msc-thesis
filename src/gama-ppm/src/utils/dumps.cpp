@@ -11,9 +11,16 @@ namespace ppm {
 
 // Camera
 ostream& operator<< (ostream& os, const Camera& c) {
-	return os << "Camera[" << c.lens_radius << ", " << c.focal_distance << ", " << c.yon << ", " << c.hither
-			  << "raster_to_camera[" << c.raster_to_camera_matrix[0] << ' ' << c.raster_to_camera_matrix[1] << ' ' << c.raster_to_camera_matrix[2] << ' ' << c.raster_to_camera_matrix[3] << "]"
-			  << "camera_to_world["  << c.camera_to_world_matrix[0]  << ' ' << c.camera_to_world_matrix[1]  << ' ' << c.camera_to_world_matrix[2]  << ' ' << c.camera_to_world_matrix[3]  << "] ]";
+	os << "Camera[" << c.lens_radius << ", " << c.focal_distance << ", " << c.yon << ", " << c.hither << ", ";
+	os << "raster_to_camera[";
+	for(uint i = 0; i < 4; ++i)
+		for(uint j = 0; j < 4; ++j)
+			os << c.raster_to_camera_matrix[i][j] << ", ";
+	os << "], camera_to_world[";
+		for(uint i = 0; i < 4; ++i)
+			for(uint j = 0; j < 4; ++j)
+				os << c.camera_to_world_matrix[i][j] << ", ";
+	return os << "] ]";
 }
 
 // BBox
@@ -35,9 +42,9 @@ ostream & operator<<(ostream &os, const Matrix4x4 &mat) {
 			os << mat.m[i][j];
 			if (j != 3) os << ", ";
 		}
-		os << " ] ";
+		os << " ]";
 	}
-	return os << " ] ";
+	return os << "]";
 }
 
 // Mesh
@@ -94,7 +101,7 @@ ostream& operator<< (ostream& os, const TriangleLight& l) {
 
 // InfiniteLight
 ostream& operator<< (ostream& os, const InfiniteLight& l) {
-	return os << "InfiniteLight[" << l.exists << "; " << l.shiftU << "; " << l.shiftV << ", " << l.gain
+	return os << "InfiniteLight[" << l.exists << ", " << l.shiftU << "; " << l.shiftV << ", " << l.gain
 			  << ", " << l.width << ", " << l.height << "]";
 }
 
@@ -120,7 +127,7 @@ ostream& operator<< (ostream& os, const SkyLight& l) {
 
 // TexMap
 ostream& operator<< (ostream& os, const TexMap& t) {
-	return os << "TexMap[" << t.rgb_offset << "; " << t.alpha_offset << ", " << t.width << "; " << t.height << "]";
+	return os << "TexMap[" << t.rgb_offset << ", " << t.alpha_offset << ", " << t.width << "; " << t.height << "]";
 }
 
 // Spectrum
@@ -130,7 +137,7 @@ ostream& operator<<(ostream& os, const Spectrum& s) {
 
 // Color
 ostream& operator<< (ostream& os, const Color& c) {
-	return os << "Color[" << c.r << "; " << c.g << ", " << c.b << "]";
+	return os << "Color[" << c.r << ", " << c.g << ", " << c.b << "]";
 }
 
 // Material

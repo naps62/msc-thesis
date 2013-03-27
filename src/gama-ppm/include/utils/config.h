@@ -19,7 +19,7 @@ struct Config : public beast::program_options::options {
 	const char** argv;
 
 	// scene
-	string scene_name;
+	string scene_dir;
 	string scene_file;
 	string scene_cfg;
 

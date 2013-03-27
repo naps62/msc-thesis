@@ -18,9 +18,9 @@ Config :: Config(
 //*************************
 
 	// scene
-	value("scene_name", scene_name, string("kitchen"),     "to find scenes/<scene_name>/ directory");
-	value("scene_file", scene_file, string("kitchen.scn"), "to find scenes/<scene_name>/<scene_file>");
-	value("scene_cfg",  scene_cfg,  string("render.cfg"),  "to find scenes/<scene_name>/<scene_cfg>");
+	value("scene_dir",  scene_dir,  string("scenes/kitchen"), "folder where scene files are stored");
+	value("scene_file", scene_file, string("kitchen.scn"), "to find <scene_dir>/<scene_file>");
+	value("scene_cfg",  scene_cfg,  string("render.cfg"),  "to find <scene_dir>/<scene_cfg>");
 
 	// window
 	flag("no-display", no_display, "Supress realtime display?");
@@ -45,4 +45,6 @@ Config :: Config(
 		accel_type = ppm::ACCEL_MQBVH;
 	else
 		accel_type = ppm::ACCEL_QBVH;
+
+	scene_file = scene_dir + '/' + scene_file;
 }
