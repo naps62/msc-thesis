@@ -103,7 +103,7 @@ struct Spectrum {
 	}
 
 	__HYBRID__ bool is_nan() const {
-		return isnan(r) || isnan(g) || isnan(b);
+		return isnan((double)r) || isnan((double)g) || isnan((double)b);
 	}
 
 	__HYBRID__ float y() const {

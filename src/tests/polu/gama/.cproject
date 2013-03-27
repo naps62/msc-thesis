@@ -35,7 +35,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/beast/include}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/local/include/lapackpp"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/gama}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/gama/src}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/local/cuda/samples/common/inc"/>
 								</option>
 								<inputType id="nvcc.compiler.input.cu.589557538" superClass="nvcc.compiler.input.cu"/>
@@ -109,7 +109,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/beast/include}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/local/include/lapackpp"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/gama}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/gama/src}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/local/cuda/samples/common/inc"/>
 								</option>
 								<inputType id="nvcc.compiler.input.cu.1206260103" superClass="nvcc.compiler.input.cu"/>
