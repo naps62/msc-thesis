@@ -17,8 +17,8 @@
 void inline checkCUDAmemory(char* t = NULL) {
 
 	//cudaDeviceSynchronize();
-	size_t free, total;
-	//cuMemGetInfo(&free, &total);
+	size_t free = 0, total = 0;
+//	cuMemGetInfo(&free, &total);
 	fprintf(stderr, "%s mem %ld total %ld\n", t, free / 1024 / 1024, total / 1024 / 1024);
 
 }

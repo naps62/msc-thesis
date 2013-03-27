@@ -110,6 +110,7 @@ void DataSet::Preprocess() {
 		}
 		default:
 			assert (false);
+			break;
 	}
 
 	accel->Init(meshes, totalVertexCount, totalTriangleCount);

@@ -21,7 +21,7 @@
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" id="com.nvidia.cuda.ide.configuration.debug.91925916" name="Debug" parent="com.nvidia.cuda.ide.configuration.debug">
 					<folderInfo id="com.nvidia.cuda.ide.configuration.debug.91925916." name="/" resourcePath="">
-						<toolChain id="com.nvidia.cuda.tools.toolchain.exe.debug.1989944946" name="CUDA Toolkit 5.0" superClass="com.nvidia.cuda.tools.toolchain.exe.debug">
+						<toolChain id="com.nvidia.cuda.tools.toolchain.exe.debug.1989944946" name="CUDA Toolkit 5.0" resourceTypeBasedDiscovery="false" superClass="com.nvidia.cuda.tools.toolchain.exe.debug">
 							<targetPlatform archList="all" binaryParser="com.nvidia.cuda.ide.elf;com.nvidia.cuda.ide.macho;com.nvidia.cuda.ide.cubin" id="com.nvidia.cuda.ide.targetPlatform.959844348" isAbstract="false" name="Debug Platform" osList="linux,macosx" superClass="com.nvidia.cuda.ide.targetPlatform"/>
 							<builder buildPath="${workspace_loc:/gama/Debug}" id="com.nvidia.cuda.ide.builder.814237782" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CUDA Toolkit 5.0 Builder" parallelBuildOn="false" parallelizationNumber="-1" superClass="com.nvidia.cuda.ide.builder"/>
 							<tool command="nvcc" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX} ${OUTPUT} ${INPUTS}" id="nvcc.compiler.base.424893488" name="NVCC Compiler" superClass="nvcc.compiler.base">
@@ -31,7 +31,6 @@
 								<option id="nvcc.compiler.pic.1262474742" name="Position Independent Code (-fPIC)" superClass="nvcc.compiler.pic"/>
 								<option id="nvcc.compiler.include.paths.1491287669" name="Include paths (-I)" superClass="nvcc.compiler.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/local/cuda/include"/>
-									<listOptionValue builtIn="false" value="/usr/local/boost/current/include"/>
 									<listOptionValue builtIn="false" value="/usr/local/include/lapackpp"/>
 									<listOptionValue builtIn="false" value="/usr/local/cuda/samples/common/inc"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
@@ -65,7 +64,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/beast/${ConfigName}}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/lib/x86_64-linux-gnu"/>
 									<listOptionValue builtIn="false" value="/usr/local/lib"/>
-									<listOptionValue builtIn="false" value="/usr/local/boost/current/lib"/>
 								</option>
 								<inputType id="nvcc.linker.input.1370878421" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -111,7 +109,7 @@
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" id="com.nvidia.cuda.ide.configuration.release.2118471627" name="Release" parent="com.nvidia.cuda.ide.configuration.release">
 					<folderInfo id="com.nvidia.cuda.ide.configuration.release.2118471627." name="/" resourcePath="">
-						<toolChain id="com.nvidia.cuda.ide.toolchain.exe.release.1610592977" name="CUDA Toolkit 5.0" superClass="com.nvidia.cuda.ide.toolchain.exe.release">
+						<toolChain id="com.nvidia.cuda.ide.toolchain.exe.release.1610592977" name="CUDA Toolkit 5.0" resourceTypeBasedDiscovery="false" superClass="com.nvidia.cuda.ide.toolchain.exe.release">
 							<targetPlatform archList="all" binaryParser="com.nvidia.cuda.ide.elf;com.nvidia.cuda.ide.macho;com.nvidia.cuda.ide.cubin" id="com.nvidia.cuda.ide.targetPlatform.429149265" isAbstract="false" name="Debug Platform" osList="linux,macosx" superClass="com.nvidia.cuda.ide.targetPlatform"/>
 							<builder buildPath="${workspace_loc:/gama/Release}" id="com.nvidia.cuda.ide.builder.1549539306" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CUDA Toolkit 5.0 Builder" superClass="com.nvidia.cuda.ide.builder"/>
 							<tool id="nvcc.compiler.base.1677571602" name="NVCC Compiler" superClass="nvcc.compiler.base">
@@ -121,7 +119,6 @@
 								<option id="nvcc.compiler.pic.770238575" name="Position Independent Code (-fPIC)" superClass="nvcc.compiler.pic"/>
 								<option id="nvcc.compiler.include.paths.1684369767" name="Include paths (-I)" superClass="nvcc.compiler.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/local/cuda/include"/>
-									<listOptionValue builtIn="false" value="/usr/local/boost/current/include"/>
 									<listOptionValue builtIn="false" value="/usr/local/include/lapackpp"/>
 									<listOptionValue builtIn="false" value="/usr/local/cuda/samples/common/inc"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
@@ -155,7 +152,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/beast/${ConfigName}}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/lib/x86_64-linux-gnu"/>
 									<listOptionValue builtIn="false" value="/usr/local/lib"/>
-									<listOptionValue builtIn="false" value="/usr/local/boost/current/lib"/>
 								</option>
 								<inputType id="nvcc.linker.input.1403784871" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -200,7 +196,7 @@
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" id="com.nvidia.cuda.ide.configuration.release.2118471627.218174598" name="Profile" parent="com.nvidia.cuda.ide.configuration.release">
 					<folderInfo id="com.nvidia.cuda.ide.configuration.release.2118471627.218174598." name="/" resourcePath="">
-						<toolChain id="com.nvidia.cuda.ide.toolchain.exe.release.1948331213" name="CUDA Toolkit 5.0" superClass="com.nvidia.cuda.ide.toolchain.exe.release">
+						<toolChain id="com.nvidia.cuda.ide.toolchain.exe.release.1948331213" name="CUDA Toolkit 5.0" resourceTypeBasedDiscovery="false" superClass="com.nvidia.cuda.ide.toolchain.exe.release">
 							<targetPlatform archList="all" binaryParser="com.nvidia.cuda.ide.elf;com.nvidia.cuda.ide.macho;com.nvidia.cuda.ide.cubin" id="com.nvidia.cuda.ide.targetPlatform.1793604510" isAbstract="false" name="Debug Platform" osList="linux,macosx" superClass="com.nvidia.cuda.ide.targetPlatform"/>
 							<builder buildPath="${workspace_loc:/gama/Release}" id="com.nvidia.cuda.ide.builder.2097597731" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CUDA Toolkit 5.0 Builder" superClass="com.nvidia.cuda.ide.builder"/>
 							<tool id="nvcc.compiler.base.1238137764" name="NVCC Compiler" superClass="nvcc.compiler.base">
@@ -210,7 +206,6 @@
 								<option id="nvcc.compiler.pic.2045664850" name="Position Independent Code (-fPIC)" superClass="nvcc.compiler.pic"/>
 								<option id="nvcc.compiler.include.paths.301860716" name="Include paths (-I)" superClass="nvcc.compiler.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/local/cuda/include"/>
-									<listOptionValue builtIn="false" value="/usr/local/boost/current/include"/>
 									<listOptionValue builtIn="false" value="/usr/local/include/lapackpp"/>
 									<listOptionValue builtIn="false" value="/usr/local/cuda/samples/common/inc"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src}&quot;"/>
@@ -244,7 +239,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/beast/${ConfigName}}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/lib/x86_64-linux-gnu"/>
 									<listOptionValue builtIn="false" value="/usr/local/lib"/>
-									<listOptionValue builtIn="false" value="/usr/local/boost/current/lib"/>
 								</option>
 								<inputType id="nvcc.linker.input.774193440" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -281,13 +275,40 @@
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.2118471627">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.91925916;com.nvidia.cuda.ide.configuration.debug.91925916.;nvcc.compiler.base.424893488;nvcc.compiler.input.cu.589557538">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.2118471627.218174598">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.2118471627.218174598;com.nvidia.cuda.ide.configuration.release.2118471627.218174598.;nvcc.compiler.base.1238137764;nvcc.compiler.input.c.1147253772">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.2118471627;com.nvidia.cuda.ide.configuration.release.2118471627.;nvcc.compiler.base.1677571602;nvcc.compiler.input.c.893686353">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.2118471627.218174598;com.nvidia.cuda.ide.configuration.release.2118471627.218174598.;nvcc.compiler.base.1238137764;nvcc.compiler.input.cu.1328161995">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.2118471627;com.nvidia.cuda.ide.configuration.release.2118471627.;nvcc.compiler.base.1677571602;nvcc.compiler.input.cpp.1303866609">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.2118471627.218174598;com.nvidia.cuda.ide.configuration.release.2118471627.218174598.;nvcc.compiler.base.1238137764;nvcc.compiler.input.cpp.1326267451">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.91925916;com.nvidia.cuda.ide.configuration.debug.91925916.;nvcc.compiler.base.424893488;nvcc.compiler.input.c.279562417">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.91925916;com.nvidia.cuda.ide.configuration.debug.91925916.;nvcc.compiler.base.424893488;nvcc.compiler.input.cpp.11845370">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.91925916;com.nvidia.cuda.ide.configuration.debug.91925916.;nvcc.compiler.base.424893488;nvcc.compiler.input.cu.589557538">
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.2118471627;com.nvidia.cuda.ide.configuration.release.2118471627.;nvcc.compiler.base.1677571602;nvcc.compiler.input.cu.1206260103">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.91925916">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 	</storageModule>

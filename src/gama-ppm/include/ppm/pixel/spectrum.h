@@ -110,7 +110,7 @@ struct Spectrum {
 		return 0.212671f * r + 0.715160f * g + 0.072169f * b;
 	}
 
-	__HYBRID__ float sclamp() {
+	__HYBRID__ void sclamp() {
 		clamp(r, 0.f, 1.f);
 		clamp(g, 0.f, 1.f);
 		clamp(b, 0.f, 1.f);

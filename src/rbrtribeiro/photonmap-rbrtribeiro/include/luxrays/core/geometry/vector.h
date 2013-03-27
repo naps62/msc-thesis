@@ -41,6 +41,7 @@ public:
 	Vector(float _x = 0.f, float _y = 0.f, float _z = 0.f) :
 		x(_x), y(_y), z(_z) {
 	}
+	__HD__
 	explicit Vector(const Point &p);
 	__HD__
 	Vector operator+(const Vector &v) const {
@@ -112,6 +113,7 @@ public:
 	float Length() const {
 		return sqrtf(LengthSquared());
 	}
+	__HD__
 	explicit Vector(const Normal &n);
 
 	// Vector Public Data

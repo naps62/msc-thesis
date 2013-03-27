@@ -117,6 +117,7 @@ __HD__
 	float x, y, z;
 } ;
 
+__HD__
 inline Vector::Vector(const Point &p)
 	: x(p.x), y(p.y), z(p.z) {
 }

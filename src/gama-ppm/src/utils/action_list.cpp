@@ -59,7 +59,7 @@ ostream& operator<< (ostream& os, const ActionList& list) {
 		ss << list.action_to_string(*it);
 	}
 	ss << " ]";
-	os << ss.str();
+	return os << ss.str();
 }
 
 /*
@@ -96,4 +96,5 @@ string ActionList :: action_to_string(const Action action) const {
 		return string("ActionMax");
 		break;
 	}
+	return string("ActionMax");
 }

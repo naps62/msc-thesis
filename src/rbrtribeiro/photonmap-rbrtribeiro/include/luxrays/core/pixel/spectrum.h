@@ -24,6 +24,7 @@
 #define _LUXRAYS_SPECTRUM_H
 
 #include <ostream>
+#include <cmath>
 
 #include "luxrays/core/utils.h"
 
@@ -117,9 +118,12 @@ public:
 	bool Black() const {
 		return (r == 0.f) && (g == 0.f) && (b == 0.f);
 	}
+	__HD__ bool myisnan(float x) const {
+		return x != x;
+	}
 	__HD__
 	bool IsNaN() const {
-		return isnan(r) || isnan(g) || isnan(b);
+		return myisnan(r) || myisnan(g) || myisnan(b);
 	}
 	__HD__
 	float Y() const {
