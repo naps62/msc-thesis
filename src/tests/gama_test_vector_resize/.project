@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>gama_test_vector</name>
+	<name>gama_test_vector_resize</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -95,10 +95,6 @@
 		<variable>
 			<name>MSC_THESIS_PATH1</name>
 			<value>$%7BMSC_THESIS_PATH%7D/naps62/projects/msc-thesis</value>
-		</variable>
-		<variable>
-			<name>MSC_THESIS_PATH11</name>
-			<value>$%7BMSC_THESIS_PATH1%7D/naps62/projects/msc-thesis</value>
 		</variable>
 	</variableList>
 </projectDescription>
