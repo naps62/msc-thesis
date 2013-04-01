@@ -1,10 +1,3 @@
-/*
- * main.cpp
- *
- *  Created on: December 14, 2012
- *      Author: Miguel Palhas
- */
-
 #include <cstdlib>
 #include <iostream>
 
@@ -21,5 +14,6 @@ int main(int argc, char** argv) {
 	Config config("Options", argc, argv);
 
 	// load render engine
-	ppm::Engine engine(config);
+	ppm::Engine* engine = ppm::Engine::get_instance(config);
+	engine->render();
 }

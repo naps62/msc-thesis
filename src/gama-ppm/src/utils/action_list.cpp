@@ -1,10 +1,3 @@
-/*
- * action_list.cpp
- *
- *  Created on: Mar 12, 2013
- *      Author: Miguel Palhas
- */
-
 #include "utils/action_list.h"
 
 #include <sstream>

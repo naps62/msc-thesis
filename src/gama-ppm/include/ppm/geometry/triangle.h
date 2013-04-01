@@ -1,10 +1,3 @@
-/*
- * triangle.h
- *
- *  Created on: Mar 13, 2013
- *      Author: Miguel Palhas
- */
-
 #ifndef _PPM_GEOMETRY_TRIANGLE_H_
 #define _PPM_GEOMETRY_TRIANGLE_H_
 

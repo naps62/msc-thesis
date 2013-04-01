@@ -1,10 +1,3 @@
-/*
- * math.h
- *
- *  Created on: Mar 13, 2013
- *      Author: Miguel Palhas
- */
-
 #ifndef _PPM_MATH_H_
 #define _PPM_MATH_H_
 

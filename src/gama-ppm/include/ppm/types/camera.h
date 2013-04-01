@@ -1,10 +1,3 @@
-/*
- * camera.h
- *
- *  Created on: Mar 13, 2013
- *      Author: Miguel Palhas
- */
-
 #ifndef _PPM_TYPES_CAMERA_H_
 #define _PPM_TYPES_CAMERA_H_
 

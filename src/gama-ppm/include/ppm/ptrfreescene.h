@@ -1,10 +1,3 @@
-/*
- * ptrfreescene.h
- *
- *  Created on: Mar 11, 2013
- *      Author: Miguel Palhas
- */
-
 #ifndef _PPM_PTRFREESCENE_H_
 #define _PPM_PTRFREESCENE_H_
 

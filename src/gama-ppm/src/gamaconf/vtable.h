@@ -1,10 +1,3 @@
-/*
- * vtable.h
- *
- *  Created on: Dec 14, 2012
- *     Author: Miguel Palhas
- */
-
 #ifndef __MY_VTABLE_H_
 #define __MY_VTABLE_H_
 

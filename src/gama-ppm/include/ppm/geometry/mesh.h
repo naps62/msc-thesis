@@ -1,10 +1,3 @@
-/*
- * ray.h
- *
- *  Created on: Mar 14, 2013
- *      Author: Miguel Palhas
- */
-
 #ifndef _PPM_GEOMETRY_MESH_H_
 #define _PPM_GEOMETRY_MESH_H_
 

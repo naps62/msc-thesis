@@ -1,10 +1,3 @@
-/*
- * ptrfreescene.cpp
- *
- *  Created on: Mar 11, 2013
- *      Author: Miguel Palhas
- */
-
 #include "ppm/ptrfreescene.h"
 
 #include "luxrays/core/accelerator.h"

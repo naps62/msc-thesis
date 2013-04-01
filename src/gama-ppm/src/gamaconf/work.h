@@ -1,10 +1,3 @@
-/*
- * work.h
- *
- *  Created on: Dec 14, 2012
- *      Author: naps62
- */
-
 #ifndef __MY_WORK_H_
 #define __MY_WORK_H_
 

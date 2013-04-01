@@ -1,11 +1,5 @@
-/*
- * display.cpp
- *
- *  Created on: Mar 11, 2013
- *      Author: Miguel Palhas
- */
-
 #include "ppm/engine.h"
+#include "ppm/engines/ppm.h"
 
 // this should be a gama internal
 MemorySystem* LowLevelMemAllocator::_memSys = NULL;
@@ -16,29 +10,21 @@ namespace ppm {
 // constructors
 //
 
-// constructor receiving a config struct
-//*************************
 Engine :: Engine(const Config& _config)
-: config(_config),                       // store reference to global configs
-  gama(new RuntimeScheduler()),          // pre-load GAMA runtime scheduler
-  scene(new PtrFreeScene(config)) {  // pre-load input scene
-//************************
-
+: config(_config), gama(new RuntimeScheduler()), scene(new PtrFreeScene(config)), film(config) {
 	ofstream out("gama-ppm.scene.dump");
 	out << *scene << endl;
 	out.close();
 
 	// load display if necessary
 	if (config.use_display) {
-		display = new Display(config);
+		display = new Display(config, film);
 		display->start();
+		display->wait_for_window();
 	}
 }
 
-// destructor
-//*************************
 Engine :: ~Engine() {
-//*************************
 	// finalize RuntimeSystem
 	delete gama;
 
@@ -51,5 +37,14 @@ Engine :: ~Engine() {
 //
 // public methods
 //
+
+// static
+Engine* Engine :: get_instance(const Config& config) {
+	if (config.engine_name == string("ppm"))
+		return new ppm::PPM(config);
+	else {
+		throw new string("invalid engine name " + config.engine_name);
+	}
+}
 
 }

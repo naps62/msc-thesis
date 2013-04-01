@@ -1,10 +1,3 @@
-/*
- * config.h
- *
- *  Created on: Mar 11, 2013
- *      Author: Miguel Palhas
- */
-
 #ifndef _UTILS_CONFIG_H_
 #define _UTILS_CONFIG_H_
 
@@ -31,6 +24,7 @@ struct Config : public beast::program_options::options {
 	string title;
 
 	// render
+	string engine_name;
 	string accel_name;
 	ppm::AcceleratorType accel_type;
 	float alpha;

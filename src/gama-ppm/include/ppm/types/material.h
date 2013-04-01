@@ -1,10 +1,3 @@
-/*
- * material.h
- *
- *  Created on: Mar 20, 2013
- *      Author: Miguel Palhas
- */
-
 #ifndef _PPM_TYPES_MATERIAL_H_
 #define _PPM_TYPES_MATERIAL_H_
 

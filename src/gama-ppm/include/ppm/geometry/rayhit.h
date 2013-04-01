@@ -1,10 +1,3 @@
-/*
- * rayhit.h
- *
- *  Created on: Mar 14, 2013
- *      Author: Miguel Palhas
- */
-
 #ifndef _PPM_GEOMETRY_RAYHIT_H_
 #define _PPM_GEOMETRY_RAYHIT_H_
 

@@ -1,10 +1,3 @@
-/*
- * math.cu
- *
- *  Created on: Mar 13, 2013
- *      Author: Miguel Palhas
- */
-
 #include "ppm/math.h"
 
 namespace ppm { namespace math {

@@ -1,10 +1,3 @@
-/*
- * vtable.cuh
- *
- *  Created on: Dec 14, 2012
- *      Author: naps62
- */
-
 #ifndef __MY_VTABLE_CUH_
 #define __MY_VTABLE_CUH_
 

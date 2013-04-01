@@ -1,10 +1,3 @@
-/*
- * dumps.cpp
- *
- *  Created on: Mar 24, 2013
- *      Author: Miguel Palhas
- */
-
 #include "ppm/types.h"
 
 namespace ppm {

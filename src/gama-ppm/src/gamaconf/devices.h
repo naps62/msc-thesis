@@ -1,10 +1,3 @@
-/*
- * devices.h
- *
- *  Created on: Dec 14, 2012
- *      Author: Miguel Palhas
- */
-
 #ifndef __MY_DEVICES_H_
 #define __MY_DEVICES_H_
 

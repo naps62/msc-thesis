@@ -1,10 +1,3 @@
-/*
- * edit_action.h
- *
- *  Created on: Mar 11, 2013
- *      Author: Miguel Palhas
- */
-
 #ifndef _UTILS_EDIT_ACTION_H_
 #define _UTILS_EDIT_ACTION_H_
 
