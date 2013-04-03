@@ -10,6 +10,7 @@ class PPM : public Engine {
 public:
 	PPM(const Config& _config);
 	void render();
+	void set_captions();
 };
 
 }

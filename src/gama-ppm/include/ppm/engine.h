@@ -16,6 +16,7 @@ public:
 	Engine(const Config& _config);
 	virtual ~Engine();
 	virtual void render() = 0;
+	virtual void set_captions() = 0;
 
 	static Engine* get_instance(const Config& config);
 

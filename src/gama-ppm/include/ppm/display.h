@@ -8,12 +8,18 @@
 namespace ppm {
 
 struct Display : public beast::gl::async_window {
-
 	Display(const Config& config, Film& film);
 	void render();
+	void set_captions(stringstream& header_ss, stringstream& footer_ss);
 
 private:
+	const Config& config;
 	Film& film;
+	float frame_time;
+	string header;
+	string footer;
+
+	void print_string(void* font, const string& str) const;
 };
 
 }
