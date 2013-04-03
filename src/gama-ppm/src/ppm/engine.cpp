@@ -19,8 +19,7 @@ Engine :: Engine(const Config& _config)
 	// load display if necessary
 	if (config.use_display) {
 		display = new Display(config, film);
-		display->start();
-		display->wait_for_window();
+		display->start(true);
 	}
 }
 

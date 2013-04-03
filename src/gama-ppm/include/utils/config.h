@@ -22,6 +22,7 @@ struct Config : public beast::program_options::options {
 	uint width;
 	uint height;
 	string title;
+	uint max_refresh_rate;
 
 	// render
 	string engine_name;

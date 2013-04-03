@@ -41,7 +41,7 @@
 								<option id="nvcc.compiler.def.symbols.1526993847" name="Defined symbols (-D)" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_${ConfigName}"/>
 								</option>
-								<option id="nvcc.compiler.compileroptions.642375679" name="Preprocessor options (-Xcompiler)" superClass="nvcc.compiler.compileroptions"/>
+								<option id="nvcc.compiler.compileroptions.642375679" name="Preprocessor options (-Xcompiler)" superClass="nvcc.compiler.compileroptions" valueType="stringList"/>
 								<inputType id="nvcc.compiler.input.cu.589557538" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.11845370" superClass="nvcc.compiler.input.cpp"/>
 								<inputType id="nvcc.compiler.input.c.279562417" superClass="nvcc.compiler.input.c"/>
@@ -129,7 +129,7 @@
 								<option id="nvcc.compiler.def.symbols.2144465073" name="Defined symbols (-D)" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_${ConfigName}"/>
 								</option>
-								<option id="nvcc.compiler.compileroptions.255142727" name="Preprocessor options (-Xcompiler)" superClass="nvcc.compiler.compileroptions"/>
+								<option id="nvcc.compiler.compileroptions.255142727" name="Preprocessor options (-Xcompiler)" superClass="nvcc.compiler.compileroptions" valueType="stringList"/>
 								<inputType id="nvcc.compiler.input.cu.1206260103" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.1303866609" superClass="nvcc.compiler.input.cpp"/>
 								<inputType id="nvcc.compiler.input.c.893686353" superClass="nvcc.compiler.input.c"/>
@@ -175,6 +175,7 @@
 					<sass major="2" minor="0"/>
 					<ptx major="1" minor="2"/>
 				</executable>
+				<editor-arch major="2" minor="0"/>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>
@@ -216,7 +217,7 @@
 								<option id="nvcc.compiler.def.symbols.589021198" name="Defined symbols (-D)" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_${ConfigName}"/>
 								</option>
-								<option id="nvcc.compiler.compileroptions.1938215108" name="Preprocessor options (-Xcompiler)" superClass="nvcc.compiler.compileroptions"/>
+								<option id="nvcc.compiler.compileroptions.1938215108" name="Preprocessor options (-Xcompiler)" superClass="nvcc.compiler.compileroptions" valueType="stringList"/>
 								<inputType id="nvcc.compiler.input.cu.1328161995" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.1326267451" superClass="nvcc.compiler.input.cpp"/>
 								<inputType id="nvcc.compiler.input.c.1147253772" superClass="nvcc.compiler.input.c"/>
@@ -262,6 +263,7 @@
 					<sass major="2" minor="0"/>
 					<ptx major="1" minor="2"/>
 				</executable>
+				<editor-arch major="2" minor="0"/>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 		</cconfiguration>

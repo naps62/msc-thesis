@@ -5,17 +5,12 @@
 #include "utils/config.h"
 #include "ppm/film.h"
 
-#include <string>
-using std::string;
-
 namespace ppm {
 
 struct Display : public beast::gl::async_window {
 
 	Display(const Config& config, Film& film);
-
 	void render();
-	void set_require_update();
 
 private:
 	Film& film;

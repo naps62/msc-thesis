@@ -21,8 +21,6 @@ void Film :: clear(const Spectrum color) {
 }
 
 Spectrum* Film :: get_frame_buffer_ptr() {
-	boost::recursive_mutex::scoped_lock lock(buffer_mutex);
-
 	update_frame_buffer();
 	return &frame_buffer[0];
 }

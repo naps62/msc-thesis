@@ -20,8 +20,4 @@ void Display :: render() {
 	glDrawPixels(film.width, film.height, GL_RGB, GL_FLOAT, buffer);
 }
 
-void Display :: set_require_update() {
-	glutPostRedisplay();
-}
-
 }
