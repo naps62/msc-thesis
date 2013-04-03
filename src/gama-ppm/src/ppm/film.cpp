@@ -26,7 +26,9 @@ Spectrum* Film :: get_frame_buffer_ptr() {
 }
 
 void Film :: update_frame_buffer() {
-	boost::recursive_mutex::scoped_lock lock(buffer_mutex);
+	boost::unique_lock<boost::recursive_mutex> lock(buffer_mutex, boost::defer_lock_t());
+	if (config.vsync)
+		lock.lock();
 
 	if (!has_changed)
 		return;

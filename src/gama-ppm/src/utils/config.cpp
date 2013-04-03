@@ -14,6 +14,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
 	value("height,h",  height, uint(480),          "window height");
 	value("title,t",   title,  string("gama-ppm"), "window title");
 	value("fps",       max_refresh_rate, uint(60), "maximum FPS");
+	flag("vsync",      vsync, "V-Sync. Can cause problems sometimes, so defaults to false");
 
 	// render
 	value("alpha,a", alpha,       float(0.7), "??? still don't know what this is for");

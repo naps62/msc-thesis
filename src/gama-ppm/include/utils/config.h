@@ -23,6 +23,7 @@ struct Config : public beast::program_options::options {
 	uint height;
 	string title;
 	uint max_refresh_rate;
+	bool vsync;
 
 	// render
 	string engine_name;
