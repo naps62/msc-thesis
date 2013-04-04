@@ -17,16 +17,18 @@ Config :: Config(const char *desc, int _argc, char **_argv)
 	flag("vsync",      vsync, "V-Sync. Can cause problems sometimes, so defaults to false");
 
 	// render
-	value("alpha,a", alpha,       float(0.7), "??? still don't know what this is for");
-	value("spp",     spp,         uint(4),    "samples per pixel (supersampling)");
-	value("accel",   accel_name,  string("QBVH"), "accelerator type [QBVH (default) | BVH | MQBVH)");
-	value("engine",  engine_name, string("ppm"), "render engine to use [ppm (default) | ... (others to come)]");
+	value("alpha,a",   alpha,       float(0.7), "??? still don't know what this is for");
+	value("spp",       spp,         uint(4),    "samples per pixel (supersampling)");
+	value("accel",     accel_name,  string("QBVH"), "accelerator type [QBVH (default) | BVH | MQBVH)");
+	value("engine",    engine_name, string("ppm"), "render engine to use [ppm (default) | ... (others to come)]");
 
 	// now parse the arguments
 	parse(_argc, _argv);
 
 	// derived values
 	use_display = ! no_display;
+	min_frame_time = 1.f / max_refresh_rate;
+	total_hit_points = width * height * spp * spp;
 
 	if (accel_name == string("BVH"))
 		accel_type = ppm::ACCEL_BVH;

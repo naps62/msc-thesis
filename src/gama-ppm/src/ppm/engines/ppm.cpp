@@ -6,15 +6,14 @@ PPM :: PPM(const Config& config)
 : Engine(config) { }
 
 void PPM :: render() {
+	film.clear(Spectrum(1.f, 0.f, 0.f));
+	build_hit_points(1);
 	float r = 0.f;
-	float frame_time = 1.f / config.max_refresh_rate;
-	bool x = true;
 	while(true) {
-		film.clear(Spectrum(r, 0.f, 0.f));
 		r += 0.01;
-		if (r >= 1.f) r = 0.f;
+		if (r >= .5f) r = 0.f;
 		set_captions();
-		display->request_update(frame_time);
+		display->request_update(config.min_frame_time);
 	}
 }
 

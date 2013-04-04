@@ -15,7 +15,6 @@ struct Display : public beast::gl::async_window {
 private:
 	const Config& config;
 	Film& film;
-	float frame_time;
 	string header;
 	string footer;
 

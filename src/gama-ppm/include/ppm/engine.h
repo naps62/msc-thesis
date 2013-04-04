@@ -26,6 +26,10 @@ protected:
 	PtrFreeScene* const scene;
 	Display* display;
 	Film film;
+
+	vector<HitPointStaticInfo> hit_point_static_info_iteration_copy;
+
+	void build_hit_points(uint iteration);
 };
 
 }

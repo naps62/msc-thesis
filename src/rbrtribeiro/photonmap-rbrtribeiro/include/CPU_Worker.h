@@ -88,17 +88,17 @@ public:
 		if (buildHitPoints) {
 			BuildHitPoints(1);
 
-#if defined USE_PPMPA
+		#if defined USE_PPMPA
 			engine->globalHitPointsStaticInfo = hitPointsStaticInfo_iterationCopy;
-#endif
+		#endif
 		}
-#if defined USE_PPMPA
+		#if defined USE_PPMPA
 		engine->waitForHitPoints->wait();
 
 		hitPointsStaticInfo_iterationCopy = engine->globalHitPointsStaticInfo;
 
 		//non-static info allocated and initialized in worker constructor
-#endif
+		#endif
 #endif
 
 		ProcessIterations(engine);

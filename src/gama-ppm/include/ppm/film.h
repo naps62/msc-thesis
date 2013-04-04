@@ -9,7 +9,7 @@ class Film {
 
 public:
 	Film(const Config& _config);
-	void clear(const Spectrum color);
+	void clear(const Spectrum color = Spectrum());
 	Spectrum* get_frame_buffer_ptr();
 	void update_frame_buffer();
 

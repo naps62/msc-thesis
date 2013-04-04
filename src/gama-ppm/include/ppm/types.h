@@ -43,5 +43,7 @@ ostream& operator<< (ostream& os, const Color& c);
 #include "ppm/types/material.h"
 #include "ppm/types/light.h"
 #include "ppm/types/texture.h"
+#include "ppm/types/paths.h"
+#include "ppm/types/hitpoints.h"
 
 #endif // _PPM_TYPES_H_

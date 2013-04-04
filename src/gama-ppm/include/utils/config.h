@@ -18,11 +18,12 @@ struct Config : public beast::program_options::options {
 
 	// window
 	bool no_display;
-	bool use_display;  // derived from no_display
+	bool use_display;  // derived from (!no_display)
 	uint width;
 	uint height;
 	string title;
 	uint max_refresh_rate;
+	float min_frame_time; // derived from (1 / max_refresh_rate)
 	bool vsync;
 
 	// render
@@ -31,6 +32,7 @@ struct Config : public beast::program_options::options {
 	ppm::AcceleratorType accel_type;
 	float alpha;
 	uint spp;
+	uint total_hit_points; // derived from (width * height * spp^2)
 
 	Config(const char *desc, int _argc, char **_argv);
 };
