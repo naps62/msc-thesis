@@ -72,14 +72,15 @@ static void KeyFunc(unsigned char key, int x, int y) {
 		case 27: { // Escape key
 			// Stop photon tracing thread
 
-//			if (engine->draw_thread) {
-//				engine->draw_thread->interrupt();
-//				delete engine->draw_thread;
-//		}
+			if (engine->draw_thread) {
+				engine->draw_thread->interrupt();
+				delete engine->draw_thread;
+		}
 
-			//engine->UpdateScreenBuffer();
-			//film->Save(imgFileName);
-			//film->FreeSampleBuffer(sampleBuffer);
+			engine->UpdateScreenBuffer();
+			engine->SaveImpl(engine->fileName);
+//			film->Save(imgFileName);
+//			film->FreeSampleBuffer(sampleBuffer);
 
 			exit(EXIT_SUCCESS);
 			break;

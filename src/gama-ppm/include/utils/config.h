@@ -22,7 +22,7 @@ struct Config : public beast::program_options::options {
 	uint width;
 	uint height;
 	string title;
-	uint max_refresh_rate;
+	uint fps;
 	float min_frame_time; // derived from (1 / max_refresh_rate)
 	bool vsync;
 

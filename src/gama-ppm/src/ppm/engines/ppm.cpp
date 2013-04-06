@@ -1,5 +1,7 @@
 #include "ppm/engines/ppm.h"
 
+#include "ppm/kernels/build_hit_points.h"
+
 namespace ppm {
 
 PPM :: PPM(const Config& config)
@@ -7,7 +9,11 @@ PPM :: PPM(const Config& config)
 
 void PPM :: render() {
 	film.clear(Spectrum(1.f, 0.f, 0.f));
-	build_hit_points(1);
+
+	new kernels::BuildHitPoints(scene, 1);
+	gama->synchronize();
+
+//	build_hit_points(1);
 	float r = 0.f;
 	while(true) {
 		r += 0.01;

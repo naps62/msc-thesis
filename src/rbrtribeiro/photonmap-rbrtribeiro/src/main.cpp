@@ -9,6 +9,7 @@
 
 #include <GL/glut.h>
 #include <FreeImage.h>
+#include <boost/thread.hpp>
 #include <boost/detail/container_fwd.hpp>
 #include "luxrays/utils/sdl/scene.h"
 #include "CUDA_Worker.h"
@@ -22,7 +23,31 @@ static void Draw(int argc, char *argv[]) {
 
 }
 
+//uint _num_threads = 0;
+//uint _num_iters = 1;
+//char* _render_cfg;
+//char* _img_file;
+const Config* config;
+
 int main(int argc, char *argv[]) {
+
+	// load configurations
+	config = new Config("Options", argc, argv);
+
+//	if (argc < 5) {
+//		fprintf(stderr, "usage: program <num_threads> <num_iters> <render_cfg_file> <img_output_file>");
+//		exit(0);
+//	}
+//	_num_threads = atoi(argv[1]);
+//	_num_iters = atoi(argv[2]);
+//	_render_cfg = argv[3];
+//	_img_file = argv[4];
+
+//	printf("num_threads: %d\n", _num_threads);
+//	printf("num_iters: %d\n", _num_iters);
+//	printf("render_cfg: %s\n", _render_cfg);
+//	printf("img_file: %s\n", _img_file);
+
 
 	srand(1000);
 
@@ -32,45 +57,14 @@ int main(int argc, char *argv[]) {
 	uint superSampling;
 	unsigned long long photonsFirstIteration;
 
-#ifdef RENDER_FAST_PHOTON
-	alpha = alpha;
-	width = 640;
-	height = 480;
-	superSampling = 4;
-	photonsFirstIteration = 1 << 19;//0.5M;
-#endif
-
-#ifdef RENDER_TINY
 	//alpha = alpha;
-	width = 640;
-	height = 480;
-	superSampling = 1;
-	photonsFirstIteration = 1 << 19;//0.5M;
-#endif
+	width = config->width;//640;
+	height = config->height;//480;
+	superSampling = config->spp;//1;
+	photonsFirstIteration = 1 << config->photons_first_iter_exp;//0.5M;
 
-#ifdef RENDER_MEDIUM
-	alpha = alpha;
-	width = 640;
-	height = 480;
-	superSampling = 3;
-	photonsFirstIteration = 1 << 21;//2M
-#endif
 
-#ifdef RENDER_BIG
-	alpha = alpha;
-	width = 640;
-	height = 480;
-	superSampling = 4;
-	photonsFirstIteration = 1 << 22;//4M
-#endif
 
-#ifdef RENDER_HUGE
-	alpha = alpha;
-	width = 640;
-	height = 480;
-	superSampling = 6;
-	photonsFirstIteration = 1 << 23;//8M
-#endif
 
 #if defined USE_SPPM || defined USE_SPPMPA
 	superSampling=1;
@@ -93,9 +87,9 @@ int main(int argc, char *argv[]) {
 
 	engine = new PPM(alpha, width, height, superSampling, photonsFirstIteration, ndvices);
 
-	std::string sceneFileName = "scenes/kitchen/kitchen.scn";
+	std::string sceneFileName = config->scene_file.c_str(); //"scenes/kitchen/kitchen.scn";
 
-	engine->fileName = "kitchen.png";
+	engine->fileName = config->img_file;//"kitchen.png";
 
 	//	std::string sceneFileName = "scenes/alloy/alloy.scn";
 	//	std::string sceneFileName = "scenes/bigmonkey/bigmonkey.scn";
@@ -164,9 +158,9 @@ int main(int argc, char *argv[]) {
 			build_hit);
 #endif
 
-#ifdef USE_GLUT
-	engine->draw_thread = new boost::thread(boost::bind(Draw, argc, argv));
-#endif
+	if (config->use_display)
+		engine->draw_thread = new boost::thread(boost::bind(Draw, argc, argv));
+
 
 #ifdef GPU0
 	gpuWorker0->thread->join();
@@ -183,13 +177,13 @@ int main(int argc, char *argv[]) {
 	float MPhotonsSec = engine->getPhotonTracedTotal() / (elapsedTime * 1000000.f);
 	const float itsec = engine->GetIterationNumber() / elapsedTime;
 
-	printf("Avg. %.2f MPhotons/sec\n", MPhotonsSec);
 	printf("Avg. %.3f iteration/sec\n", itsec);
 	printf("Total photons: %.2fM\n", engine->getPhotonTracedTotal() / 1000000.f);
 
-#ifdef USE_GLUT
-	engine->draw_thread->join();
-#endif
+	if (config->use_display)
+		engine->draw_thread->join();
+
+	engine->SaveImpl(config->img_file.c_str());
 
 	return EXIT_SUCCESS;
 }

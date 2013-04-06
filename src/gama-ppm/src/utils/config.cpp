@@ -13,7 +13,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
 	value("width,w",   width,  uint(640),          "window width");
 	value("height,h",  height, uint(480),          "window height");
 	value("title,t",   title,  string("gama-ppm"), "window title");
-	value("fps",       max_refresh_rate, uint(60), "maximum FPS");
+	value("fps",       fps,    uint(60), "maximum FPS");
 	flag("vsync",      vsync, "V-Sync. Can cause problems sometimes, so defaults to false");
 
 	// render
@@ -27,7 +27,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
 
 	// derived values
 	use_display = ! no_display;
-	min_frame_time = 1.f / max_refresh_rate;
+	min_frame_time = 1.f / fps;
 	total_hit_points = width * height * spp * spp;
 
 	if (accel_name == string("BVH"))

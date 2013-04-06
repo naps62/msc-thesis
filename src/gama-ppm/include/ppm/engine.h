@@ -25,7 +25,7 @@ public:
 protected:
 	const Config& config;
 	RuntimeScheduler* const gama;
-	PtrFreeScene* const scene;
+	PtrFreeScene* scene;
 	Display* display;
 	Film film;
 

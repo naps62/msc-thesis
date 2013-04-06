@@ -47,7 +47,7 @@
  * Multi-resolution grid targeted.
  */
 
-#define USE_GLUT
+//#define USE_GLUT
 
 //#define RENDER_FAST_PHOTON
 #define RENDER_TINY
@@ -71,5 +71,84 @@
 #define QBVH_STACK_SIZE 24
 
 //#define WARP_RR
+
+#ifndef _UTILS_CONFIG_H_
+#define _UTILS_CONFIG_H_
+
+#include <beast/program_options.hpp>
+#include <string>
+using std::string;
+
+struct Config : public beast::program_options::options {
+	const int argc;
+	const char** argv;
+
+	// scene
+	string scene_dir;
+	string scene_file;
+	string scene_cfg;
+
+	// window
+	bool no_display;
+	bool use_display;  // derived from (!no_display)
+	uint width;
+	uint height;
+	string title;
+	uint fps;
+	float min_frame_time; // derived from (1 / max_refresh_rate)
+	bool vsync;
+
+	// render
+	string engine_name;
+	string accel_name;
+	float alpha;
+	uint spp;
+	uint total_hit_points; // derived from (width * height * spp^2)
+	uint photons_first_iter_exp;
+	uint max_threads;
+	uint max_iters;
+	string img_file;
+
+	Config(const char *desc, int _argc, char **_argv)
+	: beast::program_options::options(desc), argc(_argc), argv((const char**)_argv) {
+
+		// scene
+		value("scene_dir",  scene_dir,  string("scenes/kitchen"), "folder where scene files are stored");
+		value("scene_file", scene_file, string("kitchen.scn"), "to find <scene_dir>/<scene_file>");
+		value("scene_cfg",  scene_cfg,  string("render.cfg"),  "to find <scene_dir>/<scene_cfg>");
+
+		// window
+		flag("no_display", no_display, "Supress realtime display?");
+		value("width,w",   width,  uint(640),          "window width");
+		value("height,h",  height, uint(480),          "window height");
+		value("title,t",   title,  string("gama-ppm"), "window title");
+		value("fps",       fps,    uint(60), "maximum FPS");
+		flag("vsync",      vsync, "V-Sync. Can cause problems sometimes, so defaults to false");
+
+		// render
+		value("alpha,a",   alpha,       float(0.7), "??? still don't know what this is for");
+		value("spp",       spp,         uint(4),    "samples per pixel (supersampling)");
+		value("accel",     accel_name,  string("QBVH"), "accelerator type [QBVH (default) | BVH | MQBVH)");
+		value("engine",    engine_name, string("ppm"), "render engine to use [ppm (default) | ... (others to come)]");
+		value("photons_iter", photons_first_iter_exp, uint(20),  "to compute amount of photons on first iteration");
+		value("max_threads", max_threads, uint(8),  "number of cpu threads");
+		value("max_iters",   max_iters,   uint(10), "number of iterations");
+		value("img_file",  img_file,    string("output.png"), "output image file");
+
+		// now parse the arguments
+		parse(_argc, _argv);
+
+		// derived values
+		use_display = ! no_display;
+		min_frame_time = 1.f / fps;
+		total_hit_points = width * height * spp * spp;
+
+		scene_file = scene_dir + '/' + scene_file;
+	}
+
+};
+
+#endif // _UTILS_CONFIG_H_
+
 
 #endif /* CONFIG_H_ */

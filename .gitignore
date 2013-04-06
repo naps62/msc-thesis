@@ -5,6 +5,7 @@ doc/*/main.sh
 doc/*/*/main.run.xml
 *.tmp
 msc-thesis.sublime-workspace
+*.png
 
 # Latex
 _inputs.tex

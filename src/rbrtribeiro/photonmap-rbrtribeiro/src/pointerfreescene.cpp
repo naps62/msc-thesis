@@ -57,9 +57,9 @@ PointerFreeScene::PointerFreeScene(uint width, uint height, std::string sceneFil
 	editActions.AddAllAction();
 	Recompile(editActions);
 
-	ofstream out("rr-ppm.scene.dump");
-	out << *this << endl;
-	out.close();
+//	ofstream out("rr-ppm.scene.dump");
+//	out << *this << endl;
+//	out.close();
 	//delete scene_;
 	//scene = NULL;
 }

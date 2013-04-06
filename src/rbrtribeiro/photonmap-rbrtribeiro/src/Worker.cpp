@@ -8,6 +8,10 @@
 #include "Worker.h"
 #include "omp.h"
 
+//extern uint _num_threads;
+//extern uint _num_iters;
+extern const Config* config;
+
 Worker::~Worker() {
 	// TODO Auto-generated destructor stub
 }
@@ -242,7 +246,11 @@ void Worker::ProcessIterations(PPM* engine) {
 	UpdateBBox();
 	LookupSetHitPoints(hitPointsStaticInfo_iterationCopy, hitPoints_iterationCopy);
 
-	while (!boost::this_thread::interruption_requested()) {
+	uint iter = 0;
+	double previousIterTime = WallClockTime();
+	fprintf(stderr, "iteration, photons_iter, photons_total, photons_sec, total_time, radius, device\n");
+	while (!boost::this_thread::interruption_requested() && iter < config->max_iters) {
+		++iter;
 
 		double start = WallClockTime();
 
@@ -254,28 +262,18 @@ void Worker::ProcessIterations(PPM* engine) {
 
 		photonPerIteration = engine->photonsFirstIteration;
 
-		fprintf(stderr, "\n#######\n Processing iteration %d with %lu photons in device %d...\n",
-				iterationCount, photonPerIteration, getDeviceID());
-
 #if defined USE_SPPMPA || defined USE_SPPM
 		BuildHitPoints(iterationCount);
 		UpdateBBox();
 
 #endif
 
-		//PullHitPoints();
-
 #if defined USE_SPPM || defined USE_PPM
 		if (iterationCount == 1)
 			InitRadius(iterationCount);
-		fprintf(stderr, "Iteration radius: %f\n", hitPoints_iterationCopy[0].accumPhotonRadius2);
-
 #else
 		InitRadius(iterationCount);
-		fprintf(stderr, "Iteration radius: %f\n", currentPhotonRadius2);
-
 #endif
-
 
 		updateDeviceHitPoints();
 
@@ -285,7 +283,6 @@ void Worker::ProcessIterations(PPM* engine) {
 
 		photonPerIteration = AdvancePhotonPath(photonPerIteration);
 
-		fprintf(stderr, "Traced %lu photon\n", photonPerIteration);
 
 		getDeviceHitpoints();
 
@@ -317,8 +314,24 @@ void Worker::ProcessIterations(PPM* engine) {
 		if (profiler->iterationCount % 100 == 0)
 			profiler->printStats(deviceID);
 
-		if (iterationCount % 50 == 0)
-			engine->SaveImpl(to_string<uint> (iterationCount, std::dec) + engine->fileName);
+//		if (iterationCount % 50 == 0)
+//			engine->SaveImpl(to_string<uint> (iterationCount, std::dec) + engine->fileName);
+
+
+#if defined USE_SPPM || defined USE_PPM
+		const float radius = hitPoints_iterationCopy[0].accumPhotonRadius2;
+#else
+		const float radius = currentPhotonRadius2;
+#endif
+		const double time = WallClockTime();
+		const double totalTime = time - engine->startTime;
+		const double iterTime = time - previousIterTime;
+		const float itsec = engine->GetIterationNumber() / totalTime;
+
+		const uint photonTotal = engine->getPhotonTracedTotal();
+		const float photonSec   = photonTotal / (totalTime * 1000.f);
+		fprintf(stderr, "%d, %lu, %lu, %f, %f, %f, %f, %d\n", iterationCount, photonPerIteration, photonTotal, photonSec, iterTime, totalTime, radius, getDeviceID());
+		previousIterTime = time;
 
 	}
 
@@ -419,7 +432,7 @@ void Worker::AccumulateFluxPPM(uint iteration, u_int64_t photonTraced) {
 	photonTraced += engine->getPhotonTracedTotal();
 
 #ifndef __DEBUG
-	omp_set_num_threads(8);
+	omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
 #endif
 	for (uint i = 0; i < engine->hitPointTotal; i++) {
@@ -471,7 +484,7 @@ void Worker::AccumulateFluxSPPM(uint iteration, u_int64_t photonTraced) {
 	photonTraced += engine->getPhotonTracedTotal();
 
 #ifndef __DEBUG
-	omp_set_num_threads(8);
+	omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
 #endif
 	for (uint i = 0; i < engine->hitPointTotal; i++) {
@@ -530,7 +543,7 @@ void Worker::AccumulateFluxPPMPA(uint iteration, u_int64_t photonTraced) {
 
 
 #ifndef __DEBUG
-	omp_set_num_threads(8);
+	omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
 #endif
 	for (uint i = 0; i < engine->hitPointTotal; i++) {
@@ -569,7 +582,7 @@ void Worker::AccumulateFluxPPMPA(uint iteration, u_int64_t photonTraced) {
 void Worker::AccumulateFluxSPPMPA(uint iteration, u_int64_t photonTraced) {
 
 #ifndef __DEBUG
-	omp_set_num_threads(8);
+	omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
 #endif
 	for (uint i = 0; i < engine->hitPointTotal; i++) {
