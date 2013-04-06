@@ -12,10 +12,6 @@ namespace ppm {
 
 Engine :: Engine(const Config& _config)
 : config(_config), gama(new RuntimeScheduler()), scene(new PtrFreeScene(config)), film(config) {
-	ofstream out("gama-ppm.scene.dump");
-	out << *scene << endl;
-	out.close();
-
 	// load display if necessary
 	if (config.use_display) {
 		display = new Display(config, film);
@@ -24,6 +20,12 @@ Engine :: Engine(const Config& _config)
 }
 
 Engine :: ~Engine() {
+	finalize();
+}
+
+
+
+void Engine :: finalize() {
 	// finalize RuntimeSystem
 	delete gama;
 
@@ -38,11 +40,11 @@ Engine :: ~Engine() {
 //
 
 // static
-Engine* Engine :: get_instance(const Config& config) {
-	if (config.engine_name == string("ppm"))
-		return new ppm::PPM(config);
-	else {
-		throw new string("invalid engine name " + config.engine_name);
+Engine* Engine :: instantiate(const Config& config) {
+	if (config.engine_name == string("PPM")) {
+		return new PPM(config);
+	} else {
+		throw new string("Invalid engine name" + config.engine_name);
 	}
 }
 
@@ -76,7 +78,6 @@ void Engine :: build_hit_points(uint iteration) {
 			}
 		}
 	}
-
 }
 
 }

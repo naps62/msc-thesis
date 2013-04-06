@@ -20,7 +20,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
 	value("alpha,a",   alpha,       float(0.7), "??? still don't know what this is for");
 	value("spp",       spp,         uint(4),    "samples per pixel (supersampling)");
 	value("accel",     accel_name,  string("QBVH"), "accelerator type [QBVH (default) | BVH | MQBVH)");
-	value("engine",    engine_name, string("ppm"), "render engine to use [ppm (default) | ... (others to come)]");
+	value("engine",    engine_name, string("PPM"), "render engine to use [ppm (default) | ... (others to come)]");
 
 	// now parse the arguments
 	parse(_argc, _argv);
