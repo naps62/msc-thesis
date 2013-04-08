@@ -61,10 +61,10 @@ void HashGridLookup::ReHash(float currentPhotonRadius2) {
 
 	for (unsigned int i = 0; i < hitPointsCount; ++i) {
 
-		if (WallClockTime() - lastPrintTime > 2.0) {
-			std::cerr << "  " << i / 1000 << "k/" << hitPointsCount / 1000 << "k" << std::endl;
-			lastPrintTime = WallClockTime();
-		}
+//		if (WallClockTime() - lastPrintTime > 2.0) {
+//			std::cerr << "  " << i / 1000 << "k/" << hitPointsCount / 1000 << "k" << std::endl;
+//			lastPrintTime = WallClockTime();
+//		}
 
 		//HitPointInfo *hp = engine->GetHitPointInfo(i);
 		HitPointStaticInfo *hp = &workerHitPointsInfo[i];

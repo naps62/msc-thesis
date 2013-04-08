@@ -20,34 +20,14 @@ static void Draw(int argc, char *argv[]) {
 	InitGlut(argc, argv, engine->width, engine->height);
 
 	RunGlut(engine->width, engine->height);
-
 }
 
-//uint _num_threads = 0;
-//uint _num_iters = 1;
-//char* _render_cfg;
-//char* _img_file;
 const Config* config;
 
 int main(int argc, char *argv[]) {
 
 	// load configurations
 	config = new Config("Options", argc, argv);
-
-//	if (argc < 5) {
-//		fprintf(stderr, "usage: program <num_threads> <num_iters> <render_cfg_file> <img_output_file>");
-//		exit(0);
-//	}
-//	_num_threads = atoi(argv[1]);
-//	_num_iters = atoi(argv[2]);
-//	_render_cfg = argv[3];
-//	_img_file = argv[4];
-
-//	printf("num_threads: %d\n", _num_threads);
-//	printf("num_iters: %d\n", _num_iters);
-//	printf("render_cfg: %s\n", _render_cfg);
-//	printf("img_file: %s\n", _img_file);
-
 
 	srand(1000);
 
@@ -89,7 +69,7 @@ int main(int argc, char *argv[]) {
 
 	std::string sceneFileName = config->scene_file.c_str(); //"scenes/kitchen/kitchen.scn";
 
-	engine->fileName = config->img_file;//"kitchen.png";
+	engine->fileName = config->output_file;//"kitchen.png";
 
 	//	std::string sceneFileName = "scenes/alloy/alloy.scn";
 	//	std::string sceneFileName = "scenes/bigmonkey/bigmonkey.scn";
@@ -105,7 +85,6 @@ int main(int argc, char *argv[]) {
 	engine->ss = new PointerFreeScene(width, height, sceneFileName);
 
 	engine->startTime = WallClockTime();
-
 	Seed* seedBuffer;
 	uint devID;
 	uint c;
@@ -177,13 +156,15 @@ int main(int argc, char *argv[]) {
 	float MPhotonsSec = engine->getPhotonTracedTotal() / (elapsedTime * 1000000.f);
 	const float itsec = engine->GetIterationNumber() / elapsedTime;
 
-	printf("Avg. %.3f iteration/sec\n", itsec);
-	printf("Total photons: %.2fM\n", engine->getPhotonTracedTotal() / 1000000.f);
-
 	if (config->use_display)
 		engine->draw_thread->join();
 
-	engine->SaveImpl(config->img_file.c_str());
+	engine->SaveImpl(config->output_file.c_str());
+
+	fprintf(stderr, "Avg. %.3f iteration/sec\n", itsec);
+	fprintf(stderr, "Total photons: %.2fM\n", engine->getPhotonTracedTotal() / 1000000.f);
+	fprintf(stderr, "Total time:\n%f", elapsedTime);
+
 
 	return EXIT_SUCCESS;
 }

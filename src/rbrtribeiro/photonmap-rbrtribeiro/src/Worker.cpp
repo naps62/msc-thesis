@@ -46,10 +46,10 @@ void Worker::BuildHitPoints(uint iteration) {
 
 	for (unsigned int y = 0; y < height; ++y) {
 
-		if (WallClockTime() - lastPrintTime > 2.0) {
-			std::cerr << "  " << y << "/" << height << std::endl;
-			lastPrintTime = WallClockTime();
-		}
+//		if (WallClockTime() - lastPrintTime > 2.0) {
+//			std::cerr << "  " << y << "/" << height << std::endl;
+//			lastPrintTime = WallClockTime();
+//		}
 
 		//for all hitpoints
 		for (unsigned int x = 0; x < width; ++x) {
@@ -109,10 +109,10 @@ void Worker::BuildHitPoints(uint iteration) {
 
 	while (todoEyePathCount > 0) {
 
-		if (WallClockTime() - lastPrintTime > 2.0) {
-			std::cerr << "  " << todoEyePathCount / 1000 << "k eye paths left" << std::endl;
-			lastPrintTime = WallClockTime();
-		}
+//		if (WallClockTime() - lastPrintTime > 2.0) {
+//			std::cerr << "  " << todoEyePathCount / 1000 << "k eye paths left" << std::endl;
+//			lastPrintTime = WallClockTime();
+//		}
 
 		//std::vector<EyePath *>::iterator todoEyePathsIterator =
 		//		todoEyePaths.begin() + roundPointer;
@@ -248,7 +248,7 @@ void Worker::ProcessIterations(PPM* engine) {
 
 	uint iter = 0;
 	double previousIterTime = WallClockTime();
-	fprintf(stderr, "iteration, photons_iter, photons_total, photons_sec, total_time, radius, device\n");
+	fprintf(stdout, "iteration, photons_iter, photons_total, photons_sec, total_time, radius, device\n");
 	while (!boost::this_thread::interruption_requested() && iter < config->max_iters) {
 		++iter;
 
@@ -330,7 +330,7 @@ void Worker::ProcessIterations(PPM* engine) {
 
 		const uint photonTotal = engine->getPhotonTracedTotal();
 		const float photonSec   = photonTotal / (totalTime * 1000.f);
-		fprintf(stderr, "%d, %lu, %lu, %f, %f, %f, %f, %d\n", iterationCount, photonPerIteration, photonTotal, photonSec, iterTime, totalTime, radius, getDeviceID());
+		fprintf(stdout, "%d, %lu, %lu, %f, %f, %f, %f, %d\n", iterationCount, photonPerIteration, photonTotal, photonSec, iterTime, totalTime, radius, getDeviceID());
 		previousIterTime = time;
 
 	}

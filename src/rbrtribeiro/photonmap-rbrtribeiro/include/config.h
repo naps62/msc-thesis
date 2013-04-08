@@ -86,7 +86,8 @@ struct Config : public beast::program_options::options {
 	// scene
 	string scene_dir;
 	string scene_file;
-	string scene_cfg;
+	string output_dir;
+	string output_file;
 
 	// window
 	bool no_display;
@@ -107,20 +108,20 @@ struct Config : public beast::program_options::options {
 	uint photons_first_iter_exp;
 	uint max_threads;
 	uint max_iters;
-	string img_file;
 
 	Config(const char *desc, int _argc, char **_argv)
 	: beast::program_options::options(desc), argc(_argc), argv((const char**)_argv) {
 
 		// scene
-		value("scene_dir",  scene_dir,  string("scenes/kitchen"), "folder where scene files are stored");
-		value("scene_file", scene_file, string("kitchen.scn"), "to find <scene_dir>/<scene_file>");
-		value("scene_cfg",  scene_cfg,  string("render.cfg"),  "to find <scene_dir>/<scene_cfg>");
+		value("scene_dir",  scene_dir,   string("scenes/kitchen"), "folder where scene files are stored");
+		value("scene_file", scene_file,  string("kitchen.scn"), "to find <scene_dir>/<scene_file>");
+		value("output_dir",    output_dir,  string("."), "output image directory");
+		value("output_file",   output_file, string("output.png"), "output image file");
 
 		// window
 		flag("no_display", no_display, "Supress realtime display?");
-		value("width,w",   width,  uint(640),          "window width");
-		value("height,h",  height, uint(480),          "window height");
+		value("width",   width,  uint(640),          "window width");
+		value("height",  height, uint(480),          "window height");
 		value("title,t",   title,  string("gama-ppm"), "window title");
 		value("fps",       fps,    uint(60), "maximum FPS");
 		flag("vsync",      vsync, "V-Sync. Can cause problems sometimes, so defaults to false");
@@ -133,9 +134,9 @@ struct Config : public beast::program_options::options {
 		value("photons_iter", photons_first_iter_exp, uint(20),  "to compute amount of photons on first iteration");
 		value("max_threads", max_threads, uint(8),  "number of cpu threads");
 		value("max_iters",   max_iters,   uint(10), "number of iterations");
-		value("img_file",  img_file,    string("output.png"), "output image file");
 
 		// now parse the arguments
+		std::cout << "config" << std::endl;
 		parse(_argc, _argv);
 
 		// derived values
@@ -143,7 +144,8 @@ struct Config : public beast::program_options::options {
 		min_frame_time = 1.f / fps;
 		total_hit_points = width * height * spp * spp;
 
-		scene_file = scene_dir + '/' + scene_file;
+		scene_file  = scene_dir  + '/' + scene_file;
+		output_file = output_dir + '/' + output_file;
 	}
 
 };
