@@ -6,6 +6,9 @@ doc/*/*/main.run.xml
 *.tmp
 msc-thesis.sublime-workspace
 *.png
+*.out
+*.err
+kbest_times.csv
 
 # Latex
 _inputs.tex
