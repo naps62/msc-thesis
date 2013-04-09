@@ -9,6 +9,7 @@ CUDA_INSTALL_PATH := /usr/local/cuda-5.0
 EXCLUDE_DIR :=
 
 BEAST_ROOT := $(HOME)/projects/beast
+FREEIMAGE_ROOT := /usr/local/cuda-4.0/NVIDIA_GPU_Computing_SDK/CUDALibraries/common/FreeImage
 
 ARCH := $(shell getconf LONG_BIT)
 OMP  := openmp
@@ -17,9 +18,9 @@ CFLAGS  := -m$(ARCH) -O3 -Wall -Wextra
 NVFLAGS := -m$(ARCH) -O3
 LDFLAGS := -m$(ARCH)
 ARFLAGS :=
-LD_LIBS       := beast glut GLU GL boost_program_options boost_system boost_thread boost_chrono freeimage # gomp dl cublas pthread cudart cufft fftw3 GLEW GL boost_filesystem boost_system freeimage64 boost_thread OpenCL
-INCLUDE_DIR   := include /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include
-LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib $(BOOST_ROOT)/lib $(BEAST_ROOT)/lib
+LD_LIBS       := beast glut GLU GL boost_program_options boost_system boost_thread boost_chrono freeimage$(ARCH)
+INCLUDE_DIR   := include /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include $(FREEIMAGE_ROOT)/include
+LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib $(BOOST_ROOT)/lib $(BEAST_ROOT)/lib $(FREEIMAGE_ROOT)/lib/linux
 CUDA_LIBS_DIR := $(CUDA_INSTALL_PATH)/lib64 $(CUDA_INSTALL_PATH)/lib
 
 
@@ -117,6 +118,7 @@ lib/$(LIBNAME): $(DEPS) $(OBJ)
 	$(AR) $(ARFLAGS) -r "lib/$(LIBNAME)" $(OBJ)
 
 checkdirs: $(BUILD_DIR)
+	@echo $(BOOST_ROOT)
 
 $(BUILD_DIR):
 	@mkdir -p $@
