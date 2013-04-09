@@ -153,7 +153,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 	const double elapsedTime = WallClockTime() - engine->startTime;
-	float MPhotonsSec = engine->getPhotonTracedTotal() / (elapsedTime * 1000000.f);
+//	float MPhotonsSec = engine->getPhotonTracedTotal() / (elapsedTime * 1000000.f);
 	const float itsec = engine->GetIterationNumber() / elapsedTime;
 
 	if (config->use_display)

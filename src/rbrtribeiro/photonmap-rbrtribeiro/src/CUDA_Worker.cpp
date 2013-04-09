@@ -316,7 +316,7 @@ void CUDA_Worker::MirrorHitPoints() {
 	//
 }
 
-void CUDA_Worker::CommitIterationHitPoints(u_int64_t photonPerIteration) {
+void CUDA_Worker::CommitIterationHitPoints(u_int64_t /*photonPerIteration*/) {
 	//
 	//	engine->lockHitPoints();
 	//
@@ -417,7 +417,7 @@ void CUDA_Worker::CopyAcc() {
 
 }
 
-void CUDA_Worker::AllocCopyCUDABuffer(void **buff, void *src, const size_t size, const string &desc) {
+void CUDA_Worker::AllocCopyCUDABuffer(void **buff, void *src, const size_t size, const string &/*desc*/) {
 
 	cudaMalloc(buff, size);
 

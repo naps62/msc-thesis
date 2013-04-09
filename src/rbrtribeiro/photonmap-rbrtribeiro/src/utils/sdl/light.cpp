@@ -243,8 +243,8 @@ Spectrum SunLight::Le(const Vector &dir) const {
 		return Spectrum();
 }
 
-Spectrum SunLight::Sample_L(const Scene *scene, const Point &p,
-		const Normal *N, const float u0, const float u1, const float u2,
+Spectrum SunLight::Sample_L(const Scene */*scene*/, const Point &p,
+		const Normal *N, const float u0, const float u1, const float /*u2*/,
 		float *pdf, Ray *shadowRay) const {
 	if (N && Dot(*N, -sundir) > 0.0f) {
 		*pdf = 0.0f;
@@ -259,8 +259,8 @@ Spectrum SunLight::Sample_L(const Scene *scene, const Point &p,
 	return suncolor;
 }
 
-Spectrum SunLight::Sample_L(const Scene *scene, const float u0, const float u1,
-		const float u2, const float u3, const float u4, float *pdf, Ray *ray) const {
+Spectrum SunLight::Sample_L(const Scene */*scene*/, const float /*u0*/, const float /*u1*/,
+		const float /*u2*/, const float /*u3*/, const float /*u4*/, float */*pdf*/, Ray */*ray*/) const {
 	// Choose point on disk oriented toward infinite light direction
 //	const Point worldCenter = scene->dataSet->GetBSphere().center;
 //	const float worldRadius = scene->dataSet->GetBSphere().rad * 1.01f;
@@ -275,6 +275,7 @@ Spectrum SunLight::Sample_L(const Scene *scene, const float u0, const float u1,
 //	*pdf = UniformConePdf(cosThetaMax) / (M_PI * worldRadius * worldRadius);
 //
 //	return suncolor;
+	return Spectrum();
 }
 
 //------------------------------------------------------------------------------
@@ -293,8 +294,8 @@ Spectrum InfiniteLight::Le(const Vector &dir) const {
 	return gain * tex->GetTexMap()->GetColor(uv);
 }
 
-Spectrum InfiniteLight::Sample_L(const Scene *scene, const Point &p,
-		const Normal *N, const float u0, const float u1, const float u2,
+Spectrum InfiniteLight::Sample_L(const Scene */*scene*/, const Point &p,
+		const Normal *N, const float u0, const float u1, const float /*u2*/,
 		float *pdf, Ray *shadowRay) const {
 	if (N) {
 		Vector wi = CosineSampleHemisphere(u0, u1);
@@ -319,9 +320,9 @@ Spectrum InfiniteLight::Sample_L(const Scene *scene, const Point &p,
 	}
 }
 
-Spectrum InfiniteLight::Sample_L(const Scene *scene, const float u0,
-		const float u1, const float u2, const float u3, const float u4,
-		float *pdf, Ray *ray) const {
+Spectrum InfiniteLight::Sample_L(const Scene */*scene*/, const float /*u0*/,
+		const float /*u1*/, const float /*u2*/, const float /*u3*/, const float /*u4*/,
+		float */*pdf*/, Ray */*ray*/) const {
 //	// Choose two points p1 and p2 on scene bounding sphere
 //	const Point worldCenter = scene->dataSet->GetBSphere().center;
 //	const float worldRadius = scene->dataSet->GetBSphere().rad * 1.01f;
@@ -338,6 +339,7 @@ Spectrum InfiniteLight::Sample_L(const Scene *scene, const float u0,
 //	*pdf = costheta / (4.f * M_PI * M_PI * worldRadius * worldRadius);
 //
 //	return Le(-ray->d);
+	return Spectrum();
 }
 
 //------------------------------------------------------------------------------
@@ -360,7 +362,7 @@ InfiniteLightPortal::~InfiniteLightPortal() {
 	delete portals;
 }
 
-Spectrum InfiniteLightPortal::Sample_L(const Scene *scene, const Point &p,
+Spectrum InfiniteLightPortal::Sample_L(const Scene */*scene*/, const Point &p,
 		const Normal *N, const float u0, const float u1, const float u2,
 		float *pdf, Ray *shadowRay) const {
 	// Select one of the portals
@@ -402,7 +404,7 @@ Spectrum InfiniteLightPortal::Sample_L(const Scene *scene, const Point &p,
 	return Spectrum();
 }
 
-Spectrum InfiniteLightPortal::Sample_L(const Scene *scene, const float u0,
+Spectrum InfiniteLightPortal::Sample_L(const Scene */*scene*/, const float u0,
 		const float u1, const float u2, const float u3, const float u4,
 		float *pdf, Ray *ray) const {
 	// Select one of the portals
@@ -475,8 +477,8 @@ void InfiniteLightIS::Preprocess() {
 	delete[] img;
 }
 
-Spectrum InfiniteLightIS::Sample_L(const Scene *scene, const Point &p,
-		const Normal *N, const float u0, const float u1, const float u2,
+Spectrum InfiniteLightIS::Sample_L(const Scene */*scene*/, const Point &p,
+		const Normal *N, const float u0, const float u1, const float /*u2*/,
 		float *pdf, Ray *shadowRay) const {
 	float uv[2];
 	uvDistrib->SampleContinuous(u0, u1, uv, pdf);
@@ -501,9 +503,9 @@ Spectrum InfiniteLightIS::Sample_L(const Scene *scene, const Point &p,
 	return gain * tex->GetTexMap()->GetColor(UV(uv));
 }
 
-Spectrum InfiniteLightIS::Sample_L(const Scene *scene, const float u0,
-		const float u1, const float u2, const float u3, const float u4,
-		float *pdf, Ray *ray) const {
+Spectrum InfiniteLightIS::Sample_L(const Scene */*scene*/, const float /*u0*/,
+		const float /*u1*/, const float /*u2*/, const float /*u3*/, const float /*u4*/,
+		float */*pdf*/, Ray */*ray*/) const {
 //	// Choose a point on scene bounding sphere using IS
 //	float uv[2];
 //	float mapPdf;
@@ -542,6 +544,7 @@ Spectrum InfiniteLightIS::Sample_L(const Scene *scene, const float u0,
 //	*pdf = directionPdf * areaPdf;
 //
 //	return gain * tex->GetTexMap()->GetColor(UV(uv));
+	return Spectrum();
 }
 
 //------------------------------------------------------------------------------
@@ -564,7 +567,7 @@ void TriangleLight::Init(const std::vector<ExtMesh *> &objs) {
 }
 
 Spectrum TriangleLight::Sample_L(const Scene *scene, const Point &p,
-		const Normal *N, const float u0, const float u1, const float u2,
+		const Normal *N, const float u0, const float u1, const float /*u2*/,
 		float *pdf, Ray *shadowRay) const {
 	const ExtMesh *mesh = scene->objects[meshIndex];
 
@@ -600,7 +603,7 @@ Spectrum TriangleLight::Sample_L(const Scene *scene, const Point &p,
 }
 
 Spectrum TriangleLight::Sample_L(const Scene *scene, const float u0,
-		const float u1, const float u2, const float u3, const float u4,
+		const float u1, const float u2, const float u3, const float /*u4*/,
 		float *pdf, Ray *ray) const {
 
 

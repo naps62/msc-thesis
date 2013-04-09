@@ -339,7 +339,7 @@ public:
 		return doneQueue.GetSize();
 	}
 
-	void PushToDo(RayBuffer *rayBuffer, const size_t queueIndex) {
+	void PushToDo(RayBuffer *rayBuffer, const size_t /*queueIndex*/) {
 		todoQueue.Push(rayBuffer);
 	}
 	RayBuffer *PopToDo() {
@@ -352,7 +352,7 @@ public:
 	void PushDone(RayBuffer *rayBuffer) {
 		doneQueue.Push(rayBuffer);
 	}
-	RayBuffer *PopDone(const size_t queueIndex) {
+	RayBuffer *PopDone(const size_t /*queueIndex*/) {
 		return doneQueue.Pop();
 	}
 

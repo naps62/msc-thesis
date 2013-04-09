@@ -140,7 +140,7 @@ public:
 
 	void GenerateRay(
 		const float screenX, const float screenY,
-		const unsigned int filmWidth, const unsigned int filmHeight,
+		const unsigned int /*filmWidth*/, const unsigned int filmHeight,
 		Ray *ray, const float u1, const float u2, const float u3) const {
 		Transform c2w;
 		if (motionBlur) {

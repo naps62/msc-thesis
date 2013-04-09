@@ -16,7 +16,7 @@ Worker::~Worker() {
 	// TODO Auto-generated destructor stub
 }
 
-void Worker::BuildHitPoints(uint iteration) {
+void Worker::BuildHitPoints(uint /*iteration*/) {
 
 	const unsigned int width = engine->width;
 	const unsigned int height = engine->height;
@@ -41,7 +41,7 @@ void Worker::BuildHitPoints(uint iteration) {
 	//		<< superSampling << " super-sampling:" << std::endl;
 	//std::cerr << "  0/" << height << std::endl;
 
-	double lastPrintTime = WallClockTime();
+//	double lastPrintTime = WallClockTime();
 	const float invSuperSampling = 1.f / superSampling;
 
 	for (unsigned int y = 0; y < height; ++y) {
@@ -95,7 +95,7 @@ void Worker::BuildHitPoints(uint iteration) {
 
 	// Iterate through all eye paths
 	//std::cerr << "Building eye paths hit points: " << std::endl;
-	lastPrintTime = WallClockTime();
+//	lastPrintTime = WallClockTime();
 	// Note: (todoEyePaths.size() > 0) is extremly slow to execute
 
 
@@ -326,11 +326,11 @@ void Worker::ProcessIterations(PPM* engine) {
 		const double time = WallClockTime();
 		const double totalTime = time - engine->startTime;
 		const double iterTime = time - previousIterTime;
-		const float itsec = engine->GetIterationNumber() / totalTime;
+//		const float itsec = engine->GetIterationNumber() / totalTime;
 
 		const uint photonTotal = engine->getPhotonTracedTotal();
 		const float photonSec   = photonTotal / (totalTime * 1000.f);
-		fprintf(stdout, "%d, %lu, %lu, %f, %f, %f, %f, %d\n", iterationCount, photonPerIteration, photonTotal, photonSec, iterTime, totalTime, radius, getDeviceID());
+		fprintf(stdout, "%d, %lu, %u, %f, %f, %f, %f, %d\n", iterationCount, photonPerIteration, photonTotal, photonSec, iterTime, totalTime, radius, getDeviceID());
 		previousIterTime = time;
 
 	}
@@ -355,7 +355,11 @@ void Worker::UpdateBBox() {
 
 }
 
+#if defined USE_SPPMPA || defined USE_PPMPA
 void Worker::InitRadius(uint iteration) {
+#else
+void Worker::InitRadius(uint /*iteration*/) {
+#endif
 
 	BBox* hitPointsbbox = GetHostBBox();
 
@@ -398,7 +402,11 @@ void Worker::InitRadius(uint iteration) {
 
 }
 
+#if defined USE_SPPM || defined USE_SPPMPA
 void Worker::UpdateSampleFrameBuffer(unsigned long long iterationPhotonCount) {
+#else
+void Worker::UpdateSampleFrameBuffer(unsigned long long /*iterationPhotonCount*/) {
+#endif
 
 	for (unsigned int i = 0; i < engine->hitPointTotal; ++i) {
 		HitPointStaticInfo *hp = GetHitPointInfo(i);
@@ -427,7 +435,7 @@ void Worker::UpdateSampleFrameBuffer(unsigned long long iterationPhotonCount) {
 }
 
 #ifdef USE_PPM
-void Worker::AccumulateFluxPPM(uint iteration, u_int64_t photonTraced) {
+void Worker::AccumulateFluxPPM(uint /*iteration*/, u_int64_t photonTraced) {
 
 	photonTraced += engine->getPhotonTracedTotal();
 

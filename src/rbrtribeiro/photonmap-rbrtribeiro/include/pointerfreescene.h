@@ -246,8 +246,8 @@ public:
 	//------------------------------------------------------------------------------
 	__HD__
 	void GenerateRay(const float screenX, const float screenY,
-			const unsigned int filmWidth, const unsigned int filmHeight,
-			Ray *ray, const float u1, const float u2, const float u3,
+			const unsigned int /*filmWidth*/, const unsigned int filmHeight,
+			Ray *ray, const float u1, const float u2, const float /*u3*/,
 			POINTERFREESCENE::Camera *camera) {
 
 		Point Pras;
@@ -410,7 +410,7 @@ public:
 	}
 	__HD__
 	void TriangleLight_Sample_L(POINTERFREESCENE::TriangleLight *l, const float u0,
-			const float u1, const float u2, const float u3, const float u4,
+			const float u1, const float u2, const float u3, const float /*u4*/,
 			float *pdf, Ray *ray, Spectrum& f, Spectrum* colors,
 			POINTERFREESCENE::Mesh* meshDescs) {
 
@@ -515,9 +515,9 @@ public:
 		if (!skipInfiniteLight && (infiniteLight || sunLight || skyLight)) {
 
 			unsigned int lightCount = lightsSize;
-			int ilx1;
-			int ilx2;
-			int ilx3;
+			int ilx1 = 0;
+			int ilx2 = 0;
+			int ilx3 = 0;
 
 			if (infiniteLight) {
 				ilx1 = lightCount;
@@ -583,7 +583,7 @@ public:
 	}
 	__HD__
 	void inline InfiniteLight_Sample_L(const float u0, const float u1,
-			const float u2, const float u3, const float u4, float *pdf,
+			const float u2, const float u3, const float /*u4*/, float *pdf,
 			Ray *ray, Spectrum& f, POINTERFREESCENE::InfiniteLight * infiniteLight,
 			const Spectrum *infiniteLightMap) {
 
@@ -643,7 +643,7 @@ public:
 	// used in PM
 	__HD__
 	void inline SunLight_Sample_L(const float u0, const float u1,
-			const float u2, const float u3, const float u4, float *pdf,
+			const float u2, const float u3, const float /*u4*/, float *pdf,
 			Ray *ray, Spectrum &f, POINTERFREESCENE::SunLight *sunLight) {
 
 		// Choose point on disk oriented toward infinite light direction
@@ -683,7 +683,7 @@ public:
 	// used in PM
 	__HD__
 	void inline SkyLight_Sample_L(const float u0, const float u1,
-			const float u2, const float u3, const float u4, float *pdf,
+			const float u2, const float u3, const float /*u4*/, float *pdf,
 			Ray *ray, Spectrum& f, POINTERFREESCENE::SkyLight *skyLight) {
 
 		// Choose two points p1 and p2 on scene bounding sphere
@@ -709,8 +709,8 @@ public:
 	// Material samplers
 	//------------------------------------------------------------------------------
 	__HD__
-	void inline Matte_f(POINTERFREESCENE::MatteParam *mat, const Vector &wo,
-			const Vector &wi, const Normal &N, Spectrum& f) {
+	void inline Matte_f(POINTERFREESCENE::MatteParam *mat, const Vector &/*wo*/,
+			const Vector &/*wi*/, const Normal &/*N*/, Spectrum& f) {
 		f.r = mat->r * INV_PI; // added
 		f.g = mat->g * INV_PI;
 		f.b = mat->b * INV_PI;
@@ -729,7 +729,7 @@ public:
 	}
 	__HD__
 	void inline Alloy_f(POINTERFREESCENE::AlloyParam *mat, const Vector &wo,
-			const Vector &wi, const Normal &N, Spectrum& f) {
+			const Vector &/*wi*/, const Normal &N, Spectrum& f) {
 		// Schilick's approximation
 		 float c = 1.f - Dot(wo, N);
 		 float Re = mat->R0 + (1.f - mat->R0) * c * c * c * c * c;
@@ -756,7 +756,7 @@ public:
 		Le->b = brightSide ? mat->gain_b : 0.f;
 	}
 	__HD__
-	void Matte_Sample_f(POINTERFREESCENE::MatteParam *mat, const Vector *wo,
+	void Matte_Sample_f(POINTERFREESCENE::MatteParam *mat, const Vector */*wo*/,
 			Vector *wi, float *pdf, Spectrum *f, const Normal *shadeN,
 			const float u0, const float u1, bool *specularBounce) {
 		Vector dir;

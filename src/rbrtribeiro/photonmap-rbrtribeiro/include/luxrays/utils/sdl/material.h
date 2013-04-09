@@ -141,13 +141,13 @@ public:
 		return false;
 	}
 
-	Spectrum f(const Vector &wo, const Vector &wi, const Normal &N) const {
+	Spectrum f(const Vector &/*wo*/, const Vector &/*wi*/, const Normal &/*N*/) const {
 		return KdOverPI;
 	}
 
-	Spectrum Sample_f(const Vector &wo, Vector *wi, const Normal &N,
+	Spectrum Sample_f(const Vector &/*wo*/, Vector *wi, const Normal &/*N*/,
 			const Normal &shadeN, const float u0, const float u1,
-			const float u2, const bool onlySpecular, float *pdf,
+			const float /*u2*/, const bool onlySpecular, float *pdf,
 			bool &specularBounce) const {
 		if (onlySpecular) {
 			*pdf = 0.f;
@@ -205,13 +205,13 @@ public:
 		return true;
 	}
 
-	Spectrum f(const Vector &wo, const Vector &wi, const Normal &N) const {
+	Spectrum f(const Vector &/*wo*/, const Vector &/*wi*/, const Normal &/*N*/) const {
 		throw std::runtime_error("Internal error, called MirrorMaterial::f()");
 	}
 
-	Spectrum Sample_f(const Vector &wo, Vector *wi, const Normal &N,
-			const Normal &shadeN, const float u0, const float u1,
-			const float u2, const bool onlySpecular, float *pdf,
+	Spectrum Sample_f(const Vector &wo, Vector *wi, const Normal &/*N*/,
+			const Normal &shadeN, const float /*u0*/, const float /*u1*/,
+			const float /*u2*/, const bool /*onlySpecular*/, float *pdf,
 			bool &specularBounce) const {
 
 		const Vector dir = -wo;
@@ -342,13 +342,13 @@ public:
 		return true;
 	}
 
-	Spectrum f(const Vector &wo, const Vector &wi, const Normal &N) const {
+	Spectrum f(const Vector &/*wo*/, const Vector &/*wi*/, const Normal &/*N*/) const {
 		throw std::runtime_error("Internal error, called GlassMaterial::f()");
 	}
 
 	Spectrum Sample_f(const Vector &wo, Vector *wi, const Normal &N,
-			const Normal &shadeN, const float u0, const float u1,
-			const float u2, const bool onlySpecular, float *pdf,
+			const Normal &shadeN, const float u0, const float /*u1*/,
+			const float /*u2*/, const bool /*onlySpecular*/, float *pdf,
 			bool &specularBounce) const {
 		const Vector rayDir = -wo;
 		const Vector reflDir = rayDir - (2.f * Dot(N, rayDir)) * Vector(N);
@@ -419,13 +419,13 @@ public:
 	const Spectrum &GetKrefrct() const {
 		return Krefrct;
 	}
-	const float GetOutsideIOR() const {
+	float GetOutsideIOR() const {
 		return ousideIor;
 	}
-	const float GetIOR() const {
+	float GetIOR() const {
 		return ior;
 	}
-	const float GetR0() const {
+	float GetR0() const {
 		return R0;
 	}
 	bool HasReflSpecularBounceEnabled() const {
@@ -462,13 +462,13 @@ public:
 		return true;
 	}
 
-	Spectrum f(const Vector &wo, const Vector &wi, const Normal &N) const {
+	Spectrum f(const Vector &/*wo*/, const Vector &/*wi*/, const Normal &/*N*/) const {
 		throw std::runtime_error("Internal error, called MetalMaterial::f()");
 	}
 
-	Spectrum Sample_f(const Vector &wo, Vector *wi, const Normal &N,
+	Spectrum Sample_f(const Vector &wo, Vector *wi, const Normal &/*N*/,
 			const Normal &shadeN, const float u0, const float u1,
-			const float u2, const bool onlySpecular, float *pdf,
+			const float /*u2*/, const bool /*onlySpecular*/, float *pdf,
 			bool &specularBounce) const {
 
 		(*wi) = GlossyReflection(wo, exponent, shadeN, u0, u1);
@@ -568,9 +568,9 @@ public:
 					onlySpecular, pdf, specularBounce);
 			*pdf *= metalPdf;
 
-			if (f.r == 0.f || f.g == 0.f || f.b == 0.f) {
+//			if (f.r == 0.f || f.g == 0.f || f.b == 0.f) {
 				//printf("d");
-			}
+//			}
 
 			return f;
 		} else {
@@ -578,9 +578,9 @@ public:
 					onlySpecular, pdf, specularBounce);
 			*pdf *= mattePdf;
 
-			if (f.r == 0.f || f.g == 0.f || f.b == 0.f) {
-						printf("d");
-					}
+//			if (f.r == 0.f || f.g == 0.f || f.b == 0.f) {
+//						printf("d",);
+//					}
 			return f;
 		}
 	}
@@ -645,14 +645,14 @@ public:
 		return Ktrans;
 	}
 
-	Spectrum f(const Vector &wo, const Vector &wi, const Normal &N) const {
+	Spectrum f(const Vector &/*wo*/, const Vector &/*wi*/, const Normal &/*N*/) const {
 		throw std::runtime_error(
 				"Internal error, called ArchGlassMaterial::f()");
 	}
 
 	Spectrum Sample_f(const Vector &wo, Vector *wi, const Normal &N,
-			const Normal &shadeN, const float u0, const float u1,
-			const float u2, const bool onlySpecular, float *pdf,
+			const Normal &shadeN, const float u0, const float /*u1*/,
+			const float /*u2*/, const bool /*onlySpecular*/, float *pdf,
 			bool &specularBounce) const {
 		// Ray from outside going in ?
 		const bool into = (Dot(N, shadeN) > 0.f);
@@ -690,16 +690,16 @@ public:
 	const Spectrum &GetKrefrct() const {
 		return Ktrans;
 	}
-	const float GetTransFilter() const {
+	float GetTransFilter() const {
 		return transFilter;
 	}
-	const float GetTotFilter() const {
+	float GetTotFilter() const {
 		return totFilter;
 	}
-	const float GetReflPdf() const {
+	float GetReflPdf() const {
 		return reflPdf;
 	}
-	const float GetTransPdf() const {
+	float GetTransPdf() const {
 		return transPdf;
 	}
 	bool HasReflSpecularBounceEnabled() const {
@@ -739,7 +739,7 @@ public:
 		return true;
 	}
 
-	Spectrum f(const Vector &wo, const Vector &wi, const Normal &N) const {
+	Spectrum f(const Vector &wo, const Vector &/*wi*/, const Normal &N) const {
 		// Schilick's approximation
 		const float c = 1.f - Dot(wo, N);
 		const float Re = R0 + (1.f - R0) * c * c * c * c * c;
@@ -749,7 +749,7 @@ public:
 		return KdiffOverPI * (1.f - Re) / (1.f - P);
 	}
 
-	Spectrum Sample_f(const Vector &wo, Vector *wi, const Normal &N,
+	Spectrum Sample_f(const Vector &wo, Vector *wi, const Normal &/*N*/,
 			const Normal &shadeN, const float u0, const float u1,
 			const float u2, const bool onlySpecular, float *pdf,
 			bool &specularBounce) const {

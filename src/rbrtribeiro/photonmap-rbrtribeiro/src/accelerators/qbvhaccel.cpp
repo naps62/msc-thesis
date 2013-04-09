@@ -197,8 +197,9 @@ void QBVHAccel::BuildTree(u_int start, u_int end, u_int *primsIndexes,
 	// If the bbox is a point, create a leaf, hoping there are not more
 	// than 64 primitives that share the same center.
 	if (k1 == INFINITY) {
-		if (end - start > 64)
+		if (end - start > 64) {
 			LR_LOG( "QBVH unable to handle geometry, too many primitives with the same centroid");
+		}
 		CreateTempLeaf(parentIndex, childIndex, start, end, nodeBbox);
 		return;
 	}

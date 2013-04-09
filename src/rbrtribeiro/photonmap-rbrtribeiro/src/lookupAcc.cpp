@@ -16,7 +16,11 @@ lookupAcc::~lookupAcc() {
 	// TODO Auto-generated destructor stub
 }
 
+#if defined USE_SPPMPA || defined USE_PPMPA
 void HashGridLookup::ReHash(float currentPhotonRadius2) {
+#else
+void HashGridLookup::ReHash(float /*currentPhotonRadius*/) {
+#endif
 
 	const unsigned int hitPointsCount = engine->hitPointTotal;
 	const BBox &hpBBox = hitPointsbbox;
@@ -56,7 +60,7 @@ void HashGridLookup::ReHash(float currentPhotonRadius2) {
 	//std::cerr << "Building hit points hash grid:" << std::endl;
 	//std::cerr << "  0k/" << hitPointsCount / 1000 << "k" << std::endl;
 	//unsigned int maxPathCount = 0;
-	double lastPrintTime = WallClockTime();
+//	double lastPrintTime = WallClockTime();
 	unsigned long long entryCount = 0;
 
 	for (unsigned int i = 0; i < hitPointsCount; ++i) {
@@ -137,9 +141,15 @@ void HashGridLookup::ReHash(float currentPhotonRadius2) {
 	 }*/
 }
 
-void HashGridLookup::AddFlux(PointerFreeScene *ss, const float alpha, const Point &hitPoint,
+#if defined USE_SPPM || defined USE_PPM
+void HashGridLookup::AddFlux(PointerFreeScene *ss, const float /*alpha*/, const Point &hitPoint,
+		const Normal &shadeN, const Vector wi, const Spectrum photonFlux,
+		float /*currentPhotonRadius2*/) {
+#else
+void HashGridLookup::AddFlux(PointerFreeScene *ss, const float /*alpha*/, const Point &hitPoint,
 		const Normal &shadeN, const Vector wi, const Spectrum photonFlux,
 		float currentPhotonRadius2) {
+#endif
 
 	// Look for eye path hit points near the current hit point
 	Vector hh = (hitPoint - hitPointsbbox.pMin) * invCellSize;
@@ -165,7 +175,7 @@ void HashGridLookup::AddFlux(PointerFreeScene *ss, const float alpha, const Poin
 			HitPointStaticInfo *hp = &workerHitPointsInfo[*iter];
 			HitPoint *ihp = &workerHitPoints[*iter++];
 
-			Vector v = hp->position - hitPoint;
+//			Vector v = hp->position - hitPoint;
 
 #if defined USE_SPPM || defined USE_PPM
 			//if ((Dot(hp->normal, shadeN) > 0.5f) && (Dot(v, v) <= ihp->accumPhotonRadius2)) {
@@ -244,7 +254,11 @@ void HashGridLookup::AddFlux(PointerFreeScene *ss, const float alpha, const Poin
 	}
 }
 
+#if defined USE_SPPMPA || defined USE_PPMPA
 void PointerFreeHashGrid::ReHash(float currentPhotonRadius2) {
+#else
+void PointerFreeHashGrid::ReHash(float /*currentPhotonRadius2*/) {
+#endif
 
 	const unsigned int hitPointsCount = engine->hitPointTotal;
 	const BBox &hpBBox = hitPointsbbox;

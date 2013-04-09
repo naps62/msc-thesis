@@ -979,7 +979,7 @@ __global__ void fullAdvance(CUDA_Worker* worker, PPM* engine, PointerFreeScene *
 void intersect_wrapper(Ray *rays, RayHit *rayHits, POINTERFREESCENE::QBVHNode *nodes,
 		POINTERFREESCENE::QuadTriangle *quadTris, uint rayCount) {
 
-	int sqrtn = sqrt(rayCount);
+//	int sqrtn = sqrt(rayCount);
 
 	//dim3 blockDIM = dim3(16, 16);
 	//dim3 gridDIM = dim3((sqrtn / blockDIM.x) + 1, (sqrtn / blockDIM.y) + 1);
@@ -1044,7 +1044,7 @@ unsigned long long AdvancePhotonPath_wrapper(CUDA_Worker* worker, PPM* engine, u
 
 	__E(cudaDeviceSynchronize());
 
-	double startTrace = WallClockTime();
+//	double startTrace = WallClockTime();
 
 	fullAdvance<<<gridDIM,blockDIM>>>
 	(workerBuff, engineBuff, ssBuff, hashBuff,worker->livePhotonPathsBuff, photonCountBuff, photonTarget);
@@ -1055,7 +1055,7 @@ unsigned long long AdvancePhotonPath_wrapper(CUDA_Worker* worker, PPM* engine, u
 			cudaMemcpy(&photonCount, photonCountBuff, sizeof(unsigned long long),
 					cudaMemcpyDeviceToHost));
 
-	float MPhotonsSec = photonCount / ((WallClockTime()-startTrace) * 1000000.f);
+//	float MPhotonsSec = photonCount / ((WallClockTime()-startTrace) * 1000000.f);
 
 	//printf("\nRate: %.3f MPhotons/sec\n",MPhotonsSec);
 

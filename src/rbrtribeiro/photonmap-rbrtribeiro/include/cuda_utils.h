@@ -23,16 +23,18 @@ void inline checkCUDAmemory(char* t = NULL) {
 
 }
 
-void inline checkCUDAError(char* t = NULL) {
 #ifdef __DEBUG
+void inline checkCUDAError(char* t = NULL) {
 
 	cudaError_t err = cudaGetLastError();
 	if (cudaSuccess != err) {
 		fprintf(stderr, "Cuda error %s: %s.\n", t, cudaGetErrorString(err));
 		exit(-1);
 	}
-#endif
 }
+#else
+void inline checkCUDAError(char * = NULL) { }
+#endif
 
 void inline __E(cudaError_t err) {
 	if (cudaSuccess != err) {

@@ -62,7 +62,7 @@ public:
 	std::string fileName;
 
 	PPM(float alpha_, uint width_, uint height_, uint superSampling_,
-			unsigned long long photonsFirstIteration_, uint ndevices) {
+			unsigned long long photonsFirstIteration_, uint /*ndevices*/) {
 
 #ifdef USE_PPMPA
 		waitForHitPoints =new boost::barrier(ndevices);

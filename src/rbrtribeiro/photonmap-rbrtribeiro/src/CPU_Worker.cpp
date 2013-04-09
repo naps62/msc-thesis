@@ -673,7 +673,7 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 	}
 
 
-	float MPhotonsSec = todoPhotonCount / ((WallClockTime()-start) * 1000000.f);
+//	float MPhotonsSec = todoPhotonCount / ((WallClockTime()-start) * 1000000.f);
 
 	//printf("\nRate: %.3f MPhotons/sec\n",MPhotonsSec);
 

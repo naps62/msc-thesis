@@ -279,7 +279,7 @@ public:
 		}
 	}
 	__HD__
-	void SplatSampleBuffer(SampleFrameBuffer* sampleFrameBuffer,const bool preview, SampleBuffer *sampleBuffer) {
+	void SplatSampleBuffer(SampleFrameBuffer* sampleFrameBuffer,const bool /*preview*/, SampleBuffer *sampleBuffer) {
 
 
 		//statsTotalSampleCount += (unsigned int) sampleBuffer->GetSampleCount();

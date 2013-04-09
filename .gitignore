@@ -9,6 +9,7 @@ msc-thesis.sublime-workspace
 *.out
 *.err
 kbest_times.csv
+.metadata
 
 # Latex
 _inputs.tex

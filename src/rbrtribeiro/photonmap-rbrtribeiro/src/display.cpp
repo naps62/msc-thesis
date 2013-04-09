@@ -63,7 +63,7 @@ static void DisplayFunc(void) {
 	glutSwapBuffers();
 }
 
-static void KeyFunc(unsigned char key, int x, int y) {
+static void KeyFunc(unsigned char key, int /*x*/, int /*y*/) {
 	switch (key) {
 //		case 'p':
 //			engine->UpdateScreenBuffer();
@@ -92,7 +92,7 @@ static void KeyFunc(unsigned char key, int x, int y) {
 	//glu eiDisplayFunc();
 }
 
-static void TimerFunc(int value) {
+static void TimerFunc(int /*value*/) {
 
 	//engine->UpdateFrameBuffer();
 

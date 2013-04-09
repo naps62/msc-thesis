@@ -76,7 +76,7 @@ public:
 	*/
 	void AddAlpha(const std::string &alphaMap);
   
-	const bool HasAlpha() const { return alpha != NULL; }
+	bool HasAlpha() const { return alpha != NULL; }
 	float GetAlpha(const UV &uv) const {
 		assert (alpha != NULL);
 
@@ -113,7 +113,6 @@ private:
 		const unsigned int v = Mod<int>(t, height);
 
 		const unsigned index = v * width + u;
-		assert (index >= 0);
 		assert (index < width * height);
 
 		return pixels[index];
@@ -124,7 +123,6 @@ private:
 		const unsigned int v = Mod(t, height);
 
 		const unsigned index = v * width + u;
-		assert (index >= 0);
 		assert (index < width * height);
 
 		return alpha[index];
