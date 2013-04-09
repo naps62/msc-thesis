@@ -1,5 +1,5 @@
 default: bin
-BINNAME := ppm-rr
+BINNAME := NAME_HERE
 UNAME   := $(shell uname)
 
 SRC_DIR           := src
