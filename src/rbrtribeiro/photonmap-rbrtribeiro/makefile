@@ -107,12 +107,12 @@ endef
 
 
 bin/$(BINNAME): $(DEPS) $(OBJ)
-	@echo "Creating build tree"
-	$(LD) $(OMP) $(LD_LIBS_DIR) $(LD_LIBS) $(OBJ) -o $@
+	@echo " LD    $(BINNAME)"
+	@$(LD) $(OMP) $(LD_LIBS_DIR) $(LD_LIBS) $(OBJ) -o $@
 
 lib/$(LIBNAME): $(DEPS) $(OBJ)
-	@echo "Creating build tree"
-	$(AR) $(ARFLAGS) -r "lib/$(LIBNAME)" $(OBJ)
+	@echo " AR     $(LIBNAME)"
+	@$(AR) $(ARFLAGS) -r "lib/$(LIBNAME)" $(OBJ) 2> /dev/null
 
 checkdirs: $(BUILD_DIR)
 
