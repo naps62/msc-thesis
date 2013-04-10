@@ -34,7 +34,6 @@ THREADS.each do |t|
       "--max_threads #{t}",
       "--spp #{spp}",
       "--output_dir #{this_test_root}",
-      "--max_iters 1"
     ].join(' ')
 
     puts   "#{KBEST} #{kbest_ops} \"#{cmd}\""
