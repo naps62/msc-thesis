@@ -254,11 +254,12 @@ void Worker::ProcessIterations(PPM* engine) {
 
 		double start = WallClockTime();
 
-		iterationCount = engine->IncIteration();
 
 		if (engine->GetIterationNumber() > MAX_ITERATIONS) {
 			break;
 		}
+
+		iterationCount = engine->IncIteration();
 
 		photonPerIteration = engine->photonsFirstIteration;
 
