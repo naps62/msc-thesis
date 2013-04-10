@@ -156,8 +156,10 @@ int main(int argc, char *argv[]) {
 //	float MPhotonsSec = engine->getPhotonTracedTotal() / (elapsedTime * 1000000.f);
 	const float itsec = engine->GetIterationNumber() / elapsedTime;
 
-	if (config->use_display)
+	if (config->use_display) {
+		cout << "Done. waiting for display" << endl;
 		engine->draw_thread->join();
+	}
 
 	engine->SaveImpl(config->output_file.c_str());
 

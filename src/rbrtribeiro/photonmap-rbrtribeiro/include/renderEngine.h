@@ -76,7 +76,7 @@ public:
 		photonsFirstIteration = photonsFirstIteration_;
 		//rng = new TauswortheRandomGenerator(7);
 
-		interationCount = 0;
+		interationCount = 1;
 
 		hitPointTotal = width * height * superSampling * superSampling;
 
