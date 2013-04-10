@@ -166,6 +166,8 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr, "Avg. %.3f iteration/sec\n", itsec);
 	fprintf(stderr, "Total photons: %.2fM\n", engine->getPhotonTracedTotal() / 1000000.f);
 	fprintf(stderr, "Total time:\n%f\n", elapsedTime);
+	fflush(stdout);
+	fflush(stderr);
 
 	return EXIT_SUCCESS;
 }
