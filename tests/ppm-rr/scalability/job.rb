@@ -7,8 +7,10 @@ NODE      = `hostname`.split.first
 KBEST     = "#{HOME}/projects/beast/blotter/kbest.rb"
 TEST_ROOT = "#{HOME}/projects/msc-thesis/tests/ppm-rr/scalability"
 
-THREADS = [1, 2, 4, 6, 8, 12, 16, 24, 32]
-SPP     = [1, 2, 4]
+#THREADS = [1, 2, 4, 6, 8, 12, 16, 24, 32]
+#SPP     = [1, 2, 4]
+THREADS = [2,4]
+SPP = [1]
 
 EXEC = "#{{}}"
 
