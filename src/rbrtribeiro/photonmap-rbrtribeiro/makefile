@@ -9,7 +9,9 @@ CUDA_INSTALL_PATH := /usr/local/cuda-5.0
 EXCLUDE_DIR :=
 
 BEAST_ROOT := $(HOME)/projects/beast
-FREEIMAGE_ROOT := /usr/local/cuda-4.0/NVIDIA_GPU_Computing_SDK/CUDALibraries/common/FreeImage
+FREEIMAGE_ROOT := /share/edu-mei/freeimage/3.15.4
+#FREEIMAGE_ROOT := /usr/local/cuda-4.0/NVIDIA_GPU_Computing_SDK/CUDALibraries/common/FreeImage
+#FREEIMAGE_LIB := $(FREEIMAGE_ROOT) /usr/local/cuda-5.0/samples/7_CUDALibraries/common/FreeImage/lib/linux/x86_64
 
 ARCH := $(shell getconf LONG_BIT)
 OMP  := openmp
@@ -18,9 +20,9 @@ CFLAGS  := -m$(ARCH) -O3 -Wall -Wextra
 NVFLAGS := -m$(ARCH) -O3
 LDFLAGS := -m$(ARCH)
 ARFLAGS :=
-LD_LIBS       := beast glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage$(ARCH)
+LD_LIBS       := beast glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage
 INCLUDE_DIR   := include /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include $(FREEIMAGE_ROOT)/include
-LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib $(BOOST_ROOT)/lib $(BEAST_ROOT)/lib $(FREEIMAGE_ROOT)/lib/linux
+LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib $(BOOST_ROOT)/lib $(BEAST_ROOT)/lib $(FREEIMAGE_ROOT)/lib/linux $(FREEIMAGE_ROOT)/lib
 CUDA_LIBS_DIR := $(CUDA_INSTALL_PATH)/lib64 $(CUDA_INSTALL_PATH)/lib
 
 
