@@ -136,7 +136,6 @@ struct Config : public beast::program_options::options {
 		value("max_iters",   max_iters,   uint(10), "number of iterations");
 
 		// now parse the arguments
-		std::cout << "config" << std::endl;
 		parse(_argc, _argv);
 
 		// derived values
