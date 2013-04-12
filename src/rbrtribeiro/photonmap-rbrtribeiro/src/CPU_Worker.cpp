@@ -201,6 +201,8 @@ void CPU_Worker::AdvanceEyePaths( RayBuffer *rayBuffer, EyePath* todoEyePaths,
 #pragma omp parallel for schedule(guided)
 //#endif
 	for (uint i = 0; i < max; i++) {
+		cout << omp_get_num_threads() << endl;
+
 
 		EyePath *eyePath = &todoEyePaths[eyePathIndexes[i]];
 

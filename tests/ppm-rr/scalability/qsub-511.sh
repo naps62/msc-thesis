@@ -11,6 +11,7 @@ source /etc/profile.d/env-modules.sh
 module load cuda-5.0
 module load gcc/4.6
 module load boost/49
+module load freeimage
 
 cd $HOME/projects/msc-thesis
 tests/ppm-rr/scalability/job.rb 
