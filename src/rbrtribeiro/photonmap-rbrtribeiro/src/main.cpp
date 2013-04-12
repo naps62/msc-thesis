@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
 
 	// load configurations
 	config = new Config("Options", argc, argv);
+	cout << config->max_threads << endl;
 
 	srand(1000);
 

@@ -9,7 +9,7 @@
 #include "omp.h"
 
 //extern uint _num_threads;
-extern Config config;
+extern Config* config;
 
 CPU_Worker::~CPU_Worker() {
 
@@ -197,11 +197,11 @@ void CPU_Worker::AdvanceEyePaths( RayBuffer *rayBuffer, EyePath* todoEyePaths,
 
 	const uint max = rayBuffer->GetRayCount();
 //#ifndef __DEBUG
-	omp_set_num_threads(config.max_threads);
+	omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
 //#endif
 	for (uint i = 0; i < max; i++) {
-		cout << omp_get_num_threads() << endl;
+		cout << config->max_threads << " " << omp_get_num_threads() << endl;
 
 
 		EyePath *eyePath = &todoEyePaths[eyePathIndexes[i]];
@@ -456,7 +456,7 @@ void CPU_Worker::Intersect(RayBuffer *rayBuffer) {
 	double start = WallClockTime();
 
 #ifndef __DEBUG
-	omp_set_num_threads(config.max_threads);
+	omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
 #endif
 	for (unsigned int i = 0; i < rayBuffer->GetRayCount(); ++i) {
@@ -500,7 +500,7 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 		Intersect(rayBuffer);
 
 #ifndef __DEBUG
-		omp_set_num_threads(config.max_threads);
+		omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
 #endif
 		for (unsigned int i = 0; i < rayBuffer->GetRayCount(); ++i) {
