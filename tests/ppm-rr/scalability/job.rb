@@ -8,14 +8,14 @@ KBEST     = "#{HOME}/projects/beast/blotter/kbest.rb"
 TEST_ROOT = "#{HOME}/projects/msc-thesis/tests/ppm-rr/scalability"
 
 THREADS = [1, 2, 4, 6, 8, 12, 16, 24, 32]
-SPP     = [1, 2, 4]
+PPI     = [19, 20, 21, 22]
 
 EXEC = "#{{}}"
 
 THREADS.each do |t|
-  SPP.each do |spp|
-    puts "  THREADS = #{t}, SPP = #{spp}"
-    this_test_root = "#{TEST_ROOT}/#{NODE}/t#{t}_s#{spp}"
+  PPI.each do |ppi|
+    puts "  THREADS = #{t}, PPI = #{ppi}"
+    this_test_root = "#{TEST_ROOT}/#{NODE}/t#{t}_ppi#{ppi}"
     FileUtils.mkdir_p this_test_root
 
     kbest_ops   = [
@@ -30,7 +30,7 @@ THREADS.each do |t|
       "#{HOME}/projects/msc-thesis/bin/ppm-rr",
       "--config #{TEST_ROOT}/common.cfg",
       "--max_threads #{t}",
-      "--spp #{spp}",
+      "--photons_iter #{ppi}",
       "--output_dir #{this_test_root}",
     ].join(' ')
 

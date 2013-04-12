@@ -196,10 +196,9 @@ void CPU_Worker::AdvanceEyePaths( RayBuffer *rayBuffer, EyePath* todoEyePaths,
 		uint* eyePathIndexes) {
 
 	const uint max = rayBuffer->GetRayCount();
-//#ifndef __DEBUG
-	omp_set_num_threads(config->max_threads);
+
+omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
-//#endif
 	for (uint i = 0; i < max; i++) {
 
 		EyePath *eyePath = &todoEyePaths[eyePathIndexes[i]];
