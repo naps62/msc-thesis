@@ -7,7 +7,7 @@ NODE      = `hostname`.split.first
 KBEST     = "#{HOME}/projects/beast/blotter/kbest.rb"
 TEST_ROOT = "#{HOME}/projects/msc-thesis/tests/ppm-rr/scalability2"
 
-THREADS = (1..16).each { |t| t * 2 }
+THREADS = [1] + (1..16).each { |t| t * 2 }
 SCENES = ['kitchen', 'cornell', 'alloy', 'bigmonkey', 'simple-mat', 'luxball']
 
 THREADS.each do |t|
