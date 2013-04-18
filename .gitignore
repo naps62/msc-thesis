@@ -12,6 +12,9 @@ kbest_times.csv
 .metadata
 build/
 bin/
+.cscope.files
+.tags
+.tags_sorted_by_file
 
 # Latex
 _inputs.tex
