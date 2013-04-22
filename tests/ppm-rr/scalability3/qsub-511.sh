@@ -18,4 +18,4 @@ cd $HOME/projects/msc-thesis
 echo $PWD
 echo $PATH
 ls /share/edu-mei
-tests/ppm-rr/scalability/job.rb 
+tests/ppm-rr/scalability3/job.rb 

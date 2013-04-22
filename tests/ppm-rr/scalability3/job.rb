@@ -5,10 +5,10 @@ require 'fileutils'
 HOME      = ENV['HOME']
 NODE      = `hostname`.split.first
 KBEST     = "#{HOME}/projects/beast/blotter/kbest.rb"
-TEST_ROOT = "#{HOME}/projects/msc-thesis/tests/ppm-rr/scalability2"
+TEST_ROOT = "#{HOME}/projects/msc-thesis/tests/ppm-rr/scalability3"
 
-THREADS = [1] + (1..16).each { |t| t * 2 }
-SCENES = ['kitchen', 'cornell', 'alloy', 'bigmonkey', 'simple-mat', 'luxball']
+THREADS = [1] + (1..16).map { |t| t * 2 }
+SCENES = ['kitchen', 'cornell', 'luxball']
 
 THREADS.each do |t|
   SCENES.each do |scene|
@@ -20,7 +20,7 @@ THREADS.each do |t|
       "--out #{this_test_root}",
       "--k 3",
       "--diff 0.05",
-      "--min 10",
+      "--min 3",
       "--max 30"
     ].join(' ')
 
