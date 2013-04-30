@@ -1,5 +1,5 @@
 default: bin
-BINNAME := starpu_hello_world2
+BINNAME := starpu_hello_world
 STARPU_MODE := lib
 UNAME   := $(shell uname)
 
@@ -24,13 +24,14 @@ endif
 
 BEAST_ROOT := $(HOME)/projects/beast
 FREEIMAGE_ROOT := /share/edu-mei/freeimage/3.15.4
+STARPU_WRAPPER_ROOT := $(HOME)/projects/msc-thesis/src/starpu_wrapper
 
 CFLAGS  := -m$(ARCH) -O3 -Wall -Wno-unused-result $(STARPU_CFLAGS)
 NVFLAGS := -m$(ARCH) -O3 $(STARPU_CFLAGS)
 LDFLAGS := -m$(ARCH) $(STARPU_LIBS)
 ARFLAGS :=
 LD_LIBS       := beast glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage
-INCLUDE_DIR   := include /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include $(FREEIMAGE_ROOT)/include
+INCLUDE_DIR   := include /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include $(FREEIMAGE_ROOT)/include $(STARPU_WRAPPER_ROOT)/include
 LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib $(BOOST_ROOT)/lib $(BEAST_ROOT)/lib $(FREEIMAGE_ROOT)/lib/linux $(FREEIMAGE_ROOT)/lib
 CUDA_LIBS_DIR := $(CUDA_INSTALL_PATH)/lib64 $(CUDA_INSTALL_PATH)/lib
 

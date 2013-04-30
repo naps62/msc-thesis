@@ -7,24 +7,30 @@ struct params {
 };
 
 void cpu_func(void * buffers[], void *cl_arg) {
-  struct params* params = (struct params*) cl_arg;
+  struct params* params = cl_arg;
   printf("Hello World (params = { %i, %f })\n", params->i, params->f);
 }
 
 
+//struct starpu_codelet cl;// = {
+/*.where = STARPU_CPU,
+  .cpu_funcs = { cpu_func, NULL },
+  .nbuffers = 0
+};
+*/
 void callback_func(void *callback_arg) {
   printf("Callback function (arg)\n", callback_arg);
 }
 
-int main(int /*argc*/, char ** /*argv*/) {
+int main(int argc, char ** argv) {
   starpu_init(NULL);
 
-  struct starpu_codelet cl;
-  cl.where = STARPU_CPU;
-  cl.cpu_funcs[0] = cpu_func;
-  cl.cpu_funcs[1] = NULL;
-  cl.nbuffers = 0;
-
+  struct starpu_codelet cl = {
+    .where = STARPU_CPU,
+    .cpu_funcs[0] = cpu_func,
+    .cpu_funcs[1] = NULL,
+    .nbuffers = 0
+  };
 
   struct starpu_task* task = starpu_task_create();
 
