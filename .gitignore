@@ -13,6 +13,7 @@ kbest_times.csv
 build/
 bin/
 .cscope.files
+tags
 .tags
 .tags_sorted_by_file
 
