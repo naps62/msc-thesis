@@ -1,6 +1,7 @@
 #ifndef _STARPU_WRAPPER_TASK_
 #define _STARPU_WRAPPER_TASK_
 
+#include <starpu_wrapper/types.hpp>
 #include <starpu_wrapper/codelet.hpp>
 
 namespace starpu {
@@ -18,6 +19,19 @@ namespace starpu {
 
     task& set_codelet(codelet cl) {
       t->cl = cl.ptr();
+      return *this;
+    }
+
+    template<typename ArgClass>
+    task& arg(ArgClass* arg) {
+      t->cl_arg = arg;
+      t->cl_arg_size = sizeof(ArgClass);
+      return *this;
+    }
+
+    task& callback(callback_func_t callback, void* arg = NULL) {
+      t->callback_func = callback;
+      t->callback_arg  = arg;
       return *this;
     }
 

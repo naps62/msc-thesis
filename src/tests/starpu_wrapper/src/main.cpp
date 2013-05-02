@@ -23,26 +23,15 @@ int main(int /*argc*/, char ** /*argv*/) {
 
   starpu::codelet cl(STARPU_CPU, cpu_func);
 
+  struct params params = { 1, 2.0f };
 
   starpu::task task(cl);
-  task.set_sync();
-  //struct starpu_task* task = starpu_task_create();
+  task
+    .set_sync()
+    .arg(&params)
+    .callback(callback_func, (void*) 0x42);
 
-  // pointer to the codelet
-  task.ptr()->cl = cl.ptr();
-
-  struct params params = { 1, 2.0f };
-  task.ptr()->cl_arg = &params;
-  task.ptr()->cl_arg_size = sizeof(params);
-
-  task.ptr()->callback_func = callback_func;
-  task.ptr()->callback_arg  = (void*) 0x42;
-
-  // starpu_task_submit will be a blocking call
-  //task->synchronous = 1;
-
-  // submit the task to StarPU
-  starpu_task_submit(task.ptr());
+  starpu::submit(task);
 
   // terminate StarPU
   starpu::shutdown();

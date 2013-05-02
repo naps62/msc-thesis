@@ -13,11 +13,9 @@ OMP  := openmp
 OMP := $(addprefix -f,$(OMP))
 
 ifeq ($(STARPU_MODE),lib)
-$(info using StarPU lib)
 STARPU_CFLAGS := ${shell pkg-config --cflags starpu-1.0}
 STARPU_LIBS   := $(shell pkg-config --libs   starpu-1.0)
 else
-$(info using StarPU plugin)
 STARPU_CFLAGS := $(shell pkg-config starpu-1.0 --variable=gccplugin)
 STARPU_LIBS   := $(shell pkg-config starpu-1.0 --variable=gccplugin)
 endif
@@ -85,30 +83,36 @@ endif
 define make-files
 $1/%.d: %.cu
 	@echo " DEPS   $$@"
-	@$(NVXX) -M $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(NVCC) -M -MT 'build/$$*.o' $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
 
 $1/%.d: %.cpp
 	@echo " DEPS   $$@"
-	@$(CXX) -M $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(CXX) -M -MT 'build/$$*.o' $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
 
 $1/%.d: %.c
 	@echo " DEPS   $$@"
-	@$(CC) -M $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(CC) -M -MT 'build/$$*.o' $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.cu
 	@echo " NVCC   $$<"
-	@$(NVCC) -c $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(NVCC) -c $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.cpp
 	@echo " CXX    $$<"
-	@$(CXX) -c $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(CXX) -c $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.c
 	@echo " CC     $$<"
-	@$(CC) -c $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(CC) -c $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
 endef
 
-.PHONY: all checkdirs clean asd
+define include-dep-file
+ifneq ($(wildcard $1),)
+-include $1
+endif
+endef
+
+.PHONY: all checkdirs clean
 
 
 bin/$(BINNAME): $(DEPS) $(OBJ)
@@ -132,3 +136,4 @@ bin: $(BUILD_DIR) bin/$(BINNAME)
 lib: $(BUILD_DIR) lib/$(LIBNAME)
 
 $(foreach bdir,$(BUILD_DIR),$(eval $(call make-files,$(bdir))))
+$(foreach dep,$(DEPS),$(eval $(call include-dep-file,$(dep))))
