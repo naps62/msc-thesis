@@ -445,7 +445,6 @@ void Worker::AccumulateFluxPPM(uint /*iteration*/, u_int64_t photonTraced) {
 #pragma omp parallel for schedule(guided)
 #endif
 	for (uint i = 0; i < engine->hitPointTotal; i++) {
-		cout << omp_get_num_threads() << endl;
 		HitPointStaticInfo *ehp = GetHitPointInfo(i);
 		HitPoint *ihp = GetHitPoint(i);
 
@@ -498,7 +497,6 @@ void Worker::AccumulateFluxSPPM(uint iteration, u_int64_t photonTraced) {
 #pragma omp parallel for schedule(guided)
 #endif
 	for (uint i = 0; i < engine->hitPointTotal; i++) {
-		cout << omp_get_num_threads() << endl;
 		HitPointStaticInfo *ehp = GetHitPointInfo(i);
 		HitPoint *ihp = GetHitPoint(i);
 
@@ -558,7 +556,6 @@ void Worker::AccumulateFluxPPMPA(uint iteration, u_int64_t photonTraced) {
 #pragma omp parallel for schedule(guided)
 #endif
 	for (uint i = 0; i < engine->hitPointTotal; i++) {
-		cout << omp_get_num_threads() << endl;
 
 		HitPointStaticInfo *ehp = GetHitPointInfo(i);
 		HitPoint *ihp = GetHitPoint(i);
@@ -598,7 +595,6 @@ void Worker::AccumulateFluxSPPMPA(uint iteration, u_int64_t photonTraced) {
 #pragma omp parallel for schedule(guided)
 #endif
 	for (uint i = 0; i < engine->hitPointTotal; i++) {
-		cout << omp_get_num_threads() << endl;
 		HitPointStaticInfo *ehp = GetHitPointInfo(i);
 		HitPoint *ihp = GetHitPoint(i);
 

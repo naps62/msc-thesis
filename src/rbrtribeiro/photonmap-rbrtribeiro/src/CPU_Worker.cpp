@@ -200,7 +200,6 @@ void CPU_Worker::AdvanceEyePaths( RayBuffer *rayBuffer, EyePath* todoEyePaths,
 omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
 	for (uint i = 0; i < max; i++) {
-		cout << omp_get_num_threads() << endl;
 
 		EyePath *eyePath = &todoEyePaths[eyePathIndexes[i]];
 
@@ -458,7 +457,6 @@ void CPU_Worker::Intersect(RayBuffer *rayBuffer) {
 #pragma omp parallel for schedule(guided)
 #endif
 	for (unsigned int i = 0; i < rayBuffer->GetRayCount(); ++i) {
-		cout << omp_get_num_threads() << endl;
 		hb[i].SetMiss();
 		IntersectRay(&rb[i], &hb[i]);
 	}
@@ -503,7 +501,6 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 #pragma omp parallel for schedule(guided)
 #endif
 		for (unsigned int i = 0; i < rayBuffer->GetRayCount(); ++i) {
-		cout << omp_get_num_threads() << endl;
 			PhotonPath *photonPath = &livePhotonPaths[i];
 			Ray *ray = &rayBuffer->GetRayBuffer()[i];
 			RayHit *rayHit = &rayBuffer->GetHitBuffer()[i];
