@@ -5,11 +5,10 @@
 
 namespace starpu {
 
-
   struct codelet {
 
     codelet(uint32_t where = 0, cpu_func_t cpu_func = NULL) {
-      n_cpu_funcs = n_cuda_funcs = 0;
+      n_cpu_funcs = n_cuda_funcs = n_modes = 0;
       starpu_codelet_init(&cl);
       this->init_codelet(where, cpu_func);
     }
@@ -24,13 +23,9 @@ namespace starpu {
       return *this;
     }
 
-    codelet& nbuffers(unsigned nbuffers) {
-      cl.nbuffers = nbuffers;
-      return *this;
-    }
-
-    codelet& mode(starpu_access_mode mode) {
+    codelet& buffer(starpu_access_mode mode) {
       cl.modes[n_modes++] = mode;
+      cl.nbuffers = n_modes;
       return *this;
     }
 

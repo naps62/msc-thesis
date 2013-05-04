@@ -18,5 +18,6 @@ namespace starpu {
 
 }
 
+#include <starpu_wrapper/types/vector.hpp>
 
 #endif // _STARPU_WRAPPER_TYPES

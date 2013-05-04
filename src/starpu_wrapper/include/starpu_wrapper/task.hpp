@@ -29,6 +29,12 @@ namespace starpu {
       return *this;
     }
 
+    template<typename T>
+    task& handle(starpu::vector<T> vec) {
+      t->handles[n_handles++] = vec.handle();
+      return *this;
+    }
+
     template<typename ArgClass>
     task& arg(ArgClass* arg) {
       t->cl_arg = arg;
