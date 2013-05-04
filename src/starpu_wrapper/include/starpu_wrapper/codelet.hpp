@@ -24,6 +24,16 @@ namespace starpu {
       return *this;
     }
 
+    codelet& nbuffers(unsigned nbuffers) {
+      cl.nbuffers = nbuffers;
+      return *this;
+    }
+
+    codelet& mode(starpu_access_mode mode) {
+      cl.modes[n_modes++] = mode;
+      return *this;
+    }
+
     starpu_codelet* ptr() {
       return &cl;
     }
@@ -32,6 +42,7 @@ namespace starpu {
     starpu_codelet cl;
     unsigned int n_cpu_funcs;
     unsigned int n_cuda_funcs;
+    unsigned int n_modes;
 
     void init_codelet(uint32_t where, cpu_func_t cpu_func) {
       cl.cpu_funcs[0] = NULL;

@@ -9,16 +9,23 @@ namespace starpu {
   struct task {
 
     task() {
+      n_handles = 0;
       t = starpu_task_create();
     }
 
     task(codelet cl) {
+      n_handles = 0;
       t = starpu_task_create();
       set_codelet(cl);
     }
 
     task& set_codelet(codelet cl) {
       t->cl = cl.ptr();
+      return *this;
+    }
+
+    task& handle(starpu_data_handle_t handle) {
+      t->handles[n_handles++] = handle;
       return *this;
     }
 
@@ -47,6 +54,7 @@ namespace starpu {
 
   private:
     starpu_task* t;
+    unsigned int n_handles;
   };
 }
 
