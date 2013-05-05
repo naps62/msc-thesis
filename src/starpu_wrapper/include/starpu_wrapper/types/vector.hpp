@@ -20,6 +20,10 @@ namespace starpu {
       starpu_data_unregister(_handle);
     }
 
+    void acquire() {
+      starpu_data_acquire(_handle, STARPU_R);
+    }
+
     starpu_data_handle_t handle() {
       return _handle;
     }

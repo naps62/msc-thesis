@@ -5,6 +5,7 @@ namespace starpu {
 
   // cpu function pointer
   typedef void (*cpu_func_t)      (void* buffers[], void* cl_args);
+  typedef void (*cuda_func_t)     (void* buffers[], void* cl_args);
   typedef void (*callback_func_t) (void* callback_arg);
 
   // cuda function pointer

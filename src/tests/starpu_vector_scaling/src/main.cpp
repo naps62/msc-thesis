@@ -4,6 +4,7 @@
 #include <starpu_wrapper.hpp>
 
 #include "cpu_kernel.h"
+#include "cuda_kernel.h"
 
 struct params {
   int i;
@@ -24,7 +25,7 @@ int main(int /*argc*/, char ** /*argv*/) {
 
   starpu::init();
 
-  starpu::codelet cl(STARPU_CPU, cpu_kernel);
+  starpu::codelet cl(STARPU_CUDA, cpu_kernel, cuda_kernel);
   cl.buffer(STARPU_RW);
 
   values.register_data();
@@ -39,6 +40,9 @@ int main(int /*argc*/, char ** /*argv*/) {
     .callback(callback_func, (void*) 0x42);
 
   starpu::submit(task);
+  starpu_task_wait_for_all();
+
+  values.acquire();
 
   for(int i = 0; i < NX; ++i)
     printf("%f\n", values[i]);

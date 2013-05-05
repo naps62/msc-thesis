@@ -34,15 +34,6 @@ LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib
 CUDA_LIBS_DIR := $(CUDA_INSTALL_PATH)/lib64 $(CUDA_INSTALL_PATH)/lib
 
 
-#
-# Do not change
-#
-ifdef (DEFINES)
-ifeq ($(CUDA_SUPPORT),yes)
-DEFINES := -Xcompiler "$(CFLAGS)"
-endif
-endif
-
 MODULES   := ${shell find $(SRC_DIR) -type d -print | sed 1d | cut -d'/' -f2,3,4,5 }
 SRC_DIR   := $(SRC_DIR) $(addprefix src/,$(MODULES))
 BUILD_DIR := build      $(addprefix build/,$(MODULES))
@@ -83,19 +74,19 @@ endif
 define make-files
 $1/%.d: %.cu
 	@echo " DEPS   $$@"
-	@$(NVCC) -M -MT 'build/$$*.o' $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
+	@$(NVCC) -M $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.d: %.cpp
 	@echo " DEPS   $$@"
-	@$(CXX) -M -MT 'build/$$*.o' $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
+	@$(CXX) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.d: %.c
 	@echo " DEPS   $$@"
-	@$(CC) -M -MT 'build/$$*.o' $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
+	@$(CC) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.cu
 	@echo " NVCC   $$<"
-	@$(NVCC) -c $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
+	@$(NVCC) -c $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.cpp
 	@echo " CXX    $$<"
