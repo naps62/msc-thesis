@@ -40,7 +40,6 @@ namespace starpu {
 
   private:
     boost::shared_ptr<starpu_codelet> cl;
-    //starpu_codelet* cl;
     unsigned int n_cpu_funcs;
     unsigned int n_cuda_funcs;
     unsigned int n_modes;

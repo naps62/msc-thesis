@@ -16,7 +16,6 @@ extern "C" void cuda_kernel(void *buffers[], void *args) {
 
   // CUDA copy of the vector pointer
   float *val = (float*) STARPU_VECTOR_GET_PTR(buffers[0]);
-  printf("asd: %f\n", val);
   unsigned threads_per_block = 64;
   unsigned nblocks = (n + threads_per_block - 1) / threads_per_block;
 

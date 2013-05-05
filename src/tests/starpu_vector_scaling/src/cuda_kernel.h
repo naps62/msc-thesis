@@ -3,6 +3,9 @@
 
 #include <starpu_cuda.h>
 
-extern "C" void cuda_kernel(void *buffers[], void *args);
+#ifdef __cplusplus
+extern "C"
+#endif
+void cuda_kernel(void *buffers[], void *args);
 
 #endif // _CUDA_KERNEL_
