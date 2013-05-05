@@ -25,7 +25,7 @@ int main(int /*argc*/, char ** /*argv*/) {
 
   starpu::init();
 
-  starpu::codelet cl(STARPU_CUDA, cpu_kernel, cuda_kernel);
+  starpu::codelet cl(STARPU_CPU, cpu_kernel, cuda_kernel);
   cl.buffer(STARPU_RW);
 
   values.register_data();
