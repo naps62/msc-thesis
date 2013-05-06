@@ -39,7 +39,7 @@ Scene::Scene(const std::string &fileName,uint width, uint height ,const int aTyp
 	extMeshCache = new ExtMeshCache();
 	texMapCache = new TextureMapCache();
 
-	SDL_LOG("Reading scene: " << fileName);
+	//SDL_LOG("Reading scene: " << fileName);
 
 	scnProp = new Properties(fileName);
 
@@ -51,8 +51,8 @@ Scene::Scene(const std::string &fileName,uint width, uint height ,const int aTyp
 	Point o(vf.at(0), vf.at(1), vf.at(2));
 	Point t(vf.at(3), vf.at(4), vf.at(5));
 
-	SDL_LOG("Camera postion: " << o);
-	SDL_LOG("Camera target: " << t);
+	//SDL_LOG("Camera postion: " << o);
+	//SDL_LOG("Camera target: " << t);
 
 	vf = GetParameters(*scnProp, "scene.camera.up", 3, "0.0 0.0 0.1");
 	const Vector up(vf.at(0), vf.at(1), vf.at(2));
@@ -62,7 +62,7 @@ Scene::Scene(const std::string &fileName,uint width, uint height ,const int aTyp
 	camera->lensRadius = scnProp->GetFloat("scene.camera.lensradius", 0.f);
 	camera->focalDistance = scnProp->GetFloat("scene.camera.focaldistance", 10.f);
 	camera->fieldOfView = scnProp->GetFloat("scene.camera.fieldofview", 45.f);
-  
+
 	// Check if camera motion blur is enabled
 	if (scnProp->GetInt("scene.camera.motionblur.enable", 0)) {
 		camera->motionBlur = true;
@@ -91,7 +91,7 @@ Scene::Scene(const std::string &fileName,uint width, uint height ,const int aTyp
 		const std::string matName = Properties::ExtractField(key, 3);
 		if (matName == "")
 			throw std::runtime_error("Syntax error in " + key);
-		SDL_LOG("Material definition: " << matName << " [" << matType << "]");
+		//SDL_LOG("Material definition: " << matName << " [" << matType << "]");
 
 		Material *mat = CreateMaterial(key, *scnProp);
 
@@ -129,11 +129,11 @@ Scene::Scene(const std::string &fileName,uint width, uint height ,const int aTyp
 		const std::string plyFileName = args.at(0);
 		const double now = WallClockTime();
 		if (now - lastPrint > 2.0) {
-			SDL_LOG("PLY object count: " << objCount);
+			//SDL_LOG("PLY object count: " << objCount);
 			lastPrint = now;
 		}
 		++objCount;
-		//SDL_LOG("PLY object [" << objName << "] file name: " << plyFileName);
+		////SDL_LOG("PLY object [" << objName << "] file name: " << plyFileName);
 
 		// Check if I have to calculate normal or not
 		const bool usePlyNormals = (scnProp->GetInt(key + ".useplynormals", 0) != 0);
@@ -166,7 +166,7 @@ Scene::Scene(const std::string &fileName,uint width, uint height ,const int aTyp
 
 		// Check if it is a light sources
 		if (mat->IsLightSource()) {
-			SDL_LOG("The " << objName << " object is a light sources with " << meshObject->GetTotalTriangleCount() << " triangles");
+			//SDL_LOG("The " << objName << " object is a light sources with " << meshObject->GetTotalTriangleCount() << " triangles");
 
 			AreaLightMaterial *light = (AreaLightMaterial *)mat;
 			objectMaterials.push_back(mat);
@@ -216,7 +216,7 @@ Scene::Scene(const std::string &fileName,uint width, uint height ,const int aTyp
 				const float gamma = scnProp->GetFloat(key + ".texmap.gamma", 2.2f);
 				TextureMap *tm;
 				if (!(tm = texMapCache->FindTextureMap(texMap, gamma))) {
-					SDL_LOG("Alpha map " << alphaMap << " is for a materials without texture. A black texture has been created for support!");
+					//SDL_LOG("Alpha map " << alphaMap << " is for a materials without texture. A black texture has been created for support!");
 					// We have an alpha map without a diffuse texture. In this case we need to create
 					// a texture map filled with black
 					tm = new TextureMap(alphaMap, gamma, 1.0, 1.0, 1.0);
@@ -231,7 +231,7 @@ Scene::Scene(const std::string &fileName,uint width, uint height ,const int aTyp
 					tm->AddAlpha(alphaMap);
 				}
 			}
-      
+
 			// Check for if there is a bump map associated to the object
 			const std::string bumpMap = scnProp->GetString(key + ".bumpmap", "");
 			if (bumpMap != "") {
@@ -259,7 +259,7 @@ Scene::Scene(const std::string &fileName,uint width, uint height ,const int aTyp
 				objectNormalMaps.push_back(NULL);
 		}
 	}
-	SDL_LOG("PLY object count: " << objCount);
+	//SDL_LOG("PLY object count: " << objCount);
 
 	//--------------------------------------------------------------------------
 	// Check if there is an infinitelight source defined
@@ -272,7 +272,7 @@ Scene::Scene(const std::string &fileName,uint width, uint height ,const int aTyp
 
 		// Check if I have to use InfiniteLightBF method
 		if (scnProp->GetInt("scene.infinitelight.usebruteforce", 0)) {
-			SDL_LOG("Using brute force infinite light sampling");
+			//SDL_LOG("Using brute force infinite light sampling");
 			infiniteLight = new InfiniteLightBF(tex);
 			useInfiniteLightBruteForce = true;
 		} else {

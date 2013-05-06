@@ -1,5 +1,7 @@
 #include "ppm/engines/ppm.h"
 
+#include "ppm/kernels/build_hit_points.h"
+
 namespace ppm {
 
 PPM :: PPM(const Config& config)
@@ -10,10 +12,8 @@ PPM :: ~PPM() { }
 void PPM :: render() {
   film.clear(Spectrum(1.f, 0.f, 0.f));
 
-  //new kernels::BuildHitPoints(scene, 1);
+  k_build_hit_points();
 
-//  build_hit_points(1);
-  float r = 0.f;
   while(true) {
     set_captions();
     display->request_update(config.min_frame_time);

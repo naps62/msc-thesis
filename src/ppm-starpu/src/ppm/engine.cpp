@@ -1,6 +1,8 @@
 #include "ppm/engine.h"
 #include "ppm/engines/ppm.h"
 
+#include <starpu.h>
+
 namespace ppm {
 
 //
@@ -14,15 +16,13 @@ Engine :: Engine(const Config& _config)
     display = new Display(config, film);
     display->start(true);
   }
+
+  starpu_init(NULL);
 }
 
 Engine :: ~Engine() {
-  finalize();
-}
+  starpu_shutdown();
 
-
-
-void Engine :: finalize() {
   // wait for display to close
   if (config.use_display) {
     display->join();

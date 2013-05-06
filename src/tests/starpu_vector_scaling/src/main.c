@@ -1,5 +1,6 @@
 #include <starpu.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <starpu.h>
 #include "cpu_kernel.h"
@@ -11,7 +12,7 @@ struct params {
 };
 
 static struct starpu_codelet cl = {
-  .where = STARPU_CPU | STARPU_CUDA,
+  .where = STARPU_CUDA,
   .cpu_funcs = { cpu_kernel, NULL },
   .cuda_funcs = { cuda_kernel, NULL },
   .nbuffers = 1,

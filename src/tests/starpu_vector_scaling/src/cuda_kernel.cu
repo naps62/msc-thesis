@@ -1,11 +1,15 @@
 #include "cuda_kernel.h"
+#include "cuPrintf.cuh"
+#include "cuPrintf.cu.inc"
 
 #include <starpu.h>
+#include <stdio.h>
 
 static __global__ void cuda_kernel_impl(float *val, unsigned n, float factor) {
   unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
-  if (i < n)
+  if (i < n) {
     val[i] *= factor;
+  }
 }
 
 extern "C" void cuda_kernel(void *buffers[], void *args) {

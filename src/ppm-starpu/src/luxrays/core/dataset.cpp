@@ -73,9 +73,9 @@ TriangleMeshID DataSet::Add(Mesh *mesh) {
 void DataSet::Preprocess() {
   assert (!preprocessed);
 
-  LR_LOG( "Preprocessing DataSet");
-  LR_LOG("Total vertex count: " << totalVertexCount);
-  LR_LOG( "Total triangle count: " << totalTriangleCount);
+  //LR_LOG( "Preprocessing DataSet");
+  //LR_LOG("Total vertex count: " << totalVertexCount);
+  //LR_LOG( "Total triangle count: " << totalTriangleCount);
 
   if (totalTriangleCount == 0)
     throw std::runtime_error("An empty DataSet can not be preprocessed");

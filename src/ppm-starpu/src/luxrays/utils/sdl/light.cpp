@@ -506,6 +506,8 @@ Spectrum InfiniteLightIS::Sample_L(const Scene *scene, const float u0,
 		float *pdf, Ray *ray) const {
 //	// Choose a point on scene bounding sphere using IS
 	float uv[2];
+	uv[0] = 0;
+	uv[1] = 0;
 //	float mapPdf;
 //	uvDistrib->SampleContinuous(u0, u1, uv, &mapPdf);
 //	uv[0] -= shiftU;

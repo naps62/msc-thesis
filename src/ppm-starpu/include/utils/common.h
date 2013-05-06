@@ -12,4 +12,12 @@
 #define __forceinline __inline__ __attribute__((__always_inline__))
 #endif
 
+
+#if defined(__cplusplus)
+#define _extern_c_ extern "C"
+
+#else
+#define _extern_c_
+#endif
+
 #endif // _UTILS_COMMON_H
