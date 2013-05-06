@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Anthony Pajot   
+ *   Copyright (C) 2007 by Anthony Pajot
  *   anthony.pajot@etu.enseeiht.fr
  *
  * This file is part of FlexRay
@@ -60,7 +60,7 @@ void MQBVHAccel::Init(const std::deque<Mesh *> &meshes, const unsigned int total
 
 	// Build a QBVH for each mesh
 	nLeafs = meshList.size();
-	LR_LOG(ctx, "MQBVH leaf count: " << nLeafs);
+	//LR_LOG(ctx, "MQBVH leaf count: " << nLeafs);
 
 	leafs = new QBVHAccel*[nLeafs];
 	leafsInvTransform = new const Transform*[nLeafs];
@@ -72,7 +72,7 @@ void MQBVHAccel::Init(const std::deque<Mesh *> &meshes, const unsigned int total
 	for (unsigned int i = 0; i < nLeafs; ++i) {
 		const double now = WallClockTime();
 		if (now - lastPrint > 2.0) {
-			LR_LOG(ctx, "Building QBVH for MQBVH leaf: " << i);
+			//LR_LOG(ctx, "Building QBVH for MQBVH leaf: " << i);
 			lastPrint = now;
 		}
 
@@ -98,7 +98,7 @@ void MQBVHAccel::Init(const std::deque<Mesh *> &meshes, const unsigned int total
 					leafs[i]->Init(itm);
 					accels[itm->GetTriangleMesh()] = leafs[i];
 				} else {
-					//LR_LOG(ctx, "Cached QBVH leaf");
+					////LR_LOG(ctx, "Cached QBVH leaf");
 					leafs[i] = it->second;
 				}
 
@@ -116,7 +116,7 @@ void MQBVHAccel::Init(const std::deque<Mesh *> &meshes, const unsigned int total
 					leafs[i]->Init(eitm);
 					accels[eitm->GetExtTriangleMesh()] = leafs[i];
 				} else {
-					//LR_LOG(ctx, "Cached QBVH leaf");
+					////LR_LOG(ctx, "Cached QBVH leaf");
 					leafs[i] = it->second;
 				}
 
@@ -142,7 +142,7 @@ void MQBVHAccel::Init(const std::deque<Mesh *> &meshes, const unsigned int total
 	nodes = AllocAligned<QBVHNode>(maxNodes);
 
 	Update();
-	
+
 	initialized = true;
 }
 
@@ -178,13 +178,13 @@ void MQBVHAccel::Update() {
 	}
 
 	// Recursively build the tree
-	LR_LOG(ctx, "Building MQBVH, leafs: " << nLeafs << ", initial nodes: " << maxNodes);
+	//LR_LOG(ctx, "Building MQBVH, leafs: " << nLeafs << ", initial nodes: " << maxNodes);
 
 	BuildTree(0, nLeafs, primsIndexes, primsBboxes, primsCentroids,
 			worldBound, centroidsBbox, -1, 0, 0);
 
-	LR_LOG(ctx, "MQBVH completed with " << nNodes << "/" << maxNodes << " nodes");
-	LR_LOG(ctx, "Total MQBVH memory usage: " << nNodes * sizeof(QBVHNode) / 1024 << "Kbytes");
+	//LR_LOG(ctx, "MQBVH completed with " << nNodes << "/" << maxNodes << " nodes");
+	//LR_LOG(ctx, "Total MQBVH memory usage: " << nNodes * sizeof(QBVHNode) / 1024 << "Kbytes");
 
 	// Release temporary memory
 	delete[] primsBboxes;
@@ -215,7 +215,7 @@ void MQBVHAccel::BuildTree(u_int start, u_int end, u_int *primsIndexes,
 	// Fill in the bins, considering all the primitives when a given
 	// threshold is reached, else considering only a portion of the
 	// primitives for the binned-SAH process. Also compute the bins bboxes
-	// for the primitives. 
+	// for the primitives.
 
 	for (u_int i = 0; i < NB_BINS; ++i)
 		bins[i] = 0;

@@ -62,8 +62,8 @@ void BVHAccel::Init(const std::deque<Mesh *> &meshes, const unsigned int totalVe
 	assert (preprocessedMesh->GetTotalVertexCount() == totalVertexCount);
 	assert (preprocessedMesh->GetTotalTriangleCount() == totalTriangleCount);
 
-	LR_LOG(ctx, "Total vertices memory usage: " << totalVertexCount * sizeof(Point) / 1024 << "Kbytes");
-	LR_LOG(ctx, "Total triangles memory usage: " << totalTriangleCount * sizeof(Triangle) / 1024 << "Kbytes");
+	//LR_LOG(ctx, "Total vertices memory usage: " << totalVertexCount * sizeof(Point) / 1024 << "Kbytes");
+	//LR_LOG(ctx, "Total triangles memory usage: " << totalTriangleCount * sizeof(Triangle) / 1024 << "Kbytes");
 
 	const Point *v = preprocessedMesh->GetVertices();
 	const Triangle *p = preprocessedMesh->GetTriangles();
@@ -80,19 +80,19 @@ void BVHAccel::Init(const std::deque<Mesh *> &meshes, const unsigned int totalVe
 		bvList.push_back(ptr);
 	}
 
-	LR_LOG(ctx, "Building Bounding Volume Hierarchy, primitives: " << totalTriangleCount);
+	//LR_LOG(ctx, "Building Bounding Volume Hierarchy, primitives: " << totalTriangleCount);
 
 	nNodes = 0;
 	BVHAccelTreeNode *rootNode = BuildHierarchy(bvList, 0, bvList.size(), 2);
 
-	LR_LOG(ctx, "Pre-processing Bounding Volume Hierarchy, total nodes: " << nNodes);
+	//LR_LOG(ctx, "Pre-processing Bounding Volume Hierarchy, total nodes: " << nNodes);
 
 	bvhTree = new BVHAccelArrayNode[nNodes];
 	BuildArray(rootNode, 0);
 	FreeHierarchy(rootNode);
 
-	LR_LOG(ctx, "Total BVH memory usage: " << nNodes * sizeof(BVHAccelArrayNode) / 1024 << "Kbytes");
-	LR_LOG(ctx, "Finished building Bounding Volume Hierarchy array");
+	//LR_LOG(ctx, "Total BVH memory usage: " << nNodes * sizeof(BVHAccelArrayNode) / 1024 << "Kbytes");
+	//LR_LOG(ctx, "Finished building Bounding Volume Hierarchy array");
 
 	initialized = true;
 }
