@@ -12,7 +12,7 @@ PPM :: ~PPM() { }
 void PPM :: render() {
   film.clear(Spectrum(1.f, 0.f, 0.f));
 
-  k_build_hit_points();
+  this->build_hit_points();
 
   while(true) {
     set_captions();

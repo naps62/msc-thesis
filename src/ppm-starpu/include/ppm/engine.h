@@ -6,6 +6,7 @@
 #include "ppm/display.h"
 #include "ppm/ptrfreescene.h"
 #include "ppm/film.h"
+#include "utils/random.h"
 
 #include <vector>
 
@@ -27,6 +28,7 @@ protected:
   Display* display;
   Film film;
 
+  std::vector<Seed> seeds;
   std::vector<HitPointStaticInfo> hit_point_static_info_iteration_copy;
 
   void build_hit_points(uint iteration);

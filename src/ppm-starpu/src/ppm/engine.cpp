@@ -1,5 +1,6 @@
 #include "ppm/engine.h"
 #include "ppm/engines/ppm.h"
+#include "utils/random.h"
 
 #include <starpu.h>
 
@@ -10,7 +11,12 @@ namespace ppm {
 //
 
 Engine :: Engine(const Config& _config)
-: config(_config), scene(new PtrFreeScene(config)), film(config) {
+: config(_config), scene(new PtrFreeScene(config)), film(config), seeds(config.total_hit_points); {
+
+  for(uint i = 0; i < seeds.size(); ++i) {
+    seeds[i] = mwc(i);
+  }
+
   // load display if necessary
   if (config.use_display) {
     display = new Display(config, film);
@@ -47,7 +53,6 @@ void Engine :: build_hit_points(uint iteration) {
   hit_point_static_info_iteration_copy = vector<HitPointStaticInfo>(config.total_hit_points);
 
   // TODO SPPM
-
   const float sample_weight = 1.f / config.spp;
 
   // for all hitpoints

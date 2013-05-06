@@ -3,6 +3,19 @@
 
 #include "utils/common.h"
 
-_extern_c_  void k_build_hit_points();
+struct args_build_hit_points {
+  unsigned width;
+  unsigned height;
+  unsigned spp;
+  unsigned hit_points;
+};
+
+_extern_c_ void k_build_hit_points(
+  //void* scene,
+  unsigned width,
+  unsigned height,
+  unsigned spp,
+  unsigned hit_points
+);
 
 #endif // _PPM_KERNELS_BUILD_HIT_POINTS_H_

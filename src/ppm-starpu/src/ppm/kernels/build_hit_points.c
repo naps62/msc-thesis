@@ -13,13 +13,15 @@ static struct starpu_codelet cl_build_hit_points = {
   //.modes = { STARPU_RW }
 };
 
-_extern_c_ void k_build_hit_points() {
+_extern_c_ void k_build_hit_points(void* scene, unsigned width, unsigned height, unsigned spp, unsigned hit_points) {
+  struct args_build_hit_points args = { width, height, spp, hit_points };
+
   struct starpu_task* task = starpu_task_create();
   task->synchronous = 1;
   task->cl = &cl_build_hit_points;
   //task->handles[0] =
-  //task->cl_arg =
-  //task->cl_arg_size =
+  task->cl_arg      = &args;
+  task->cl_arg_size = sizeof(args);
 
   starpu_task_submit(task);
 }
