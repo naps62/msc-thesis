@@ -1,0 +1,10 @@
+build_hit_points
+  para cada (width*height*spp), gerar um EyePath
+  no iteration_copy needed. hit_points only generated once
+
+  EyePaths[hit_point_total]
+  EyePathIndexes[ray_buffer_size] <- to advance #n-sized chunks of EyePaths each time
+
+  todo_eye_path
+  while(todo_eye_paths)
+
