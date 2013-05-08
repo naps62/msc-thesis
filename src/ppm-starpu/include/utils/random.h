@@ -128,7 +128,7 @@ __host__ __device__ __inline__ unsigned long uintValue(Seed& prev) {
   return (prev.s1 ^ prev.s2 ^ prev.s3);
 }
 
-__host__ __device__ __inline__ float getFloatRNG(Seed& prev) {
+__host__ __device__ __inline__ float floatRNG(Seed& prev) {
   return (uintValue(prev) & FLOATMASK) * invUI;
 }
 

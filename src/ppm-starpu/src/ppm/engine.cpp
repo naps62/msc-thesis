@@ -11,7 +11,7 @@ namespace ppm {
 //
 
 Engine :: Engine(const Config& _config)
-: config(_config), scene(new PtrFreeScene(config)), film(config), seeds(config.total_hit_points); {
+: config(_config), scene(new PtrFreeScene(config)), film(config), seeds(config.total_hit_points) {
 
   for(uint i = 0; i < seeds.size(); ++i) {
     seeds[i] = mwc(i);
