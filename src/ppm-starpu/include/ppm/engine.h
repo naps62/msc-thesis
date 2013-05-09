@@ -29,7 +29,7 @@ protected:
   Film film;
 
   std::vector<Seed> seeds;
-  std::vector<HitPointStaticInfo> hit_point_static_info_iteration_copy;
+  sstd::vector<HitPointStaticInfo> hit_points;
 
   void build_hit_points(uint iteration);
 };

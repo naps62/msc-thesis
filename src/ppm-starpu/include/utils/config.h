@@ -37,6 +37,7 @@ struct Config : public beast::program_options::options {
   uint max_threads;
   uint max_iters;
   ppm::AcceleratorType accel_type;
+  uint max_eye_path_depth;
 
   Config(const char *desc, int _argc, char **_argv);
 };

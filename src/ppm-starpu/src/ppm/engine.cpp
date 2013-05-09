@@ -12,7 +12,8 @@ namespace ppm {
 //
 
 Engine :: Engine(const Config& _config)
-: config(_config), scene(new PtrFreeScene(config)), film(config), seeds(config.total_hit_points) {
+: config(_config), scene(new PtrFreeScene(config)), film(config),
+  seeds(config.total_hit_points), hit_points(hit_points) {
 
   // load display if necessary
   if (config.use_display) {

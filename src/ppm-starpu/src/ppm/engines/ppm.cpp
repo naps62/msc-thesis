@@ -30,11 +30,9 @@ void PPM :: set_captions() {
 }
 
 void PPM :: init_seed_buffer() {
-  seed_buffer = vector<Seed>(config.total_hit_points);//new Seed[config.total_hit_points];
-
   // TODO is it worth it to move this to a kernel?
   for(uint i = 0; i < config.total_hit_points; ++i) {
-    seed_buffer[i] = mwc(i);
+    seeds[i] = mwc(i);
   }
 }
 
@@ -43,7 +41,8 @@ void PPM :: build_hit_points() {
   vector<EyePath> eye_paths(config.total_hit_points);
 
   // eye path generation
-  kernels::generate_eye_paths(eye_paths, seed_buffer, &config, scene);
+  kernels::generate_eye_paths(eye_paths, seeds, &config, scene);
+  kernels::eye_paths_to_hit_points(eye_paths, hit_points, seeds, &config, scene);
 }
 
 }

@@ -25,6 +25,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   value("photons_iter", photons_first_iter_exp, uint(20),  "to compute amount of photons on first iteration");
   value("max_threads", max_threads, uint(8),  "number of cpu threads");
   value("max_iters",   max_iters,   uint(10), "number of iterations");
+  value("max_eye_path_depth", max_eye_path_depth, uint(16), "max eye path depth");
 
   // now parse the arguments
   parse(_argc, _argv);
