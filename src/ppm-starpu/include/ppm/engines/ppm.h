@@ -15,7 +15,7 @@ public:
   void set_captions();
 
 private:
-  Seed* seed_buffer;
+  vector<Seed> seed_buffer;
 
   void init_seed_buffer();
   void build_hit_points();

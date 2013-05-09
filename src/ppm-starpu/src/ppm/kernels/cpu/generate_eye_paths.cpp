@@ -11,7 +11,9 @@ using ppm::EyePath;
 #include <cstdio>
 #include <cstddef>
 
-_extern_c_ void k_cpu_generate_eye_paths(void* buffers[], void* args_orig) {
+namespace ppm { namespace kernels { namespace cpu {
+
+void generate_eye_paths(void* buffers[], void* args_orig) {
   // cl_args
   const args_generate_eye_paths* args = (args_generate_eye_paths*) args_orig;
   const Config*       config = static_cast<const Config*>(args->config);
@@ -61,3 +63,4 @@ _extern_c_ void k_cpu_generate_eye_paths(void* buffers[], void* args_orig) {
 
 }
 
+} } }

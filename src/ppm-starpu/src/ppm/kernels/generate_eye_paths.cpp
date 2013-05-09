@@ -1,24 +1,15 @@
+#include "ppm/kernels/codelets.h"
 #include "ppm/kernels/generate_eye_paths.h"
 
 #include <starpu.h>
 
 namespace ppm { namespace kernels {
 
-void k_cpu_generate_eye_paths(void *buffers[], void *args);
-
-starpu_codelet cl_generate_eye_paths = {
-  .where = STARPU_CPU,
-  .type = STARPU_FORKJOIN,
-  .cpu_funcs = { k_cpu_generate_eye_paths, NULL },
-  .nbuffers = 2,
-  .modes = { STARPU_W, STARPU_RW }
-};
-
 void generate_eye_paths(
-    vector<EyePath> eye_paths,
-    vector<Seed>    seed_buffer,
-    const Config*   config,
-    PtrFreeScene*   scene) {
+    vector<EyePath>& eye_paths,
+    vector<Seed>&    seed_buffer,
+    const Config*    config,
+    PtrFreeScene*    scene) {
 
   // kernel args
   struct args_generate_eye_paths args = { config, scene };
@@ -34,7 +25,7 @@ void generate_eye_paths(
   // task definition
   struct starpu_task* task = starpu_task_create();
   task->synchronous = 1;
-  task->cl = &cl_generate_eye_paths;
+  task->cl = &codelets::generate_eye_paths;
   task->handles[0] = handle_eye_paths;
   task->handles[1] = handle_seed_buffer;
   task->cl_arg      = &args;
@@ -43,3 +34,5 @@ void generate_eye_paths(
   // submit
   starpu_task_submit(task);
 }
+
+} }

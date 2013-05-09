@@ -1,5 +1,6 @@
 #include "ppm/engine.h"
 #include "ppm/engines/ppm.h"
+#include "ppm/kernels/codelets.h"
 #include "utils/random.h"
 
 #include <starpu.h>
@@ -13,10 +14,6 @@ namespace ppm {
 Engine :: Engine(const Config& _config)
 : config(_config), scene(new PtrFreeScene(config)), film(config), seeds(config.total_hit_points) {
 
-  for(uint i = 0; i < seeds.size(); ++i) {
-    seeds[i] = mwc(i);
-  }
-
   // load display if necessary
   if (config.use_display) {
     display = new Display(config, film);
@@ -24,6 +21,7 @@ Engine :: Engine(const Config& _config)
   }
 
   starpu_init(NULL);
+  kernels::codelets::init();
 }
 
 Engine :: ~Engine() {
