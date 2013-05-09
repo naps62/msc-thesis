@@ -43,9 +43,10 @@ void PPM :: build_hit_points() {
   EyePath* eye_paths = new EyePath[config.total_hit_points];
 
   // eye path generation
-  k_generate_eye_paths(eye_paths, config.total_hit_points, sizeof(EyePath),
-                       seed_buffer, config.total_hit_points, sizeof(Seed),
-                       &config, scene);
+  kernels::generate_eye_paths(eye_paths, seed_buffer, &config, scene);
+  //k_generate_eye_paths(eye_paths, config.total_hit_points, sizeof(EyePath),
+  //                     seed_buffer, config.total_hit_points, sizeof(Seed),
+  //                     &config, scene);
 }
 
 }
