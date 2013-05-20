@@ -5,11 +5,11 @@ namespace ppm { namespace kernels {
 
   namespace codelets {
     starpu_codelet generate_eye_paths;
-    starpu_codelet eye_paths_to_hit_points
+    starpu_codelet eye_paths_to_hit_points;
 
     void init() {
       // generate_eye_paths
-      starpu_codelet* const cl = &generate_eye_paths;
+      starpu_codelet* cl = &generate_eye_paths;
       starpu_codelet_init(cl);
       cl->where        = STARPU_CPU;
       cl->type         = STARPU_FORKJOIN;
@@ -20,7 +20,7 @@ namespace ppm { namespace kernels {
       cl->modes[1]     = STARPU_RW;
 
       // eye_paths_to_hit_points
-      starpu_codelet* const cl = &eye_paths_to_hit_points;
+      cl = &eye_paths_to_hit_points;
       starpu_codelet_init(cl);
       cl->where        = STARPU_CPU;
       cl->type         = STARPU_FORKJOIN;

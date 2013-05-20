@@ -31,7 +31,7 @@ ostream& operator<< (ostream& os, const Color& c);
 #include "ppm/geometry/point.h"
 #include "ppm/geometry/ray.h"
 #include "ppm/geometry/rayhit.h"
-//#include "ppm/geometry/raybuffer.h"
+#include "ppm/geometry/raybuffer.h"
 #include "ppm/geometry/bbox.h"
 #include "ppm/geometry/bsphere.h"
 #include "ppm/geometry/triangle.h"

@@ -14,6 +14,6 @@ int main(int argc, char** argv) {
   Config config("Options", argc, argv);
 
   // load render engine
-  ppm::Engine* engine = ppm::Engine::instantiate(config);
+  ppm::Engine* engine = new ppm::Engine(config);
   engine->render();
 }

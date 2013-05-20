@@ -34,20 +34,23 @@ void eye_paths_to_hit_points(void* buffers[], void* args_orig) {
   unsigned chunk_count = 0;
   const unsigned chunk_size  = 1024 * 256;
   unsigned chunk_done_count = 0;
+  RayBuffer ray_buffer(chunk_size);
 
   while (todo_eye_paths) {
 
+    ray_buffer.clear();
     const unsigned start = chunk_count * chunk_size;
     const unsigned end   = (hit_points_count - start  < chunk_size) ? hit_points_count : start+ chunk_size;
 
+    // 1. fill the ray buffer
     for(unsigned i = start; i < end; ++i) {
       EyePath& eye_path = eye_paths[i];
 
-      if (!eye_path.done)
+      if (!eye_path.done) {
         // check if path reached max depth
-        if (eye_path.depth > config.max_eye_path_depth) {
+        if (eye_path.depth > config->max_eye_path_depth) {
           // make it done
-          HitPointStaticInfo& hp 0 hit_points[eye_path.sample_index];
+          HitPointStaticInfo& hp = hit_points[eye_path.sample_index];
           hp.type  = CONSTANT_COLOR;
           hp.scr_x = eye_path.scr_x;
           hp.scr_y = eye_path.scr_y;
@@ -56,8 +59,9 @@ void eye_paths_to_hit_points(void* buffers[], void* args_orig) {
           eye_path.done = true;
 
         } else {
+          // if not, add it to current buffer
           eye_path.depth++;
-          // add to raybuffer
+          ray_buffer.add(eye_path.ray);
         }
       }
 
@@ -71,10 +75,19 @@ void eye_paths_to_hit_points(void* buffers[], void* args_orig) {
           chunk_done_count = 0;
         }
       }
+    }
 
+    // 2. advance ray buffer
+    if (ray_buffer.size() > 0) {
+      // intersect ray buffer
+      ray_buffer.intersect(scene->data_set);
+
+      // advance eye paths
+
+      // reset ray buffer
+      ray_buffer.reset();
     }
   }
-
 }
 
 } } }

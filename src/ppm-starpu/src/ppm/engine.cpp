@@ -1,7 +1,8 @@
 #include "ppm/engine.h"
-#include "ppm/engines/ppm.h"
 #include "ppm/kernels/codelets.h"
 #include "utils/random.h"
+#include "ppm/kernels/generate_eye_paths.h"
+#include "ppm/types.h"
 
 #include <starpu.h>
 
@@ -37,45 +38,51 @@ Engine :: ~Engine() {
 //
 // public methods
 //
+void Engine :: render() {
+  film.clear(Spectrum(1.f, 0.f, 0.f));
+  this->init_seed_buffer();
+  this->build_hit_points();
 
-// static
-Engine* Engine :: instantiate(const Config& config) {
-  if (config.engine_name == string("PPM")) {
-    return new PPM(config);
-  } else {
-    throw new string("Invalid engine name" + config.engine_name);
+  while(true) {
+    set_captions();
+    display->request_update(config.min_frame_time);
   }
 }
 
-void Engine :: build_hit_points(uint iteration) {
-  vector<EyePath> todo_eye_paths(config.total_hit_points);
-  hit_point_static_info_iteration_copy = vector<HitPointStaticInfo>(config.total_hit_points);
+void Engine :: set_captions() {
+  stringstream header, footer;
+  header << "Hello World!";
+  footer << "[Photons " << 0 << "M][Avg. photons/sec " << 0 << "K][Elapsed time " << 0 << "secs]";
+  display->set_captions(header, footer);
+}
 
-  // TODO SPPM
-  const float sample_weight = 1.f / config.spp;
+// static
+//Engine* Engine :: instantiate(const Config& config) {
+//  if (config.engine_name == string("PPM")) {
+//    return new PPM(config);
+//  } else {
+//    throw new string("Invalid engine name" + config.engine_name);
+//  }
+//}
 
-  // for all hitpoints
-  uint hit_point_index = 0;
-  for(uint y(0); y < config.height; ++y) {
-    for(uint x(0); x < config.width; ++x) {
-      for(uint sy(0); sy < config.spp; ++sy) {
-        for(uint sx(0); sx < config.spp; ++sx) {
-          EyePath* eye_path = &todo_eye_paths[hit_point_index];
+//
+// private methods
+//
 
-          eye_path->scr_x = x + (sx /* + TODO RAND */) * sample_weight - 0.5f;
-          eye_path->scr_y = y + (sy /* + TODO RAND */) * sample_weight - 0.5f;
-
-          float u0 = 0; /* TODO RAND */
-          float u1 = 0; /* TODO RAND */
-          float u2 = 0; /* TODO RAND */
-
-          eye_path->ray = scene->generate_ray(eye_path->scr_x, eye_path->scr_y, config.width, config.height, u0, u1, u2);
-          eye_path->sample_index = hit_point_index;
-          ++hit_point_index;
-        }
-      }
-    }
+void Engine :: init_seed_buffer() {
+  // TODO is it worth it to move this to a kernel?
+  for(uint i = 0; i < config.total_hit_points; ++i) {
+    seeds[i] = mwc(i);
   }
+}
+
+void Engine :: build_hit_points() {
+  // list of eye paths to generate
+  vector<EyePath> eye_paths(config.total_hit_points);
+
+  // eye path generation
+  kernels::generate_eye_paths(eye_paths, seeds, &config, scene);
+  kernels::eye_paths_to_hit_points(eye_paths, hit_points, seeds, &config, scene);
 }
 
 }

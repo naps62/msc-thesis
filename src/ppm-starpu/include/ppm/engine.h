@@ -16,11 +16,11 @@ class Engine {
 
 public:
   Engine(const Config& _config);
-  virtual ~Engine();
-  virtual void render() = 0;
-  virtual void set_captions() = 0;
+  ~Engine();
+  void render();
+  void set_captions();
 
-  static Engine* instantiate(const Config& _config);
+  //static Engine* instantiate(const Config& _config);
 
 protected:
   const Config& config;
@@ -29,9 +29,10 @@ protected:
   Film film;
 
   std::vector<Seed> seeds;
-  sstd::vector<HitPointStaticInfo> hit_points;
+  std::vector<HitPointStaticInfo> hit_points;
 
-  void build_hit_points(uint iteration);
+  void init_seed_buffer();
+  void build_hit_points();
 };
 
 }
