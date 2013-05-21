@@ -22,9 +22,6 @@ void eye_paths_to_hit_points(
   // hit_points
   starpu_data_handle_t handle_hit_points;
   starpu_vector_data_register(&handle_hit_points, 0, (uintptr_t)&hit_points[0], hit_points.size(), sizeof(HitPointStaticInfo));
-  // seed_buffer
-  starpu_data_handle_t handle_seed_buffer;
-  starpu_vector_data_register(&handle_seed_buffer, 0, (uintptr_t)&seed_buffer[0], seed_buffer.size(), sizeof(Seed));
 
   // task definition
   struct starpu_task* task = starpu_task_create();
@@ -32,9 +29,9 @@ void eye_paths_to_hit_points(
   task->cl = &codelets::eye_paths_to_hit_points;
   task->handles[0] = handle_eye_paths;
   task->handles[1] = handle_hit_points;
-  task->handles[1] = handle_seed_buffer;
   task->cl_arg      = &args;
   task->cl_arg_size = sizeof(args);
+
 
   // submit
   starpu_task_submit(task);

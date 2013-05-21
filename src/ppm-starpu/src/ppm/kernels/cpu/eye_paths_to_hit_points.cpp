@@ -42,9 +42,6 @@ void eye_paths_to_hit_points(void* buffers[], void* args_orig) {
   // hit_points
   HitPointStaticInfo* const hit_points = reinterpret_cast<HitPointStaticInfo* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
   const unsigned hit_points_count      = STARPU_VECTOR_GET_NX(buffers[0]);
-  // seeds
-  Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
-  const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[1]);
 
   unsigned todo_eye_paths = eye_path_count;
   unsigned chunk_count = 0;
@@ -83,6 +80,7 @@ void eye_paths_to_hit_points(void* buffers[], void* args_orig) {
       // check if this ray is already done, but not yet splatted
       if (eye_path.done && !eye_path.splat) {
         eye_path.splat = true;
+        todo_eye_paths--;
         chunk_done_count++;
         if (chunk_done_count == chunk_size) {
           // move to next chunk

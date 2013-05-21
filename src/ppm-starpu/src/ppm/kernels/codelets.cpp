@@ -26,10 +26,9 @@ namespace ppm { namespace kernels {
       cl->type         = STARPU_FORKJOIN;
       cl->cpu_funcs[0] = ppm::kernels::cpu::eye_paths_to_hit_points;
       cl->cpu_funcs[1] = NULL;
-      cl->nbuffers     = 3;
+      cl->nbuffers     = 2;
       cl->modes[0]     = STARPU_RW;
       cl->modes[1]     = STARPU_W;
-      cl->modes[2]     = STARPU_RW;
     }
   }
 
