@@ -1,13 +1,8 @@
-#ifndef _PPM_GEOMETRY_MESH_H_
-#define _PPM_GEOMETRY_MESH_H_
-
-#include "utils/common.h"
-#include <ostream>
-using std::ostream;
+#ifndef _PPM_TYPES_MESH_H_
+#define _PPM_TYPES_MESH_H_
 
 namespace ppm {
-struct Mesh;
-ostream& operator<< (ostream& os, const Mesh& m);
+
 struct Mesh {
   uint verts_offset;
   uint tris_offset;
@@ -38,4 +33,4 @@ ostream& operator<< (ostream& os, const Mesh& m);
 
 }
 
-#endif // _PPM_GEOMETRY_MESH_H_
+#endif // _PPM_TYPES_MESH_H_

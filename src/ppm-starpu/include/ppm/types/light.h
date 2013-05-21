@@ -2,11 +2,8 @@
 #define _PPM_TYPES_LIGHT_H_
 
 #include "utils/common.h"
-#include "ppm/geometry/point.h"
-#include "ppm/geometry/normal.h"
-#include "ppm/pixel/spectrum.h"
-#include "ppm/types/material.h"
 #include "ppm/types.h"
+using namespace luxrays;
 
 namespace ppm {
 

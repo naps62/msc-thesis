@@ -13,6 +13,22 @@ using ppm::EyePath;
 
 namespace ppm { namespace kernels { namespace cpu {
 
+void intersect_ray_buffer(const PtrFreeScene* scene, RayBuffer& buffer) {
+  const unsigned int size = buffer.GetRayCount();
+
+  Ray*    const ray_buffer = buffer.GetRayBuffer();
+  RayHit* const hit_buffer = buffer.GetHitBuffer();
+
+  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+  for(unsigned int i = 0; i < size; ++i) {
+    Ray&    ray  = ray_buffer[i];
+    RayHit& hit = hit_buffer[i];
+
+    hit.SetMiss();
+    scene->intersect(ray, hit);//data_set->Intersect(&ray, &hit);
+  }
+}
+
 void eye_paths_to_hit_points(void* buffers[], void* args_orig) {
   // cl_args
   const args_eye_paths_to_hit_points* args = (args_eye_paths_to_hit_points*) args_orig;
@@ -38,7 +54,6 @@ void eye_paths_to_hit_points(void* buffers[], void* args_orig) {
 
   while (todo_eye_paths) {
 
-    ray_buffer.clear();
     const unsigned start = chunk_count * chunk_size;
     const unsigned end   = (hit_points_count - start  < chunk_size) ? hit_points_count : start+ chunk_size;
 
@@ -61,7 +76,7 @@ void eye_paths_to_hit_points(void* buffers[], void* args_orig) {
         } else {
           // if not, add it to current buffer
           eye_path.depth++;
-          ray_buffer.add(eye_path.ray);
+          ray_buffer.AddRay(eye_path.ray);
         }
       }
 
@@ -78,14 +93,13 @@ void eye_paths_to_hit_points(void* buffers[], void* args_orig) {
     }
 
     // 2. advance ray buffer
-    if (ray_buffer.size() > 0) {
-      // intersect ray buffer
-      ray_buffer.intersect(scene->data_set);
+    if (ray_buffer.GetRayCount() > 0) {
+      intersect_ray_buffer(scene, ray_buffer);
 
       // advance eye paths
 
       // reset ray buffer
-      ray_buffer.reset();
+      ray_buffer.Reset();
     }
   }
 }

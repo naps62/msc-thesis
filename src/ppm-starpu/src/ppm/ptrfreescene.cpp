@@ -49,7 +49,7 @@ void PtrFreeScene :: recompile(const ActionList& actions) {
 Ray PtrFreeScene :: generate_ray(
     const float sx, const float sy,
     const uint width, const uint height,
-    const float u0, const float u1, const float u2) {
+    const float u0, const float u1, const float u2) const {
 
   Point p(sx, height - sy - 1.f, 0);
   Point orig;
@@ -95,7 +95,7 @@ Ray PtrFreeScene :: generate_ray(
     dir = p_focus - orig;
   }
 
-  dir = dir.normalize();
+  dir = Normalize(dir);
 
   Point torig;
   const float iw2 = 1.f / ( camera.camera_to_world_matrix[3][0] * orig.x
@@ -127,6 +127,10 @@ Ray PtrFreeScene :: generate_ray(
        + camera.camera_to_world_matrix[2][2] * dir.z;
 
   return Ray(torig, tdir, RAY_EPSILON, (camera.yon - hither) / dir.z);
+}
+
+bool PtrFreeScene :: intersect(Ray& ray, RayHit& hit) const {
+  return data_set->Intersect(&ray, &hit);
 }
 
 /*
@@ -378,16 +382,16 @@ void PtrFreeScene :: compile_area_lights() {
         const luxrays::Triangle* tri = static_cast<const luxrays::Triangle*>(&mesh->GetTriangles()[tl->GetTriIndex()]);
 
         ppm::TriangleLight* cpl = &area_lights[index];
-        cpl->v0 = ppm::Point(mesh->GetVertex(tri->v[0]));
-        cpl->v1 = ppm::Point(mesh->GetVertex(tri->v[1]));
-        cpl->v2 = ppm::Point(mesh->GetVertex(tri->v[2]));
+        cpl->v0 = Point(mesh->GetVertex(tri->v[0]));
+        cpl->v1 = Point(mesh->GetVertex(tri->v[1]));
+        cpl->v2 = Point(mesh->GetVertex(tri->v[2]));
         cpl->mesh_index = tl->GetMeshIndex();
         cpl->tri_index = tl->GetTriIndex();
         cpl->normal = mesh->GetNormal(tri->v[0]);
         cpl->area = tl->GetArea();
 
         const luxrays::AreaLightMaterial* alm = static_cast<const luxrays::AreaLightMaterial*>(tl->GetMaterial());
-        cpl->gain = ppm::Spectrum(alm->GetGain());
+        cpl->gain = Spectrum(alm->GetGain());
         ++index;
       }
     }
@@ -415,7 +419,7 @@ void PtrFreeScene :: compile_infinite_light() {
 
   if (il) {
     infinite_light.exists = true;
-    infinite_light.gain   = ppm::Spectrum(il->GetGain());
+    infinite_light.gain   = Spectrum(il->GetGain());
     infinite_light.shiftU = il->GetShiftU();
     infinite_light.shiftV = il->GetShiftV();
 
@@ -440,13 +444,13 @@ void PtrFreeScene :: compile_sun_light() {
 
   if (sl) {
     sun_light.exists = true;
-    sun_light.gain   = ppm::Spectrum(sl->GetGain());
+    sun_light.gain   = Spectrum(sl->GetGain());
     sun_light.turbidity = sl->GetTubidity();
     sun_light.rel_size = sl->GetRelSize();
-    sun_light.x = ppm::Vector(sl->x);
-    sun_light.y = ppm::Vector(sl->y);
+    sun_light.x = Vector(sl->x);
+    sun_light.y = Vector(sl->y);
     sun_light.cos_theta_max = sl->cosThetaMax;
-    sun_light.color = ppm::Spectrum(sl->suncolor);
+    sun_light.color = Spectrum(sl->suncolor);
   } else {
     sun_light.exists = false;
   }
@@ -470,7 +474,7 @@ void PtrFreeScene :: compile_sky_light() {
 
   if (sl) {
     sky_light.exists = true;
-    sky_light.gain = ppm::Spectrum(sl->GetGain());
+    sky_light.gain = Spectrum(sl->GetGain());
     sky_light.theta_s = sl->thetaS;
     sky_light.phi_s = sl->phiS;
     sky_light.zenith_Y = sl->zenith_Y;
@@ -520,7 +524,7 @@ void PtrFreeScene :: compile_texture_maps() {
         luxrays::TextureMap* tm = tms[i];
         const uint pixel_count = tm->GetWidth() * tm->GetHeight();
         // TODO memcpy safe?
-        memcpy(&rgb_tex[rgb_offset], tm->GetPixels(), pixel_count * sizeof(ppm::Spectrum));
+        memcpy(&rgb_tex[rgb_offset], tm->GetPixels(), pixel_count * sizeof(Spectrum));
         tex_maps[i].rgb_offset = rgb_offset;
         rgb_offset += pixel_count;
       }
@@ -667,8 +671,8 @@ void PtrFreeScene :: translate_geometry_qbvh(const lux_ext_mesh_list_t& meshs) {
         is_existing_instance = true;
       }
 
-      current_mesh.trans.set(imesh->GetTransformation().GetMatrix().m);
-      current_mesh.inv_trans.set(imesh->GetInvTransformation().GetMatrix().m);
+      current_mesh.trans = imesh->GetTransformation().GetMatrix().m;
+      current_mesh.inv_trans = imesh->GetInvTransformation().GetMatrix().m;
 
       mesh = imesh->GetExtTriangleMesh();
     } else {
@@ -697,13 +701,13 @@ void PtrFreeScene :: translate_geometry_qbvh(const lux_ext_mesh_list_t& meshs) {
       uint offset = normals.size();
       normals.resize(offset + mesh->GetTotalVertexCount());
       for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
-        normals[offset + j] = ppm::Normal(mesh->GetNormal(j));
+        normals[offset + j] = Normal(mesh->GetNormal(j));
 
       if (mesh->HasColors()) {
         offset = colors.size();
         colors.resize(offset + mesh->GetTotalVertexCount());
         for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
-          colors[offset + j] = ppm::Spectrum(mesh->GetColor(j));
+          colors[offset + j] = Spectrum(mesh->GetColor(j));
       }
 
       // translate vertex uvs
@@ -714,24 +718,24 @@ void PtrFreeScene :: translate_geometry_qbvh(const lux_ext_mesh_list_t& meshs) {
         uvs.resize(offset + mesh->GetTotalVertexCount());
         if (mesh->HasUVs())
           for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
-            uvs[offset + j] = ppm::UV(0.f, 0.f);
+            uvs[offset + j] = UV(0.f, 0.f);
         else
           for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
-            uvs[offset + j] = ppm::UV(mesh->GetUV(j));
+            uvs[offset + j] = UV(mesh->GetUV(j));
       }
 
       // translate mesh vertices
       offset = vertexes.size();
       vertexes.resize(offset + mesh->GetTotalVertexCount());
       for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
-        vertexes[offset + j] = ppm::Point(mesh->GetVertex(j));
+        vertexes[offset + j] = Point(mesh->GetVertex(j));
 
       // translate mesh indices
       offset = triangles.size();
       const luxrays::Triangle *mtris = mesh->GetTriangles();
       triangles.resize(offset + mesh->GetTotalTriangleCount());
       for(uint j = 0; j < mesh->GetTotalTriangleCount(); ++j)
-        triangles[offset + j] = ppm::Triangle(mtris[j]);
+        triangles[offset + j] = Triangle(mtris[j]);
     }
   }
 }
@@ -756,10 +760,10 @@ void PtrFreeScene :: translate_geometry() {
 
     mesh_offsets[i] = v_index;
     for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j) {
-      normals[index]  = ppm::Normal(mesh->GetNormal(j));
-      colors[index]   = ppm::Spectrum(mesh->GetColor(j));
-      uvs[index]      = (mesh->HasUVs()) ? ppm::UV(mesh->GetUV(j)) : ppm::UV(0.f, 0.f);
-      vertexes[index] = ppm::Point(mesh->GetVertex(j));
+      normals[index]  = Normal(mesh->GetNormal(j));
+      colors[index]   = Spectrum(mesh->GetColor(j));
+      uvs[index]      = (mesh->HasUVs()) ? mesh->GetUV(j) : UV(0.f, 0.f);
+      vertexes[index] = Point(mesh->GetVertex(j));
       index++;
     }
     v_index += mesh->GetTotalVertexCount();
@@ -773,7 +777,7 @@ void PtrFreeScene :: translate_geometry() {
     const luxrays::Triangle *mtris = mesh->GetTriangles();
     const uint moffset = mesh_offsets[i];
     for (uint j = 0; j < mesh->GetTotalTriangleCount(); ++j) {
-      triangles[index++] = ppm::Triangle(
+      triangles[index++] = Triangle(
           mtris[j].v[0] + moffset,
           mtris[j].v[1] + moffset,
           mtris[j].v[2] + moffset);

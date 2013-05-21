@@ -32,7 +32,6 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
   const unsigned spp    = config->spp;
 
   // generate the eye paths
-  printf("k_cpu_ %d %d %d %d %d\n", width, height, spp, eye_path_count, starpu_combined_worker_get_size());
 
   unsigned index = 0;
   const float sample_weight = 1.f / spp;
@@ -51,9 +50,8 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
           float u0 = floatRNG(seed_buffer[index]);
           float u1 = floatRNG(seed_buffer[index]);
           float u2 = floatRNG(seed_buffer[index]);
-          printf("%f %f %f\n", u0, u1, u2);
 
-         // eye_path.ray = scene->generate_ray(eye_path.scr_x, eye_path.scr_y, width, height, u0, u1, u2);
+          eye_path.ray = scene->generate_ray(eye_path.scr_x, eye_path.scr_y, width, height, u0, u1, u2);
           eye_path.sample_index = index;
           ++index;
         }

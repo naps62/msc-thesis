@@ -28,7 +28,7 @@
 #include "luxrays/core/accelerator.h"
 #include "luxrays/core/trianglemesh.h"
 
-#include "ppm/geometry/bsphere.h"
+#include "ppm/types.h"
 
 namespace luxrays {
 
@@ -57,9 +57,9 @@ public:
   const BBox &GetBBox() const { return bbox; }
   const BSphere &GetBSphere() const { return bsphere; }
 
-  const ppm::BSphere GetPPMBSphere() const {
-    ppm::Point center(bsphere.center.x, bsphere.center.y, bsphere.center.z);
-    return ppm::BSphere(center, bsphere.rad);
+  const BSphere GetPPMBSphere() const {
+    Point center(bsphere.center.x, bsphere.center.y, bsphere.center.z);
+    return BSphere(center, bsphere.rad);
   }
 
   unsigned int GetTotalVertexCount() const { return totalVertexCount; }

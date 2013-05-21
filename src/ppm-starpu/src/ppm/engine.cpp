@@ -2,6 +2,7 @@
 #include "ppm/kernels/codelets.h"
 #include "utils/random.h"
 #include "ppm/kernels/generate_eye_paths.h"
+#include "ppm/kernels/eye_paths_to_hit_points.h"
 #include "ppm/types.h"
 
 #include <starpu.h>
@@ -81,7 +82,10 @@ void Engine :: build_hit_points() {
   vector<EyePath> eye_paths(config.total_hit_points);
 
   // eye path generation
+  printf("generating eye paths\n");
   kernels::generate_eye_paths(eye_paths, seeds, &config, scene);
+
+  printf("converting eye paths to hit points\n");
   kernels::eye_paths_to_hit_points(eye_paths, hit_points, seeds, &config, scene);
 }
 

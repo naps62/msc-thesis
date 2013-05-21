@@ -10,7 +10,6 @@
 
 namespace ppm {
 
-
 class PtrFreeScene {
 
 public:
@@ -19,7 +18,9 @@ public:
 
   void recompile(const ActionList& actions);
 
-  Ray generate_ray(const float sx, const float sy, const uint width, const uint height, const float u0, const float u1, const float u2);
+  Ray generate_ray(const float sx, const float sy, const uint width, const uint height, const float u0, const float u1, const float u2) const;
+
+  bool intersect(Ray& ray, RayHit& hit) const;
 
   typedef std::vector<luxrays::ExtMesh*> lux_ext_mesh_list_t;
   typedef bool(*lux_mesh_comparator_t)(luxrays::Mesh*, luxrays::Mesh*);

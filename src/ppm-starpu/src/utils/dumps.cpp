@@ -2,6 +2,10 @@
 
 namespace ppm {
 
+ostream& operator<< (ostream& os, const Color& c) {
+  return os << "Color[" << c.r << ", " << c.b << ", " << c.b << "]";
+}
+
 // Camera
 ostream& operator<< (ostream& os, const Camera& c) {
   os << "Camera[" << c.lens_radius << ", " << c.focal_distance << ", " << c.yon << ", " << c.hither << ", ";
@@ -16,30 +20,6 @@ ostream& operator<< (ostream& os, const Camera& c) {
   return os << "] ]";
 }
 
-// BBox
-ostream& operator<<(ostream& os, const BBox& bbox) {
-  return os << "BBox[" << bbox.pmin << ", " << bbox.pmax << "]";
-}
-
-// BSphere
-ostream& operator<<(ostream& os, const BSphere& s) {
-  return os << "BSphere[" << s.center << ", " << s.radius << "]";
-}
-
-// Matrix4x4
-ostream & operator<<(ostream &os, const Matrix4x4 &mat) {
-  os << "Matrix4x4[ ";
-  for (int i = 0; i < 4; ++i) {
-    os << "[ ";
-    for (int j = 0; j < 4; ++j) {
-      os << mat.m[i][j];
-      if (j != 3) os << ", ";
-    }
-    os << " ]";
-  }
-  return os << "]";
-}
-
 // Mesh
 ostream& operator<< (ostream& os, const Mesh& m) {
   return os  << "Mesh["
@@ -50,40 +30,6 @@ ostream& operator<< (ostream& os, const Mesh& m) {
     << "trans:"         << m.trans << ", "
     << "inv_trans:"     << m.inv_trans
     << "]";
-}
-
-// Normal
-ostream& operator<<(ostream& os, const Normal& n) {
-  return os << "Normal[" << n.x << ", " << n.y << ", " << n.z << "]";
-}
-
-// Point
-ostream& operator<<(ostream& os, const Point& p) {
-  return os << "Point[" << p.x << ", " << p.y << ", " << p.z << "]";
-}
-
-// Ray
-ostream& operator<<(ostream& os, const Ray& r) {
-  return os << "Ray[" << r.o << ", " << r.d << ", " << r.mint << ", " << r.maxt << "]";
-}
-
-// RayHit
-ostream& operator<< (ostream& os, const RayHit& r) {
-  return os << "RayHit[" << r.t << ", " << r.b1 << ", " << r.b2 << ", " << r.index << "]";
-}
-
-// Triangle
-ostream& operator<<(ostream& os, const Triangle& tri) {
-  return os << "Triangle[" << tri.v[0] << ", " << tri.v[1] << ", " << tri.v[2] << "]";
-}
-
-// UV
-ostream& operator<<(ostream& os, const UV& uv) {
-  return os << "UV[" << uv.u << ", " << uv.v << "]";
-}
-
-ostream& operator<<(ostream& os, const Vector& v) {
-  return os << "Vector[" << v.x << ", " << v.y << ", " << v.z << "]";
 }
 
 // TriangleLight
@@ -123,15 +69,6 @@ ostream& operator<< (ostream& os, const TexMap& t) {
   return os << "TexMap[" << t.rgb_offset << ", " << t.alpha_offset << ", " << t.width << "; " << t.height << "]";
 }
 
-// Spectrum
-ostream& operator<<(ostream& os, const Spectrum& s) {
-  return os << "Spectrum[" << s.r << ", " << s.g << ", " << s.b << "]";
-}
-
-// Color
-ostream& operator<< (ostream& os, const Color& c) {
-  return os << "Color[" << c.r << ", " << c.g << ", " << c.b << "]";
-}
 
 // Material
 ostream& operator<< (ostream& os, const Material& m) {
