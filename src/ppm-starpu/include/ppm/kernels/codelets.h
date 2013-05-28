@@ -8,7 +8,7 @@ namespace ppm { namespace kernels {
   namespace codelets {
 
     extern starpu_codelet generate_eye_paths;
-    extern starpu_codelet eye_paths_to_hit_points;
+    extern starpu_codelet intersect_ray_hit_buffer;
 
     void init();
   }

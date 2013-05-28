@@ -1,4 +1,4 @@
-#include "ppm/kernels/eye_paths_to_hit_points.h"
+#include "ppm/kernels/intersect_ray_hit_buffer.h"
 
 #include "utils/config.h"
 #include "ppm/ptrfreescene.h"
@@ -13,92 +13,30 @@ using ppm::EyePath;
 
 namespace ppm { namespace kernels { namespace cpu {
 
-void intersect_ray_buffer(const PtrFreeScene* scene, RayBuffer& buffer) {
-  const unsigned int size = buffer.GetRayCount();
+void intersect_ray_hit_buffer(void* buffers[], void* args_orig) {
 
-  Ray*    const ray_buffer = buffer.GetRayBuffer();
-  RayHit* const hit_buffer = buffer.GetHitBuffer();
-
-  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
-  for(unsigned int i = 0; i < size; ++i) {
-    Ray&    ray  = ray_buffer[i];
-    RayHit& hit = hit_buffer[i];
-
-    hit.SetMiss();
-    scene->intersect(ray, hit);//data_set->Intersect(&ray, &hit);
-  }
-}
-
-void eye_paths_to_hit_points(void* buffers[], void* args_orig) {
   // cl_args
-  const args_eye_paths_to_hit_points* args = (args_eye_paths_to_hit_points*) args_orig;
-  const Config*       config = static_cast<const Config*>(args->config);
+  const args_intersect_ray_hit_buffer* args = (args_intersect_ray_hit_buffer*) args_orig;
+  //const Config*       config = static_cast<const Config*>(args->config);
   const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->scene);
 
   // buffers
-  // eye_paths
-  EyePath* const eye_paths      = reinterpret_cast<EyePath* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
-  const unsigned eye_path_count = STARPU_VECTOR_GET_NX(buffers[0]);
-  // hit_points
-  HitPointStaticInfo* const hit_points = reinterpret_cast<HitPointStaticInfo* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
-  const unsigned hit_points_count      = STARPU_VECTOR_GET_NX(buffers[0]);
+  Ray* const rays = reinterpret_cast<Ray* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
+  const unsigned rays_count = STARPU_VECTOR_GET_NX(buffers[0]);
+  RayHit* const hits = reinterpret_cast<RayHit* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
 
-  unsigned todo_eye_paths = eye_path_count;
-  unsigned chunk_count = 0;
-  const unsigned chunk_size  = 1024 * 256;
-  unsigned chunk_done_count = 0;
-  RayBuffer ray_buffer(chunk_size);
+  // slice
+  const unsigned work_size = starpu_combined_worker_get_size();
+  const unsigned work_id   = starpu_combined_worker_get_rank();
+  const unsigned slice_size = rays_count / work_size;
+  const unsigned work_start = (work_id  ) * slice_size;
+  const unsigned work_end   = (work_id+1) * slice_size;
 
-  while (todo_eye_paths) {
+  printf("%d %d %d %d %d\n", work_size, work_id, slice_size, work_start, work_end);
 
-    const unsigned start = chunk_count * chunk_size;
-    const unsigned end   = (hit_points_count - start  < chunk_size) ? hit_points_count : start+ chunk_size;
-
-    // 1. fill the ray buffer
-    for(unsigned i = start; i < end; ++i) {
-      EyePath& eye_path = eye_paths[i];
-
-      if (!eye_path.done) {
-        // check if path reached max depth
-        if (eye_path.depth > config->max_eye_path_depth) {
-          // make it done
-          HitPointStaticInfo& hp = hit_points[eye_path.sample_index];
-          hp.type  = CONSTANT_COLOR;
-          hp.scr_x = eye_path.scr_x;
-          hp.scr_y = eye_path.scr_y;
-          hp.throughput = Spectrum();
-
-          eye_path.done = true;
-
-        } else {
-          // if not, add it to current buffer
-          eye_path.depth++;
-          ray_buffer.AddRay(eye_path.ray);
-        }
-      }
-
-      // check if this ray is already done, but not yet splatted
-      if (eye_path.done && !eye_path.splat) {
-        eye_path.splat = true;
-        todo_eye_paths--;
-        chunk_done_count++;
-        if (chunk_done_count == chunk_size) {
-          // move to next chunk
-          chunk_count++;
-          chunk_done_count = 0;
-        }
-      }
-    }
-
-    // 2. advance ray buffer
-    if (ray_buffer.GetRayCount() > 0) {
-      intersect_ray_buffer(scene, ray_buffer);
-
-      // advance eye paths
-
-      // reset ray buffer
-      ray_buffer.Reset();
-    }
+  for(unsigned int i = work_start; i < work_end; ++i) {
+    hits[i].SetMiss();
+    scene->intersect(rays[i], hits[i]);
   }
 }
 

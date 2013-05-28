@@ -9,6 +9,7 @@
 #include "utils/random.h"
 
 #include <vector>
+#include <starpu.h>
 
 namespace ppm {
 
@@ -28,11 +29,16 @@ protected:
   Display* display;
   Film film;
 
+  // starpu stuff
+  starpu_conf spu_conf;
+
   std::vector<Seed> seeds;
   std::vector<HitPointStaticInfo> hit_points;
 
   void init_seed_buffer();
   void build_hit_points();
+
+  void eye_paths_to_hit_points(vector<EyePath>& eye_paths);
 };
 
 }

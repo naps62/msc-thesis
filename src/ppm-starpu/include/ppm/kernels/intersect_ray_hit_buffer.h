@@ -10,17 +10,15 @@ using std::vector;
 
 namespace ppm { namespace kernels {
 
-struct args_eye_paths_to_hit_points {
-  const Config* config;
+struct args_intersect_ray_hit_buffer {
+  //const Config* config;
   PtrFreeScene* scene;
 };
 
-void eye_paths_to_hit_points (
-  vector<EyePath>&            eye_paths,
-  vector<HitPointStaticInfo>& hit_points,
-  vector<Seed>&               seed_buffer,
-  const Config*               config,
-  PtrFreeScene*               scene
+void intersect_ray_hit_buffer (
+  RayBuffer&    ray_hit_buffer,
+  //const Config* config,
+  PtrFreeScene* scene
 );
 
 } }
