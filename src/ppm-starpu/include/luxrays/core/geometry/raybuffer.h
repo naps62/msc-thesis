@@ -45,8 +45,6 @@ public:
 
     rays = new Ray[size];
     rayHits = new RayHit[size];
-
-    fprintf(stderr, "Ray buffer created\n");
   }
 
   ~RayBuffer() {

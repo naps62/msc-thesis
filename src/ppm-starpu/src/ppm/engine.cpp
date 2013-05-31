@@ -15,7 +15,7 @@ namespace ppm {
 
 Engine :: Engine(const Config& _config)
 : config(_config), scene(new PtrFreeScene(config)), film(config),
-  seeds(config.total_hit_points), hit_points(hit_points) {
+  seeds(config.total_hit_points), hit_points(config.total_hit_points) {
 
   // load display if necessary
   if (config.use_display) {
@@ -124,8 +124,8 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
       // check if this ray is already done, but not yet splatted
       if (eye_path.done && !eye_path.splat) {
         eye_path.splat = true;
-        todo_eye_paths--;
-        chunk_done_count++;
+        /*todo_eye_paths--;
+        chunk_done_count++;*/
         if (chunk_done_count == chunk_size) {
           // move to next chunk
           chunk_count++;
