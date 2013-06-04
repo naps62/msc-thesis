@@ -1,6 +1,5 @@
 default: bin
-BINNAME := starpu_hello_world2
-STARPU_MODE := lib
+BINNAME := ppm-starpu
 UNAME   := $(shell uname)
 
 SRC_DIR           := src
@@ -12,37 +11,28 @@ ARCH := $(shell getconf LONG_BIT)
 OMP  := openmp
 OMP := $(addprefix -f,$(OMP))
 
-ifeq ($(STARPU_MODE),lib)
-$(info using StarPU lib)
+HOST := $(shell hostname)
+ifeq ($(HOST),search.di.uminho.pt)
+STARPU_CFLAGS := $(shell echo $(SEARCH_STARPU_CFLAGS))
+STARPU_LIBS   := $(shell echo $(SEARCH_STAPU_LIBS))
+else
 STARPU_CFLAGS := ${shell pkg-config --cflags starpu-1.0}
 STARPU_LIBS   := $(shell pkg-config --libs   starpu-1.0)
-else
-$(info using StarPU plugin)
-STARPU_CFLAGS := $(shell pkg-config starpu-1.0 --variable=gccplugin)
-STARPU_LIBS   := $(shell pkg-config starpu-1.0 --variable=gccplugin)
 endif
 
 BEAST_ROOT := $(HOME)/projects/beast
 FREEIMAGE_ROOT := /share/edu-mei/freeimage/3.15.4
+STARPU_WRAPPER_ROOT := $(HOME)/projects/msc-thesis/src/starpu_wrapper
 
-CFLAGS  := -m$(ARCH) -O3 -Wall -Wno-unused-result $(STARPU_CFLAGS)
-NVFLAGS := -m$(ARCH) -O3 $(STARPU_CFLAGS)
+CFLAGS  := -m$(ARCH) $(STARPU_CFLAGS) -O3 -Wall -Wno-unused-result
+NVFLAGS := -m$(ARCH) $(STARPU_CFLAGS) -O3
 LDFLAGS := -m$(ARCH) $(STARPU_LIBS)
 ARFLAGS :=
 LD_LIBS       := beast glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage
-INCLUDE_DIR   := include /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include $(FREEIMAGE_ROOT)/include
+INCLUDE_DIR   := include include/luxrays /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include $(FREEIMAGE_ROOT)/include $(STARPU_WRAPPER_ROOT)/include
 LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib $(BOOST_ROOT)/lib $(BEAST_ROOT)/lib $(FREEIMAGE_ROOT)/lib/linux $(FREEIMAGE_ROOT)/lib
 CUDA_LIBS_DIR := $(CUDA_INSTALL_PATH)/lib64 $(CUDA_INSTALL_PATH)/lib
 
-
-#
-# Do not change
-#
-ifdef (DEFINES)
-ifeq ($(CUDA_SUPPORT),yes)
-DEFINES := -Xcompiler "$(CFLAGS)"
-endif
-endif
 
 MODULES   := ${shell find $(SRC_DIR) -type d -print | sed 1d | cut -d'/' -f2,3,4,5 }
 SRC_DIR   := $(SRC_DIR) $(addprefix src/,$(MODULES))
@@ -84,15 +74,15 @@ endif
 define make-files
 $1/%.d: %.cu
 	@echo " DEPS   $$@"
-	@$(NVCC) -M -MT 'build/$$*.o' $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
+	@$(NVCC) -M $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.d: %.cpp
 	@echo " DEPS   $$@"
-	@$(CXX) -M -MT 'build/$$*.o' $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
+	@$(CXX) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.d: %.c
 	@echo " DEPS   $$@"
-	@$(CC) -M -MT 'build/$$*.o' $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
+	@$(CC) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.cu
 	@echo " NVCC   $$<"
@@ -100,11 +90,11 @@ $1/%.o: %.cu
 
 $1/%.o: %.cpp
 	@echo " CXX    $$<"
-	@$(CXX) -c $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(CXX) -c $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.c
 	@echo " CC     $$<"
-	@$(CC) -c $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(CC) -c $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
 endef
 
 define include-dep-file
@@ -113,7 +103,7 @@ ifneq ($(wildcard $1),)
 endif
 endef
 
-.PHONY: all checkdirs clean asd
+.PHONY: all checkdirs clean
 
 
 bin/$(BINNAME): $(DEPS) $(OBJ)

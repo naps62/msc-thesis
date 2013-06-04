@@ -1,6 +1,5 @@
 default: bin
 BINNAME := ppm-starpu
-STARPU_MODE := lib
 UNAME   := $(shell uname)
 
 SRC_DIR           := src
@@ -12,20 +11,21 @@ ARCH := $(shell getconf LONG_BIT)
 OMP  := openmp
 OMP := $(addprefix -f,$(OMP))
 
-ifeq ($(STARPU_MODE),lib)
+HOST := $(shell hostname)
+ifeq ($(HOST),search.di.uminho.pt)
+STARPU_CFLAGS := $(shell echo $(SEARCH_STARPU_CFLAGS))
+STARPU_LIBS   := $(shell echo $(SEARCH_STAPU_LIBS))
+else
 STARPU_CFLAGS := ${shell pkg-config --cflags starpu-1.0}
 STARPU_LIBS   := $(shell pkg-config --libs   starpu-1.0)
-else
-STARPU_CFLAGS := $(shell pkg-config starpu-1.0 --variable=gccplugin)
-STARPU_LIBS   := $(shell pkg-config starpu-1.0 --variable=gccplugin)
 endif
 
 BEAST_ROOT := $(HOME)/projects/beast
 FREEIMAGE_ROOT := /share/edu-mei/freeimage/3.15.4
 STARPU_WRAPPER_ROOT := $(HOME)/projects/msc-thesis/src/starpu_wrapper
 
-CFLAGS  := -m$(ARCH) -O3 -Wall -Wno-unused-result $(STARPU_CFLAGS)
-NVFLAGS := -m$(ARCH) -O3 $(STARPU_CFLAGS)
+CFLAGS  := -m$(ARCH) $(STARPU_CFLAGS) -O3 -Wall -Wno-unused-result
+NVFLAGS := -m$(ARCH) $(STARPU_CFLAGS) -O3
 LDFLAGS := -m$(ARCH) $(STARPU_LIBS)
 ARFLAGS :=
 LD_LIBS       := beast glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage
