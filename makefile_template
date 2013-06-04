@@ -11,14 +11,8 @@ ARCH := $(shell getconf LONG_BIT)
 OMP  := openmp
 OMP := $(addprefix -f,$(OMP))
 
-HOST := $(shell hostname)
-ifeq ($(HOST),search.di.uminho.pt)
-STARPU_CFLAGS := $(shell echo $(SEARCH_STARPU_CFLAGS))
-STARPU_LIBS   := $(shell echo $(SEARCH_STAPU_LIBS))
-else
-STARPU_CFLAGS := ${shell pkg-config --cflags starpu-1.0}
+STARPU_CFLAGS := $(shell pkg-config --cflags starpu-1.0)
 STARPU_LIBS   := $(shell pkg-config --libs   starpu-1.0)
-endif
 
 BEAST_ROOT := $(HOME)/projects/beast
 FREEIMAGE_ROOT := /share/edu-mei/freeimage/3.15.4
