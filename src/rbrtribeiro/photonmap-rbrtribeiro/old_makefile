@@ -6,23 +6,34 @@ SRC_DIR           := src
 CUDA_SUPPORT      := yes
 CUDA_INSTALL_PATH := /usr/local/cuda-5.0
 
-
-ARCH := $(shell getconf LONG_BIT)
-OMP  := openmp
-OMP := $(addprefix -f,$(OMP))
+EXCLUDE_DIR :=
 
 BEAST_ROOT := $(HOME)/projects/beast
 FREEIMAGE_ROOT := /share/edu-mei/freeimage/3.15.4
+#FREEIMAGE_ROOT := /usr/local/cuda-4.0/NVIDIA_GPU_Computing_SDK/CUDALibraries/common/FreeImage
+#FREEIMAGE_LIB := $(FREEIMAGE_ROOT) /usr/local/cuda-5.0/samples/7_CUDALibraries/common/FreeImage/lib/linux/x86_64
 
-CFLAGS  := -m$(ARCH) -O3 -Wall -Wno-unused-result
+ARCH := $(shell getconf LONG_BIT)
+OMP  := openmp
+
+CFLAGS  := -m$(ARCH) -O3 -Wall -Wextra
 NVFLAGS := -m$(ARCH) -O3
 LDFLAGS := -m$(ARCH)
 ARFLAGS :=
 LD_LIBS       := beast glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage
-INCLUDE_DIR   := include include/luxrays /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include $(FREEIMAGE_ROOT)/include
+INCLUDE_DIR   := include /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include $(FREEIMAGE_ROOT)/include
 LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib $(BOOST_ROOT)/lib $(BEAST_ROOT)/lib $(FREEIMAGE_ROOT)/lib/linux $(FREEIMAGE_ROOT)/lib
 CUDA_LIBS_DIR := $(CUDA_INSTALL_PATH)/lib64 $(CUDA_INSTALL_PATH)/lib
 
+
+#
+# Do not change
+#
+ifdef (DEFINES)
+ifeq ($(CUDA_SUPPORT),yes)
+DEFINES := -Xcompiler "$(CFLAGS)"
+endif
+endif
 
 MODULES   := ${shell find $(SRC_DIR) -type d -print | sed 1d | cut -d'/' -f2,3,4,5 }
 SRC_DIR   := $(SRC_DIR) $(addprefix src/,$(MODULES))
@@ -42,41 +53,48 @@ LD_LIBS     := $(addprefix -l,$(LD_LIBS))
 LD_LIBS_DIR := $(addprefix -L,$(LD_LIBS_DIR))
 LD_LIBS_DIR += $(addprefix -L,$(CUDA_LIBS_DIR))
 
+ifeq ($(CUDA_SUPPORT),yes)
+OMP := $(addprefix -Xcompiler -f,$(OMP))
+else
+OMP := $(addprefix -f,$(OMP))
+endif
+
 vpath %.cpp $(SRC_DIR)
 vpath %.c $(SRC_DIR)
-
-
-CC   := gcc $(CFLAGS) $(OMP)
-CXX  := g++ $(CFLAGS) $(OMP)
 
 ifeq ($(CUDA_SUPPORT),yes)
 NVFLAGS := $(NVFLAGS) -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=sm_21 -gencode arch=compute_30,code=sm_30
 LDFLAGS := $(LDFLAGS) -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=sm_21 -gencode arch=compute_30,code=sm_30
 vpath %.cu $(SRC_DIR)
-NVCC := nvcc -x cu  $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
-LD   := nvcc -link  $(LDFLAGS) -Xcompiler "$(OMP)"
+
+CC   := nvcc -x c   $(NVFLAGS) -Xcompiler "$(CFLAGS)"
+CXX  := nvcc -x c++ $(NVFLAGS) -Xcompiler "$(CFLAGS)"
+NVCC := nvcc -x cu  $(NVFLAGS) -Xcompiler "$(CFLAGS)"
+LD   := nvcc -link  $(LDFLAGS)
 AR   := ar
 else
-NVCC := nvcc $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
-LD   := gcc  $(LDFLAGS) $(OMP)
+CC   := gcc  $(CFLAGS)
+CXX  := g++  $(CFLAGS)
+NVCC := nvcc $(NVFLAGS) -Xcompiler "$(CFLAGS)"
+LD   := gcc  $(LDFLAGS)
 endif
 
 define make-files
 $1/%.d: %.cu
 	@echo " DEPS   $$@"
-	@$(NVCC) -M $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(NVCC) -M $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
 
 $1/%.d: %.cpp
 	@echo " DEPS   $$@"
-	@$(CXX) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(CXX) -M $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
 
 $1/%.d: %.c
 	@echo " DEPS   $$@"
-	@$(CC) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(CC) -M $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.cu
 	@echo " NVCC   $$<"
-	@$(NVCC) -c $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(NVCC) -c $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.cpp
 	@echo " CXX    $$<"
@@ -87,34 +105,28 @@ $1/%.o: %.c
 	@$(CC) -c $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
 endef
 
-define include-dep-file
-ifneq ($(wildcard $1),)
--include $1
-endif
-endef
-
-.PHONY: all checkdirs clean
+.PHONY: all checkdirs clean asd
 
 
 bin/$(BINNAME): $(DEPS) $(OBJ)
 	@echo " LD    $(BINNAME)"
-	@$(LD) $(LD_LIBS_DIR) $(LD_LIBS) $(OBJ) -o $@
+	@$(LD) $(OMP) $(LD_LIBS_DIR) $(LD_LIBS) $(OBJ) -o $@
 
 lib/$(LIBNAME): $(DEPS) $(OBJ)
 	@echo " AR     $(LIBNAME)"
 	@$(AR) $(ARFLAGS) -r "lib/$(LIBNAME)" $(OBJ) 2> /dev/null
 
+checkdirs: $(BUILD_DIR)
+
 $(BUILD_DIR):
 	@mkdir -p $@
-	@mkdir -p bin
 
 clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf bin/$(BINNAME)
 	rm -rf lib/$(LIBNAME)
 
-bin: $(BUILD_DIR) bin/$(BINNAME)
-lib: $(BUILD_DIR) lib/$(LIBNAME)
+bin: checkdirs bin/$(BINNAME)
+lib: checkdirs lib/$(LIBNAME)
 
 $(foreach bdir,$(BUILD_DIR),$(eval $(call make-files,$(bdir))))
-$(foreach dep,$(DEPS),$(eval $(call include-dep-file,$(dep))))
