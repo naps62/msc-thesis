@@ -56,8 +56,8 @@
 //#define RENDER_HUGE
 
 
-#define CPU
-//#define GPU0
+//#define CPU
+#define GPU0
 //#define GPU2
 
 
