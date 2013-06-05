@@ -27,6 +27,9 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   value("max_iters",   max_iters,   uint(10), "number of iterations");
   value("max_eye_path_depth", max_eye_path_depth, uint(16), "max eye path depth");
 
+  // starpu
+  value("sched", sched_policy, string("pheft"), "scheduling policy (pheft (default) | pgreedy)");
+
   // now parse the arguments
   parse(_argc, _argv);
 

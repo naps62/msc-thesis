@@ -39,6 +39,9 @@ struct Config : public beast::program_options::options {
   ppm::AcceleratorType accel_type;
   uint max_eye_path_depth;
 
+  // starpu
+  string sched_policy;
+
   Config(const char *desc, int _argc, char **_argv);
 };
 

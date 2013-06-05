@@ -25,16 +25,9 @@ void intersect_ray_hit_buffer(void* buffers[], void* args_orig) {
   const unsigned rays_count = STARPU_VECTOR_GET_NX(buffers[0]);
   RayHit* const hits = reinterpret_cast<RayHit* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
 
-  // slice
-  const unsigned work_size = starpu_combined_worker_get_size();
-  const unsigned work_id   = starpu_combined_worker_get_rank();
-  const unsigned slice_size = rays_count / work_size;
-  const unsigned work_start = (work_id  ) * slice_size;
-  const unsigned work_end   = (work_id+1) * slice_size;
-
-  printf("%d %d %d %d %d\n", work_size, work_id, slice_size, work_start, work_end);
-
-  for(unsigned int i = work_start; i < work_end; ++i) {
+  //printf("intersect: %d %d\n", starpu_combined_worker_get_size(), rays_count);
+  //#pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+  for(unsigned int i = 0; i < rays_count; ++i) {
     hits[i].SetMiss();
     scene->intersect(rays[i], hits[i]);
   }

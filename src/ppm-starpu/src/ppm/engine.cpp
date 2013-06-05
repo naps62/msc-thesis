@@ -25,13 +25,14 @@ Engine :: Engine(const Config& _config)
 
   // load starpu
   starpu_conf_init(&this->spu_conf);
-  spu_conf.sched_policy_name = "pheft";
+  spu_conf.sched_policy_name = config.sched_policy.c_str();
 
-  starpu_init(&this->spu_conf);
+  starpu_init(NULL);//&this->spu_conf);
   kernels::codelets::init();
 }
 
 Engine :: ~Engine() {
+  printf("shutting down\n");
   starpu_shutdown();
 
   // wait for display to close
@@ -48,7 +49,8 @@ void Engine :: render() {
   this->init_seed_buffer();
   this->build_hit_points();
 
-  while(true) {
+  int max = 0;
+  while(max++ < 1000) {
     set_captions();
     display->request_update(config.min_frame_time);
   }
@@ -81,7 +83,9 @@ void Engine :: build_hit_points() {
   kernels::generate_eye_paths(eye_paths, seeds, &config, scene);
 
   printf("converting eye paths to hit points\n");
-  this->eye_paths_to_hit_points(eye_paths);
+  //this->eye_paths_to_hit_points(eye_paths);
+
+  printf("done\n");
 }
 
 void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
@@ -124,8 +128,8 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
       // check if this ray is already done, but not yet splatted
       if (eye_path.done && !eye_path.splat) {
         eye_path.splat = true;
-        /*todo_eye_paths--;
-        chunk_done_count++;*/
+        todo_eye_paths--;
+        chunk_done_count++;
         if (chunk_done_count == chunk_size) {
           // move to next chunk
           chunk_count++;

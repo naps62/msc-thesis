@@ -22,10 +22,10 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
   // buffers
   // eye_paths
   EyePath* const eye_paths      = reinterpret_cast<EyePath* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
-  const unsigned eye_path_count = STARPU_VECTOR_GET_NX(buffers[0]);
+  //const unsigned eye_path_count = STARPU_VECTOR_GET_NX(buffers[0]);
   // seeds
   Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
-  const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[1]);
+  //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[1]);
 
   const unsigned width  = config->width;
   const unsigned height = config->height;
@@ -36,6 +36,8 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
   unsigned index = 0;
   const float sample_weight = 1.f / spp;
 
+  printf("%d\n", starpu_combined_worker_get_size());
+  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned y = 0; y < height; ++y) {
     for(unsigned x = 0; x < width; ++x) {
       for(unsigned sy = 0; sy < spp; ++sy) {
