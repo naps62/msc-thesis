@@ -8,7 +8,7 @@ namespace ppm {
 //
 
 Display :: Display(const Config& _config, Film& _film)
-: beast::gl::async_window(_config.title, _config.width, _config.height), config(_config), film(_film) {
+: beast::gl::async_window(_config.title, _config.width, _config.height), config(_config), film(_film), on(true) {
 }
 
 //
@@ -39,6 +39,10 @@ void Display :: render() {
   print_string(GLUT_BITMAP_8_BY_13, footer);
 }
 
+bool Display :: is_on() {
+  return on;
+}
+
 void Display :: print_string(void *font, const string& str) const {
   for (uint i(0); i < str.length(); i++)
     glutBitmapCharacter(font, str[i]);
@@ -47,6 +51,14 @@ void Display :: print_string(void *font, const string& str) const {
 void Display :: set_captions(stringstream& header_ss, stringstream& footer_ss) {
   header = header_ss.str();
   footer = footer_ss.str();
+}
+
+void Display :: keyboard(unsigned char key, int mousex, int mousey) {
+  switch(key) {
+    case 27: // ESC
+      on = false;
+      break;
+  }
 }
 
 }

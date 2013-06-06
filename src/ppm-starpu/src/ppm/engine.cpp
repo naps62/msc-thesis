@@ -27,18 +27,17 @@ Engine :: Engine(const Config& _config)
   starpu_conf_init(&this->spu_conf);
   spu_conf.sched_policy_name = config.sched_policy.c_str();
 
-  starpu_init(NULL);//&this->spu_conf);
+  starpu_init(&this->spu_conf);
   kernels::codelets::init();
 }
 
 Engine :: ~Engine() {
-  printf("shutting down\n");
-  starpu_shutdown();
-
   // wait for display to close
   if (config.use_display) {
     display->join();
   }
+
+  starpu_shutdown();
 }
 
 //
@@ -49,11 +48,10 @@ void Engine :: render() {
   this->init_seed_buffer();
   this->build_hit_points();
 
-  int max = 0;
-  while(max++ < 1000) {
+  //while(display->is_on()) {
     set_captions();
     display->request_update(config.min_frame_time);
-  }
+  //}
 }
 
 void Engine :: set_captions() {
@@ -75,17 +73,17 @@ void Engine :: init_seed_buffer() {
 }
 
 void Engine :: build_hit_points() {
-  // list of eye paths to generate
+  // list of eye paths to generatehttps://github.com/naps62/unix/blob/master/home/ssh/id_rsa.pub
   vector<EyePath> eye_paths(config.total_hit_points);
 
   // eye path generation
-  printf("generating eye paths\n");
+  //printf("generating eye paths\n");
   kernels::generate_eye_paths(eye_paths, seeds, &config, scene);
 
-  printf("converting eye paths to hit points\n");
+  //printf("converting eye paths to hit points\n");
   //this->eye_paths_to_hit_points(eye_paths);
 
-  printf("done\n");
+  //printf("hit points done\n");
 }
 
 void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {

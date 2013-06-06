@@ -36,7 +36,7 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
   unsigned index = 0;
   const float sample_weight = 1.f / spp;
 
-  printf("%d\n", starpu_combined_worker_get_size());
+  //printf("%d\n", starpu_combined_worker_get_size());
   #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned y = 0; y < height; ++y) {
     for(unsigned x = 0; x < width; ++x) {

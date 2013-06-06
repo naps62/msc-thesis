@@ -13,13 +13,17 @@ struct Display : public beast::gl::async_window {
   void render();
   void set_captions(stringstream& header_ss, stringstream& footer_ss);
 
+  bool is_on();
+
 private:
   const Config& config;
   Film& film;
   string header;
   string footer;
+  bool on;
 
   void print_string(void* font, const string& str) const;
+  void keyboard(unsigned char key, int mousex, int mousey);
 };
 
 }
