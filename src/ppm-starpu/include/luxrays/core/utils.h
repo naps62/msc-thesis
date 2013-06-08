@@ -21,6 +21,7 @@
 
 #ifndef _LUXRAYS_UTILS_H
 #define  _LUXRAYS_UTILS_H
+#include "utils/common.h"
 
 #include <cmath>
 
@@ -97,6 +98,7 @@ inline double WallClockTime() {
 #error "Unsupported Platform !!!"
 #endif
 }
+
 
 template<class T> __HD__ inline T Clamp(T val, T low, T high) {
   return val > low ? (val < high ? val : high) : low;

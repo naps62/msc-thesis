@@ -128,6 +128,7 @@ inline std::ostream & operator<<(std::ostream &os, const Point &v) {
   return os;
 }
 
+__HD__
 inline Point operator*(float f, const Point &p) {
   return p*f;
 }

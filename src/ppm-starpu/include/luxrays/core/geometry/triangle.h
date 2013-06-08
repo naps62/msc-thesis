@@ -121,7 +121,7 @@ public:
 
   unsigned int v[3];
 };
-__HD__
+
 inline std::ostream & operator<<(std::ostream &os, const Triangle &tri) {
   os << "Triangle[" << tri.v[0] << ", " << tri.v[1] << ", " << tri.v[2] << "]";
   return os;

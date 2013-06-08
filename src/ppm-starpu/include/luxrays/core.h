@@ -22,9 +22,6 @@ std::string to_string(T t, std::ios_base & (*f)(std::ios_base&)) {
   return oss.str();
 }
 
-#define __HD__
-
-
 
 typedef unsigned char u_char;
 typedef unsigned short u_short;

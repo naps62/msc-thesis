@@ -426,6 +426,8 @@ void PtrFreeScene :: compile_infinite_light() {
     const luxrays::TextureMap* tex_map = il->GetTexture()->GetTexMap();
     infinite_light.width  = tex_map->GetWidth();
     infinite_light.height = tex_map->GetHeight();
+
+    infinite_light_map = tex_map->GetPixels();
   } else {
     infinite_light.exists = false;
   }

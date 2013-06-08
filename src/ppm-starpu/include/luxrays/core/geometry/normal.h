@@ -113,7 +113,7 @@ __HD__
 inline Vector::Vector(const Normal &n) :
   x(n.x), y(n.y), z(n.z) {
 }
-__HD__
+
 inline std::ostream &operator<<(std::ostream &os, const Normal &v) {
   os << "Normal[" << v.x << ", " << v.y << ", " << v.z << "]";
   return os;

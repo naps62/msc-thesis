@@ -135,7 +135,7 @@ public:
 
   float r, g, b;
 };
-__HD__
+
 inline std::ostream &operator<<(std::ostream &os, const Spectrum &v) {
   os << "Spectrum[" << v.r << ", " << v.g << ", " << v.b << "]";
   return os;

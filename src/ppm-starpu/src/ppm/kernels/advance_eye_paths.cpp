@@ -6,15 +6,19 @@
 namespace ppm { namespace kernels {
 
 void advance_eye_paths(
-    RayBuffer&        ray_hit_buffer,
-    vector<EyePath>&  eye_paths,
-    vector<unsigned>& eye_paths_indexes,
+    vector<HitPointStaticInfo>& hit_points,
+    RayBuffer&                  ray_hit_buffer,
+    vector<EyePath>&            eye_paths,
+    vector<unsigned>&           eye_paths_indexes,
     //const Config* config,
     PtrFreeScene* scene) {
 
   // kernel args
   struct args_advance_eye_paths args = { /*config,*/ scene };
 
+  // hit points static info
+  starpu_data_handle_t handle_hit_points;
+  starpu_vector_data_register(&handle_hit_points, 0, (uintptr_t)&hit_points[0], hit_points.size(), sizeof(HitPointStaticInfo));
   // hit buffer
   starpu_data_handle_t handle_hits;
   starpu_vector_data_register(&handle_hits, 0, (uintptr_t)ray_hit_buffer.GetHitBuffer(), ray_hit_buffer.GetRayCount(), sizeof(RayHit));
@@ -29,9 +33,10 @@ void advance_eye_paths(
   struct starpu_task* task = starpu_task_create();
   task->synchronous = 1;
   task->cl = &codelets::advance_eye_paths;
-  task->handles[0] = handle_hits;
-  task->handles[1] = handle_eye_paths;
-  task->handles[2] = handle_indexes;
+  task->handles[0] = handle_hit_points;
+  task->handles[1] = handle_hits;
+  task->handles[2] = handle_eye_paths;
+  task->handles[3] = handle_indexes;
   task->cl_arg      = &args;
   task->cl_arg_size = sizeof(args);
 

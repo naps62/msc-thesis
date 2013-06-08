@@ -36,11 +36,13 @@ namespace luxrays {
 class Transform {
 public:
   // Transform Public Methods
+  __HD__
   Transform() {
     // Lotus - use the preallocated identity matrix because it will never be changed
     m = mInv = MAT_IDENTITY;
   }
 
+  __HD__
   Transform(float mat[4][4]) {
     Matrix4x4 o(mat[0][0], mat[0][1], mat[0][2], mat[0][3],
         mat[1][0], mat[1][1], mat[1][2], mat[1][3],
@@ -50,11 +52,13 @@ public:
     mInv = m.Inverse();
   }
 
+  __HD__
   Transform(const Matrix4x4 &mat) {
     m = mat;
     mInv = m.Inverse();
   }
 
+  __HD__
   Transform(const Matrix4x4 &mat,
       const Matrix4x4 &minv) {
     m = mat;

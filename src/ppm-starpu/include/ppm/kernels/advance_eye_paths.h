@@ -16,9 +16,10 @@ struct args_advance_eye_paths {
 };
 
 void advance_eye_paths (
-  RayBuffer&        ray_hit_buffer,
-  vector<EyePath>&  eye_paths,
-  vector<unsigned>& eye_paths_indexes,
+  vector<HitPointStaticInfo>& hit_points,
+  RayBuffer&                  ray_hit_buffer,
+  vector<EyePath>&            eye_paths,
+  vector<unsigned>&           eye_paths_indexes,
   //const Config* config,
   PtrFreeScene* scene
 );

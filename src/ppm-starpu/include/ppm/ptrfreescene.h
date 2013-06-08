@@ -26,7 +26,7 @@ public:
   typedef bool(*lux_mesh_comparator_t)(luxrays::Mesh*, luxrays::Mesh*);
   typedef std::map<luxrays::ExtMesh*, uint, lux_mesh_comparator_t> lux_defined_meshs_t;
 
-private:
+//private:
   const Config& config;           // reference to global configs
   luxrays::Scene* original_scene; // original scene structure
   luxrays::DataSet* data_set;     // original data_set structure
@@ -53,6 +53,7 @@ private:
   // lights
   std::vector<TriangleLight> area_lights;
   InfiniteLight  infinite_light;
+  const Spectrum* infinite_light_map;
   SunLight       sun_light;
   SkyLight       sky_light;
 

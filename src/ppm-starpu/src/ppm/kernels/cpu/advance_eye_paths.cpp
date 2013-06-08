@@ -1,4 +1,6 @@
 #include "ppm/kernels/advance_eye_paths.h"
+#include "ppm/kernels/helpers.cuh"
+using namespace ppm::kernels;
 
 #include "utils/config.h"
 #include "ppm/ptrfreescene.h"
@@ -14,9 +16,10 @@ using ppm::EyePath;
 namespace ppm { namespace kernels { namespace cpu {
 
 void advance_eye_paths_impl(
-    RayHit*   const hits,              const unsigned hits_count,
-    EyePath*  const eye_paths,         const unsigned eye_paths_count,
-    unsigned* const eye_paths_indexes, const unsigned eye_paths_indexes_count,
+    HitPointStaticInfo* const hit_points, //const unsigned hit_points_count
+    RayHit*   const hits,                 const unsigned hits_count,
+    EyePath*  const eye_paths,            const unsigned eye_paths_count,
+    unsigned* const eye_paths_indexes,    const unsigned eye_paths_indexes_count,
     const PtrFreeScene* const scene) {
 
 
@@ -27,22 +30,26 @@ void advance_eye_paths_impl(
 
     if (hit.Miss()) {
       // add a hit point
-      HitPointStaticInfo& hp = scene->hit_points[eye_path.sampleIndex];
+      //HitPointStaticInfo& hp = scene->hit_points[eye_path.sampleIndex];
+      HitPointStaticInfo& hp = hit_points[eye_path.sample_index];
       hp.type = CONSTANT_COLOR;
-      hp.scrX = eye_path.scrX;
-      hp.scrY = eye_path.scrY;
+      hp.scr_x = eye_path.scr_x;
+      hp.scr_y = eye_path.scr_y;
 
-      if (scene->infinite_light.exists || scene->sun_light.exists || ss->sky_light.exists) {
+      if (scene->infinite_light.exists || scene->sun_light.exists || scene->sky_light.exists) {
         if (scene->infinite_light.exists) {
-          // scene->infinite_light_le
+          // TODO check this
+          helpers::infinite_light_le(&hp.throughput, &eye_path.ray.d, &scene->infinite_light, scene->infinite_light_map);
         }
         if (scene->sun_light.exists) {
-          // scene->sun_light_le
+          // TODO check this
+          helpers::sun_light_le(&hp.throughput, &eye_path.ray.d, &scene->sun_light);
         }
         if (scene->sky_light.exists) {
-          // scene-<sky_light_le
+          // TODO check this
+          helpers::sky_light_le(&hp.throughput, &eye_path.ray.d, &scene->sky_light);
         }
-        hp.throughput *= eye_path.throughput;
+        hp.throughput *= eye_path.flux;
       } else {
         hp.throughput = Spectrum();
         eye_path.done = true;
@@ -65,18 +72,22 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
   const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->scene);
 
   // buffers
+  // hit point static info
+  HitPointStaticInfo* const hit_points = reinterpret_cast<HitPointStaticInfo* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
+  //const unsigned hit_points_count = STARPU_VECTOR_GET_NX(buffers[0]);
   // hit buffer
-  RayHit* const hits = reinterpret_cast<RayHit* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
-  const unsigned hits_count = STARPU_VECTOR_GET_NX(buffers[0]);
+  RayHit* const hits = reinterpret_cast<RayHit* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
+  const unsigned hits_count = STARPU_VECTOR_GET_NX(buffers[1]);
   // eye paths
-  EyePath* const eye_paths = reinterpret_cast<EyePath* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
-  const unsigned eye_paths_count = STARPU_VECTOR_GET_NX(buffers[1]);
+  EyePath* const eye_paths = reinterpret_cast<EyePath* const>(STARPU_VECTOR_GET_PTR(buffers[2]));
+  const unsigned eye_paths_count = STARPU_VECTOR_GET_NX(buffers[2]);
   // eye paths indexes
-  unsigned* const eye_paths_indexes = reinterpret_cast<unsigned* const>(STARPU_VECTOR_GET_PTR(buffers[2]));
-  const unsigned eye_paths_indexes_count = STARPU_VECTOR_GET_NX(buffers[2]);
+  unsigned* const eye_paths_indexes = reinterpret_cast<unsigned* const>(STARPU_VECTOR_GET_PTR(buffers[3]));
+  const unsigned eye_paths_indexes_count = STARPU_VECTOR_GET_NX(buffers[3]);
 
 
-  advance_eye_paths_impl(hits,              hits_count,
+  advance_eye_paths_impl(hit_points, // hit_points_count,
+                         hits,              hits_count,
                          eye_paths,         eye_paths_count,
                          eye_paths_indexes, eye_paths_indexes_count,
                          scene);

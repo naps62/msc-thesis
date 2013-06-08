@@ -274,7 +274,7 @@ public:
       // Wait for a new buffer to arrive
       condition.wait(lock);
     }
-    return NULL;
+    //return NULL;
   }
 
   //--------------------------------------------------------------------------
@@ -311,7 +311,7 @@ public:
       // Wait for a new buffer to arrive
       condition.wait(lock);
     }
-    return NULL;
+    //return NULL;
   }
 
 private:
