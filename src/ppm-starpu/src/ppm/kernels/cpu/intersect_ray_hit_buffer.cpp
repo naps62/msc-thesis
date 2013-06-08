@@ -13,6 +13,19 @@ using ppm::EyePath;
 
 namespace ppm { namespace kernels { namespace cpu {
 
+void intersect_ray_hit_buffer_impl(
+    Ray* const rays, const unsigned rays_count,
+    RayHit* const hits,
+    const PtrFreeScene* scene) {
+
+  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+  for(unsigned int i = 0; i < rays_count; ++i) {
+    hits[i].SetMiss();
+    scene->intersect(rays[i], hits[i]);
+  }
+}
+
+
 void intersect_ray_hit_buffer(void* buffers[], void* args_orig) {
 
   // cl_args
@@ -25,12 +38,8 @@ void intersect_ray_hit_buffer(void* buffers[], void* args_orig) {
   const unsigned rays_count = STARPU_VECTOR_GET_NX(buffers[0]);
   RayHit* const hits = reinterpret_cast<RayHit* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
 
-  //printf("intersect: %d %d\n", starpu_combined_worker_get_size(), rays_count);
-  //#pragma omp parallel for num_threads(starpu_combined_worker_get_size())
-  for(unsigned int i = 0; i < rays_count; ++i) {
-    hits[i].SetMiss();
-    scene->intersect(rays[i], hits[i]);
-  }
+
+  intersect_ray_hit_buffer_impl(rays, rays_count, hits, scene);
 }
 
 } } }

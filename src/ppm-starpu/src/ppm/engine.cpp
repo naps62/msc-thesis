@@ -3,6 +3,7 @@
 #include "utils/random.h"
 #include "ppm/kernels/generate_eye_paths.h"
 #include "ppm/kernels/intersect_ray_hit_buffer.h"
+#include "ppm/kernels/advance_eye_paths.h"
 #include "ppm/types.h"
 
 #include <starpu.h>
@@ -45,13 +46,15 @@ Engine :: ~Engine() {
 //
 void Engine :: render() {
   film.clear(Spectrum(1.f, 0.f, 0.f));
+  cout << "Building seed buffer" << endl;
   this->init_seed_buffer();
+  cout << "Building hit points" << endl;
   this->build_hit_points();
 
-  //while(display->is_on()) {
+  while(display->is_on()) {
     set_captions();
     display->request_update(config.min_frame_time);
-  //}
+  }
 }
 
 void Engine :: set_captions() {
@@ -73,27 +76,23 @@ void Engine :: init_seed_buffer() {
 }
 
 void Engine :: build_hit_points() {
-  // list of eye paths to generatehttps://github.com/naps62/unix/blob/master/home/ssh/id_rsa.pub
+  // list of eye paths to generate
   vector<EyePath> eye_paths(config.total_hit_points);
 
   // eye path generation
-  //printf("generating eye paths\n");
   kernels::generate_eye_paths(eye_paths, seeds, &config, scene);
 
-  //printf("converting eye paths to hit points\n");
-  //this->eye_paths_to_hit_points(eye_paths);
-
-  //printf("hit points done\n");
+  this->eye_paths_to_hit_points(eye_paths);
 }
 
 void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
-
   unsigned todo_eye_paths = eye_paths.size();
   const unsigned hit_points_count = hit_points.size();
   unsigned chunk_count = 0;
   const unsigned chunk_size  = 1024 * 256;
   unsigned chunk_done_count = 0;
   RayBuffer ray_hit_buffer(chunk_size);
+  vector<unsigned> eye_paths_indexes(chunk_size);
 
   while (todo_eye_paths) {
 
@@ -119,7 +118,8 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
         } else {
           // if not, add it to current buffer
           eye_path.depth++;
-          ray_hit_buffer.AddRay(eye_path.ray);
+          const int index = ray_hit_buffer.AddRay(eye_path.ray);
+          eye_paths_indexes[index] = i;
         }
       }
 
@@ -141,6 +141,7 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
       kernels::intersect_ray_hit_buffer(ray_hit_buffer, /*&config,*/ scene);
 
       // advance eye paths
+      kernels::advance_eye_paths(ray_hit_buffer, eye_paths, eye_paths_indexes, /*&config,*/ scene);
 
       // reset ray buffer
       ray_hit_buffer.Reset();

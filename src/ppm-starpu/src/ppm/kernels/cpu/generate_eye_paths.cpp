@@ -13,19 +13,11 @@ using ppm::EyePath;
 
 namespace ppm { namespace kernels { namespace cpu {
 
-void generate_eye_paths(void* buffers[], void* args_orig) {
-  // cl_args
-  const args_generate_eye_paths* args = (args_generate_eye_paths*) args_orig;
-  const Config*       config = static_cast<const Config*>(args->config);
-  const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->scene);
-
-  // buffers
-  // eye_paths
-  EyePath* const eye_paths      = reinterpret_cast<EyePath* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
-  //const unsigned eye_path_count = STARPU_VECTOR_GET_NX(buffers[0]);
-  // seeds
-  Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
-  //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[1]);
+void generate_eye_paths_impl(
+    EyePath* const eye_paths, // const unsigned eye_path_count,
+    Seed* const seed_buffer,  // const unsigned seed_buffer_count,
+    const Config* config,
+    const PtrFreeScene* scene) {
 
   const unsigned width  = config->width;
   const unsigned height = config->height;
@@ -60,6 +52,29 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
       }
     }
   }
+}
+
+
+void generate_eye_paths(void* buffers[], void* args_orig) {
+  // cl_args
+  const args_generate_eye_paths* args = (args_generate_eye_paths*) args_orig;
+  const Config*       config = static_cast<const Config*>(args->config);
+  const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->scene);
+
+  // buffers
+  // eye_paths
+  EyePath* const eye_paths      = reinterpret_cast<EyePath* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
+  //const unsigned eye_path_count = STARPU_VECTOR_GET_NX(buffers[0]);
+  // seeds
+  Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
+  //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[1]);
+
+
+  generate_eye_paths_impl(eye_paths,   // eye_path_count,
+                          seed_buffer, // seed_buffer_count,
+                          config,
+                          scene);
+
 
 }
 

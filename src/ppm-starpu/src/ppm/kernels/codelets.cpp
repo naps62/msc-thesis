@@ -9,12 +9,15 @@ namespace ppm { namespace kernels {
   namespace codelets {
     starpu_codelet generate_eye_paths;
     starpu_codelet intersect_ray_hit_buffer;
+    starpu_codelet advance_eye_paths;
 
     starpu_perfmodel generate_eye_paths_pm;
     starpu_perfmodel intersect_ray_hit_buffer_pm;
+    starpu_perfmodel advance_eye_paths_pm;
 
     const char* generate_eye_paths_sym       = "ppm_generate_eye_paths_001";
     const char* intersect_ray_hit_buffer_sym = "ppm_intersect_ray_hit_buffer_001";
+    const char* advance_eye_paths_sym        = "ppm_advance_eye_paths_001";
 
     void perfmodel_init(starpu_perfmodel* model) {
       memset(model, 0, sizeof(starpu_perfmodel));
@@ -42,7 +45,7 @@ namespace ppm { namespace kernels {
       cl->model           = pm;
 
 
-      // eye_paths_to_hit_points
+      // intersect_ray_hit_buffer
       pm = &intersect_ray_hit_buffer_pm;
       perfmodel_init(pm);
       pm->type = STARPU_HISTORY_BASED;
@@ -52,12 +55,32 @@ namespace ppm { namespace kernels {
       starpu_codelet_init(cl);
       cl->where           = STARPU_CPU;
       cl->type            = STARPU_FORKJOIN;
-      cl->max_parallelism = 1;//std::numeric_limits<int>::max();
+      cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::intersect_ray_hit_buffer;
       cl->cpu_funcs[1]    = NULL;
       cl->nbuffers        = 2;
       cl->modes[0]        = STARPU_R;
       cl->modes[1]        = STARPU_RW;
+      cl->model           = pm;
+
+      // advance_eye_paths
+      pm = &advance_eye_paths_pm;
+      perfmodel_init(pm);
+      pm->type = STARPU_HISTORY_BASED;
+      pm->symbol = advance_eye_paths_sym;
+
+      cl = &advance_eye_paths;
+      starpu_codelet_init(cl);
+      cl->where           = STARPU_CPU;
+      cl->type            = STARPU_FORKJOIN;
+      cl->max_parallelism = std::numeric_limits<int>::max();
+      cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_eye_paths;
+      cl->cpu_funcs[1]    = NULL;
+      cl->nbuffers        = 3;
+      cl->modes[0]        = STARPU_R;
+      cl->modes[1]        = STARPU_RW;
+      cl->modes[2]        = STARPU_R;
+  ://github.com/rmdmachado/roundabet/blob/master/config/environments/development.rbhttps://github.com/rmdmachado/roundabet/blob/master/config/environments/development.rbhttps://github.com/rmdmachado/roundabet/blob/master/config/environments/development.rbrintf
       cl->model           = pm;
     }
   }
