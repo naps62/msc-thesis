@@ -39,15 +39,15 @@ void advance_eye_paths_impl(
       if (scene->infinite_light.exists || scene->sun_light.exists || scene->sky_light.exists) {
         if (scene->infinite_light.exists) {
           // TODO check this
-          helpers::infinite_light_le(&hp.throughput, &eye_path.ray.d, &scene->infinite_light, scene->infinite_light_map);
+          helpers::infinite_light_le(hp.throughput, eye_path.ray.d, scene->infinite_light, scene->infinite_light_map);
         }
         if (scene->sun_light.exists) {
           // TODO check this
-          helpers::sun_light_le(&hp.throughput, &eye_path.ray.d, &scene->sun_light);
+          helpers::sun_light_le(hp.throughput, eye_path.ray.d, scene->sun_light);
         }
         if (scene->sky_light.exists) {
           // TODO check this
-          helpers::sky_light_le(&hp.throughput, &eye_path.ray.d, &scene->sky_light);
+          helpers::sky_light_le(hp.throughput, eye_path.ray.d, scene->sky_light);
         }
         hp.throughput *= eye_path.flux;
       } else {
@@ -59,6 +59,10 @@ void advance_eye_paths_impl(
       Point hit_point;
       Spectrum surface_color;
       Normal N, shade_N;
+
+      if (helpers::get_hit_point_information(scene, eye_path.ray, hit, hit_point, surface_color, N, shade_N)) {
+
+      }
     }
   }
 }

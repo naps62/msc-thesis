@@ -48,31 +48,31 @@ void tex_map_get_color(const Spectrum* const pixels, const unsigned width, const
 
 
 __HD__
-void infinite_light_le (Spectrum* const le, const Vector* const dir, const InfiniteLight* const infinite_light, const Spectrum* const infinite_light_map) {
+void infinite_light_le (Spectrum& le, const Vector& dir, const InfiniteLight& infinite_light, const Spectrum* const infinite_light_map) {
 
-  const float u = 1.f - SphericalPhi(*dir)   * INV_TWOPI + infinite_light->shiftU;
-  const float v =       SphericalTheta(*dir) * INV_PI    + infinite_light->shiftV;
+  const float u = 1.f - SphericalPhi(dir)   * INV_TWOPI + infinite_light.shiftU;
+  const float v =       SphericalTheta(dir) * INV_PI    + infinite_light.shiftV;
 
-  tex_map_get_color(infinite_light_map, infinite_light->width, infinite_light->height, u, v, le);
+  tex_map_get_color(infinite_light_map, infinite_light.width, infinite_light.height, u, v, le);
 
-  le->r *= infinite_light->gain.r;
-  le->g *= infinite_light->gain.g;
-  le->b *= infinite_light->gain.b;
+  le.r *= infinite_light.gain.r;
+  le.g *= infinite_light.gain.g;
+  le.b *= infinite_light.gain.b;
 }
 
 
 __HD__
-void sky_light_le(Spectrum* const f, const Vector* const dir, const SkyLight* const sky_light) {
+void sky_light_le(Spectrum& f, const Vector& dir, const SkyLight& sky_light) {
 
-  const float theta = SphericalTheta(*dir);
-  const float phi   = SphericalPhi(*dir);
+  const float theta = SphericalTheta(dir);
+  const float phi   = SphericalPhi(dir);
 
   Spectrum s;
-  sky_light_get_sky_spectral_radiance(theta, phi, &s, sky_light);
+  sky_light_get_sky_spectral_radiance(theta, phi, s, sky_light);
 
-  f->r = sky_light->gain.r * s.r;
-  f->g = sky_light->gain.g * s.g;
-  f->b = sky_light->gain.b * s.b;
+  f.r = sky_light.gain.r * s.r;
+  f.g = sky_light.gain.g * s.g;
+  f.b = sky_light.gain.b * s.b;
 }
 
 __HD__
@@ -113,7 +113,7 @@ float ri_angle_between(const float thetav, const float phiv, const float theta, 
 
 __HD__
 void sky_light_get_sky_spectral_radiance(const float theta, const float phi, Spectrum* const spect, const SkyLight* const sky_light) {
-  const float theta_fin = min(theta, (float) ((M_PI * 0.5f) - 0.001f));
+  const float theta_fin =pass by referencepass by reference min(theta, (float) ((M_PI * 0.5f) - 0.001f));
   const float gamma     = ri_angle_between(theta, phi, sky_light->theta_s, sky_light->phi_s);
 
   const float x = sky_light->zenith_x * sky_light_perez_base(sky_light->perez_x, theta_fin, gamma);
@@ -125,17 +125,80 @@ void sky_light_get_sky_spectral_radiance(const float theta, const float phi, Spe
 
 
 __HD__
-void sun_light_le(Spectrum* const le, const Vector* const dir, const SunLight* const sun_light) {
-  const float cos_theta_max = sun_light->cos_theta_max;
-  const Vector sun_dir = sun_light->dir;
+void sun_light_le(Spectrum& le, const Vector& dir, const SunLight& sun_light) {
+  const float cos_theta_max = sun_light.cos_theta_max;
+  const Vector sun_dir = sun_light.dir;
 
-  if ((cos_theta_max < 1.f) && (Dot(*dir, sun_dir) > cos_theta_max))
-    *le = sun_light->color;
+  if ((cos_theta_max < 1.f) && (Dot(dir, sun_dir) > cos_theta_max))
+    le = sun_light->color;
   else {
-    le->r = 0.f;
-    le->g = 0.f;
-    le->b = 0.f;
+    le.r = 0.f;
+    le.g = 0.f;
+    le.b = 0.f;
   }
+}
+
+__HD__
+bool get_hit_point_information(PointerFreeScene* scene, Ray& ray, const RayHit& hit, Point& hit_point, Spectrum& surface_color) {
+  hit_point = ray(hit->t);
+  const unsigned current_triangle_index = hit->index;
+
+  unsigned current_mesh_index = scene->meshIDs[current_triangle_index];
+  unsigned triangle_index = current_triangle_index - ss->mesh_first_triangle_offset[current_mesh_index];
+
+  Mesh& m = scene->mesh_descs[current_mesh_index];
+
+  if (m.has_colors) {
+    // mesh interpolate color
+    mesh_interpolate_color(scene->colors[m.colors_offset], scene->triangles[m.triangles_offset], triangle_index, hit.b1, hit.b2, surface_color);
+  } else {
+    surface_color = Spectrum(1.f, 1.f, 1.f);
+  }
+
+  // mesh interpolate normal
+  mesh_interpolate_normal(scene->normals[m.verts_offset], scene->triangles[m.triangles_offset], triangle_index, ray_hit.b1, ray_hit.b2, N);
+
+  if (Dot(ray.d, N) > 0.f)
+    shade_N = -N;
+  else
+    shade_N = N;
+
+  return false;
+
+}
+
+__HD__
+void mesh_interpolate_color(const Spectrum* const colors, const Triangle* const triangles, const unsigned triangle_index, const float b1, const float b2, Spectrum& C) {
+  const Triangle& triangle = triangles[triangle_index];
+  const float b0 = 1.f - b1 - b2;
+
+  C.r = b0 * colors[triangle.v[0]].r + b1 * colors[triangle.v[1]].r + b2 * colors[triangle.v[2]].r;
+ vss by reference C.g = b0 * colors[triangle.v[0]].g + b1 * colors[triangle.v[1]].g + b2 * colors[triangle.v[2]].g;
+  C.b = b0 * colors[triangle.v[0]].b + b1 * colors[triangle.v[1]].b + b2 * colors[triangle.v[2]].b;
+}
+
+__HD__
+void mesh_interpolate_normal(const Normal* const normals, const Triangle* const triangles, const unsgined triangle_index, const float b1, const float b2, Normal& N) {
+  const Triangle& triangle = triangles[triangle_index];
+  const float b0 = 1.f - b1 - b2;
+
+  const Normal& v0 = normals[triangle.v[0]];
+  const Normal& v1 = normals[triangle.v[1]];
+  const Normal& v2 = normals[triangle.v[2]];
+
+  N.x = b0 * v0.x + b1 * v1.x + b2 * v2.x;
+  N.y = b0 * v0.y + b1 * v1.y + b2 * v2.y;
+  N.z = b0 * v0.z + b1 * v1.z + b2 * v2.z;
+
+  N = Normalize(N);
+}
+
+__HD__ void mesh_interpolate_UV(const UV* const uvs, const Triangle* const triangles, const unsigned triangle_index, const float b1, const float b2, UV& uv) {
+  const Triangle& triangle = triangles[triangle_index];
+  const float b0 = 1.f - b1 - b2;
+
+  uv.u = b0 * uvs[triangle.v[0]].u + b1 * uvs[triangle.v[1]].u + b2 * uvs[triangle.v[2]].u;
+  uv.v = b0 * uvs[triangle.v[0]].v + b1 * uvs[triangle.v[1]].v + b2 * uvs[triangle.v[2]].v;
 }
 
 }
