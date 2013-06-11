@@ -5,19 +5,19 @@ namespace ppm { namespace kernels {
 namespace helpers {
 
 __HD__
-void tex_map_get_texel(const Spectrum* const pixels, const unsigned width, const unsigned height, const int s, const int t, Spectrum* const color) {
+void tex_map_get_texel(const Spectrum* const pixels, const unsigned width, const unsigned height, const int s, const int t, Spectrum& color) {
   const unsigned u = Mod(s, width);
   const unsigned v = Mod(s, height);
 
   const Spectrum& pixel = pixels[v * width + u];
 
-  color->r = pixel.r;
-  color->g = pixel.g;
-  color->b = pixel.b;
+  color.r = pixel.r;
+  color.g = pixel.g;
+  color.b = pixel.b;
 }
 
 __HD__
-void tex_map_get_color(const Spectrum* const pixels, const unsigned width, const unsigned height, const float u, const float v, Spectrum* const color) {
+void tex_map_get_color(const Spectrum* const pixels, const unsigned width, const unsigned height, const float u, const float v, Spectrum& color) {
   const float s = u * width  - 0.5f;
   const float t = v * height - 0.5f;
 
@@ -41,9 +41,9 @@ void tex_map_get_color(const Spectrum* const pixels, const unsigned width, const
   const float k2 = ds  * idt;
   const float k3 = ds  * dt;
 
-  color->r = k0 * c0.r + k1 * c1.r + k2 * c2.r + k3 * c3.r;
-  color->g = k0 * c0.g + k1 * c1.g + k2 * c2.g + k3 * c3.g;
-  color->b = k0 * c0.b + k1 * c1.b + k2 * c2.b + k3 * c3.b;
+  color.r = k0 * c0.r + k1 * c1.r + k2 * c2.r + k3 * c3.r;
+  color.g = k0 * c0.g + k1 * c1.g + k2 * c2.g + k3 * c3.g;
+  color.b = k0 * c0.b + k1 * c1.b + k2 * c2.b + k3 * c3.b;
 }
 
 
@@ -81,7 +81,7 @@ float sky_light_perez_base(const float* const lam, const float theta, const floa
 }
 
 __HD__
-void sky_light_chromaticity_to_spectrum(const float Y, const float x, const float y, Spectrum* const s) {
+void sky_light_chromaticity_to_spectrum(const float Y, const float x, const float y, Spectrum& s) {
   float X, Z;
 
   if (y != 0.f)
@@ -95,9 +95,9 @@ void sky_light_chromaticity_to_spectrum(const float Y, const float x, const floa
     Z = 0.f;
 
   // assuming sRGB (D65 illuminant)
-  s->r =  3.2410f * X - 1.5374f * Y - 0.4986f * Z;
-  s->g = -0.9692f * X + 1.8760f * Y + 0.0416f * Z;
-  s->b =  0.0556f * X - 0.2040f * Y + 1.0570f * Z;
+  s.r =  3.2410f * X - 1.5374f * Y - 0.4986f * Z;
+  s.g = -0.9692f * X + 1.8760f * Y + 0.0416f * Z;
+  s.b =  0.0556f * X - 0.2040f * Y + 1.0570f * Z;
 }
 
 __HD__
@@ -112,13 +112,13 @@ float ri_angle_between(const float thetav, const float phiv, const float theta, 
 }
 
 __HD__
-void sky_light_get_sky_spectral_radiance(const float theta, const float phi, Spectrum* const spect, const SkyLight* const sky_light) {
+void sky_light_get_sky_spectral_radiance(const float theta, const float phi, Spectrum& spect, const SkyLight& sky_light) {
   const float theta_fin =pass by referencepass by reference min(theta, (float) ((M_PI * 0.5f) - 0.001f));
-  const float gamma     = ri_angle_between(theta, phi, sky_light->theta_s, sky_light->phi_s);
+  const float gamma     = ri_angle_between(theta, phi, sky_light.theta_s, sky_light->phi_s);
 
-  const float x = sky_light->zenith_x * sky_light_perez_base(sky_light->perez_x, theta_fin, gamma);
-  const float y = sky_light->zenith_y * sky_light_perez_base(sky_light->perez_y, theta_fin, gamma);
-  const float Y = sky_light->zenith_Y * sky_light_perez_base(sky_light->perez_Y, theta_fin, gamma);
+  const float x = sky_light.zenith_x * sky_light_perez_base(sky_light.perez_x, theta_fin, gamma);
+  const float y = sky_light.zenith_y * sky_light_perez_base(sky_light.perez_y, theta_fin, gamma);
+  const float Y = sky_light.zenith_Y * sky_light_perez_base(sky_light.perez_Y, theta_fin, gamma);
 
   sky_light_chromaticity_to_spectrum(Y, x, y, spect);
 }
@@ -132,6 +132,21 @@ void sun_light_le(Spectrum& le, const Vector& dir, const SunLight& sun_light) {
   if ((cos_theta_max < 1.f) && (Dot(dir, sun_dir) > cos_theta_max))
     le = sun_light->color;
   else {
+    le.r = 0.f;
+    le.g = 0.f;
+    le.b = 0.f;
+  }
+}
+
+__HD__
+void area_light_le(Spectrum& const le, const Vector& wo, const Normal& light_normal, const AreaLightParam& mat) {
+  const bool bright_side = (Dot(light_normal, wo) > 0.f);
+
+  if (bright_side) {
+    le.r = mat.gain.r;
+    le.g = mat.gain.g;
+    le.b = mat.gain.b;
+  } else {
     le.r = 0.f;
     le.g = 0.f;
     le.b = 0.f;
@@ -193,12 +208,287 @@ void mesh_interpolate_normal(const Normal* const normals, const Triangle* const 
   N = Normalize(N);
 }
 
-__HD__ void mesh_interpolate_UV(const UV* const uvs, const Triangle* const triangles, const unsigned triangle_index, const float b1, const float b2, UV& uv) {
+__HD__
+void mesh_interpolate_UV(const UV* const uvs, const Triangle* const triangles, const unsigned triangle_index, const float b1, const float b2, UV& uv) {
   const Triangle& triangle = triangles[triangle_index];
   const float b0 = 1.f - b1 - b2;
 
   uv.u = b0 * uvs[triangle.v[0]].u + b1 * uvs[triangle.v[1]].u + b2 * uvs[triangle.v[2]].u;
   uv.v = b0 * uvs[triangle.v[0]].v + b1 * uvs[triangle.v[1]].v + b2 * uvs[triangle.v[2]].v;
+}
+
+__HD__
+void generic_material_sample_f(const Material& mat, Vector& wo, Vector& wi, const Normal& N, const Normal& shade_N, const float u0, const float u1, const float u2, float& pdf, Spectrum& f, bool& specular_bounce) {
+  switch (mat.type) {
+    case MAT_AREALIGHT:
+      break;
+    case MAT_MATTE:       helper::matte_material_sample_f              (mat.param.matte, wo, wi,    shade_N, u0, u1,     material_pdf, f, specular_material); break;
+    case MAT_MIRROR:      helper::mirror_material_sample_f            (mat.param.mirror, wo, wi,    shade_N,             material_pdf, f, specular_material); break;
+    case MAT_GLASS:       helper::glass_material_sample_f              (mat.param.glass, wo, wi, N, shade_N, u0,         material_pdf, f, specular_material); break;
+    case MAT_MATTEMIRROR: helper::matte_mirror_material_sample_f(mat.param.matte_mirror, wo, wi,    shade_N, u0, u1, u2, material_pdf, f, specular_material); break;
+    case MAT_METAL:       helper::metal_material_sample_f              (mat.param.metal, wo, wi,    shade_N, u0, u1,     material_pdf, f, specular_material); break;
+    case MAT_MATTEMETAL:  helper::matte_metal_material_sample_f  (mat.param.matte_metal, wo, wi,    shade_N, u0, u1, u2, material_pdf, f, specular_material); break;
+    case MAT_ALLOY:       helper::alloy_material_sample_f              (mat.param.alloy, wo, wi,    shade_N, u0, u1, u2, material_pdf, f, specular_material); break;
+    case MAT_ARCHGLASS:   helper::arch_glass_material_sample_f    (mat.param.arch_glass, wo, wi, N, shade_N, u0,         material_pdf, f, specular_material); break;
+    case MAT_NULL:
+      wi = eye_path.ray.d;
+      specular_material = 1;
+      material_pdf = 1.f;
+      break;
+    default:
+      specular_material = true;
+      material_pdf = 0.f;
+      break;
+  }
+}
+
+__HD__
+void matte_material_sample_f(const MatteParam& mat, const Vector& wo, Vector& wi, const Normal& shade_N, const float u0, const float u1, float& pdf, Spectrum& f, bool& specular_bounce) {
+  Vector dir = CosineSampleHemisphere(u0, u1);
+  pdf = dir.z * INV_Z;
+
+  Vector v1, v2;
+  CoordinateSystem((Vector) shade_N, &v1, &v2);
+
+  wi.x = v1.x * dir.x + v2.x * dir.y + shade_N.x * dir.z;
+  wi.y = v1.y * dir.x + v2.y * dir.y + shade_N.y * dir.z;
+  wi.z = v1.z * dir.x + v2.z * dir.y + shade_N.z * dir.z;
+
+  const float dp = Dot(shade_N, wi);
+
+  if (dp <= 0.0001f) {
+    pdf = 0.f;
+  } else {
+    f.r = mat.r * INV_PI;
+    f.g = mat.g * INV_PI;
+    f.b = mat.b * INV_PI;
+    pdf /= dp;
+  }
+  specular_bounce = false;
+}
+
+__HD__
+void mirror_material_sample_f(const MirrorParam& mat, const Vector& wo, Vector& wi, const Normal& shade_N, float& pdf, Spectrum& f, bool& specular_bounce) {
+  const float k = 2.f * Dot(shade_N, wo);
+  wi = k * shade_N - wo;
+  pdf = 1.f;
+  f.r = mat.r;
+  f.g = mat.g;
+  f.b = mat.b;
+  specular_bounce = mat.specular_bounce;
+}
+
+__HD__
+void glass_material_sample_f(const GlassParam& mat, const Vector& wo, Vector& wi, const Normal& N, const Normal& shade_N, const float u0, float& pdf, Spectrum& f, bool& specular_bounce) {
+  const float k = 2.f * Dot(N, wo);
+  Vector refl_dir = k * N - wo;
+
+  const bool into = (Dot(N, shade_N) > 0.f);
+  const float nc = mat.outside_ior;
+  const float nt = mat.ior;
+  const float nnt = into ? (nc / nt) : (nt / nc);
+  const float ddn = -Dot(wo, shade_N);
+  const float cos2t = 1.f - nnt * nnt * (1.f - ddn * ddn);
+
+  if (cos2f < 0.f) {
+    wi = refl_dir;
+    pdf = 1.f;
+    f.r = mat.refl.r;
+    f.g = mat.refl.g;
+    f.b = mat.refl.b;
+    specular_bounce = mat.reflection_specular_bounce;
+  } else {
+    const float kk = (into ? 1.f : -1.f) * (ddn * nnt + sqrt(cos2t));
+    Vector nkk = (Vector) N;
+    nkk *= kk;
+
+    Vector trans_dir = -nnt * wo - nkk;
+    Normalize(trans_dir);
+
+    const float c = 1.f - (into ? -ddn : Dot(trans_dir, N));
+    const float R0 = mat.R0;
+    const float Re = R0 + (1.f - R0) * c * c * c * c * c;
+    const float Tr = 1.f - Re;
+    const float P = .25f + .5f * Re;
+
+    if (Tr == 0.f) {
+      if (Re == 0.f)
+        pdf = 0.f;
+      else {
+        wi = refl_dir;
+        pdf = 1.f;
+        f.r = mat.refl.r;
+        f.g = mat.refl.g;
+        f.b = mat.refl.b;
+        specular_bounce = mat.reflection_specular_bounce;
+      }
+
+    } else if (Re == 0.f) {
+      wi = trans_dir;
+      pdf = 1.f;
+      f.r = mat.refrct.r;
+      f.g = mat.refrct.g;
+      f.b = mat.refrct.b;
+      specular_bounce = mat.transmission_specular_bounce;
+
+    } else if (u0 < P) {
+      wi = refl_dir;
+      pdf = P / Re;
+      f.r = mat.refl.r;
+      f.g = mat.refl.g;
+      f.b = mat.refl.b;
+      specular_bounce = mat.reflection_specular_bounce;
+
+    } else {
+      wi = trans_dir;
+      pdf = (1.f - P) / Tr;
+      f.r = mat.refrct.r;
+      f.g = mat.refrct.g;
+      f.b = mat.refrct.b;
+      specular_bounce = mat.transmission_specular_bounce;
+    }
+  }
+}
+
+__HD__
+void matte_mirror_material_sample_f(const MatteMirrorParam& mat, const Vector& wo, Vector& wi, const Normal& shade_N, const float u0, const float u1, const float u2, float& pdf, Spectrum& f, bool& specular_bounce) {
+  const float tot_filter = mat.tot_filter;
+  const float comp = u2 * tot_filter;
+
+  float mpdf;
+  if (comp > mat.matte_filter) {
+    mirror_material_sample_f(mat.mirror, wo, wi, shade_N, pdf, f, specular_bounce);
+    mpdf = mat.mirror_pdf;
+  } else {
+    matte_material_sample_f(mat.matte, wo, wi, shade_N, u0, u1, u2, pdf, f, specular_bounce);
+    mpdf = mat.matte_pdf;
+  }
+
+  pdf *= mpdf;
+}
+
+__HD__
+void metal_material_sample_f(const MetalParam& mat, const Vector& wo, Vector& wi, const Normal& shade_N, const float u0, const float u1, float& pdf, Spectrum& f, bool& specular_bounce) {
+  glossy_reflection(wo, wi, mat.exponent, shade_N, u0, u1);
+
+  if (Dot(wi, shade_N) > 0.f) {
+    pdf = 1.f;
+    f.r = mat.r;
+    f.g = mat.g;
+    f.b = mat.b;
+    specular_bounce = mat.specular_bounce;
+  } else {
+    pdf = 0.f;
+  }
+}
+
+__HD__
+void matte_metal_material_sample_f(const MatteMetalParam& mat, const Vector& w0, Vector& wi, const Normal& shade_N, const float u0, const float u1, const float u2, float& pdf, Spectrum& f, bool& specular_bounce) {
+  float mpdf;
+  if (comp > mat.matte_filter) {
+    metal_material_sample_f(mat.metal, wo, wi, shade_N, u0, u1, pdf, f, specular_bounce);
+    mpdf = mat.metal_pdf;
+  } else {
+    matte_material_sample_f(mat.matte, wo, wi, shade_N, u', u1, pdf, f, specular_bounce);
+    mpdf = mat.matte_pdf;
+  }
+  pdf *= mpdf;
+}
+
+__HD__
+void alloy_material_sample_f(const AlloyParam& mat, const Vector& wo, Vector& wi, const Normal& shade_N, const float u0, const float u1, const float u, float& pdf, Spectrum& f, bool& specular_bounce) {
+  const float c = 1.f - Dot(wo, shade_N);
+  const float R0 = mat.R0;
+  const float Re = R0 + (1.f - R0) * c * c * c * c * c;
+  const float P = .24f + .5f * Re;
+
+  if (u2 <= P) {
+    glossy_reflection(wo, wi, mat.exponent, shade_N, u0, u1);
+    pdf = P / Re;
+    f.r = mat.refl.r * Re;
+    f.g = mat.refl.g * Re;
+    f.b = mat.refl.b * Re;
+    specular_bounce = mat.specular_bounce;
+  } else {
+    Vector dir = CosineSampleHemisphere(u0, u1);
+    pdf = dir.z * INV_PI;
+
+    Vector v1, v2;
+    CoordinateSystem((Vector) shade_N, &v1, &v2);
+
+    wi = v1 * dir.x + v2 * dir.y + shadeN * dir.z;
+
+    if (dir.z <= 0.0001f)
+      pdf = 0.f;
+    else {
+      const float iRe = 1.f - Re;
+      const float k ( 1.f - P) / iRe;
+      pdf *= k;
+      f.r = mat.diff.r * iRe;
+      f.g = mat.diff.g * iRe;
+      f.b = mat.diff.b * iRe;
+      specular_bounce = false;
+    }
+  }
+}
+
+__HD__
+void arch_glass_material_sample_f(const ArchGlassParam& mat, const Vector& wo, Vector& wi, const Normal& N, const Normal& shade_N, const float u0, float& pdf, Spectrum& f, bool& specular_bounce) {
+  const bool into = (Dot(N, shade_N) > 0.f);
+
+  if (!into) {
+    wi = -wo;
+    pdf = 1.f;
+    f.r = mat.refrct.r;
+    f.g = mat.refrct.g;
+    f.b = mat.refrct.b;
+    specular_bounce = mat.transmission_specular_bounce;
+  } else {
+    const float comp = u0 * mat.tot_filter;
+
+    if (comp > mat.trans_filter) {
+      const float k = 2.f * Dot(N, wo);
+      wi = k * N - wo;
+      pdf = mat.refl_pdf;
+      f.r = mat.refl.r;
+      f.g = mat.refl.g;
+      f.b = mat.refl.b;
+      specular_bounce = mat.reflection_specular_bounce;
+    } else {
+      wi = -wo;
+      f.r = mat.refrct.r;
+      f.g = mat.refrct.g;
+      f.b = mat.refrct.b;
+      specular_bounce = mat.transmission_specular_bounce;
+    }
+  }
+}
+
+__HD__
+void glossy_reflection(const Vector& wo, Vector& wi, const float exponent, const Normal& shade_N, const float u0, const float u1) {
+  const float phi = 2.f * M_PI * u0;
+  const float cos_theta = powf(1.f - u1, exponent);
+  const float sin_theta = sqrtf(Max(0.f, 1.f - cos_theta * cos_theta));
+  const float x = cosf(phi) * sin_theta;
+  const float y = sinf(phi) * sin_theta;
+  const float z = cos_theta;
+
+  const Vector dir = -wo;
+  const float dp = Dot(shade_N, dir);
+  const Vector w = dir - (2.f * dp) * Vector(shade_N);
+
+  Vector u;
+  if (fabsf(shade_N.x) > .1f) {
+    const Vector a(0.f, 1.f, 0.f);
+    u = Cross(a, w);
+  } else {
+    const Vector a(1.f, 0.f, 0.f);
+    u = Cross(a, w);
+  }
+  u = Normalize(u);
+  Vector v = Cross(w, u);
+
+  wi = x * u + y * v + z * w;
 }
 
 }

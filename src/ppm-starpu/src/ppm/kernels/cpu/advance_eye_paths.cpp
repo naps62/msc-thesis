@@ -30,7 +30,6 @@ void advance_eye_paths_impl(
 
     if (hit.Miss()) {
       // add a hit point
-      //HitPointStaticInfo& hp = scene->hit_points[eye_path.sampleIndex];
       HitPointStaticInfo& hp = hit_points[eye_path.sample_index];
       hp.type = CONSTANT_COLOR;
       hp.scr_x = eye_path.scr_x;
@@ -61,7 +60,64 @@ void advance_eye_paths_impl(
       Normal N, shade_N;
 
       if (helpers::get_hit_point_information(scene, eye_path.ray, hit, hit_point, surface_color, N, shade_N)) {
+        continue;
+      }
 
+      // get the material
+      const unsigned current_triangle_index = hit.index;
+      const unsigned current_mesh_index = scene->mesh_ids[current_triangle_index];
+      const unsigned material_index = scene->mesh_mats[current_mesh_index];
+      Material& hit_point_mat = scene->materials[material_index];
+      unsigned mat_type = hit_point_mat.type;
+
+      if (mat_type == MAT_AREALIGHT) {
+        // add a hit point
+        HitPointStaticInfo &hp = hit_points[eye_path.sample_index];
+        hp.type = CONSTANT_COLOR;
+        hp.scr_x = eye_path.scr_x;
+        hp.scr_y = eye_path.scr_y;
+
+        Vector md = - eye_path.ray.d;
+        helpers::area_light_le(hit_point_mat.param.area_light, md, N, hp.throughput);
+
+        eye_path.done = true;
+      } else {
+
+        Vector& wo = - eye_path.ray.d;
+        float material_pdf;
+
+        Vector wi;
+        bool specular_material = true;
+        float u0 = get_float_rng(seed_buffer[eye_path.sample_index]);
+        float u1 = get_float_rng(seed_buffer[eye_path.sample_index]);
+        float u2 = get_float_rng(seed_buffer[eye_path.sample_index]);
+
+        helper::generic_material_sample_f(hit_point_mat, wo, wi, N, shade_N, u0, u1, u2, material_pdf, f, specular_material);
+        f *= surface_color;
+      }
+
+      if ((material_pdf <= 0.f) || f.Black()) {
+        // add a hit point
+        HitPointStaticInfo& hp = hit_points[eye_path.sample_index];
+        hp.type = CONSTANT_COLOR;
+        hp.scr_x = eye_path.scr_x;
+        hp.scr_y = eye_path.scr_y;
+        hp.throughput = Spectrum();
+      } else if (specular_material || (!hit_points_mat.diffuse)) {
+        eye_path.throughput *= f / material_pdf;
+        eye_path.ray = Ray(hit_point, wi);
+      } else {
+        // add a hit point
+        HitPointStaticInfo& hp = hit_points[eye_path.sample_index];
+        hp.type = SURFACE;
+        hp.scr_x = eye_path.scr_x;
+        hp.scr_y = eye_path.scr_y;
+        hp.material_SS = material_index;
+        hp.throughput = eye_path.throughput * surface_color;
+        hp.position = hit_point;
+        hp.wo = - eye_path.ray.d;
+        hp.normal = shade_N;
+        eye_path.done = true;
       }
     }
   }
