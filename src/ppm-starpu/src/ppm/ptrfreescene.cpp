@@ -177,7 +177,7 @@ void PtrFreeScene :: compile_geometry() {
 
 void PtrFreeScene :: compile_materials() {
   // reset all materials to false
-  compiled_materials.resize(ppm::MAT_MAX);
+  compiled_materials.resize(ppm::MAT_NULL);
   for(uint i = 0; i < compiled_materials.size(); ++i)
     compiled_materials[i] = false;
 

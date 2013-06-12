@@ -20,6 +20,7 @@ void advance_eye_paths_impl(
     RayHit*   const hits,                 const unsigned hits_count,
     EyePath*  const eye_paths,            const unsigned eye_paths_count,
     unsigned* const eye_paths_indexes,    const unsigned eye_paths_indexes_count,
+    Seed*     const seed_buffer,          //const unsigned seed_buffer_count,
     const PtrFreeScene* const scene) {
 
 
@@ -67,7 +68,7 @@ void advance_eye_paths_impl(
       const unsigned current_triangle_index = hit.index;
       const unsigned current_mesh_index = scene->mesh_ids[current_triangle_index];
       const unsigned material_index = scene->mesh_mats[current_mesh_index];
-      Material& hit_point_mat = scene->materials[material_index];
+      const Material& hit_point_mat = scene->materials[material_index];
       unsigned mat_type = hit_point_mat.type;
 
       if (mat_type == MAT_AREALIGHT) {
@@ -78,46 +79,47 @@ void advance_eye_paths_impl(
         hp.scr_y = eye_path.scr_y;
 
         Vector md = - eye_path.ray.d;
-        helpers::area_light_le(hit_point_mat.param.area_light, md, N, hp.throughput);
+        helpers::area_light_le(hp.throughput, md, N, hit_point_mat.param.area_light);
 
         eye_path.done = true;
       } else {
 
-        Vector& wo = - eye_path.ray.d;
+        Vector wo = - eye_path.ray.d;
         float material_pdf;
 
         Vector wi;
         bool specular_material = true;
-        float u0 = get_float_rng(seed_buffer[eye_path.sample_index]);
-        float u1 = get_float_rng(seed_buffer[eye_path.sample_index]);
-        float u2 = get_float_rng(seed_buffer[eye_path.sample_index]);
+        float u0 = floatRNG(seed_buffer[eye_path.sample_index]);
+        float u1 = floatRNG(seed_buffer[eye_path.sample_index]);
+        float u2 = floatRNG(seed_buffer[eye_path.sample_index]);
+        Spectrum f;
 
-        helper::generic_material_sample_f(hit_point_mat, wo, wi, N, shade_N, u0, u1, u2, material_pdf, f, specular_material);
+        helpers::generic_material_sample_f(hit_point_mat, wo, wi, N, shade_N, u0, u1, u2, material_pdf, f, specular_material);
         f *= surface_color;
-      }
 
-      if ((material_pdf <= 0.f) || f.Black()) {
-        // add a hit point
-        HitPointStaticInfo& hp = hit_points[eye_path.sample_index];
-        hp.type = CONSTANT_COLOR;
-        hp.scr_x = eye_path.scr_x;
-        hp.scr_y = eye_path.scr_y;
-        hp.throughput = Spectrum();
-      } else if (specular_material || (!hit_points_mat.diffuse)) {
-        eye_path.throughput *= f / material_pdf;
-        eye_path.ray = Ray(hit_point, wi);
-      } else {
-        // add a hit point
-        HitPointStaticInfo& hp = hit_points[eye_path.sample_index];
-        hp.type = SURFACE;
-        hp.scr_x = eye_path.scr_x;
-        hp.scr_y = eye_path.scr_y;
-        hp.material_SS = material_index;
-        hp.throughput = eye_path.throughput * surface_color;
-        hp.position = hit_point;
-        hp.wo = - eye_path.ray.d;
-        hp.normal = shade_N;
-        eye_path.done = true;
+        if ((material_pdf <= 0.f) || f.Black()) {
+          // add a hit point
+          HitPointStaticInfo& hp = hit_points[eye_path.sample_index];
+          hp.type = CONSTANT_COLOR;
+          hp.scr_x = eye_path.scr_x;
+          hp.scr_y = eye_path.scr_y;
+          hp.throughput = Spectrum();
+        } else if (specular_material || (!hit_point_mat.diffuse)) {
+          eye_path.flux *= f / material_pdf;
+          eye_path.ray = Ray(hit_point, wi);
+        } else {
+          // add a hit point
+          HitPointStaticInfo& hp = hit_points[eye_path.sample_index];
+          hp.type = SURFACE;
+          hp.scr_x = eye_path.scr_x;
+          hp.scr_y = eye_path.scr_y;
+          hp.material_ss   = material_index;
+          hp.throughput = eye_path.flux * surface_color;
+          hp.position = hit_point;
+          hp.wo = - eye_path.ray.d;
+          hp.normal = shade_N;
+          eye_path.done = true;
+        }
       }
     }
   }
@@ -144,12 +146,16 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
   // eye paths indexes
   unsigned* const eye_paths_indexes = reinterpret_cast<unsigned* const>(STARPU_VECTOR_GET_PTR(buffers[3]));
   const unsigned eye_paths_indexes_count = STARPU_VECTOR_GET_NX(buffers[3]);
+  // seed buffer
+  Seed* const seed_buffer = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[4]));
+  //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[4]);
 
 
   advance_eye_paths_impl(hit_points, // hit_points_count,
                          hits,              hits_count,
                          eye_paths,         eye_paths_count,
                          eye_paths_indexes, eye_paths_indexes_count,
+                         seed_buffer, //    seed_buffer_count,
                          scene);
 }
 

@@ -421,13 +421,13 @@ public:
   const Spectrum &GetKrefrct() const {
     return Krefrct;
   }
-  const float GetOutsideIOR() const {
+  float GetOutsideIOR() const {
     return ousideIor;
   }
-  const float GetIOR() const {
+  float GetIOR() const {
     return ior;
   }
-  const float GetR0() const {
+  float GetR0() const {
     return R0;
   }
   bool HasReflSpecularBounceEnabled() const {
@@ -692,16 +692,16 @@ public:
   const Spectrum &GetKrefrct() const {
     return Ktrans;
   }
-  const float GetTransFilter() const {
+  float GetTransFilter() const {
     return transFilter;
   }
-  const float GetTotFilter() const {
+  float GetTotFilter() const {
     return totFilter;
   }
-  const float GetReflPdf() const {
+  float GetReflPdf() const {
     return reflPdf;
   }
-  const float GetTransPdf() const {
+  float GetTransPdf() const {
     return transPdf;
   }
   bool HasReflSpecularBounceEnabled() const {

@@ -76,11 +76,12 @@ namespace ppm { namespace kernels {
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_eye_paths;
       cl->cpu_funcs[1]    = NULL;
-      cl->nbuffers        = 4;
+      cl->nbuffers        = 5;
       cl->modes[0]        = STARPU_RW;
       cl->modes[1]        = STARPU_R;
       cl->modes[2]        = STARPU_RW;
       cl->modes[3]        = STARPU_R;
+      cl->modes[4]        = STARPU_RW;
       cl->model           = pm;
     }
   }

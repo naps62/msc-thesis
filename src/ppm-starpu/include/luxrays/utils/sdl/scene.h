@@ -149,7 +149,7 @@ public:
       break;
     default:
       throw std::runtime_error("Unknown accelerator.type");
-      break;
+      //break;
     }
 
     // Add all objects

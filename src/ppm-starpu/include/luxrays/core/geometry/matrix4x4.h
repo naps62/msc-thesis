@@ -30,6 +30,7 @@ namespace luxrays {
 class Matrix4x4 {
 public:
   // Matrix4x4 Public Methods
+  __HD__
   Matrix4x4() {
     for (int i = 0; i < 4; ++i)
       for (int j = 0; j < 4; ++j)
@@ -38,7 +39,9 @@ public:
         else
           m[i][j] = 0.f;
   }
+  __HD__
   Matrix4x4(float mat[4][4]);
+  __HD__
   Matrix4x4(float t00, float t01, float t02, float t03,
       float t10, float t11, float t12, float t13,
       float t20, float t21, float t22, float t23,

@@ -20,6 +20,7 @@ void advance_eye_paths (
   RayBuffer&                  ray_hit_buffer,
   vector<EyePath>&            eye_paths,
   vector<unsigned>&           eye_paths_indexes,
+  vector<Seed>&               seed_buffer,
   //const Config* config,
   PtrFreeScene* scene
 );

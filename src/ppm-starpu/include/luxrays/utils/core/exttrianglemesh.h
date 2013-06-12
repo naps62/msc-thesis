@@ -128,9 +128,12 @@ public:
     return uvs != NULL;
   }
 
+  __HD__
   Point GetVertex(const unsigned int vertIndex) const {
     return vertices[vertIndex];
   }
+
+  __HD__
   float GetTriangleArea(const unsigned int triIndex) const {
     return tris[triIndex].Area(vertices);
   }
@@ -196,9 +199,12 @@ public:
     tri.Sample(vertices, u0, u1, p, b0, b1, b2);
   }
 
+  __HD__
   Point *GetVertices() const {
     return vertices;
   }
+
+  __HD__
   Triangle *GetTriangles() const {
     return tris;
   }
@@ -237,9 +243,12 @@ public:
     return TYPE_EXT_TRIANGLE_INSTANCE;
   }
 
+  __HD__
   Point GetVertex(const unsigned index) const {
     return trans(mesh->GetVertex(index));
   }
+
+  __HD__
   float GetTriangleArea(const unsigned int triIndex) const {
     const Triangle &tri = mesh->GetTriangles()[triIndex];
 
@@ -320,9 +329,13 @@ public:
     trans = t;
     invTrans = t.GetInverse();
   }
+
+  __HD__
   Point *GetVertices() const {
     return mesh->GetVertices();
   }
+
+  __HD__
   Triangle *GetTriangles() const {
     return mesh->GetTriangles();
   }

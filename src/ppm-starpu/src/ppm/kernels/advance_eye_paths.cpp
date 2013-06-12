@@ -10,6 +10,7 @@ void advance_eye_paths(
     RayBuffer&                  ray_hit_buffer,
     vector<EyePath>&            eye_paths,
     vector<unsigned>&           eye_paths_indexes,
+    vector<Seed>&               seed_buffer,
     //const Config* config,
     PtrFreeScene* scene) {
 
@@ -28,6 +29,9 @@ void advance_eye_paths(
   // eye paths indexes
   starpu_data_handle_t handle_indexes;
   starpu_vector_data_register(&handle_indexes, 0, (uintptr_t)&eye_paths_indexes[0], eye_paths_indexes.size(), sizeof(unsigned));
+  // seed buffer
+  starpu_data_handle_t handle_seeds;
+  starpu_vector_data_register(&handle_seeds, 0, (uintptr_t)&seed_buffer[0], seed_buffer.size(), sizeof(Seed));
 
   // task definition
   struct starpu_task* task = starpu_task_create();
