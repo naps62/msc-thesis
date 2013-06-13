@@ -18,9 +18,11 @@ typedef enum {
   MAT_MATTEMETAL,
   MAT_ALLOY,
   MAT_ARCHGLASS,
-  MAT_NULL // MAT_MAX
+  MAT_NULL == MAT_MAX
 
 } CompiledMaterials_e;
+
+#define MAT_NULL MAT_MAX
 
 struct MatteParam {
   Color kd;

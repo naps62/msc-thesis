@@ -145,23 +145,26 @@ void PtrFreeScene :: compile_camera() {
 void PtrFreeScene :: compile_geometry() {
 
   // clear vectors
-  mesh_ids.resize(0);
-  vertexes.resize(0);
-  normals.resize(0);
-  colors.resize(0);
-  uvs.resize(0);
-  triangles.resize(0);
-  mesh_descs.resize(0);
-  mesh_first_triangle_offset.resize(0);
+  delete_array(mesh_ids);
+  delete_array(vertexes);
+  delete_array(normals);
+  delete_array(colors);
+  delete_array(uvs);
+  delete_array(triangles);
+  delete_array(mesh_descs);
+  delete_array(mesh_first_triangle_offset);
+
+  this->mesh_count = data_set->meshes.size();
 
   // copy mesh_id_table
   // TODO check if this is valid
-  mesh_ids.resize(data_set->meshes.size());
-  for(uint i = 0; i < mesh_ids.size(); ++i)
-    mesh_ids[i] = data_set->GetMeshIDTable()[i]; // TODO probably change this to a memcpy
+  //mesh_ids.resize(data_set->meshes.size());
+  this->mesh_ids = new uint[this->mesh_count];
+  for(unsigned i = 0; i < mesh_count; ++i)
+    this->mesh_ids[i] = data_set->GetMeshIDTable()[i]; // TODO probably change this to a memcpy
 
   // get scene bsphere
-  bsphere = data_set->GetPPMBSphere();
+  this->bsphere = data_set->GetPPMBSphere();
 
   // check used accelerator type
   if (config.accel_type == ppm::ACCEL_QBVH) {
@@ -177,12 +180,15 @@ void PtrFreeScene :: compile_geometry() {
 
 void PtrFreeScene :: compile_materials() {
   // reset all materials to false
-  compiled_materials.resize(ppm::MAT_NULL);
-  for(uint i = 0; i < compiled_materials.size(); ++i)
-    compiled_materials[i] = false;
+  //compiled_materials.resize(ppm::MAT_NULL);
+  this->compiled_materials_count = ppm::MAT_MAX:
+  reset_array(this->compiled_materials, this->compiled_materials_count);
+  for(uint i = 0; i < ppm::MAT_MAX; ++i)
+    this->compiled_materials[i] = false;
 
-  const uint materials_count = original_scene->materials.size();
-  materials.resize(materials_count);
+  this->materials_count = original_scene->materials.size();
+  //materials.resize(materials_count);
+  reset_array(this->materials, this->materials_count);
 
   for(uint i = 0; i < materials_count; ++i) {
     const luxrays::Material* orig_m = original_scene->materials[i];
@@ -244,7 +250,7 @@ void PtrFreeScene :: compile_materials() {
       break;
     }
     case luxrays::MATTEMIRROR: {
-      compiled_materials[ppm::MAT_MATTEMIRROR] = true;
+      compiled_materials[ppm::MAT_MATTEcuda stlMIRROR] = true;
       const luxrays::MatteMirrorMaterial *mmm = static_cast<const luxrays::MatteMirrorMaterial*>(orig_m);
 
       m->diffuse  = mmm->IsDiffuse();
@@ -283,7 +289,7 @@ void PtrFreeScene :: compile_materials() {
 
       m->diffuse  = mmm->IsDiffuse();
       m->specular = mmm->IsSpecular();
-      m->type = ppm::MAT_MATTEMETAL;
+      m->type = ppm::MAT_MATTEMcuda stlETAL;
       m->param.matte_metal.matte.kd.r  = mmm->GetMatte().GetKd().r;
       m->param.matte_metal.matte.kd.g  = mmm->GetMatte().GetKd().g;
       m->param.matte_metal.matte.kd.b  = mmm->GetMatte().GetKd().b;
@@ -347,8 +353,9 @@ void PtrFreeScene :: compile_materials() {
   }
 
   // translate mesh material indexes
-  const uint mesh_count = original_scene->objectMaterials.size();
-  mesh_mats.resize(mesh_count);
+  this->mesh_materials_count = original_scene->objectMaterials.size();
+  //mesh_mats.resize(mesh_coutlt);
+  reset_array(this->mesh_materials, this->mesh_mats_count);
   for(uint i = 0; i < mesh_count; ++i) {
     const luxrays::Material* m = original_scene->objectMaterials[i];
 
@@ -360,21 +367,22 @@ void PtrFreeScene :: compile_materials() {
         break;
       }
     }
-    mesh_mats[i] = index;
+    this->mesh_materials[i] = index;
   }
 
 }
 
 void PtrFreeScene :: compile_area_lights() {
-  uint area_light_count = 0;
+  this->area_lights_count = 0;
   for(uint i = 0; i < original_scene->lights.size(); ++i) {
     if (original_scene->lights[i]->IsAreaLight())
-      ++area_light_count;
+      ++this->area_light_count;
   }
 
-  area_lights.resize(area_light_count);
+  area_lights.resize(area_lights_count);
+  reset_array(this->area_lights, this->area_lights_count);
   uint index = 0;
-  if (area_light_count) {
+  if (this->area_lights_count) {
     for(uint i = 0; i < original_scene->lights.size(); ++i) {
       if (original_scene->lights[i]->IsAreaLight()) {
         const luxrays::TriangleLight* tl = static_cast<const luxrays::TriangleLight*>(original_scene->lights[i]);
@@ -493,58 +501,72 @@ void PtrFreeScene :: compile_sky_light() {
 }
 
 void PtrFreeScene :: compile_texture_maps() {
-  tex_maps.resize(0);
-  rgb_tex.resize(0);
-  alpha_tex.resize(0);
-  mesh_texs.resize(0);
-  bump_map.resize(0);
-  bump_map_scales.resize(0);
-  normal_map.resize(0);
+  delete_array(tex_maps);
+  delete_array(rgb_tex);
+  delete_array(alpha_tex);
+  delete_array(mesh_tex);
+  delete_array(bump_map);
+  delete_array(bump_map_scales);
+  delete_array(normal_map);
+  this->tex_maps_count = 0;
+  //tex_maps.resize(0);
+  //rgb_tex.resize(0);
+  //alpha_tex.resize(0);
+  //mesh_texs.resize(0);
+  //bump_map.resize(0);
+  //bump_map_scales.resize(0);
+  //normal_map.resize(0);
 
   // translate mesh texture maps
   std::vector<luxrays::TextureMap*> tms;
   original_scene->texMapCache->GetTexMaps(tms);
   // compute amount of RAM to allocate
-  uint rgb_tex_size = 0;
-  uint alpha_tex_size = 0;
+  //uint rgb_tex_size = 0;
+  //uint alpha_tex_size = 0;
+  this->rgb_tex_count = 0;
+  this->alpha_tex_count = 0
   for(uint i = 0; i < tms.size(); ++i) {
     luxrays::TextureMap* tm = tms[i];
     const uint pixel_count = tm->GetWidth() * tm->GetHeight();
-    rgb_tex_size += pixel_count;
+    this->rgb_tex_count += pixel_count;
     if (tm->HasAlpha())
-      alpha_tex_size += pixel_count;
+      this->alpha_tex_count += pixel_count;
   }
 
   // allocate texture map
-  if ((rgb_tex_size > 0) || (alpha_tex_size) > 0) {
-    tex_maps.resize(tms.size());
+  if ((this->rgb_tex_count > 0) || (this->alpha_tex_count) > 0) {
+    this->tex_maps_count = tms.size();
+    reset_array(this->tex_maps, this->tex_maps_count);
+    //tex_maps.resize(tms.size());
 
-    if (rgb_tex_size > 0) {
+    if (this->rgb_tex_count > 0) {
       uint rgb_offset = 0;
-      rgb_tex.resize(rgb_tex_size);
+      //rgb_tex.resize(rgb_tex_size);
+      reset_array(this->rgb_tex, this->rgb_tex_count);
       for(uint i = 0; i < tms.size(); ++i) {
         luxrays::TextureMap* tm = tms[i];
         const uint pixel_count = tm->GetWidth() * tm->GetHeight();
         // TODO memcpy safe?
         memcpy(&rgb_tex[rgb_offset], tm->GetPixels(), pixel_count * sizeof(Spectrum));
-        tex_maps[i].rgb_offset = rgb_offset;
+        this->tex_maps[i].rgb_offset = rgb_offset;
         rgb_offset += pixel_count;
       }
     }
 
-    if (alpha_tex_size > 0) {
+    if (this->alpha_tex_count > 0) {
       uint alpha_offset = 0;
-      alpha_tex.resize(alpha_tex_size);
+      //alpha_tex.resize(alpha_tex_size);
+      reset_array(this->alpha_tex, this->alpha_tex_count)
       for(uint i = 0; i < tms.size(); ++i) {
         luxrays::TextureMap* tm = tms[i];
         const uint pixel_count = tm->GetWidth() * tm->GetHeight();
 
         if (tm->HasAlpha()) {
           memcpy(&alpha_tex[alpha_offset], tm->GetAlphas(), pixel_count * sizeof(float));
-          tex_maps[i].alpha_offset = alpha_offset;
+          this->tex_maps[i].alpha_offset = alpha_offset;
           alpha_offset += pixel_count;
         } else {
-          tex_maps[i].alpha_offset = PPM_NONE;
+          this->tex_maps[i].alpha_offset = PPM_NONE;
         }
       }
     }
@@ -552,8 +574,8 @@ void PtrFreeScene :: compile_texture_maps() {
     // translate texture map description
     for(uint i = 0; i < tms.size(); ++i) {
       luxrays::TextureMap* tm = tms[i];
-      tex_maps[i].width = tm->GetWidth();
-      tex_maps[i].height = tm->GetHeight();
+      this->tex_maps[i].width = tm->GetWidth();
+      this->tex_maps[i].height = tm->GetHeight();
     }
 
     // translate mesh texture indexes
