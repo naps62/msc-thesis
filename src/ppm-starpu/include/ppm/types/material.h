@@ -18,7 +18,7 @@ typedef enum {
   MAT_MATTEMETAL,
   MAT_ALLOY,
   MAT_ARCHGLASS,
-  MAT_NULL == MAT_MAX
+  MAT_MAX
 
 } CompiledMaterials_e;
 

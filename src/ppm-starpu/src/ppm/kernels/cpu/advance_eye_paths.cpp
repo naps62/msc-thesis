@@ -67,7 +67,7 @@ void advance_eye_paths_impl(
       // get the material
       const unsigned current_triangle_index = hit.index;
       const unsigned current_mesh_index = scene->mesh_ids[current_triangle_index];
-      const unsigned material_index = scene->mesh_mats[current_mesh_index];
+      const unsigned material_index = scene->mesh_materials[current_mesh_index];
       const Material& hit_point_mat = scene->materials[material_index];
       unsigned mat_type = hit_point_mat.type;
 

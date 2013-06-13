@@ -5,6 +5,10 @@
 
 namespace ppm {
 
+  template<class T> void delete_array(T*& arr);
+  template<class T> void reset_array(T*& arr, unsigned new_size);
+
+
 //
 // constructors
 //
@@ -181,7 +185,7 @@ void PtrFreeScene :: compile_geometry() {
 void PtrFreeScene :: compile_materials() {
   // reset all materials to false
   //compiled_materials.resize(ppm::MAT_NULL);
-  this->compiled_materials_count = ppm::MAT_MAX:
+  this->compiled_materials_count = ppm::MAT_MAX;
   reset_array(this->compiled_materials, this->compiled_materials_count);
   for(uint i = 0; i < ppm::MAT_MAX; ++i)
     this->compiled_materials[i] = false;
@@ -250,7 +254,7 @@ void PtrFreeScene :: compile_materials() {
       break;
     }
     case luxrays::MATTEMIRROR: {
-      compiled_materials[ppm::MAT_MATTEcuda stlMIRROR] = true;
+      compiled_materials[ppm::MAT_MATTEMIRROR] = true;
       const luxrays::MatteMirrorMaterial *mmm = static_cast<const luxrays::MatteMirrorMaterial*>(orig_m);
 
       m->diffuse  = mmm->IsDiffuse();
@@ -289,7 +293,7 @@ void PtrFreeScene :: compile_materials() {
 
       m->diffuse  = mmm->IsDiffuse();
       m->specular = mmm->IsSpecular();
-      m->type = ppm::MAT_MATTEMcuda stlETAL;
+      m->type = ppm::MAT_MATTEMETAL;
       m->param.matte_metal.matte.kd.r  = mmm->GetMatte().GetKd().r;
       m->param.matte_metal.matte.kd.g  = mmm->GetMatte().GetKd().g;
       m->param.matte_metal.matte.kd.b  = mmm->GetMatte().GetKd().b;
@@ -355,7 +359,7 @@ void PtrFreeScene :: compile_materials() {
   // translate mesh material indexes
   this->mesh_materials_count = original_scene->objectMaterials.size();
   //mesh_mats.resize(mesh_coutlt);
-  reset_array(this->mesh_materials, this->mesh_mats_count);
+  reset_array(this->mesh_materials, this->mesh_materials_count);
   for(uint i = 0; i < mesh_count; ++i) {
     const luxrays::Material* m = original_scene->objectMaterials[i];
 
@@ -376,10 +380,10 @@ void PtrFreeScene :: compile_area_lights() {
   this->area_lights_count = 0;
   for(uint i = 0; i < original_scene->lights.size(); ++i) {
     if (original_scene->lights[i]->IsAreaLight())
-      ++this->area_light_count;
+      ++this->area_lights_count;
   }
 
-  area_lights.resize(area_lights_count);
+  //area_lights.resize(area_lights_count);
   reset_array(this->area_lights, this->area_lights_count);
   uint index = 0;
   if (this->area_lights_count) {
@@ -504,7 +508,7 @@ void PtrFreeScene :: compile_texture_maps() {
   delete_array(tex_maps);
   delete_array(rgb_tex);
   delete_array(alpha_tex);
-  delete_array(mesh_tex);
+  delete_array(mesh_texs);
   delete_array(bump_map);
   delete_array(bump_map_scales);
   delete_array(normal_map);
@@ -524,7 +528,7 @@ void PtrFreeScene :: compile_texture_maps() {
   //uint rgb_tex_size = 0;
   //uint alpha_tex_size = 0;
   this->rgb_tex_count = 0;
-  this->alpha_tex_count = 0
+  this->alpha_tex_count = 0;
   for(uint i = 0; i < tms.size(); ++i) {
     luxrays::TextureMap* tm = tms[i];
     const uint pixel_count = tm->GetWidth() * tm->GetHeight();
@@ -556,7 +560,7 @@ void PtrFreeScene :: compile_texture_maps() {
     if (this->alpha_tex_count > 0) {
       uint alpha_offset = 0;
       //alpha_tex.resize(alpha_tex_size);
-      reset_array(this->alpha_tex, this->alpha_tex_count)
+      reset_array(this->alpha_tex, this->alpha_tex_count);
       for(uint i = 0; i < tms.size(); ++i) {
         luxrays::TextureMap* tm = tms[i];
         const uint pixel_count = tm->GetWidth() * tm->GetHeight();
@@ -579,9 +583,10 @@ void PtrFreeScene :: compile_texture_maps() {
     }
 
     // translate mesh texture indexes
-    const uint mesh_count = mesh_mats.size();
-    mesh_texs.resize(mesh_count);
-    for(uint i = 0; i < mesh_count; ++i) {
+    //const uint mesh_count = mesh_mats.size();
+    //mesh_texs.resize(mesh_count);
+    reset_array(this->mesh_texs, this->mesh_materials_count);
+    for(uint i = 0; i < this->mesh_materials_count; ++i) {
       luxrays::TexMapInstance* t = original_scene->objectTexMaps[i];
 
       if (t) { // look for the index
@@ -592,16 +597,17 @@ void PtrFreeScene :: compile_texture_maps() {
             break;
           }
         }
-        mesh_texs[i] = index;
+        this->mesh_texs[i] = index;
       } else {
-        mesh_texs[i] = PPM_NONE;
+        this->mesh_texs[i] = PPM_NONE;
       }
     }
 
     // translate mesh bump map indexes
     bool has_bump_mapping = false;
-    bump_map.resize(mesh_count);
-    for(uint i = 0; i < mesh_count; ++i) {
+    //bump_map.resize(mesh_count);
+    reset_array(this->bump_map, this->mesh_materials_count);
+    for(uint i = 0; i < this->mesh_materials_count; ++i) {
       luxrays::BumpMapInstance* bm = original_scene->objectBumpMaps[i];
 
       if (bm) { // look for the index
@@ -612,28 +618,30 @@ void PtrFreeScene :: compile_texture_maps() {
             break;
           }
         }
-        bump_map[i] = index;
+        this->bump_map[i] = index;
         has_bump_mapping = true;
       } else {
-        bump_map[i] = PPM_NONE;
+        this->bump_map[i] = PPM_NONE;
       }
     }
 
     if (has_bump_mapping) {
-      bump_map_scales.resize(mesh_count);
+      //bump_map_scales.resize(mesh_count);
+      reset_array(this->bump_map_scales, this->mesh_materials_count);
       for(uint i = 0; i < mesh_count; ++i) {
         luxrays::BumpMapInstance* bm = original_scene->objectBumpMaps[i];
 
         if (bm)
-          bump_map_scales[i] = bm->GetScale();
+          this->bump_map_scales[i] = bm->GetScale();
         else
-          bump_map_scales[i] = 1.f;
+          this->bump_map_scales[i] = 1.f;
       }
     }
 
     // translate mesh normal map indices
     //unused? bool has_normal_mapping = false;
-    normal_map.resize(mesh_count);
+    //normal_map.resize(mesh_count);
+    reset_array(this->normal_map, this->mesh_materials_count);
     for(uint i = 0; i < mesh_count; ++i) {
       luxrays::NormalMapInstance* nm = original_scene->objectNormalMaps[i];
 
@@ -645,10 +653,10 @@ void PtrFreeScene :: compile_texture_maps() {
             break;
           }
         }
-        normal_map[i] = index;
+        this->normal_map[i] = index;
         //has_normal_mapping = true;
       } else {
-        normal_map[i] = PPM_NONE;
+        this->normal_map[i] = PPM_NONE;
       }
     }
   }
@@ -658,8 +666,9 @@ void PtrFreeScene :: compile_texture_maps() {
  * auxiliary compilation methods
  */
 void PtrFreeScene :: compile_mesh_first_triangle_offset(const lux_ext_mesh_list_t& meshs) {
-  mesh_first_triangle_offset.resize(meshs.size());
-  for(uint i = 0, current = 0; i < meshs.size(); ++i) {
+  //mesh_first_triangle_offset.resize(meshs.size());
+  reset_array(this->mesh_first_triangle_offset, this->mesh_count);
+  for(uint i = 0, current = 0; i < this->mesh_count; ++i) {
     const luxrays::ExtMesh* mesh = meshs[i];
     mesh_first_triangle_offset[i] = current;
     current += mesh->GetTotalTriangleCount();
@@ -671,6 +680,13 @@ void PtrFreeScene :: translate_geometry_qbvh(const lux_ext_mesh_list_t& meshs) {
 
   Mesh new_mesh;
   Mesh current_mesh;
+
+  std::vector<Point>    tmp_vertexes;
+  std::vector<Normal>   tmp_normals;
+  std::vector<Spectrum> tmp_colors;
+  std::vector<UV>       tmp_uvs;
+  std::vector<Triangle> tmp_triangles;
+  std::vector<Mesh>     tmp_mesh_descs;
 
   for(lux_ext_mesh_list_t::const_iterator it = meshs.begin(); it != meshs.end(); ++it) {
     const luxrays::ExtMesh* mesh = *it;
@@ -687,11 +703,11 @@ void PtrFreeScene :: translate_geometry_qbvh(const lux_ext_mesh_list_t& meshs) {
         new_mesh.verts_offset += imesh->GetTotalVertexCount();
         new_mesh.tris_offset  += imesh->GetTotalTriangleCount();
         is_existing_instance = false;
-        const uint index = mesh_descs.size();
+        const uint index = tmp_mesh_descs.size();
         defined_meshs[imesh->GetExtTriangleMesh()] = index;
       } else {
         // it is not a new one
-        current_mesh = mesh_descs[it->second];
+        current_mesh = tmp_mesh_descs[it->second];
         is_existing_instance = true;
       }
 
@@ -714,7 +730,7 @@ void PtrFreeScene :: translate_geometry_qbvh(const lux_ext_mesh_list_t& meshs) {
       is_existing_instance = false;
     }
 
-    mesh_descs.push_back(current_mesh);
+    tmp_mesh_descs.push_back(current_mesh);
 
     if (!is_existing_instance) {
 
@@ -722,57 +738,90 @@ void PtrFreeScene :: translate_geometry_qbvh(const lux_ext_mesh_list_t& meshs) {
 
       // translate mesh normals and colors
 
-      uint offset = normals.size();
-      normals.resize(offset + mesh->GetTotalVertexCount());
+      uint offset = tmp_normals.size();
+      tmp_normals.resize(offset + mesh->GetTotalVertexCount());
       for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
-        normals[offset + j] = Normal(mesh->GetNormal(j));
+        tmp_normals[offset + j] = Normal(mesh->GetNormal(j));
 
       if (mesh->HasColors()) {
-        offset = colors.size();
-        colors.resize(offset + mesh->GetTotalVertexCount());
+        offset = tmp_colors.size();
+        tmp_colors.resize(offset + mesh->GetTotalVertexCount());
         for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
-          colors[offset + j] = Spectrum(mesh->GetColor(j));
+          tmp_colors[offset + j] = Spectrum(mesh->GetColor(j));
       }
 
       // translate vertex uvs
 
       if (original_scene->texMapCache->GetSize()) {
         // TODO: should check if the only texture map is used for infintelight
-        offset = uvs.size();
-        uvs.resize(offset + mesh->GetTotalVertexCount());
+        offset = tmp_uvs.size();
+        tmp_uvs.resize(offset + mesh->GetTotalVertexCount());
         if (mesh->HasUVs())
           for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
-            uvs[offset + j] = UV(0.f, 0.f);
+            tmp_uvs[offset + j] = UV(0.f, 0.f);
         else
           for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
-            uvs[offset + j] = UV(mesh->GetUV(j));
+            tmp_uvs[offset + j] = UV(mesh->GetUV(j));
       }
 
-      // translate mesh vertices
-      offset = vertexes.size();
-      vertexes.resize(offset + mesh->GetTotalVertexCount());
+      // translate meshrverticener size, the content is expanded by inserting at the end as many elements as needed to reach a size of n. If val is specified, the new elements are initialized as copies of val, otherwise, they are value-initialized.s
+      offset = tmp_vertexes.size();
+      tmp_vertexes.resize(offset + mesh->GetTotalVertexCount());
       for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
-        vertexes[offset + j] = Point(mesh->GetVertex(j));
+        tmp_vertexes[offset + j] = Point(mesh->GetVertex(j));
 
       // translate mesh indices
-      offset = triangles.size();
+      offset = tmp_triangles.size();
       const luxrays::Triangle *mtris = mesh->GetTriangles();
-      triangles.resize(offset + mesh->GetTotalTriangleCount());
+      tmp_triangles.resize(offset + mesh->GetTotalTriangleCount());
       for(uint j = 0; j < mesh->GetTotalTriangleCount(); ++j)
-        triangles[offset + j] = Triangle(mtris[j]);
+        tmp_triangles[offset + j] = Triangle(mtris[j]);
     }
   }
+
+  this->vertex_count     = tmp_vertexes.size();
+  this->normals_count     = tmp_normals.size();
+  this->colors_count     = tmp_colors.size();
+  this->uvs_count        = tmp_uvs.size();
+  this->triangles_count  = tmp_triangles.size();
+  this->mesh_descs_count = tmp_mesh_descs.size();
+
+  reset_array(this->vertexes,   this->vertex_count);
+  reset_array(this->normals,    this->normals_count);
+  reset_array(this->colors,     this->colors_count);
+  reset_array(this->uvs,        this->uvs_count);
+  reset_array(this->triangles,  this->triangles_count);
+  reset_array(this->mesh_descs, this->mesh_descs_count);
+
+  memcpy(vertexes,   &tmp_vertexes[0],   sizeof(Point)    * this->vertex_count);
+  memcpy(normals,    &tmp_normals[0],    sizeof(Normal)   * this->normals_count);
+  memcpy(colors,     &tmp_colors[0],     sizeof(Spectrum) * this->colors_count);
+  memcpy(uvs,        &tmp_uvs[0],        sizeof(UV)       * this->uvs_count);
+  memcpy(triangles,  &tmp_triangles[0],  sizeof(Triangle) * this->triangles_count);
+  memcpy(mesh_descs, &tmp_mesh_descs[0], sizeof(Mesh)     * this->mesh_descs_count);
 }
 
 void PtrFreeScene :: translate_geometry() {
-  mesh_first_triangle_offset.resize(0);
+  //mesh_first_triangle_offset.resize(0);
+  delete_array(mesh_first_triangle_offset);
   const uint n_vertices  = data_set->GetTotalVertexCount();
   const uint n_triangles = data_set->GetTotalTriangleCount();
 
   // translate mesh normals, colors and uvs
-  normals.resize(n_vertices);
-  colors.resize(n_vertices);
-  uvs.resize(n_vertices);
+  this->vertex_count = n_vertices;
+  this->normals_count = n_vertices;
+  this->colors_count = n_vertices;
+  this->uvs_count = n_vertices;
+  this->triangles_count = n_triangles;
+
+  reset_array(this->vertexes, this->vertex_count);
+  reset_array(this->normals, this->normals_count);
+  reset_array(this->colors, this->colors_count);
+  reset_array(this->uvs, this->uvs_count);
+  reset_array(this->triangles, this->triangles_count);
+  //normals.resize(n_vertices);
+  //colors.resize(n_vertices);
+  //uvs.resize(n_vertices);
   uint index = 0;
 
   // aux data to later translate triangles
@@ -794,7 +843,7 @@ void PtrFreeScene :: translate_geometry() {
   }
 
   // translate mesh triangles
-  triangles.resize(n_triangles);
+  //triangles.resize(n_triangles);
   index = 0;
   for(uint i = 0; i < original_scene->objects.size(); ++i) {
     const luxrays::ExtMesh* mesh   = original_scene->objects[i];
@@ -817,43 +866,43 @@ bool PtrFreeScene :: mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1) {
 
 ostream& operator<< (ostream& os, PtrFreeScene& scene) {
   // TODO Vertexes checked
-  os << "Vertexes (" << scene.vertexes.size() << "):\n\t";
-  for(uint i(0); i < scene.vertexes.size(); ++i)
+  os << "Vertexes (" << scene.vertex_count << "):\n\t";
+  for(uint i(0); i < scene.vertex_count; ++i)
     os << scene.vertexes[i] << "\n\t";
 
   // TODO Normals checked
-  os <<  "\n\nNormals (" << scene.normals.size() << "):\n\t";
-  for(uint i(0); i < scene.normals.size(); ++i)
+  os <<  "\n\nNormals (" << scene.normals_count << "):\n\t";
+  for(uint i(0); i < scene.normals_count; ++i)
     os << scene.normals[i] << '\n';
 
   // TODO Colors checked
-  os <<  "\n\nColors (" << scene.colors.size() << "):\n\t";
-  for(uint i(0); i < scene.colors.size(); ++i)
+  os <<  "\n\nColors (" << scene.colors_count << "):\n\t";
+  for(uint i(0); i < scene.colors_count; ++i)
     os << scene.colors[i] << "\n\t";
 
   // TODO UVs checked
   os << "\n\nUVs:\n\t";
-  for(uint i(0); i < scene.uvs.size(); ++i)
+  for(uint i(0); i < scene.uvs_count; ++i)
     os << scene.uvs[i] << "\n\t";
 
   // TODO Triangles checked
-  os << "\n\nTriangles (" << scene.triangles.size() << "):\n\t";
-  for(uint i(0); i < scene.triangles.size(); ++i)
+  os << "\n\nTriangles (" << scene.triangles_count << "):\n\t";
+  for(uint i(0); i < scene.triangles_count; ++i)
     os << scene.triangles[i] << "\n\t";
 
   // TODO MeshDescs checked
   os << "\n\nMeshDescs:\n\t";
-  for(uint i(0); i < scene.mesh_descs.size(); ++i)
+  for(uint i(0); i < scene.mesh_descs_count; ++i)
     os << scene.mesh_descs[i] << "\n\t";
 
   // TODO No MeshIDs to check
-  os << "\n\nMeshIDs (" << scene.mesh_ids.size() << "):\n\t";
-  for(uint i(0); i < scene.mesh_ids.size(); ++i)
+  os << "\n\nMeshIDs (" << scene.mesh_count << "):\n\t";
+  for(uint i(0); i < scene.mesh_count; ++i)
     os << scene.mesh_ids[i] << "\n\t";
 
   // TODO MeshFirstTriangleOffset checked
   os << "\n\nMeshFirstTriangleOffset:\n\t";
-  for(uint i(0); i < scene.mesh_first_triangle_offset.size(); ++i)
+  for(uint i(0); i < scene.mesh_count; ++i)
     os << scene.mesh_first_triangle_offset[i] << "\n\t";
 
 
@@ -866,22 +915,22 @@ ostream& operator<< (ostream& os, PtrFreeScene& scene) {
 
   // TODO Compiled Materials checked
   os << "\n\nCompiledMaterials:\n\t";
-  for(uint i(0); i < scene.compiled_materials.size(); ++i)
+  for(uint i(0); i < scene.compiled_materials_count; ++i)
     os << scene.compiled_materials[i] << "\n\t";
 
   // TODO Materials checked
   os << "\n\nMaterials:\n\t";
-  for(uint i(0); i < scene.materials.size(); ++i)
+  for(uint i(0); i < scene.materials_count; ++i)
     os << scene.materials[i] << "\n\t";
 
   // TODO MeshMaterials checked
   os << "\n\nMeshMaterials:\n\t";
-  for(uint i(0); i < scene.mesh_mats.size(); ++i)
-    os << scene.mesh_mats[i] << "\n\t";
+  for(uint i(0); i < scene.mesh_materials_count; ++i)
+    os << scene.mesh_materials[i] << "\n\t";
 
   // TODO AreaLights checked
   os << "\n\nAreaLights:\n\t";
-  for(uint i(0); i < scene.area_lights.size(); ++i)
+  for(uint i(0); i < scene.area_lights_count; ++i)
     os << scene.area_lights[i] << "\n\t";
 
   // TODO cant check this because there are no values in current mesh
@@ -891,40 +940,55 @@ ostream& operator<< (ostream& os, PtrFreeScene& scene) {
 
   // TODO No TexMaps to check
   os << "\n\nTexMaps:\n\t";
-  for(uint i(0); i < scene.tex_maps.size(); ++i)
+  for(uint i(0); i < scene.tex_maps_count; ++i)
     os << scene.tex_maps[i] << "\n\t";
 
   // TODO No RGBTex to check
   os << "\n\nRGBTex:\n\t";
-  for(uint i(0); i < scene.rgb_tex.size(); ++i)
+  for(uint i(0); i < scene.rgb_tex_count; ++i)
     os << scene.rgb_tex[i] << "\n\t";
 
   // TODO No AlphaTex to check
   os << "\n\nAlphaTex:\n\t";
-  for(uint i(0); i < scene.alpha_tex.size(); ++i)
+  for(uint i(0); i < scene.alpha_tex_count; ++i)
     os << scene.alpha_tex[i] << "\n\t";
 
   // TODO Can't check. No MeshTexs to check
 //  os << "\n\nMeshTexs:\n\t";
-//  for(uint i(0); i < scene.mesh_texs.size(); ++i)
+//  for(uint i(0); i < scene.mesh_texs_count; ++i)
 //    os << scene.mesh_texs[i] << "\n\t";
 
   // TODO Can't check. No BumpMap to check
 //  os << "\n\nBumpMap:\n\t";
-//  for(uint i(0); i < scene.bump_map.size(); ++i)
+//  for(uint i(0); i < scene.bump_map_count; ++i)
 //    os << scene.bump_map[i] << "\n\t";
 
   // TODO Can't check. No BumpMapScales to check
 //  os << "\n\nBumpMapScales:\n\t";
-//  for(uint i(0); i < scene.bump_map_scales.size(); ++i)
+//  for(uint i(0); i < scene.bump_map_scales_count; ++i)
 //    os << scene.bump_map_scales[i] << "\n\t";
 
   // TODO Can't check. No NormalMap to check
 //  os << "\n\nNormalMap:\n\t";
-//  for(uint i(0); i < scene.normal_map.size(); ++i)
+//  for(uint i(0); i < scene.normal_map_count; ++i)
 //    os << scene.normal_map[i] << "\n\t";
 
   return os;
 }
+
+template<class T>
+void delete_array(T*& arr) {
+  if (arr) {
+    delete[] arr;
+    arr = NULL;
+  }
+}
+
+template<class T>
+void reset_array(T*& arr, unsigned new_size) {
+  delete_array(arr);
+  arr = new T[new_size];
+}
+
 
 }
