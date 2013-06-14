@@ -22,7 +22,7 @@ CFLAGS  := -m$(ARCH) $(STARPU_CFLAGS) -O3 -Wall -Wno-unused-result
 NVFLAGS := -m$(ARCH) $(STARPU_CFLAGS) -O3
 LDFLAGS := -m$(ARCH) $(STARPU_LIBS)
 ARFLAGS :=
-LD_LIBS       := beast glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage
+LD_LIBS       := glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage beast
 INCLUDE_DIR   := include include/luxrays /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include $(FREEIMAGE_ROOT)/include $(STARPU_WRAPPER_ROOT)/include
 LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib $(BOOST_ROOT)/lib $(BEAST_ROOT)/lib $(FREEIMAGE_ROOT)/lib/linux $(FREEIMAGE_ROOT)/lib
 CUDA_LIBS_DIR := $(CUDA_INSTALL_PATH)/lib64 $(CUDA_INSTALL_PATH)/lib
@@ -52,17 +52,23 @@ vpath %.c $(SRC_DIR)
 
 CC   := gcc $(CFLAGS) $(OMP)
 CXX  := g++ $(CFLAGS) $(OMP)
+CC_DEP := $(CC)
+CXX_DEP := $(CXX)
 
 ifeq ($(CUDA_SUPPORT),yes)
 NVFLAGS := $(NVFLAGS) -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=sm_21 -gencode arch=compute_30,code=sm_30
 LDFLAGS := $(LDFLAGS) -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=sm_21 -gencode arch=compute_30,code=sm_30
 vpath %.cu $(SRC_DIR)
+CC_DEP := $(CC)
+CXX_DEP := $(CXX)
+CC   := nvcc        $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
+CXX  := nvcc        $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
 NVCC := nvcc -x cu  $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
 LD   := nvcc -link  $(LDFLAGS) -Xcompiler "$(OMP)"
 AR   := ar
 else
 NVCC := nvcc $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
-LD   := gcc  $(LDFLAGS) $(OMP)
+LD   := g++  $(LDFLAGS) $(OMP)
 endif
 
 define make-files
@@ -72,11 +78,11 @@ $1/%.d: %.cu
 
 $1/%.d: %.cpp
 	@echo " DEPS   $$@"
-	@$(CXX) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(CXX_DEP) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.d: %.c
 	@echo " DEPS   $$@"
-	@$(CC) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(CC_DEP) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.cu
 	@echo " NVCC   $$<"
@@ -84,11 +90,11 @@ $1/%.o: %.cu
 
 $1/%.o: %.cpp
 	@echo " CXX    $$<"
-	@$(CXX) -c $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
+	@$(CXX) -c $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.c
 	@echo " CC     $$<"
-	@$(CC) -c $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
+	@$(CC) -c $(DEFINES) $(INCLUDES) $$< -o $$@
 endef
 
 define include-dep-file
