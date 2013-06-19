@@ -1,6 +1,7 @@
 default: bin
 BINNAME := ppm-starpu
 UNAME   := $(shell uname)
+DEBUG   := 0
 
 SRC_DIR           := src
 CUDA_SUPPORT      := yes
@@ -18,9 +19,19 @@ BEAST_ROOT := $(HOME)/projects/beast
 FREEIMAGE_ROOT := /share/edu-mei/freeimage/3.15.4
 STARPU_WRAPPER_ROOT := $(HOME)/projects/msc-thesis/src/starpu_wrapper
 
-CFLAGS  := -m$(ARCH) $(STARPU_CFLAGS) -O3 -Wall -Wno-unused-result
-NVFLAGS := -m$(ARCH) $(STARPU_CFLAGS) -O3
+CFLAGS  := -m$(ARCH) $(STARPU_CFLAGS) -Wall -Wno-unused-result
+NVFLAGS := -m$(ARCH) $(STARPU_CFLAGS)
 LDFLAGS := -m$(ARCH) $(STARPU_LIBS)
+
+ifeq ($(DEBUG),1)
+CFLAGS  += -g
+NVFLAGS += -g
+LDFLAGS += -g
+else
+CFLAGS  += -O3
+NVFLAGS += -O3
+endif
+
 ARFLAGS :=
 LD_LIBS       := glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage beast
 INCLUDE_DIR   := include include/luxrays /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include $(FREEIMAGE_ROOT)/include $(STARPU_WRAPPER_ROOT)/include

@@ -50,6 +50,7 @@ void Engine :: render() {
   this->init_seed_buffer();
   cout << "Building hit points" << endl;
   this->build_hit_points();
+  cout << "hit points done" << endl;
 
   while(display->is_on()) {
     set_captions();
@@ -80,9 +81,12 @@ void Engine :: build_hit_points() {
   vector<EyePath> eye_paths(config.total_hit_points);
 
   // eye path generation
+  cout << "generating eye paths" << endl;
   kernels::generate_eye_paths(eye_paths, seeds, &config, scene);
 
+  cout << "eye paths to hit points" << endl;
   this->eye_paths_to_hit_points(eye_paths);
+  cout << "success!" << endl;
 }
 
 void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
@@ -97,7 +101,7 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
   while (todo_eye_paths) {
 
     const unsigned start = chunk_count * chunk_size;
-    const unsigned end   = (hit_points_count - start  < chunk_size) ? hit_points_count : start+ chunk_size;
+    const unsigned end   = (hit_points_count - start  < chunk_size) ? hit_points_count : start + chunk_size;
 
     // 1. fill the ray buffer
     for(unsigned i = start; i < end; ++i) {
@@ -129,7 +133,7 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
         todo_eye_paths--;
         chunk_done_count++;
         if (chunk_done_count == chunk_size) {
-          // move to next chunk
+          // move to next chunka
           chunk_count++;
           chunk_done_count = 0;
         }

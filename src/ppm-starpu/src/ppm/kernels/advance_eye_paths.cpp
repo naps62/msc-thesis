@@ -41,6 +41,7 @@ void advance_eye_paths(
   task->handles[1] = handle_hits;
   task->handles[2] = handle_eye_paths;
   task->handles[3] = handle_indexes;
+  task->handles[4] = handle_seeds;
   task->cl_arg      = &args;
   task->cl_arg_size = sizeof(args);
 

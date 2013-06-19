@@ -24,6 +24,7 @@ void advance_eye_paths_impl(
     const PtrFreeScene* const scene) {
 
 
+  std::cout << "here"  << starpu_combined_worker_get_size() << std::endl;
   #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned i = 0; i < hits_count; ++i) {
     EyePath& eye_path = eye_paths[eye_paths_indexes[i]];
@@ -128,6 +129,7 @@ void advance_eye_paths_impl(
 
 void advance_eye_paths(void* buffers[], void* args_orig) {
 
+  fflush(stdout);
   // cl_args
   const args_advance_eye_paths* args = (args_advance_eye_paths*) args_orig;
   //const Config*       config = static_cast<const Config*>(args->config);
@@ -149,6 +151,7 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
   // seed buffer
   Seed* const seed_buffer = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[4]));
   //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[4]);
+
 
 
   advance_eye_paths_impl(hit_points, // hit_points_count,
