@@ -39,6 +39,7 @@ protected:
   void build_hit_points();
 
   void eye_paths_to_hit_points(vector<EyePath>& eye_paths);
+  void update_bbox();
 };
 
 }

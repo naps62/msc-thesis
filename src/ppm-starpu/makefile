@@ -24,9 +24,9 @@ NVFLAGS := -m$(ARCH) $(STARPU_CFLAGS)
 LDFLAGS := -m$(ARCH) $(STARPU_LIBS)
 
 ifeq ($(DEBUG),1)
-CFLAGS  += -g
-NVFLAGS += -g
-LDFLAGS += -g
+CFLAGS  +=
+NVFLAGS +=
+LDFLAGS +=
 else
 CFLAGS  += -O3
 NVFLAGS += -O3

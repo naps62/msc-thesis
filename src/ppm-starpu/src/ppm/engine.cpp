@@ -52,7 +52,20 @@ void Engine :: render() {
   this->build_hit_points();
   cout << "hit points done" << endl;
 
-  while(display->is_on()) {
+  // init_radius
+
+  this->update_bbox();
+
+  // set lookup hitpoints
+
+  unsigned iteration = 0;
+  while(display->is_on() && iteration < config.max_iters) {
+    // advance photon path
+
+    // accumulate flux
+
+    // update frame buffer
+
     set_captions();
     display->request_update(config.min_frame_time);
   }
@@ -143,14 +156,18 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
     // 2. advance ray buffer
     if (ray_hit_buffer.GetRayCount() > 0) {
       kernels::intersect_ray_hit_buffer(ray_hit_buffer, /*&config,*/ scene);
-
-      // advance eye paths
       kernels::advance_eye_paths(hit_points, ray_hit_buffer, eye_paths, eye_paths_indexes, seeds, /*&config,*/ scene);
-
-      // reset ray buffer
       ray_hit_buffer.Reset();
     }
   }
+}
+
+void Engine :: update_bbox() {
+  BBox bbox;
+
+  //kernels::compute_hit_points_bbox(hit_points, bbox);
+
+
 }
 
 }
