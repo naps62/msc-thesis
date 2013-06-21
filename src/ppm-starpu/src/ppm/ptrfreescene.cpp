@@ -5,10 +5,6 @@
 
 namespace ppm {
 
-  template<class T> void delete_array(T*& arr);
-  template<class T> void reset_array(T*& arr, unsigned new_size);
-
-
 //
 // constructors
 //
@@ -976,19 +972,6 @@ ostream& operator<< (ostream& os, PtrFreeScene& scene) {
   return os;
 }
 
-template<class T>
-void delete_array(T*& arr) {
-  if (arr) {
-    delete[] arr;
-    arr = NULL;
-  }
-}
-
-template<class T>
-void reset_array(T*& arr, unsigned new_size) {
-  delete_array(arr);
-  arr = new T[new_size];
-}
 
 
 }
