@@ -16,7 +16,7 @@ namespace ppm {
 
 Engine :: Engine(const Config& _config)
 : config(_config), scene(new PtrFreeScene(config)), film(config),
-  seeds(config.total_hit_points), hit_points(config.total_hit_points) {
+  seeds(config.total_hit_points), hit_points_info(config.total_hit_points), hit_points(config.total_hit_points) {
 
   // load display if necessary
   if (config.use_display) {
@@ -104,7 +104,7 @@ void Engine :: build_hit_points() {
 
 void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
   unsigned todo_eye_paths = eye_paths.size();
-  const unsigned hit_points_count = hit_points.size();
+  const unsigned hit_points_count = hit_points_info.size();
   unsigned chunk_count = 0;
   const unsigned chunk_size  = 1024 * 256;
   unsigned chunk_done_count = 0;
@@ -124,7 +124,7 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
         // check if path reached max depth
         if (eye_path.depth > config.max_eye_path_depth) {
           // make it done
-          HitPointStaticInfo& hp = hit_points[eye_path.sample_index];
+          HitPointStaticInfo& hp = hit_points_info[eye_path.sample_index];
           hp.type  = CONSTANT_COLOR;
           hp.scr_x = eye_path.scr_x;
           hp.scr_y = eye_path.scr_y;
@@ -156,7 +156,7 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
     // 2. advance ray buffer
     if (ray_hit_buffer.GetRayCount() > 0) {
       kernels::intersect_ray_hit_buffer(ray_hit_buffer, /*&config,*/ scene);
-      kernels::advance_eye_paths(hit_points, ray_hit_buffer, eye_paths, eye_paths_indexes, seeds, /*&config,*/ scene);
+      kernels::advance_eye_paths(hit_points_info, ray_hit_buffer, eye_paths, eye_paths_indexes, seeds, /*&config,*/ scene);
       ray_hit_buffer.Reset();
     }
   }

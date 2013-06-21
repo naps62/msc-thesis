@@ -33,7 +33,8 @@ protected:
   starpu_conf spu_conf;
 
   std::vector<Seed> seeds;
-  std::vector<HitPointStaticInfo> hit_points;
+  std::vector<HitPointStaticInfo> hit_points_info;
+  std::vector<HitPoint>           hit_points;
 
   void init_seed_buffer();
   void build_hit_points();
