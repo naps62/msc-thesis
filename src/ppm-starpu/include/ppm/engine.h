@@ -26,7 +26,9 @@ public:
 protected:
   const Config& config;
   PtrFreeScene* scene;
+  PtrFreeHashGrid hash_grid;
   Display* display;
+  BBox bbox;
   Film film;
 
   // starpu stuff

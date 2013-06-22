@@ -16,7 +16,7 @@ namespace ppm {
 
 Engine :: Engine(const Config& _config)
 : config(_config), scene(new PtrFreeScene(config)), film(config),
-  seeds(config.total_hit_points), hit_points_info(config.total_hit_points), hit_points(config.total_hit_points) {
+  seeds(config.total_hit_points), hit_points_info(config.total_hit_points), hit_points(config.total_hit_points), hash_grid(config.total_hit_points) {
 
   // load display if necessary
   if (config.use_display) {
@@ -53,13 +53,19 @@ void Engine :: render() {
   cout << "hit points done" << endl;
 
   // init_radius
+  this->init_radius();
 
+  // set hash_grid data
   this->update_bbox();
+  this->hash_grid.set_bbox(this->bbox);
+  this->hash_grid.set_hit_points(hit_points_info, hit_points);
 
-  // set lookup hitpoints
-
+  // main loop
   unsigned iteration = 0;
   while(display->is_on() && iteration < config.max_iters) {
+
+    this->hash_grid.rehash();
+
     // advance photon path
 
     // accumulate flux
@@ -165,9 +171,13 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
 void Engine :: update_bbox() {
   BBox bbox;
 
-  //kernels::compute_hit_points_bbox(hit_points, bbox);
-
-
+  // TODO move this to a kernel?
+  for(unsigned i = 0; i < hit_points.size(); ++i) {
+    HitPointStaticInfo& hpi = hit_points_info[i];
+    if (hp.type == SURFACE)
+      bbox = Union(bbox, hp.position);
+  }
+  this->bbox = bbox;
 }
 
 }
