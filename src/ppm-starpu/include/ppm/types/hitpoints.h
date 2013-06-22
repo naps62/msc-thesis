@@ -31,7 +31,7 @@ struct HitPoint {
   ulonglong photon_count;
   Spectrum reflected_flux;
 
-  float accum_photon_radius; // TODO this should be only for PPM and SPPM
+  float accum_photon_radius2; // TODO this should be only for PPM and SPPM
 
   uint constant_hits_count;
   uint surface_hits_count;

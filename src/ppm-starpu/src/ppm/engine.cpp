@@ -168,6 +168,19 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
   }
 }
 
+void Engine :: init_radius() {
+  const BBox bbox = this->bbox;
+
+  const Vector ssize = bbox.pmax - bbox.pmin;
+  const float photon_radius = ((ssize.x + ssize.y + ssize.z) / 3.f) / ((config.width * config.spp + config.height * config.spp) / 2.f) * 2.f;
+  const float photon_radius2 = photon_radius * photon_radius;
+
+  bbox.Expand(photon_radius);
+  for(unsigned i = 0; i < hit_points.size(); ++i) {
+    hit_points[i].accum_photon_radius2 = photon_radius2;
+  }
+}
+
 void Engine :: update_bbox() {
   BBox bbox;
 

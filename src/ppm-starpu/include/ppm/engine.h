@@ -40,6 +40,7 @@ protected:
 
   void init_seed_buffer();
   void build_hit_points();
+  void init_radius();
 
   void eye_paths_to_hit_points(vector<EyePath>& eye_paths);
   void update_bbox();
