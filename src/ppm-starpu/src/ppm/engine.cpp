@@ -64,9 +64,11 @@ void Engine :: render() {
   unsigned iteration = 0;
   while(display->is_on() && iteration < config.max_iters) {
 
+    // update lookup hash grid
     this->hash_grid.rehash();
 
-    // advance photon path
+    // advance photon patha
+    this->advance_photon_paths();
 
     // accumulate flux
 
@@ -181,6 +183,21 @@ void Engine :: init_radius() {
   }
 }
 
+void Engine :: advance_photon_paths() {
+  unsigned chunk_count = 0;
+  const unsigned chunk_size  = 1024 * 256;
+  unsigned chunk_done_count = 0;
+
+  std::vector<PhotonPath> live_photon_paths(chunk_size);
+  RayBuffer ray_hit_buffer(chunk_size);
+
+  for(unsigned i = 0; i < chunk_size; ++i) {
+    Ray new_ray = generate_photon_path(seed_buffer[i]);
+
+    ray_hit_buffer.AddRay(new_ray);
+  }
+}
+
 void Engine :: update_bbox() {
   BBox bbox;
 
@@ -191,6 +208,18 @@ void Engine :: update_bbox() {
       bbox = Union(bbox, hp.position);
   }
   this->bbox = bbox;
+}
+
+Ray Engine :: generate_photon_path(Seed& seed) {
+  float pdf, lpdf;
+  Spectrum f;
+
+  float u[6];
+  for(unsigned i = 0; i < 6; ++i)
+    u[i] = floatRNG(seed);
+
+  int light_index;
+  // TODO go on here
 }
 
 }
