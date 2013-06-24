@@ -7,6 +7,15 @@ using namespace luxrays;
 
 namespace ppm {
 
+enum LightTypes {
+  LIGHT_IL_BF,
+  LIGHT_IL_PORTAL,
+  LIGHT_IL_IS,
+  LIGHT_IL_SKY,
+  LIGHT_SUN,
+  LIGHT_TRIANGLE
+};
+
 struct TriangleLight {
   Point v0, v1, v2;
   Normal normal;

@@ -39,6 +39,8 @@ __HD__ void alloy_material_sample_f(const AlloyParam& mat, const Vector& wo, Vec
 __HD__ void arch_glass_material_sample_f(const ArchGlassParam& mat, const Vector& wo, Vector& wi, const Normal& N, const Normal& shade_N, const float u0, float& pdf, Spectrum& f, bool& specular_bounce);
 
 __HD__ void glossy_reflection(const Vector& wo, Vector& wi, const float exponent, const Normal& shade_N, const float u0, const float u1);
+
+__HD__ LightType sample_all_lights(const float u, const float lights_count, const InfiniteLight& infinite_light, const SunLight& sun_light, const SkyLight& sky_light, float& pdf, int& light_index, const bool skip_inifinite_ligth = false);
 }
 
 } }

@@ -505,6 +505,75 @@ void glossy_reflection(const Vector& wo, Vector& wi, const float exponent, const
   wi = x * u + y * v + z * w;
 }
 
+__HD__
+LightType sample_all_lights(const float u, const float lights_count, const InfiniteLight& infinite_light, const SunLight& sun_light, const SkyLight& sky_light, float& pdf, int& light_index, const bool skip_inifinite_ligth = false) {
+
+  if (!skip_infinite_light && (infinite_light.exists || sun_light.exists || sky_light.exists)) {
+    unsigned count = lights_count;
+    int ilx1 = 0;
+    int ilx2 = 0;
+    int ilx3 = 0;
+
+    if (infinite_light.exists) ilx1 = count++;
+    if (sun_light.exists)      ilx2 = count++;
+    if (sky_light.exists)      ilx3 = count++;
+
+    light_index = Floor2UInt(count * u);
+    pdf = 1.f / count;
+
+    if      (light_index == ilx1) return ppm::LIGHT_IL_IS;
+    else if (light_index == ilx2) return ppm::LIGHT_SUN;
+    else if (light_index == ilx3) return ppm::LIGHT_IL_SKY;
+    else return ppm::LIGHT_TRIANGLE;
+
+  } else {
+    light_index = Min(Floor2UInt(lights_count * u), lights_count - 1);
+    pdf = 1.f / lights_count;
+    return ppm::LIGHT_TRIANGLE;
+  }
+}
+
+__HD__
+void infinite_light_sample_l(const float u0, const float u1, const float u2, const float u3, const InfiniteLigh& infinite_light, const Spectrum* const infinite_light_map, const BSphere& bsphere, float& pdf, Ray& ray, Spectrum& f) {
+  const float rad = bsphere.rad * 1.01f;
+  const Point p1 = bsphere.center + rad * UniformSampleSphere(u0, u1);
+  const Point p2 = bsphere.center + rad * UniformSampleSphere(u2, u3);
+
+  ray = Ray(p1, Normalize(p2 - p1));
+
+  const Vector to_center = Normalize(bsphere.center - p1);
+  const float cos_theta = AbsDot(to_center, ray.d);
+  pdf = cos_theta / (4.f * M_PI * M_PI * rad * rad);
+
+  Vector dir = -ray.d;
+  infinite_light_le(f, dir, infinite_light, infinite_light_map);
+}
+
+__HD__
+void sun_light_sample_l(const float u0, const float u1, const SunLight& sun_light, const Point& hit_point, float& pdf, Ray& shadow_ray, Spectrum& f) {
+  Vector wi = UniformSampleCone(u0, u1, sun_light.cos_theta_max, sun_light.x, sun_light.y, syn_light.dir);
+
+  shadow_ray.o = hit_point;
+  shadow_ray.d = wi;
+  shadow_ray.min_t = RAY_EPSILON;
+  shadow_ray.max_t = FLT_MAX;
+
+  f = sun_light.color;
+  pdf = UniformConePdf(sun_light.cos_theta_max);
+}
+
+__HD__
+void sun_light_sample_l(const float u0, const float u1, const float u2, const float u3, const SunLigh& sun_light, const BSphere& bsphere, float& pdf, Ray& ray, Spectrum& f) {
+  const float rad = bsphere.rad * 1.01f;
+
+  float d1, d2;
+  ConcentricSampleDisk(u0, u1, &d1, &d2);
+  const Point p_disk = bsphere.center + rad * (d1 * sun_light.x + d2 * sun_light.y);
+
+  ray = Ray(p_disk + rad * sun_light.dir, -UniformSampleCone(u2, u3, sun_light.cos_theta_max, sun_light.x, sun_light.y, sun_light.dir));
+  pdf = UniformCodePdf(sun_light.cos_theta_max) / (M_PI * rad * rad);
+}
+
 }
 
 } }

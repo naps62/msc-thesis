@@ -191,6 +191,7 @@ void Engine :: advance_photon_paths() {
   std::vector<PhotonPath> live_photon_paths(chunk_size);
   RayBuffer ray_hit_buffer(chunk_size);
 
+  kernels::generate_photon_paths(ray_hit_buffer, seed_buffer, config, scene)
   for(unsigned i = 0; i < chunk_size; ++i) {
     Ray new_ray = generate_photon_path(seed_buffer[i]);
 
