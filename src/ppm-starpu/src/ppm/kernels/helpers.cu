@@ -1,4 +1,5 @@
 #include "ppm/kernels/helpers.cuh"
+#include <limits>
 
 namespace ppm { namespace kernels {
 
@@ -684,7 +685,7 @@ void glossy_reflection(
 __HD__
 LightType sample_all_lights(
     const float u,
-    const float lights_count,
+    const unsigned lights_count,
     const InfiniteLight& infinite_light,
     const SunLight& sun_light,
     const SkyLight& sky_light,
@@ -756,7 +757,7 @@ void sun_light_sample_l(
   shadow_ray.o = hit_point;
   shadow_ray.d = wi;
   shadow_ray.mint = RAY_EPSILON;
-  shadow_ray.maxt = FLT_MAX;
+  shadow_ray.maxt = std::numeric_limits<float>::max();
 
   f = sun_light.color;
   pdf = UniformConePdf(sun_light.cos_theta_max);
@@ -825,7 +826,7 @@ void triangle_light_sample_l(
     Spectrum& f) {
 
   Point orig;
-  SampleTriangleLight(&light, u0, u1, &orig);
+  sample_triangle_light(light, u0, u1, orig);
 
   const Normal sample_N = light.normal;
 
@@ -856,6 +857,18 @@ void triangle_light_sample_l(
     f.g *= colors[i].g;
     f.b *= colors[i].b;
   }
+}
+
+__HD__
+void sample_triangle_light(const TriangleLight& l, const float u0, const float u1, Point& p) {
+  const float su1 = sqrt(u0);
+  const float b0 = 1.f - su1;
+  const float b1 = u1 * su1;
+  const float b2 = 1.f - b0 - b1;
+
+  p.x = b0 * l.v0.x + b1 * l.v1.x + b2 * l.v2.x;
+  p.y = b0 * l.v0.y + b1 * l.v1.y + b2 * l.v2.y;
+  p.z = b0 * l.v0.z + b1 * l.v1.z + b2 * l.v2.z;
 }
 
 }

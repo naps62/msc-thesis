@@ -40,12 +40,15 @@ __HD__ void arch_glass_material_sample_f  (const ArchGlassParam& mat,   const Ve
 
 __HD__ void glossy_reflection(const Vector& wo, Vector& wi, const float exponent, const Normal& shade_N, const float u0, const float u1);
 
-__HD__ LightType sample_all_lights(const float u, const float lights_count, const InfiniteLight& infinite_light, const SunLight& sun_light, const SkyLight& sky_light, float& pdf, int& light_index, const bool skip_inifinite_ligth = false);
+__HD__ LightType sample_all_lights(const float u, const unsigned lights_count, const InfiniteLight& infinite_light, const SunLight& sun_light, const SkyLight& sky_light, float& pdf, int& light_index, const bool skip_inifinite_ligth = false);
 __HD__ void infinite_light_sample_l(const float u0, const float u1, const float u2, const float u3, const InfiniteLight& infinite_light,    const Spectrum* const infinite_light_map, const BSphere& bsphere, float& pdf, Ray& ray, Spectrum& f);
 __HD__ void sun_light_sample_l     (const float u0, const float u1,                                 const SunLight& sun_light, const Point& hit_point,                                      float& pdf, Ray& shadow_ray, Spectrum& f);
 __HD__ void sun_light_sample_l     (const float u0, const float u1, const float u2, const float u3, const SunLight& sun_light, const BSphere& bsphere,                                      float& pdf, Ray& ray,        Spectrum& f);
 __HD__ void sky_light_sample_l     (const float u0, const float u1, const float u2, const float u3, const SkyLight& sky_light, const BSphere& bsphere,                                      float& pdf, Ray& ray,        Spectrum& f);
 __HD__ void triangle_light_sample_l(const float u0, const float u1, const float u2, const float u3, const TriangleLight& light, const Mesh* const mesh_descs, const Spectrum* const colors, float& pdf, Ray& ray,        Spectrum& f);
+
+__HD__ void sample_triangle_light(const TriangleLight& l, const float u0, const float u1, Point& p);
+
 }
 
 } }
