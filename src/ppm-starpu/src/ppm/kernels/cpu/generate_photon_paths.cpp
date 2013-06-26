@@ -4,6 +4,7 @@
 #include "ppm/ptrfreescene.h"
 #include "utils/random.h"
 #include "ppm/types.h"
+#include "ppm/kernels/helpers.cuh"
 using ppm::PtrFreeScene;
 using ppm::EyePath;
 
@@ -21,25 +22,29 @@ void generate_photon_paths_impl(
 
   #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned i = 0; i < rays_count; ++i) {
+    Ray& ray = rays[i];
     float light_pdf;
     float pdf;
+    Spectrum f;
 
     const float u0 = floatRNG(seed_buffer[i]);
     const float u1 = floatRNG(seed_buffer[i]);
     const float u2 = floatRNG(seed_buffer[i]);
     const float u3 = floatRNG(seed_buffer[i]);
     const float u4 = floatRNG(seed_buffer[i]);
-    const float u5 = floatRNG(seed_buffer[i]);
 
     int light_index;
-    ppm::LightType;
-    light_type = helpers::sample_all_lights(u0, scene->area_lights_count, light_pdf, light_index, scene->infinite_light, scene->sun_light, scene->sky_light, lpdf, light_index);
+    ppm::LightType light_type;
+    light_type = helpers::sample_all_lights(u0, scene->area_lights_count, scene->infinite_light, scene->sun_light, scene->sky_light, light_pdf, light_index);
 
     if (light_type == ppm::LIGHT_IL_IS)
-      helpers::
+      helpers::infinite_light_sample_l(u1, u2, u3, u4, scene->infinite_light, scene->infinite_light_map, scene->bsphere, pdf, ray, f);
     else if (light_type == ppm::LIGHT_SUN)
-      else if (light_type == ppm::LIGHT_IL_SKY)
+      helpers::sun_light_sample_l(u1, u2, u3, u4, scene->sun_light, scene->bsphere, pdf, ray, f);
+    else if (light_type == ppm::LIGHT_IL_SKY)
+      helpers::sky_light_sample_l(u1, u2, u3, u4, scene->sky_light, scene->bsphere, pdf, ray, f);
     else
+      helpers::triangle_light_sample_l(u1, u2, u3, u4, scene->area_lights[light_index], scene->mesh_descs, scene->colors, pdf, ray, f);
   }
 }
 

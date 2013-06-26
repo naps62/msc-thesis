@@ -9,6 +9,7 @@ namespace ppm { namespace kernels {
     cpu_kernel generate_eye_paths;
     cpu_kernel intersect_ray_hit_buffer;
     cpu_kernel advance_eye_paths;
+    cpu_kernel generate_photon_paths;
   }
 
 }}

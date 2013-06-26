@@ -17,7 +17,7 @@ void generate_photon_paths(
   // handles
   // ray_buffer
   starpu_data_handle_t handle_ray_buffer;
-  starpu_vector_data_register(&handle_ray_buffer, 0, (uintptr_t)&ray_hit_buffer.GetRayBuffer(), ray_hit_buffer.GetSize(), sizeof(Ray));
+  starpu_vector_data_register(&handle_ray_buffer, 0, (uintptr_t)ray_hit_buffer.GetRayBuffer(), ray_hit_buffer.GetSize(), sizeof(Ray));
   // seed_buffer
   starpu_data_handle_t handle_seed_buffer;
   starpu_vector_data_register(&handle_seed_buffer, 0, (uintptr_t)&seed_buffer[0], seed_buffer.size(), sizeof(Seed));

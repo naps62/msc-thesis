@@ -4,6 +4,7 @@
 #include "ppm/kernels/generate_eye_paths.h"
 #include "ppm/kernels/intersect_ray_hit_buffer.h"
 #include "ppm/kernels/advance_eye_paths.h"
+#include "ppm/kernels/generate_photon_paths.h"
 #include "ppm/types.h"
 
 #include <starpu.h>
@@ -15,8 +16,8 @@ namespace ppm {
 //
 
 Engine :: Engine(const Config& _config)
-: config(_config), scene(new PtrFreeScene(config)), film(config),
-  seeds(config.total_hit_points), hit_points_info(config.total_hit_points), hit_points(config.total_hit_points), hash_grid(config.total_hit_points) {
+: config(_config), scene(new PtrFreeScene(config)), hash_grid(config.total_hit_points), film(config),
+  seeds(config.total_hit_points), hit_points_info(config.total_hit_points), hit_points(config.total_hit_points) {
 
   // load display if necessary
   if (config.use_display) {
@@ -171,9 +172,9 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
 }
 
 void Engine :: init_radius() {
-  const BBox bbox = this->bbox;
+  BBox bbox = this->bbox;
 
-  const Vector ssize = bbox.pmax - bbox.pmin;
+  const Vector ssize = bbox.pMax - bbox.pMin;
   const float photon_radius = ((ssize.x + ssize.y + ssize.z) / 3.f) / ((config.width * config.spp + config.height * config.spp) / 2.f) * 2.f;
   const float photon_radius2 = photon_radius * photon_radius;
 
@@ -184,16 +185,14 @@ void Engine :: init_radius() {
 }
 
 void Engine :: advance_photon_paths() {
-  unsigned chunk_count = 0;
   const unsigned chunk_size  = 1024 * 256;
-  unsigned chunk_done_count = 0;
 
   std::vector<PhotonPath> live_photon_paths(chunk_size);
   RayBuffer ray_hit_buffer(chunk_size);
 
-  kernels::generate_photon_paths(ray_hit_buffer, seed_buffer, config, scene)
+  kernels::generate_photon_paths(ray_hit_buffer, seeds, &config, scene);
   for(unsigned i = 0; i < chunk_size; ++i) {
-    Ray new_ray = generate_photon_path(seed_buffer[i]);
+    Ray new_ray = generate_photon_path(seeds[i]);
 
     ray_hit_buffer.AddRay(new_ray);
   }
@@ -205,8 +204,8 @@ void Engine :: update_bbox() {
   // TODO move this to a kernel?
   for(unsigned i = 0; i < hit_points.size(); ++i) {
     HitPointStaticInfo& hpi = hit_points_info[i];
-    if (hp.type == SURFACE)
-      bbox = Union(bbox, hp.position);
+    if (hpi.type == SURFACE)
+      bbox = Union(bbox, hpi.position);
   }
   this->bbox = bbox;
 }

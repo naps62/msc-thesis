@@ -5,6 +5,7 @@
 #include "utils/config.h"
 #include "ppm/display.h"
 #include "ppm/ptrfreescene.h"
+#include "ppm/ptrfree_hash_grid.h"
 #include "ppm/film.h"
 #include "utils/random.h"
 

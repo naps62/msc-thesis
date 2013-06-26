@@ -17,7 +17,7 @@ namespace ppm {
   void delete_array(T*& arr) {
     if (arr) {
       delete[] arr;
-      arr = NULL;
+      arr = 0;
     }
   }
 

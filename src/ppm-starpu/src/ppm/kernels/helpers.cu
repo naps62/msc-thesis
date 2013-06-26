@@ -5,7 +5,14 @@ namespace ppm { namespace kernels {
 namespace helpers {
 
 __HD__
-void tex_map_get_texel(const Spectrum* const pixels, const unsigned width, const unsigned height, const int s, const int t, Spectrum& color) {
+void tex_map_get_texel(
+    const Spectrum* const pixels,
+    const unsigned width,
+    const unsigned height,
+    const int s,
+    const int t,
+    Spectrum& color) {
+
   const unsigned u = Mod(s, width);
   const unsigned v = Mod(s, height);
 
@@ -17,7 +24,14 @@ void tex_map_get_texel(const Spectrum* const pixels, const unsigned width, const
 }
 
 __HD__
-void tex_map_get_color(const Spectrum* const pixels, const unsigned width, const unsigned height, const float u, const float v, Spectrum& color) {
+void tex_map_get_color(
+    const Spectrum* const pixels,
+    const unsigned width,
+    const unsigned height,
+    const float u,
+    const float v,
+    Spectrum& color) {
+
   const float s = u * width  - 0.5f;
   const float t = v * height - 0.5f;
 
@@ -48,7 +62,11 @@ void tex_map_get_color(const Spectrum* const pixels, const unsigned width, const
 
 
 __HD__
-void infinite_light_le (Spectrum& le, const Vector& dir, const InfiniteLight& infinite_light, const Spectrum* const infinite_light_map) {
+void infinite_light_le (
+    Spectrum& le,
+    const Vector& dir,
+    const InfiniteLight& infinite_light,
+    const Spectrum* const infinite_light_map) {
 
   const float u = 1.f - SphericalPhi(dir)   * INV_TWOPI + infinite_light.shiftU;
   const float v =       SphericalTheta(dir) * INV_PI    + infinite_light.shiftV;
@@ -62,7 +80,10 @@ void infinite_light_le (Spectrum& le, const Vector& dir, const InfiniteLight& in
 
 
 __HD__
-void sky_light_le(Spectrum& f, const Vector& dir, const SkyLight& sky_light) {
+void sky_light_le(
+    Spectrum& f,
+    const Vector& dir,
+    const SkyLight& sky_light) {
 
   const float theta = SphericalTheta(dir);
   const float phi   = SphericalPhi(dir);
@@ -76,12 +97,21 @@ void sky_light_le(Spectrum& f, const Vector& dir, const SkyLight& sky_light) {
 }
 
 __HD__
-float sky_light_perez_base(const float* const lam, const float theta, const float gamma) {
+float sky_light_perez_base(
+    const float* const lam,
+    const float theta,
+    const float gamma) {
+
   return (1.f + lam[1] * exp(lam[2] / cos(theta))) * (1.f + lam[3] * exp(lam[4] * gamma) + lam[5] * cos(gamma) * cos(gamma));
 }
 
 __HD__
-void sky_light_chromaticity_to_spectrum(const float Y, const float x, const float y, Spectrum& s) {
+void sky_light_chromaticity_to_spectrum(
+    const float Y,
+    const float x,
+    const float y,
+    Spectrum& s) {
+
   float X, Z;
 
   if (y != 0.f)
@@ -101,7 +131,12 @@ void sky_light_chromaticity_to_spectrum(const float Y, const float x, const floa
 }
 
 __HD__
-float ri_angle_between(const float thetav, const float phiv, const float theta, const float phi) {
+float ri_angle_between(
+    const float thetav,
+    const float phiv,
+    const float theta,
+    const float phi) {
+
   const float cospsi = sinf(thetav) * sin(theta) * cosf(phi - phiv) + cosf(thetav) * cosf(theta);
 
   if (cospsi >= 1.f)
@@ -112,7 +147,12 @@ float ri_angle_between(const float thetav, const float phiv, const float theta, 
 }
 
 __HD__
-void sky_light_get_sky_spectral_radiance(const float theta, const float phi, Spectrum& spect, const SkyLight& sky_light) {
+void sky_light_get_sky_spectral_radiance(
+    const float theta,
+    const float phi,
+    Spectrum& spect,
+    const SkyLight& sky_light) {
+
   const float theta_fin = min(theta, (float) ((M_PI * 0.5f) - 0.001f));
   const float gamma     = ri_angle_between(theta, phi, sky_light.theta_s, sky_light.phi_s);
 
@@ -125,7 +165,11 @@ void sky_light_get_sky_spectral_radiance(const float theta, const float phi, Spe
 
 
 __HD__
-void sun_light_le(Spectrum& le, const Vector& dir, const SunLight& sun_light) {
+void sun_light_le(
+    Spectrum& le,
+    const Vector& dir,
+    const SunLight& sun_light) {
+
   const float cos_theta_max = sun_light.cos_theta_max;
   const Vector sun_dir = sun_light.dir;
 
@@ -139,7 +183,12 @@ void sun_light_le(Spectrum& le, const Vector& dir, const SunLight& sun_light) {
 }
 
 __HD__
-void area_light_le(Spectrum& le, const Vector& wo, const Normal& light_normal, const AreaLightParam& mat) {
+void area_light_le(
+    Spectrum& le,
+    const Vector& wo,
+    const Normal& light_normal,
+    const AreaLightParam& mat) {
+
   const bool bright_side = (Dot(light_normal, wo) > 0.f);
 
   if (bright_side) {
@@ -154,7 +203,15 @@ void area_light_le(Spectrum& le, const Vector& wo, const Normal& light_normal, c
 }
 
 __HD__
-bool get_hit_point_information(const PtrFreeScene* const scene, Ray& ray, const RayHit& hit, Point& hit_point, Spectrum& surface_color, Normal& N, Normal& shade_N) {
+bool get_hit_point_information(
+    const PtrFreeScene* const scene,
+    Ray& ray,
+    const RayHit& hit,
+    Point& hit_point,
+    Spectrum& surface_color,
+    Normal& N,
+    Normal& shade_N) {
+
   hit_point = ray(hit.t);
   const unsigned current_triangle_index = hit.index;
 
@@ -183,7 +240,14 @@ bool get_hit_point_information(const PtrFreeScene* const scene, Ray& ray, const 
 }
 
 __HD__
-void mesh_interpolate_color(const Spectrum* const colors, const Triangle* const triangles, const unsigned triangle_index, const float b1, const float b2, Spectrum& C) {
+void mesh_interpolate_color(
+    const Spectrum* const colors,
+    const Triangle* const triangles,
+    const unsigned triangle_index,
+    const float b1,
+    const float b2,
+    Spectrum& C) {
+
   const Triangle& triangle = triangles[triangle_index];
   const float b0 = 1.f - b1 - b2;
 
@@ -193,7 +257,14 @@ void mesh_interpolate_color(const Spectrum* const colors, const Triangle* const 
 }
 
 __HD__
-void mesh_interpolate_normal(const Normal* const normals, const Triangle* const triangles, const unsigned triangle_index, const float b1, const float b2, Normal& N) {
+void mesh_interpolate_normal(
+    const Normal* const normals,
+    const Triangle* const triangles,
+    const unsigned triangle_index,
+    const float b1,
+    const float b2,
+    Normal& N) {
+
   const Triangle& triangle = triangles[triangle_index];
   const float b0 = 1.f - b1 - b2;
 
@@ -209,7 +280,14 @@ void mesh_interpolate_normal(const Normal* const normals, const Triangle* const 
 }
 
 __HD__
-void mesh_interpolate_UV(const UV* const uvs, const Triangle* const triangles, const unsigned triangle_index, const float b1, const float b2, UV& uv) {
+void mesh_interpolate_UV(
+    const UV* const uvs,
+    const Triangle* const triangles,
+    const unsigned triangle_index,
+    const float b1,
+    const float b2,
+    UV& uv) {
+
   const Triangle& triangle = triangles[triangle_index];
   const float b0 = 1.f - b1 - b2;
 
@@ -218,7 +296,19 @@ void mesh_interpolate_UV(const UV* const uvs, const Triangle* const triangles, c
 }
 
 __HD__
-void generic_material_sample_f(const Material& mat, Vector& wo, Vector& wi, const Normal& N, const Normal& shade_N, const float u0, const float u1, const float u2, float& pdf, Spectrum& f, bool& specular_bounce) {
+void generic_material_sample_f(
+    const Material& mat,
+    Vector& wo,
+    Vector& wi,
+    const Normal& N,
+    const Normal& shade_N,
+    const float u0,
+    const float u1,
+    const float u2,
+    float& pdf,
+    Spectrum& f,
+    bool& specular_bounce) {
+
   switch (mat.type) {
     case MAT_AREALIGHT:
       break;
@@ -243,7 +333,17 @@ void generic_material_sample_f(const Material& mat, Vector& wo, Vector& wi, cons
 }
 
 __HD__
-void matte_material_sample_f(const MatteParam& mat, const Vector& wo, Vector& wi, const Normal& shade_N, const float u0, const float u1, float& pdf, Spectrum& f, bool& specular_bounce) {
+void matte_material_sample_f(
+    const MatteParam& mat,
+    const Vector& wo,
+    Vector& wi,
+    const Normal& shade_N,
+    const float u0,
+    const float u1,
+    float& pdf,
+    Spectrum& f,
+    bool& specular_bounce) {
+
   Vector dir = CosineSampleHemisphere(u0, u1);
   pdf = dir.z * INV_PI;
 
@@ -268,7 +368,15 @@ void matte_material_sample_f(const MatteParam& mat, const Vector& wo, Vector& wi
 }
 
 __HD__
-void mirror_material_sample_f(const MirrorParam& mat, const Vector& wo, Vector& wi, const Normal& shade_N, float& pdf, Spectrum& f, bool& specular_bounce) {
+void mirror_material_sample_f(
+    const MirrorParam& mat,
+    const Vector& wo,
+    Vector& wi,
+    const Normal& shade_N,
+    float& pdf,
+    Spectrum& f,
+    bool& specular_bounce) {
+
   const float k = 2.f * Dot(shade_N, wo);
   wi.x = k * shade_N.x - wo.x;
   wi.y = k * shade_N.y - wo.y;
@@ -282,7 +390,17 @@ void mirror_material_sample_f(const MirrorParam& mat, const Vector& wo, Vector& 
 }
 
 __HD__
-void glass_material_sample_f(const GlassParam& mat, const Vector& wo, Vector& wi, const Normal& N, const Normal& shade_N, const float u0, float& pdf, Spectrum& f, bool& specular_bounce) {
+void glass_material_sample_f(
+    const GlassParam& mat,
+    const Vector& wo,
+    Vector& wi,
+    const Normal& N,
+    const Normal& shade_N,
+    const float u0,
+    float& pdf,
+    Spectrum& f,
+    bool& specular_bounce) {
+
   const float k = 2.f * Dot(N, wo);
   Vector refl_dir;
   refl_dir.x = k * N.x - wo.x;
@@ -357,7 +475,18 @@ void glass_material_sample_f(const GlassParam& mat, const Vector& wo, Vector& wi
 }
 
 __HD__
-void matte_mirror_material_sample_f(const MatteMirrorParam& mat, const Vector& wo, Vector& wi, const Normal& shade_N, const float u0, const float u1, const float u2, float& pdf, Spectrum& f, bool& specular_bounce) {
+void matte_mirror_material_sample_f(
+    const MatteMirrorParam& mat,
+    const Vector& wo,
+    Vector& wi,
+    const Normal& shade_N,
+    const float u0,
+    const float u1,
+    const float u2,
+    float& pdf,
+    Spectrum& f,
+    bool& specular_bounce) {
+
   const float tot_filter = mat.tot_filter;
   const float comp = u2 * tot_filter;
 
@@ -374,7 +503,16 @@ void matte_mirror_material_sample_f(const MatteMirrorParam& mat, const Vector& w
 }
 
 __HD__
-void metal_material_sample_f(const MetalParam& mat, const Vector& wo, Vector& wi, const Normal& shade_N, const float u0, const float u1, float& pdf, Spectrum& f, bool& specular_bounce) {
+void metal_material_sample_f(
+    const MetalParam& mat,
+    const Vector& wo,
+    Vector& wi,
+    const Normal& shade_N,
+    const float u0,
+    const float u1,
+    float& pdf,
+    Spectrum& f,
+    bool& specular_bounce) {
   glossy_reflection(wo, wi, mat.exp, shade_N, u0, u1);
 
   if (Dot(wi, shade_N) > 0.f) {
@@ -389,7 +527,17 @@ void metal_material_sample_f(const MetalParam& mat, const Vector& wo, Vector& wi
 }
 
 __HD__
-void matte_metal_material_sample_f(const MatteMetalParam& mat, const Vector& wo, Vector& wi, const Normal& shade_N, const float u0, const float u1, const float u2, float& pdf, Spectrum& f, bool& specular_bounce) {
+void matte_metal_material_sample_f(
+    const MatteMetalParam& mat,
+    const Vector& wo,
+    Vector& wi,
+    const Normal& shade_N,
+    const float u0,
+    const float u1,
+    const float u2,
+    float& pdf,
+    Spectrum& f,
+    bool& specular_bounce) {
   const float tot_filter = mat.tot_filter;
   const float comp = u2 * tot_filter;
 
@@ -405,7 +553,18 @@ void matte_metal_material_sample_f(const MatteMetalParam& mat, const Vector& wo,
 }
 
 __HD__
-void alloy_material_sample_f(const AlloyParam& mat, const Vector& wo, Vector& wi, const Normal& shade_N, const float u0, const float u1, const float u2, float& pdf, Spectrum& f, bool& specular_bounce) {
+void alloy_material_sample_f(
+    const AlloyParam& mat,
+    const Vector& wo,
+    Vector& wi,
+    const Normal& shade_N,
+    const float u0,
+    const float u1,
+    const float u2,
+    float& pdf,
+    Spectrum& f,
+    bool& specular_bounce) {
+
   const float c = 1.f - Dot(wo, shade_N);
   const float R0 = mat.R0;
   const float Re = R0 + (1.f - R0) * c * c * c * c * c;
@@ -444,7 +603,17 @@ void alloy_material_sample_f(const AlloyParam& mat, const Vector& wo, Vector& wi
 }
 
 __HD__
-void arch_glass_material_sample_f(const ArchGlassParam& mat, const Vector& wo, Vector& wi, const Normal& N, const Normal& shade_N, const float u0, float& pdf, Spectrum& f, bool& specular_bounce) {
+void arch_glass_material_sample_f(
+    const ArchGlassParam& mat,
+    const Vector& wo,
+    Vector& wi,
+    const Normal& N,
+    const Normal& shade_N,
+    const float u0,
+    float& pdf,
+    Spectrum& f,
+    bool& specular_bounce) {
+
   const bool into = (Dot(N, shade_N) > 0.f);
 
   if (!into) {
@@ -479,7 +648,14 @@ void arch_glass_material_sample_f(const ArchGlassParam& mat, const Vector& wo, V
 }
 
 __HD__
-void glossy_reflection(const Vector& wo, Vector& wi, const float exponent, const Normal& shade_N, const float u0, const float u1) {
+void glossy_reflection(
+    const Vector& wo,
+    Vector& wi,
+    const float exponent,
+    const Normal& shade_N,
+    const float u0,
+    const float u1) {
+
   const float phi = 2.f * M_PI * u0;
   const float cos_theta = powf(1.f - u1, exponent);
   const float sin_theta = sqrtf(Max(0.f, 1.f - cos_theta * cos_theta));
@@ -506,7 +682,15 @@ void glossy_reflection(const Vector& wo, Vector& wi, const float exponent, const
 }
 
 __HD__
-LightType sample_all_lights(const float u, const float lights_count, const InfiniteLight& infinite_light, const SunLight& sun_light, const SkyLight& sky_light, float& pdf, int& light_index, const bool skip_inifinite_ligth = false) {
+LightType sample_all_lights(
+    const float u,
+    const float lights_count,
+    const InfiniteLight& infinite_light,
+    const SunLight& sun_light,
+    const SkyLight& sky_light,
+    float& pdf,
+    int& light_index,
+    const bool skip_infinite_light) {
 
   if (!skip_infinite_light && (infinite_light.exists || sun_light.exists || sky_light.exists)) {
     unsigned count = lights_count;
@@ -534,7 +718,16 @@ LightType sample_all_lights(const float u, const float lights_count, const Infin
 }
 
 __HD__
-void infinite_light_sample_l(const float u0, const float u1, const float u2, const float u3, const InfiniteLigh& infinite_light, const Spectrum* const infinite_light_map, const BSphere& bsphere, float& pdf, Ray& ray, Spectrum& f) {
+void infinite_light_sample_l(
+    const float u0,
+    const float u1,
+    const float u2,
+    const float u3,
+    const InfiniteLight& infinite_light,
+    const Spectrum* const infinite_light_map,
+    const BSphere& bsphere,
+    float& pdf, Ray& ray, Spectrum& f) {
+
   const float rad = bsphere.rad * 1.01f;
   const Point p1 = bsphere.center + rad * UniformSampleSphere(u0, u1);
   const Point p2 = bsphere.center + rad * UniformSampleSphere(u2, u3);
@@ -550,20 +743,37 @@ void infinite_light_sample_l(const float u0, const float u1, const float u2, con
 }
 
 __HD__
-void sun_light_sample_l(const float u0, const float u1, const SunLight& sun_light, const Point& hit_point, float& pdf, Ray& shadow_ray, Spectrum& f) {
-  Vector wi = UniformSampleCone(u0, u1, sun_light.cos_theta_max, sun_light.x, sun_light.y, syn_light.dir);
+void sun_light_sample_l(
+    const float u0,
+    const float u1, const SunLight& sun_light,
+    const Point& hit_point,
+    float& pdf,
+    Ray& shadow_ray,
+    Spectrum& f) {
+
+  Vector wi = UniformSampleCone(u0, u1, sun_light.cos_theta_max, sun_light.x, sun_light.y, sun_light.dir);
 
   shadow_ray.o = hit_point;
   shadow_ray.d = wi;
-  shadow_ray.min_t = RAY_EPSILON;
-  shadow_ray.max_t = FLT_MAX;
+  shadow_ray.mint = RAY_EPSILON;
+  shadow_ray.maxt = FLT_MAX;
 
   f = sun_light.color;
   pdf = UniformConePdf(sun_light.cos_theta_max);
 }
 
 __HD__
-void sun_light_sample_l(const float u0, const float u1, const float u2, const float u3, const SunLigh& sun_light, const BSphere& bsphere, float& pdf, Ray& ray, Spectrum& f) {
+void sun_light_sample_l(
+    const float u0,
+    const float u1,
+    const float u2,
+    const float u3,
+    const SunLight& sun_light,
+    const BSphere& bsphere,
+    float& pdf,
+    Ray& ray,
+    Spectrum& f) {
+
   const float rad = bsphere.rad * 1.01f;
 
   float d1, d2;
@@ -571,7 +781,81 @@ void sun_light_sample_l(const float u0, const float u1, const float u2, const fl
   const Point p_disk = bsphere.center + rad * (d1 * sun_light.x + d2 * sun_light.y);
 
   ray = Ray(p_disk + rad * sun_light.dir, -UniformSampleCone(u2, u3, sun_light.cos_theta_max, sun_light.x, sun_light.y, sun_light.dir));
-  pdf = UniformCodePdf(sun_light.cos_theta_max) / (M_PI * rad * rad);
+  pdf = UniformConePdf(sun_light.cos_theta_max) / (M_PI * rad * rad);
+}
+
+__HD__
+void sky_light_sample_l(
+    const float u0,
+    const float u1,
+    const float u2,
+    const float u3,
+    const SkyLight& sky_light,
+    const BSphere& bsphere,
+    float& pdf,
+    Ray& ray,
+    Spectrum& f) {
+
+  const float rad = bsphere.rad * 1.01f;
+  const Point p1 = bsphere.center + rad * UniformSampleSphere(u0, u1);
+  const Point p2 = bsphere.center + rad * UniformSampleSphere(u2, u3);
+
+  ray = Ray(p1, Normalize(p2 - p1));
+
+  const Vector to_center = Normalize(bsphere.center - p1);
+  const float cos_theta = AbsDot(to_center, ray.d);
+  pdf = cos_theta / (4.f * M_PI * M_PI * rad * rad);
+
+  const Vector dir = -ray.d;
+  sky_light_le(f, dir, sky_light);
+}
+
+
+__HD__
+void triangle_light_sample_l(
+    const float u0,
+    const float u1,
+    const float u2,
+    const float u3,
+    const TriangleLight& light,
+    const Mesh* const mesh_descs,
+    const Spectrum* const colors,
+    float& pdf,
+    Ray& ray,
+    Spectrum& f) {
+
+  Point orig;
+  SampleTriangleLight(&light, u0, u1, &orig);
+
+  const Normal sample_N = light.normal;
+
+  const float z = 1.f - 2.f * u2;
+  const float r = sqrtf(Max(0.f, 1.f - z * z));
+  const float phi = 2.f * M_PI * u3;
+  const float x = r * cosf(phi);
+  const float y = r * sinf(phi);
+
+  Vector dir = Vector(x, y, z);
+  float RdotN = Dot(dir, sample_N);
+  if (RdotN < 0.f) {
+    dir *= -1.f;
+    RdotN = -RdotN;
+  }
+
+  ray = Ray(orig, dir);
+  pdf = INV_TWOPI / light.area;
+  const Mesh& m = mesh_descs[light.mesh_index];
+
+  f.r = light.gain.r * RdotN;
+  f.g = light.gain.g * RdotN;
+  f.b = light.gain.b * RdotN;
+
+  if (m.has_colors) {
+    const unsigned i = m.colors_offset + light.tri_index;
+    f.r *= colors[i].r;
+    f.g *= colors[i].g;
+    f.b *= colors[i].b;
+  }
 }
 
 }

@@ -1,8 +1,9 @@
 #ifndef _PPM_PTRFREE_HASH_GRID_H_
 #define _PPM_PTRFREE_HASH_GRID_H_
 
-//#include "renderEngine.h"
-#include "ppm/core.h"
+#include "ppm/types.h"
+#include "luxrays/core.h"
+#include <vector>
 //#include "cuda_utils.h"
 
 namespace ppm {
@@ -13,15 +14,15 @@ public:
   std::deque<unsigned> **hash_grid;
 
   unsigned int* lists;
-  unsigned int* lenghts;
+  unsigned int* lengths;
   unsigned int* lists_index;
 
   unsigned int size;
   float inv_cell_size;
   unsigned int entry_count;
 
-  unsigned int* Lists_buff;
-  unsigned int* lenghts_buff;
+  unsigned int* lists_buff;
+  unsigned int* lengths_buff;
   unsigned int* index_buff;
 
   HitPointStaticInfo* hit_points_info;
@@ -31,11 +32,11 @@ public:
   BBox bbox;
 
 
-  PtrFreeHashGrid();
+  PtrFreeHashGrid(const unsigned size);
 
   ~PtrFreeHashGrid();
 
-  void set_hit_points(std::vector<HitPointStaticInfo> hit_points_info, vector<HitPoint> hit_points);
+  void set_hit_points(std::vector<HitPointStaticInfo> hit_points_info, std::vector<HitPoint> hit_points);
   void set_bbox(BBox bbox);
 
   void rehash();
@@ -44,8 +45,6 @@ public:
   //    const Vector wi, const Spectrum photonFlux,float currentPhotonRadius2);
 
   //void updateLookupTable();
-
-#endif
 
 private:
   unsigned hash(const int ix, const int iy, const int iz) const;

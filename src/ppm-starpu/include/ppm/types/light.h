@@ -7,7 +7,7 @@ using namespace luxrays;
 
 namespace ppm {
 
-enum LightTypes {
+enum LightType {
   LIGHT_IL_BF,
   LIGHT_IL_PORTAL,
   LIGHT_IL_IS,
