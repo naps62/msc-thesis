@@ -1,4 +1,5 @@
 .DS_Store
+.ctrlp
 scenes/
 inputs/
 doc/*/main.sh
