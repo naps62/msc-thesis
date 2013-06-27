@@ -39,6 +39,8 @@ protected:
   std::vector<HitPointStaticInfo> hit_points_info;
   std::vector<HitPoint>           hit_points;
 
+  const unsigned chunk_size;
+
   void init_seed_buffer();
   void build_hit_points();
   void init_radius();
@@ -46,8 +48,6 @@ protected:
 
   void eye_paths_to_hit_points(vector<EyePath>& eye_paths);
   void update_bbox();
-
-  Ray generate_photon_path(Seed& seed);
 };
 
 }

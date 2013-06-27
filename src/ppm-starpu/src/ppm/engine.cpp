@@ -5,6 +5,7 @@
 #include "ppm/kernels/intersect_ray_hit_buffer.h"
 #include "ppm/kernels/advance_eye_paths.h"
 #include "ppm/kernels/generate_photon_paths.h"
+#include "ppm/kernels/advance_photon_paths.h"
 #include "ppm/types.h"
 
 #include <starpu.h>
@@ -16,8 +17,14 @@ namespace ppm {
 //
 
 Engine :: Engine(const Config& _config)
-: config(_config), scene(new PtrFreeScene(config)), hash_grid(config.total_hit_points), film(config),
-  seeds(config.total_hit_points), hit_points_info(config.total_hit_points), hit_points(config.total_hit_points) {
+: config(_config),
+  scene(new PtrFreeScene(config)),
+  hash_grid(config.total_hit_points),
+  film(config),
+  seeds(config.total_hit_points),
+  hit_points_info(config.total_hit_points),
+  hit_points(config.total_hit_points),
+  chunk_size(config.engine_chunk_size) {
 
   // load display if necessary
   if (config.use_display) {
@@ -115,7 +122,6 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
   unsigned todo_eye_paths = eye_paths.size();
   const unsigned hit_points_count = hit_points_info.size();
   unsigned chunk_count = 0;
-  const unsigned chunk_size  = 1024 * 256;
   unsigned chunk_done_count = 0;
   RayBuffer ray_hit_buffer(chunk_size);
   vector<unsigned> eye_paths_indexes(chunk_size);
@@ -185,17 +191,12 @@ void Engine :: init_radius() {
 }
 
 void Engine :: advance_photon_paths() {
-  const unsigned chunk_size  = 1024 * 256;
-
   std::vector<PhotonPath> live_photon_paths(chunk_size);
   RayBuffer ray_hit_buffer(chunk_size);
 
-  kernels::generate_photon_paths(ray_hit_buffer, seeds, &config, scene);
-  for(unsigned i = 0; i < chunk_size; ++i) {
-    Ray new_ray = generate_photon_path(seeds[i]);
+  kernels::generate_photon_paths(ray_hit_buffer, live_photon_paths, seeds, &config, scene);
 
-    ray_hit_buffer.AddRay(new_ray);
-  }
+  kernels::advance_photon_paths(ray_hit_buffer, live_photon_paths, seeds, &config, scene);
 }
 
 void Engine :: update_bbox() {
@@ -208,18 +209,6 @@ void Engine :: update_bbox() {
       bbox = Union(bbox, hpi.position);
   }
   this->bbox = bbox;
-}
-
-Ray Engine :: generate_photon_path(Seed& seed) {
-  float pdf, lpdf;
-  Spectrum f;
-
-  float u[6];
-  for(unsigned i = 0; i < 6; ++i)
-    u[i] = floatRNG(seed);
-
-  int light_index;
-  // TODO go on here
 }
 
 }
