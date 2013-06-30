@@ -192,11 +192,70 @@ void Engine :: init_radius() {
 
 void Engine :: advance_photon_paths() {
   std::vector<PhotonPath> live_photon_paths(chunk_size);
-  RayBuffer ray_hit_buffer(chunk_size);
+  RayBuffer* ray_hit_buffer = new RayBuffer(chunk_size);
+  unsigned todo_photon_paths = chunk_size;
 
-  kernels::generate_photon_paths(ray_hit_buffer, live_photon_paths, seeds, &config, scene);
+  kernels::generate_photon_paths(*ray_hit_buffer, live_photon_paths, seeds, &config, scene);
 
-  kernels::advance_photon_paths(ray_hit_buffer, live_photon_paths, seeds, &config, scene);
+  while (todo_photon_paths > 0) {
+    kernels::intersect_ray_hit_buffer(*ray_hit_buffer, /*&config,*/ scene);
+
+    // calc contribution
+    //kernels::
+
+    // refill ray_hit_buffer
+
+  }
+
+  //while (todo_photon_paths > 0) {
+
+  //  const unsigned start = chunk_count * chunk_size;
+  //  const unsigned end   = (hit_points_count - start  < chunk_size) ? hit_points_count : start + chunk_size;
+
+  //   1. fill the ray buffer
+  //  for(unsigned i = start; i < end; ++i) {
+  //    EyePath& eye_path = eye_paths[i];
+
+  //    if (!eye_path.done) {
+  //       check if path reached max depth
+  //      if (eye_path.depth > config.max_eye_path_depth) {
+  //         make it done
+  //        HitPointStaticInfo& hp = hit_points_info[eye_path.sample_index];
+  //        hp.type  = CONSTANT_COLOR;
+  //        hp.scr_x = eye_path.scr_x;
+  //        hp.scr_y = eye_path.scr_y;
+  //        hp.throughput = Spectrum();
+
+  //        eye_path.done = true;
+
+  //      } else {
+  //         if not, add it to current buffer
+  //        eye_path.depth++;
+  //        const int index = ray_hit_buffer.AddRay(eye_path.ray);
+  //        eye_paths_indexes[index] = i;
+  //      }
+  //    }
+
+  //     check if this ray is already done, but not yet splatted
+  //    if (eye_path.done && !eye_path.splat) {
+  //      eye_path.splat = true;
+  //      todo_eye_paths--;
+  //      chunk_done_count++;
+  //      if (chunk_done_count == chunk_size) {
+  //         move to next chunka
+  //        chunk_count++;
+  //        chunk_done_count = 0;
+  //      }
+  //    }
+  //  }
+
+  //   2. advance ray buffer
+  //  if (ray_hit_buffer.GetRayCount() > 0) {
+  //    kernels::intersect_ray_hit_buffer(ray_hit_buffer, &config, scene);
+  //    kernels::advance_eye_paths(hit_points_info, ray_hit_buffer, eye_paths, eye_paths_indexes, seeds, &config, scene);
+  //    ray_hit_buffer.Reset();
+  //  }
+  //}
 }
 
 void Engine :: update_bbox() {

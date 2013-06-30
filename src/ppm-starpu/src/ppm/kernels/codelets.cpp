@@ -66,8 +66,8 @@ namespace ppm { namespace kernels {
       cl->cpu_funcs[0]    = ppm::kernels::cpu::intersect_ray_hit_buffer;
       cl->cpu_funcs[1]    = NULL;
       cl->nbuffers        = 2;
-      cl->modes[0]        = STARPU_R;
-      cl->modes[1]        = STARPU_RW;
+      cl->modes[0]        = STARPU_R;  // rays
+      cl->modes[1]        = STARPU_RW; // hits
       cl->model           = pm;
 
       // advance_eye_paths

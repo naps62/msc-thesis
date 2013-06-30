@@ -21,6 +21,11 @@ void advance_photon_paths_impl(
     const Config* config,
     const PtrFreeScene* scene) {
 
+  unsigned todo_photon_count = photon_paths_count;
+
+  while(todo_photon_count < 0) {
+
+  }
 }
 
 

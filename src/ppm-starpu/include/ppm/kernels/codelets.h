@@ -11,6 +11,7 @@ namespace ppm { namespace kernels {
     extern starpu_codelet intersect_ray_hit_buffer;
     extern starpu_codelet advance_eye_paths;
     extern starpu_codelet generate_photon_paths;
+    extern starpu_codelet advance_photon_paths;
 
     void init();
   }
