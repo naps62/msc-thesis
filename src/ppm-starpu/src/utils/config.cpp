@@ -26,6 +26,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   value("max_threads", max_threads, uint(8),  "number of cpu threads");
   value("max_iters",   max_iters,   uint(10), "number of iterations");
   value("max_eye_path_depth", max_eye_path_depth, uint(16), "max eye path depth");
+  value("max_photon_depth",   max_photon_depth,   uint(8),  "max photon path depth");
 
   // engine
   value("chunk_size", engine_chunk_size, unsigned(1024*256), "chunk size for ray and photon buffers (defaults to 1024*256)");

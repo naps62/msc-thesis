@@ -38,6 +38,7 @@ struct Config : public beast::program_options::options {
   uint max_iters;
   ppm::AcceleratorType accel_type;
   uint max_eye_path_depth;
+  uint max_photon_depth;
 
   // engine
   unsigned engine_chunk_size;

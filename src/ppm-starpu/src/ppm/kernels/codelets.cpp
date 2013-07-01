@@ -125,10 +125,11 @@ namespace ppm { namespace kernels {
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_photon_paths;
       cl->cpu_funcs[1]    = NULL;
-      cl->nbuffers        = 3;
-      cl->modes[0]        = STARPU_W;  // ray_buffer
-      cl->modes[1]        = STARPU_RW; // live_photon_paths
-      cl->modes[2]        = STARPU_RW; // seeds
+      cl->nbuffers        = 4;
+      cl->modes[0]        = STARPU_RW; // ray_buffer
+      cl->modes[1]        = STARPU_RW; // hit buffer
+      cl->modes[2]        = STARPU_RW; // live_photon_paths
+      cl->modes[3]        = STARPU_RW; // seeds
       cl->model           = pm;
     }
   }
