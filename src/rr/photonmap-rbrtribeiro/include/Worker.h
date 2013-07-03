@@ -16,7 +16,7 @@
 class Worker {
 public:
 
-	boost::thread* thread;
+	std::thread* thread;
 	uint deviceID;
 
 	PointerFreeScene *ss;

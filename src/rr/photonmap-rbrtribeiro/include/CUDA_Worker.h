@@ -115,7 +115,7 @@ public:
 		uvsBuff = NULL;
 		deviceID = device;
 
-		thread = new boost::thread(boost::bind(CUDA_Worker::Entry, this, buildHitPoints));
+		thread = new std::thread(&CUDA_Worker::Entry, this, buildHitPoints);
 
 	}
 

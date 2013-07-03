@@ -9,7 +9,7 @@
 
 #include <GL/glut.h>
 #include <FreeImage.h>
-#include <boost/thread.hpp>
+//#include <boost/thread.hpp>
 #include <boost/detail/container_fwd.hpp>
 #include "luxrays/utils/sdl/scene.h"
 #include "CUDA_Worker.h"
@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 	if (config->use_display)
-		engine->draw_thread = new boost::thread(boost::bind(Draw, argc, argv));
+		engine->draw_thread = new std::thread(&Draw, argc, argv);
 
 
 #ifdef GPU0

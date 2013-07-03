@@ -34,7 +34,7 @@
 #include "core.h"
 #include "config.h"
 
-#include <boost/thread/mutex.hpp>
+//#include <boost/thread/mutex.hpp>
 
 //#include "luxrays/utils/film/film.h"
 #include "luxrays/core/pixel/samplebuffer.h"

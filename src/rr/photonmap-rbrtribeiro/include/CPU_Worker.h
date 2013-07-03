@@ -42,7 +42,7 @@ public:
 
 		setScene(ss);
 
-		thread = new boost::thread(boost::bind(CPU_Worker::Entry, this, buildHitPoints));
+		thread = new std::thread(&CPU_Worker::Entry, this, buildHitPoints);
 
 		//Entry(this,true);
 

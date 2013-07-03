@@ -28,7 +28,7 @@
 #include <pthread.h>
 #endif
 
-#include <boost/thread.hpp>
+//#include <boost/thread.hpp>
 
 #if defined(WIN32)
 #include <float.h>
@@ -130,12 +130,12 @@ __HD__
 inline unsigned int Mod(unsigned int a, unsigned int b) {
 	if (b == 0)
 		b = 1;
-		
+
 	a %= b;
-	
+
 	return a;
-}	
-	
+}
+
 inline float Radians(float deg) {
 	return (M_PI / 180.f) * deg;
 }
@@ -233,10 +233,11 @@ inline void StringTrim(std::string &str) {
 	} else str.erase(str.begin(), str.end());
 }
 
-inline bool SetThreadRRPriority(boost::thread *thread, int pri = 0) {
+inline bool SetThreadRRPriority(std::thread *thread, int pri = 0) {
 #if defined (__linux__) || defined (__APPLE__) || defined(__CYGWIN__)
 	{
-		const pthread_t tid = (pthread_t)thread->native_handle();
+		//const pthread_t tid = (pthread_t)thread->native_handle();
+    const pthread_id tid = thread->get_id();
 
 		int policy = SCHED_FIFO;
 		int sysMinPriority = sched_get_priority_min(policy);

@@ -36,9 +36,9 @@ private:
 public:
 	//HitPoint* hitPoints_Acc;
 
-	boost::mutex hitPointsLock;
+	std::mutex hitPointsLock;
 
-	boost::thread* draw_thread;
+	std::thread* draw_thread;
 
 #ifdef USE_PPMPA
 	boost::barrier* waitForHitPoints;
