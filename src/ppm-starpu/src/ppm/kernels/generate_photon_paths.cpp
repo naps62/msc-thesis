@@ -1,5 +1,5 @@
 #include "ppm/kernels/codelets.h"
-#include "ppm/kernels/generate_photon_paths.h"
+#include "ppm/kernels/kernels.h"
 
 #include <starpu.h>
 
@@ -8,12 +8,7 @@ namespace ppm { namespace kernels {
 void generate_photon_paths(
     RayBuffer&          ray_hit_buffer,
     vector<PhotonPath>& photon_paths,
-    vector<Seed>&       seed_buffer,
-    const Config*       config,
-    PtrFreeScene*       scene) {
-
-  // kernel args
-  struct args_generate_photon_paths args = { config, scene };
+    vector<Seed>&       seed_buffer) {
 
   // handles
   // ray_buffer
@@ -33,8 +28,8 @@ void generate_photon_paths(
   task->handles[0] = handle_ray_buffer;
   task->handles[1] = handle_photon_paths;
   task->handles[1] = handle_seed_buffer;
-  task->cl_arg      = &args;
-  task->cl_arg_size = sizeof(args);
+  task->cl_arg      = &codelets::generic_args;
+  task->cl_arg_size = sizeof(codelets::generic_args);
 
   // submit
   starpu_task_submit(task);

@@ -7,6 +7,8 @@
 namespace ppm { namespace kernels {
 
   namespace codelets {
+    starpu_args    generic_args;
+
     starpu_codelet generate_eye_paths;
     starpu_codelet intersect_ray_hit_buffer;
     starpu_codelet advance_eye_paths;
@@ -29,7 +31,13 @@ namespace ppm { namespace kernels {
       memset(model, 0, sizeof(starpu_perfmodel));
     }
 
-    void init() {
+    void init(const Config* cpu_config, const PtrFreeScene* cpu_scene, const CUDA::Config* gpu_config, const PtrFreeScene* gpu_scene) {
+      generic_args.cpu_config = cpu_config;
+      generic_args.cpu_scene  = cpu_scene;
+      generic_args.gpu_config = gpu_config;
+      generic_args.gpu_scene  = gpu_scene;
+
+
       starpu_perfmodel* pm;
       starpu_codelet* cl;
 

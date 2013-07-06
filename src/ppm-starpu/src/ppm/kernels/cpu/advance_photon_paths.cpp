@@ -1,4 +1,4 @@
-#include "ppm/kernels/advance_photon_paths.h"
+#include "ppm/kernels/kernels.h"
 
 #include "utils/config.h"
 #include "ppm/ptrfreescene.h"
@@ -98,9 +98,9 @@ namespace ppm { namespace kernels { namespace cpu {
 
 void advance_photon_paths(void* buffers[], void* args_orig) {
   // cl_args
-  const args_advance_photon_paths* args = (args_advance_photon_paths*) args_orig;
-  const Config*       config = static_cast<const Config*>(args->config);
-  const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->scene);
+  const starpu_args* args    = (const starpu_args*) args_orig;
+  const Config*       config = static_cast<const Config*>(args->cpu_config);
+  const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->cpu_scene);
 
   // buffers
   // rays

@@ -1,17 +1,12 @@
 #include "ppm/kernels/codelets.h"
-#include "ppm/kernels/intersect_ray_hit_buffer.h"
+#include "ppm/kernels/kernels.h"
 
 #include <starpu.h>
 
 namespace ppm { namespace kernels {
 
 void intersect_ray_hit_buffer(
-    RayBuffer&    ray_hit_buffer,
-    //const Config* config,
-    PtrFreeScene* scene) {
-
-  // kernel args
-  struct args_intersect_ray_hit_buffer args = { /*config,*/ scene };
+    RayBuffer&    ray_hit_buffer) {
 
   // ray buffer
   starpu_data_handle_t handle_rays;
@@ -26,8 +21,8 @@ void intersect_ray_hit_buffer(
   task->cl = &codelets::intersect_ray_hit_buffer;
   task->handles[0] = handle_rays;
   task->handles[1] = handle_hits;
-  task->cl_arg      = &args;
-  task->cl_arg_size = sizeof(args);
+  task->cl_arg      = &codelets::generic_args;
+  task->cl_arg_size = sizeof(codelets::generic_args);
 
   // submit
   starpu_task_submit(task);

@@ -1,5 +1,5 @@
 #include "ppm/kernels/codelets.h"
-#include "ppm/kernels/generate_eye_paths.h"
+#include "ppm/kernels/kernels.h"
 
 #include <starpu.h>
 
@@ -7,12 +7,7 @@ namespace ppm { namespace kernels {
 
 void generate_eye_paths(
     vector<EyePath>& eye_paths,
-    vector<Seed>&    seed_buffer,
-    const Config*    config,
-    PtrFreeScene*    scene) {
-
-  // kernel args
-  struct args_generate_eye_paths args = { config, scene };
+    vector<Seed>&    seed_buffer) {
 
   // handles
   // eye_paths
@@ -28,8 +23,8 @@ void generate_eye_paths(
   task->cl = &codelets::generate_eye_paths;
   task->handles[0] = handle_eye_paths;
   task->handles[1] = handle_seed_buffer;
-  task->cl_arg      = &args;
-  task->cl_arg_size = sizeof(args);
+  task->cl_arg      = &codelets::generic_args;
+  task->cl_arg_size = sizeof(codelets::generic_args);
 
   // submit
   starpu_task_submit(task);

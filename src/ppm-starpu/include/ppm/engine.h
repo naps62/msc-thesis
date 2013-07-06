@@ -22,8 +22,6 @@ public:
   void render();
   void set_captions();
 
-  //static Engine* instantiate(const Config& _config);
-
 protected:
   const Config& config;
   PtrFreeScene* scene;

@@ -1,11 +1,7 @@
 #include "ppm/engine.h"
 #include "ppm/kernels/codelets.h"
 #include "utils/random.h"
-#include "ppm/kernels/generate_eye_paths.h"
-#include "ppm/kernels/intersect_ray_hit_buffer.h"
-#include "ppm/kernels/advance_eye_paths.h"
-#include "ppm/kernels/generate_photon_paths.h"
-#include "ppm/kernels/advance_photon_paths.h"
+#include "ppm/kernels/kernels.h"
 #include "ppm/types.h"
 
 #include <starpu.h>
@@ -37,7 +33,7 @@ Engine :: Engine(const Config& _config)
   spu_conf.sched_policy_name = config.sched_policy.c_str();
 
   starpu_init(&this->spu_conf);
-  kernels::codelets::init();
+  kernels::codelets::init(&config, scene, NULL, NULL); // TODO GPU versions here
 }
 
 Engine :: ~Engine() {
@@ -111,7 +107,7 @@ void Engine :: build_hit_points() {
 
   // eye path generation
   cout << "generating eye paths" << endl;
-  kernels::generate_eye_paths(eye_paths, seeds, &config, scene);
+  kernels::generate_eye_paths(eye_paths, seeds);
 
   cout << "eye paths to hit points" << endl;
   this->eye_paths_to_hit_points(eye_paths);
@@ -170,8 +166,8 @@ void Engine :: eye_paths_to_hit_points(vector<EyePath>& eye_paths) {
 
     // 2. advance ray buffer
     if (ray_hit_buffer.GetRayCount() > 0) {
-      kernels::intersect_ray_hit_buffer(ray_hit_buffer, /*&config,*/ scene);
-      kernels::advance_eye_paths(hit_points_info, ray_hit_buffer, eye_paths, eye_paths_indexes, seeds, /*&config,*/ scene);
+      kernels::intersect_ray_hit_buffer(ray_hit_buffer);
+      kernels::advance_eye_paths(hit_points_info, ray_hit_buffer, eye_paths, eye_paths_indexes, seeds);
       ray_hit_buffer.Reset();
     }
   }
@@ -195,10 +191,10 @@ void Engine :: advance_photon_paths() {
   RayBuffer* ray_hit_buffer = new RayBuffer(chunk_size);
   unsigned todo_photon_paths = chunk_size;
 
-  kernels::generate_photon_paths(*ray_hit_buffer, live_photon_paths, seeds, &config, scene);
+  kernels::generate_photon_paths(*ray_hit_buffer, live_photon_paths, seeds);
 
   while (todo_photon_paths > 0) {
-    kernels::intersect_ray_hit_buffer(*ray_hit_buffer, /*&config,*/ scene);
+    kernels::intersect_ray_hit_buffer(*ray_hit_buffer);
 
     // calc contribution
     //kernels::

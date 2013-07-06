@@ -1,4 +1,4 @@
-#include "ppm/kernels/advance_eye_paths.h"
+#include "ppm/kernels/kernels.h"
 #include "ppm/kernels/helpers.cuh"
 using namespace ppm::kernels;
 
@@ -131,9 +131,9 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
 
   fflush(stdout);
   // cl_args
-  const args_advance_eye_paths* args = (args_advance_eye_paths*) args_orig;
-  //const Config*       config = static_cast<const Config*>(args->config);
-  const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->scene);
+  const starpu_args* args = (const starpu_args*) args_orig;
+  //const Config*       config = static_cast<const Config*>(args->cpu_config);
+  const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->cpu_scene);
 
   // buffers
   // hit point static info

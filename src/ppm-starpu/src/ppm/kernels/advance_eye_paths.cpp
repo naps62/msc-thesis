@@ -1,5 +1,5 @@
 #include "ppm/kernels/codelets.h"
-#include "ppm/kernels/advance_eye_paths.h"
+#include "ppm/kernels/kernels.h"
 
 #include <starpu.h>
 
@@ -10,12 +10,7 @@ void advance_eye_paths(
     RayBuffer&                  ray_hit_buffer,
     vector<EyePath>&            eye_paths,
     vector<unsigned>&           eye_paths_indexes,
-    vector<Seed>&               seed_buffer,
-    //const Config* config,
-    PtrFreeScene* scene) {
-
-  // kernel args
-  struct args_advance_eye_paths args = { /*config,*/ scene };
+    vector<Seed>&               seed_buffer) {
 
   // hit points static info
   starpu_data_handle_t handle_hit_points;
@@ -42,8 +37,8 @@ void advance_eye_paths(
   task->handles[2] = handle_eye_paths;
   task->handles[3] = handle_indexes;
   task->handles[4] = handle_seeds;
-  task->cl_arg      = &args;
-  task->cl_arg_size = sizeof(args);
+  task->cl_arg      = &codelets::generic_args;
+  task->cl_arg_size = sizeof(codelets::generic_args);
 
   // submit
   starpu_task_submit(task);

@@ -1,4 +1,4 @@
-#include "ppm/kernels/intersect_ray_hit_buffer.h"
+#include "ppm/kernels/kernels.h"
 
 #include "utils/config.h"
 #include "ppm/ptrfreescene.h"
@@ -29,9 +29,9 @@ void intersect_ray_hit_buffer_impl(
 void intersect_ray_hit_buffer(void* buffers[], void* args_orig) {
 
   // cl_args
-  const args_intersect_ray_hit_buffer* args = (args_intersect_ray_hit_buffer*) args_orig;
-  //const Config*       config = static_cast<const Config*>(args->config);
-  const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->scene);
+  const starpu_args* args = (const starpu_args*) args_orig;
+  //const Config*       config = static_cast<const Config*>(args->cpu_config);
+  const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->cpu_scene);
 
   // buffers
   Ray* const rays = reinterpret_cast<Ray* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
