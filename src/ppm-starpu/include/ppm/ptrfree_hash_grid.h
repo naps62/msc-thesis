@@ -21,9 +21,9 @@ public:
   float inv_cell_size;
   unsigned int entry_count;
 
-  unsigned int* lists_buff;
-  unsigned int* lengths_buff;
-  unsigned int* index_buff;
+  //unsigned int* lists_buff;
+  //unsigned int* lengths_buff;
+  //unsigned int* index_buff;
 
   HitPointStaticInfo* hit_points_info;
   HitPoint*           hit_points;
@@ -46,8 +46,6 @@ public:
 
   //void updateLookupTable();
 
-private:
-  unsigned hash(const int ix, const int iy, const int iz) const;
 
 };
 

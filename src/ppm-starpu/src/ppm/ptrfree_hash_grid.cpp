@@ -1,4 +1,5 @@
 #include "ppm/ptrfree_hash_grid.h"
+#include "ppm/kernels/helpers.cuh"
 
 namespace ppm {
 
@@ -8,9 +9,9 @@ PtrFreeHashGrid :: PtrFreeHashGrid(const unsigned size) {
   lengths = NULL;
   lists = NULL;
   lists_index = NULL;
-  lengths_buff = NULL;
-  lists_buff = NULL;
-  index_buff = NULL;
+  //lengths_buff = NULL;
+  //lists_buff = NULL;
+  //index_buff = NULL;
 }
 
 PtrFreeHashGrid :: ~PtrFreeHashGrid() {
@@ -25,10 +26,6 @@ void PtrFreeHashGrid :: set_hit_points(std::vector<HitPointStaticInfo> hit_point
 
 void PtrFreeHashGrid :: set_bbox(BBox bbox) {
   this->bbox = bbox;
-}
-
-unsigned PtrFreeHashGrid :: hash(const int ix, const int iy, const int iz) const {
-  return (unsigned) ((ix * 73856093) ^ (iy * 19349663) ^ (iz * 83492791)) % size;
 }
 
 
@@ -76,7 +73,7 @@ void PtrFreeHashGrid :: rehash() {
       for(int iz = abs(int(b_min.z)); iz < abs(int(b_max.z)); ++iz) {
         for(int iy = abs(int(b_min.y)); iz < abs(int(b_max.y)); ++iy) {
           for(int ix = abs(int(b_min.x)); iz < abs(int(b_max.x)); ++ix) {
-            int hv = this->hash(ix, iy, iz);
+            int hv = kernels::helpers::hash(ix, iy, iz, size);
 
             if (hash_grid[hv] == NULL)
               hash_grid[hv] = new std::deque<unsigned>();

@@ -21,6 +21,7 @@ namespace ppm { namespace kernels {
     extern starpu_codelet advance_eye_paths;
     extern starpu_codelet generate_photon_paths;
     extern starpu_codelet advance_photon_paths;
+
     extern starpu_args    generic_args;
 
     void init(const Config* cpu_config, const PtrFreeScene* cpu_scene, const CUDA::Config* gpu_config, const PtrFreeScene* gpu_scene);

@@ -1,4 +1,5 @@
 #include "ppm/kernels/helpers.cuh"
+#include "ppm/ptrfree_hash_grid.h"
 #include <limits>
 
 namespace ppm { namespace kernels {
@@ -860,7 +861,12 @@ void triangle_light_sample_l(
 }
 
 __HD__
-void sample_triangle_light(const TriangleLight& l, const float u0, const float u1, Point& p) {
+void sample_triangle_light(
+    const TriangleLight& l,
+    const float u0,
+    const float u1,
+    Point& p) {
+
   const float su1 = sqrt(u0);
   const float b0 = 1.f - su1;
   const float b1 = u1 * su1;
@@ -869,6 +875,121 @@ void sample_triangle_light(const TriangleLight& l, const float u0, const float u
   p.x = b0 * l.v0.x + b1 * l.v1.x + b2 * l.v2.x;
   p.y = b0 * l.v0.y + b1 * l.v1.y + b2 * l.v2.y;
   p.z = b0 * l.v0.z + b1 * l.v1.z + b2 * l.v2.z;
+}
+
+template<class T> __host__ __device__ void my_atomic_add(T* var, T inc) {
+#ifdef __CUDA_ARCH__
+  atomicAdd(var, inc);
+#else
+  __sync_fetch_and_add(var, inc);
+#endif
+}
+
+__HD__ void matte_f(
+    const MatteParam& mat,
+    Spectrum& f) {
+
+  f.r = mat.kd.r * INV_PI;
+  f.g = mat.kd.g * INV_PI;
+  f.b = mat.kd.b * INV_PI;
+}
+
+__HD__ void matte_mirror_f(
+    const MatteMirrorParam& mat,
+    Spectrum& f) {
+
+  f *= mat.matte_pdf;
+}
+
+__HD__ void matte_metal_f(
+    const MatteMetalParam& mat,
+    Spectrum& f) {
+
+  f *= mat.matte_pdf;
+}
+
+__HD__ void alloy_f(
+    const AlloyParam& mat,
+    const Vector& wo,
+    const Normal& N,
+    Spectrum& f) {
+
+  const float c  = 1.f - Dot(wo, N);
+  const float Re = mat.R0 + (1.f - mat.R0) * c * c * c * c * c;
+  const float P  = .25f + .5f * Re;
+
+  f.r = mat.diff.r * INV_PI;
+  f.g = mat.diff.g * INV_PI;
+  f.b = mat.diff.b * INV_PI;
+
+  f *= (1.f - Re) / (1.f - P);
+}
+
+__HD__ void add_flux(
+    const PtrFreeHashGrid* const hash_grid,
+    const PtrFreeScene* const scene,
+    const Point& hit_point,
+    const Normal& shade_N,
+    const Vector& wi,
+    const Spectrum& photon_flux,
+    HitPointStaticInfo* const hit_points_static_info,
+    HitPoint* const hit_points) {
+
+  const Vector hh = (hit_point - hash_grid->bbox.pMin) * hash_grid->inv_cell_size;
+  const int ix = abs(int(hh.x));
+  const int iy = abs(int(hh.y));
+  const int iz = abs(int(hh.z));
+
+  unsigned grid_index = hash(ix, iy, iz, hash_grid->size);
+  unsigned length = hash_grid->lengths[grid_index];
+
+  if (length > 0) {
+    unsigned local_list = hash_grid->lists_index[grid_index];
+    for(unsigned i = local_list; i < local_list + length; ++i) {
+      unsigned hit_point_index = hash_grid->lists[i];
+      HitPointStaticInfo& ihp = hit_points_static_info[hit_point_index];
+      HitPoint& hp = hit_points[hit_point_index];
+
+      Vector v = ihp.position - hit_point;
+
+      if ((Dot(ihp.normal, shade_N) > 0.5f) && (Dot(v, v) <= hp.accum_photon_radius2)) {
+
+        // atomic add
+        my_atomic_add(&hp.accum_photon_count, (unsigned)1);
+
+        Spectrum f;
+
+        Material& hit_point_mat = scene->materials[ihp.material_ss];
+        switch(hit_point_mat.type) {
+          case MAT_MATTE: matte_f(hit_point_mat.param.matte, f);
+                          break;
+          case MAT_MATTEMIRROR: matte_mirror_f(hit_point_mat.param.matte_mirror, f);
+                                break;
+          case MAT_MATTEMETAL: matte_metal_f(hit_point_mat.param.matte_metal, f);
+                               break;
+          case MAT_ALLOY: alloy_f(hit_point_mat.param.alloy, ihp.wo, shade_N, f);
+                          break;
+        }
+
+        Spectrum flux = photon_flux * AbsDot(shade_N, wi) * ihp.throughput * f;
+
+#ifdef __CUDA_ARCH__
+        my_atomic_add(&hp.accum_reflected_flux.r, flux.r);
+        my_atomic_add(&hp.accum_reflected_flux.g, flux.g);
+        my_atomic_add(&hp.accum_reflected_flux.b, flux.b);
+#else
+#pragma omp critical
+        {
+          hp.accum_reflected_flux = hp.accum_reflected_flux + flux;
+        }
+#endif
+      }
+    }
+  }
+}
+
+__HD__ unsigned hash(const int ix, const int iy, const int iz, unsigned size) {
+  return (unsigned) ((ix * 73856093) ^ (iy * 19349663) ^ (iz * 83492791)) % size;
 }
 
 }

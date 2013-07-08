@@ -66,6 +66,7 @@ namespace ppm { namespace kernels { namespace cpu {
 
           if (specular_bounce) {
             // add flux
+            // helpers::add_flux()
 
             if (path.depth < CONST_max_photon_depth) {
               if (f_pdf <= 0.f || f.Black()) {

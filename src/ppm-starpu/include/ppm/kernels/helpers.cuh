@@ -49,6 +49,15 @@ __HD__ void triangle_light_sample_l(const float u0, const float u1, const float 
 
 __HD__ void sample_triangle_light(const TriangleLight& l, const float u0, const float u1, Point& p);
 
+__HD__ void matte_f(const MatteParam& mat, Spectrum& f);
+__HD__ void matte_mirror_f(const MatteMirrorParam& mat, Spectrum& f);
+__HD__ void matte_metal_f(const MatteMetalParam& mat, Spectrum& f);
+__HD__ void alloy_f(const MatteParam& mat, const Vector& wo, const Normal& N, Spectrum& f);
+
+__HD__ void add_flux(const PtrFreeScene* const scene, const Point& hit_point, const Normal& shade_N, const Vector& wi, const Spectrum& photon_flux);
+
+__HD__ unsigned hash(const int ix, const int iy, const int iz, unsigned size);
+
 }
 
 } }

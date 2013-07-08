@@ -72,6 +72,7 @@ void Engine :: render() {
     this->hash_grid.rehash();
 
     // advance photon patha
+    // TODO receive total_photon_paths as argument, and call multiple times, making all jobs within it asynchronous
     this->advance_photon_paths();
 
     // accumulate flux
@@ -195,12 +196,7 @@ void Engine :: advance_photon_paths() {
 
   while (todo_photon_paths > 0) {
     kernels::intersect_ray_hit_buffer(*ray_hit_buffer);
-
-    // calc contribution
-    //kernels::
-
-    // refill ray_hit_buffer
-
+    kernels::advance_photon_paths(*ray_hit_buffer, live_photon_paths, seeds);
   }
 
   //while (todo_photon_paths > 0) {
