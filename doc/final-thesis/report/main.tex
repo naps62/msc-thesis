@@ -1,0 +1,60 @@
+\documentclass[a4paper,abstract=on,twoside,halfparskip-]{scrartcl}
+\setlength\parindent{1.2em}
+
+\usepackage[final=false]{../../common/naps62}
+
+\newcommand{\common}[1]{\input{../../common/#1}}
+
+\newcommand{\subsubsubsection}[1]{\paragraph{#1\hfill}\hfill
+
+}
+
+% include custom mathematical definitions
+\common{equations/defs}
+
+\hypersetup{pdfauthor={Miguel Branco Palhas}}
+\hypersetup{pdftitle={Thesis: An Evaluation of the GAMA/StarPU Frameworks for Heterogeneous Platforms: The Progressive Photon Mapping Algorithm}}
+
+\bibliography{../../common/bib/parallel,../../common/bib/gama,../../common/bib/gpu,../../common/bib/photon_mapping}
+
+% reduce chapter margins
+\renewcommand{\chapterheadstartvskip}{\vspace*{-1.6\baselineskip}}
+
+\begin{document}
+\pdfbookmark[1]{Cover}{cover}
+\pagenumbering{roman}
+% TODO acrescentar capa depois
+%\includepdf[pages=-]{misc/cover-mei}
+
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[LO,RE]{}
+\fancyhead[LE]{\slshape \leftmark}
+\fancyhead[RO]{\slshape \rightmark}
+\fancyfoot[RO,LE]{\thepage}%
+\fancyfoot[C]{}
+
+\fancypagestyle{plain}{%
+  \renewcommand{\headrulewidth}{0.0pt}
+  \fancyhead{}
+  \fancyfoot[C]{}
+  \fancyfoot[RO,LE]{\thepage}
+}
+
+
+%
+% include all tex/ chapter files
+%
+\input{tex/_inputs}
+%\bibliographystyle{../../common/IEEE}
+%\nocite{*}
+\newpage % force the bookmark to go to the new page
+\pdfbookmark[1]{References}{references}
+\printbibliography[title=References]
+
+\newpage
+\pdfbookmark[1]{Signatures}{signatures}
+% TODO é preciso parecer?
+%\includepdf[pages=-]{../advisor_declaration/final}
+
+\end{document}
