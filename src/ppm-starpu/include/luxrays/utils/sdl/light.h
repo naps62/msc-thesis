@@ -105,6 +105,11 @@ public:
     *pdf = 0;
     return Spectrum();
   }
+  virtual Spectrum Sample_L(const Scene *scene, const float u0, const float u1,
+    const float u2, const float u3, const float u4, float *pdf, Ray *ray) const {
+    *pdf = 0;
+    return Spectrum();
+  }
 };
 
 class InfiniteLightPortal : public InfiniteLight {

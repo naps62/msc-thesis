@@ -75,15 +75,15 @@ public:
     return m;
   }
   bool HasScale() const;
-  inline Point operator()(const Point &pt) const;
-  inline void operator()(const Point &pt, Point *ptrans) const;
-  inline Vector operator()(const Vector &v) const;
-  inline void operator()(const Vector &v, Vector *vt) const;
-  inline Normal operator()(const Normal &) const;
-  inline void operator()(const Normal &, Normal *nt) const;
-  inline Ray operator()(const Ray &r) const;
-  inline void operator()(const Ray &r, Ray *rt) const;
-  BBox operator()(const BBox &b) const;
+  __HD__ inline Point operator()(const Point &pt) const;
+  __HD__ inline void operator()(const Point &pt, Point *ptrans) const;
+  __HD__ inline Vector operator()(const Vector &v) const;
+  __HD__ inline void operator()(const Vector &v, Vector *vt) const;
+  __HD__ inline Normal operator()(const Normal &) const;
+  __HD__ inline void operator()(const Normal &, Normal *nt) const;
+  __HD__ inline Ray operator()(const Ray &r) const;
+  __HD__ inline void operator()(const Ray &r, Ray *rt) const;
+  __HD__ BBox operator()(const BBox &b) const;
   Transform operator*(const Transform &t2) const;
   bool SwapsHandedness() const;
 
@@ -94,6 +94,7 @@ private:
   static const Matrix4x4 MAT_IDENTITY;
 };
 
+__HD__
 inline Point Transform::operator()(const Point &pt) const {
   const float x = pt.x, y = pt.y, z = pt.z;
   const float xp = m.m[0][0] * x + m.m[0][1] * y + m.m[0][2] * z + m.m[0][3];
@@ -106,6 +107,7 @@ inline Point Transform::operator()(const Point &pt) const {
   else return Point(xp, yp, zp) / wp;
 }
 
+__HD__
 inline void Transform::operator()(const Point &pt, Point *ptrans) const {
   const float x = pt.x, y = pt.y, z = pt.z;
   ptrans->x = m.m[0][0] * x + m.m[0][1] * y + m.m[0][2] * z + m.m[0][3];
@@ -115,6 +117,7 @@ inline void Transform::operator()(const Point &pt, Point *ptrans) const {
   if (w != 1.) *ptrans /= w;
 }
 
+__HD__
 inline Vector Transform::operator()(const Vector &v) const {
   const float x = v.x, y = v.y, z = v.z;
   return Vector(m.m[0][0] * x + m.m[0][1] * y + m.m[0][2] * z,
@@ -122,6 +125,7 @@ inline Vector Transform::operator()(const Vector &v) const {
       m.m[2][0] * x + m.m[2][1] * y + m.m[2][2] * z);
 }
 
+__HD__
 inline void Transform::operator()(const Vector &v,
     Vector *vt) const {
   const float x = v.x, y = v.y, z = v.z;
@@ -130,6 +134,7 @@ inline void Transform::operator()(const Vector &v,
   vt->z = m.m[2][0] * x + m.m[2][1] * y + m.m[2][2] * z;
 }
 
+__HD__
 inline Normal Transform::operator()(const Normal &n) const {
   const float x = n.x, y = n.y, z = n.z;
   return Normal(mInv.m[0][0] * x + mInv.m[1][0] * y + mInv.m[2][0] * z,
@@ -137,6 +142,7 @@ inline Normal Transform::operator()(const Normal &n) const {
       mInv.m[0][2] * x + mInv.m[1][2] * y + mInv.m[2][2] * z);
 }
 
+__HD__
 inline void Transform::operator()(const Normal &n,
     Normal *nt) const {
   const float x = n.x, y = n.y, z = n.z;
@@ -158,12 +164,14 @@ inline bool Transform::SwapsHandedness() const {
   return det < 0.f;
 }
 
+__HD__
 inline Ray Transform::operator()(const Ray &r) const {
   Ray ret((*this)(r.o), (*this)(r.d), r.mint, r.maxt);
 
   return ret;
 }
 
+__HD__
 inline void Transform::operator()(const Ray &r,
     Ray *rt) const {
   (*this)(r.o, &rt->o);

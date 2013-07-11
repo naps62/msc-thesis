@@ -31,7 +31,7 @@ namespace luxrays {
 
 #define RAY_EPSILON 1e-4f
 
-class  Ray {
+class Ray {
 public:
   // Ray Public Methods
   __HD__
@@ -44,6 +44,7 @@ public:
     mint = RAY_EPSILON;
   }
 
+  __HD__
   Ray(const Point &origin, const Vector &direction,
     float start, float end = std::numeric_limits<float>::infinity())
     : o(origin), d(direction), mint(start), maxt(end) { }

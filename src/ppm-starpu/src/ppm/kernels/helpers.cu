@@ -1,6 +1,7 @@
 #include "ppm/kernels/helpers.cuh"
 #include "ppm/ptrfree_hash_grid.h"
 #include <limits>
+#include <cfloat>
 
 namespace ppm { namespace kernels {
 
@@ -758,7 +759,7 @@ void sun_light_sample_l(
   shadow_ray.o = hit_point;
   shadow_ray.d = wi;
   shadow_ray.mint = RAY_EPSILON;
-  shadow_ray.maxt = std::numeric_limits<float>::max();
+  shadow_ray.maxt = FLT_MAX/*std::numeric_limits<float>::max()*/;
 
   f = sun_light.color;
   pdf = UniformConePdf(sun_light.cos_theta_max);
