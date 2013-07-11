@@ -19,7 +19,10 @@ namespace ppm { namespace kernels { namespace cpu {
       RayHit* const hits,             // const unsigned hits_count,
       PhotonPath* const photon_paths,    const unsigned photon_paths_count,
       Seed* const seed_buffer,        // const unsigned seed_buffer_count,
+      const PtrFreeHashGrid* hash_grid,
       const PtrFreeScene* scene,
+      HitPointStaticInfo* const hit_points_info,
+      HitPoint* const hit_points,
       const unsigned CONST_max_photon_depth) {
 
 #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
@@ -66,7 +69,7 @@ namespace ppm { namespace kernels { namespace cpu {
 
           if (specular_bounce) {
             // add flux
-            // helpers::add_flux()
+            helpers::add_flux(hash_grid, scene, hit_point, shade_N, wo, path.flux, hit_points_info, hit_points);
 
             if (path.depth < CONST_max_photon_depth) {
               if (f_pdf <= 0.f || f.Black()) {
@@ -102,6 +105,7 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
   const starpu_args* args    = (const starpu_args*) args_orig;
   const Config*       config = static_cast<const Config*>(args->cpu_config);
   const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->cpu_scene);
+  const PtrFreeHashGrid* hash_grid = static_cast<const PtrFreeHashGrid*>(args->cpu_hash_grid);
 
   // buffers
   // rays
@@ -113,16 +117,25 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
   // photon_paths
   PhotonPath* const photon_paths = reinterpret_cast<PhotonPath* const>(STARPU_VECTOR_GET_PTR(buffers[2]));
   const unsigned photon_paths_count = STARPU_VECTOR_GET_NX(buffers[2]);
+  // hit_points_static_info
+  HitPointStaticInfo* const hit_points_info = reinterpret_cast<HitPointStaticInfo* const>(STARPU_VECTOR_GET_PTR(buffers[3]));
+  //const unsigned hit_points_count = STARPU_VECTOR_GET_NX(buffers[3]);
+  // hit_points
+  HitPoint* const hit_points = reinterpret_cast<HitPoint* const>(STARPU_VECTOR_GET_PTR(buffers[4]));
+  //const unsigned hit_points_count = STARPU_VECTOR_GET_NX(buffers[4]);
   // seeds
-  Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[3]));
-  //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[3]);
+  Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[5]));
+  //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[5]);
 
 
   advance_photon_paths_impl(rays,         rays_count,
                             hits,         // hits_count
                             photon_paths, photon_paths_count,
                             seed_buffer,  // seed_buffer_count,
+                            hash_grid,
                             scene,
+                            hit_points_info,
+                            hit_points,
                             config->max_photon_depth);
 
 

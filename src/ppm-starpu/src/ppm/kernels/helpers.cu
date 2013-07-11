@@ -933,7 +933,7 @@ __HD__ void add_flux(
     const Normal& shade_N,
     const Vector& wi,
     const Spectrum& photon_flux,
-    HitPointStaticInfo* const hit_points_static_info,
+    HitPointStaticInfo* const hit_points_info,
     HitPoint* const hit_points) {
 
   const Vector hh = (hit_point - hash_grid->bbox.pMin) * hash_grid->inv_cell_size;
@@ -948,7 +948,7 @@ __HD__ void add_flux(
     unsigned local_list = hash_grid->lists_index[grid_index];
     for(unsigned i = local_list; i < local_list + length; ++i) {
       unsigned hit_point_index = hash_grid->lists[i];
-      HitPointStaticInfo& ihp = hit_points_static_info[hit_point_index];
+      HitPointStaticInfo& ihp = hit_points_info[hit_point_index];
       HitPoint& hp = hit_points[hit_point_index];
 
       Vector v = ihp.position - hit_point;

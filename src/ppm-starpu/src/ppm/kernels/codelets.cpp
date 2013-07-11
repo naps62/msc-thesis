@@ -31,11 +31,14 @@ namespace ppm { namespace kernels {
       memset(model, 0, sizeof(starpu_perfmodel));
     }
 
-    void init(const Config* cpu_config, const PtrFreeScene* cpu_scene, const CUDA::Config* gpu_config, const PtrFreeScene* gpu_scene) {
-      generic_args.cpu_config = cpu_config;
-      generic_args.cpu_scene  = cpu_scene;
-      generic_args.gpu_config = gpu_config;
-      generic_args.gpu_scene  = gpu_scene;
+    void init(const Config* cpu_config,       const PtrFreeScene* cpu_scene, const PtrFreeHashGrid* cpu_hash_grid,
+              const CUDA::Config* gpu_config, const PtrFreeScene* gpu_scene, const PtrFreeHashGrid* gpu_hash_grid) {
+      generic_args.cpu_config    = cpu_config;
+      generic_args.cpu_scene     = cpu_scene;
+      generic_args.cpu_hash_grid = cpu_hash_grid;
+      generic_args.gpu_config    = gpu_config;
+      generic_args.gpu_scene     = gpu_scene;
+      generic_args.gpu_hash_grid = gpu_hash_grid;
 
 
       starpu_perfmodel* pm;
@@ -133,11 +136,13 @@ namespace ppm { namespace kernels {
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_photon_paths;
       cl->cpu_funcs[1]    = NULL;
-      cl->nbuffers        = 4;
+      cl->nbuffers        = 6;
       cl->modes[0]        = STARPU_RW; // ray_buffer
       cl->modes[1]        = STARPU_RW; // hit buffer
       cl->modes[2]        = STARPU_RW; // live_photon_paths
-      cl->modes[3]        = STARPU_RW; // seeds
+      cl->modes[3]        = STARPU_RW; // hit_points_info
+      cl->modes[4]        = STARPU_RW; // hit_points
+      cl->modes[5]        = STARPU_RW; // seeds
       cl->model           = pm;
     }
   }

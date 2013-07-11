@@ -34,6 +34,8 @@ void advance_eye_paths (
 void advance_photon_paths (
   RayBuffer&          ray_hit_buffer,
   vector<PhotonPath>& photon_paths,
+  vector<HitPointStaticInfo>& hit_points_info,
+  vector<HitPoint>& hit_points,
   vector<Seed>&       seed_buffer
 );
 

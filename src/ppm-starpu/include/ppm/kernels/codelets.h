@@ -5,15 +5,18 @@
 #include "utils/config.h"
 #include "utils/cuda_config.cuh"
 #include "ppm/ptrfreescene.h"
+#include "ppm/ptrfree_hash_grid.h"
 
 namespace ppm { namespace kernels {
 
   namespace codelets {
     struct starpu_args {
-      const Config*       cpu_config;
-      const PtrFreeScene* cpu_scene;
-      const CUDA::Config* gpu_config;
-      const PtrFreeScene* gpu_scene;
+      const Config*          cpu_config;
+      const PtrFreeScene*    cpu_scene;
+      const PtrFreeHashGrid* cpu_hash_grid;
+      const CUDA::Config*    gpu_config;
+      const PtrFreeScene*    gpu_scene;
+      const PtrFreeHashGrid* gpu_hash_grid;
     };
 
     extern starpu_codelet generate_eye_paths;
@@ -24,7 +27,8 @@ namespace ppm { namespace kernels {
 
     extern starpu_args    generic_args;
 
-    void init(const Config* cpu_config, const PtrFreeScene* cpu_scene, const CUDA::Config* gpu_config, const PtrFreeScene* gpu_scene);
+    void init(const Config* cpu_config,       const PtrFreeScene* cpu_scene, const PtrFreeHashGrid* cpu_hash_grid,
+              const CUDA::Config* gpu_config, const PtrFreeScene* gpu_scene, const PtrFreeHashGrid* gpu_hash_grid);
 
   }
 
