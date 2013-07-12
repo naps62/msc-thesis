@@ -28,6 +28,7 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
+#include <cstring>
 
 #include "luxrays/core/geometry/ray.h"
 
@@ -36,423 +37,423 @@
 
 class RayBuffer {
 public:
-	RayBuffer(const size_t bufferSize) {
+  RayBuffer(const size_t bufferSize) {
 
-		size = bufferSize;
-		currentFreeRayIndex = 0;
+    size = bufferSize;
+    currentFreeRayIndex = 0;
 
-		rays = new Ray[size];
-		rayHits = new RayHit[size];
+    rays = new Ray[size];
+    rayHits = new RayHit[size];
 
-//		fprintf(stderr, "Ray buffer created\n");
-	}
+//    fprintf(stderr, "Ray buffer created\n");
+  }
 
-	~RayBuffer() {
-		delete[] rays;
-		delete[] rayHits;
-	}
+  ~RayBuffer() {
+    delete[] rays;
+    delete[] rayHits;
+  }
 
-	void PushUserData(size_t data) {
-		userData.push_back(data);
-	}
+  void PushUserData(size_t data) {
+    userData.push_back(data);
+  }
 
-	size_t GetUserData() {
-		return userData.back();
-	}
+  size_t GetUserData() {
+    return userData.back();
+  }
 
-	size_t GetUserData(const size_t index) {
-		assert (index < userData.size());
+  size_t GetUserData(const size_t index) {
+    assert (index < userData.size());
 
-		return userData[userData.size() - index - 1];
-	}
+    return userData[userData.size() - index - 1];
+  }
 
-	size_t PopUserData() {
-		size_t data = userData.back();
-		userData.pop_back();
+  size_t PopUserData() {
+    size_t data = userData.back();
+    userData.pop_back();
 
-		return data;
-	}
+    return data;
+  }
 
-	size_t GetUserDataCount() {
-		return userData.size();
-	}
+  size_t GetUserDataCount() {
+    return userData.size();
+  }
 
-	void ResetUserData() {
-		userData.clear();
-	}
+  void ResetUserData() {
+    userData.clear();
+  }
 
-	void Reset() {
-		currentFreeRayIndex = 0;
-	}
+  void Reset() {
+    currentFreeRayIndex = 0;
+  }
 
-	size_t ReserveRay() {
-		//assert (currentFreeRayIndex < size);
+  size_t ReserveRay() {
+    //assert (currentFreeRayIndex < size);
 
-		if (currentFreeRayIndex > size) {
-			fprintf(stderr, "%lu %lu \n", currentFreeRayIndex, size);
-		}
-		return currentFreeRayIndex++;
-	}
+    if (currentFreeRayIndex > size) {
+      fprintf(stderr, "%lu %lu \n", currentFreeRayIndex, size);
+    }
+    return currentFreeRayIndex++;
+  }
 
-	size_t AddRay(const Ray &ray) {
-		assert (currentFreeRayIndex < size);
-		rays[currentFreeRayIndex] = ray;
+  size_t AddRay(const Ray &ray) {
+    assert (currentFreeRayIndex < size);
+    rays[currentFreeRayIndex] = ray;
 
-		return currentFreeRayIndex++;
-	}
+    return currentFreeRayIndex++;
+  }
 
-	size_t AddRays(const Ray *ray, const size_t raysCount) {
-		assert ((raysCount == 0) || (currentFreeRayIndex + raysCount - 1 < size));
+  size_t AddRays(const Ray *ray, const size_t raysCount) {
+    assert ((raysCount == 0) || (currentFreeRayIndex + raysCount - 1 < size));
 
-		memcpy(&rays[currentFreeRayIndex], ray, sizeof(Ray) * raysCount);
+    memcpy(&rays[currentFreeRayIndex], ray, sizeof(Ray) * raysCount);
 
-		const size_t firstIndex = currentFreeRayIndex;
-		currentFreeRayIndex += raysCount;
+    const size_t firstIndex = currentFreeRayIndex;
+    currentFreeRayIndex += raysCount;
 
-		return firstIndex;
-	}
+    return firstIndex;
+  }
 
-	const RayHit *GetRayHit(const size_t index) const {
-		return &rayHits[index];
-	}
+  const RayHit *GetRayHit(const size_t index) const {
+    return &rayHits[index];
+  }
 
-	inline size_t GetSize() const {
-		return size;
-	}
+  inline size_t GetSize() const {
+    return size;
+  }
 
-	inline size_t GetRayCount() const {
-		return currentFreeRayIndex;
-	}
+  inline size_t GetRayCount() const {
+    return currentFreeRayIndex;
+  }
 
-	bool IsFull() const {
-		return (currentFreeRayIndex >= size);
-	}
+  bool IsFull() const {
+    return (currentFreeRayIndex >= size);
+  }
 
-	size_t LeftSpace() const {
-		return size - currentFreeRayIndex;
-	}
+  size_t LeftSpace() const {
+    return size - currentFreeRayIndex;
+  }
 
-	Ray *GetRayBuffer() const {
-		return rays;
-	}
+  Ray *GetRayBuffer() const {
+    return rays;
+  }
 
-	RayHit *GetHitBuffer() {
-		return rayHits;
-	}
+  RayHit *GetHitBuffer() {
+    return rayHits;
+  }
 
 private:
-	volatile size_t currentFreeRayIndex;
-	volatile size_t size;
-	std::vector<size_t> userData;
+  volatile size_t currentFreeRayIndex;
+  volatile size_t size;
+  std::vector<size_t> userData;
 
-	Ray *rays;
-	RayHit *rayHits;
+  Ray *rays;
+  RayHit *rayHits;
 };
 
 // NOTE: this class must be thread safe
 class RayBufferQueue {
 public:
-	virtual ~RayBufferQueue() {
-	}
+  virtual ~RayBufferQueue() {
+  }
 
-	virtual void Clear() = 0;
-	virtual size_t GetSizeToDo() = 0;
-	virtual size_t GetSizeDone() = 0;
+  virtual void Clear() = 0;
+  virtual size_t GetSizeToDo() = 0;
+  virtual size_t GetSizeDone() = 0;
 
-	virtual void PushToDo(RayBuffer *rayBuffer, const size_t index) = 0;
-	virtual RayBuffer *PopToDo() = 0;
-	// Pop up to 3 buffers out of a queue
-	virtual void
-			Pop3xToDo(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) = 0;
+  virtual void PushToDo(RayBuffer *rayBuffer, const size_t index) = 0;
+  virtual RayBuffer *PopToDo() = 0;
+  // Pop up to 3 buffers out of a queue
+  virtual void
+      Pop3xToDo(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) = 0;
 
-	virtual void PushDone(RayBuffer *rayBuffer) = 0;
-	virtual RayBuffer *PopDone(const size_t index = 0) = 0;
+  virtual void PushDone(RayBuffer *rayBuffer) = 0;
+  virtual RayBuffer *PopDone(const size_t index = 0) = 0;
 };
 
 class RayBufferSingleQueue {
 public:
-	RayBufferSingleQueue() {
-	}
+  RayBufferSingleQueue() {
+  }
 
-	~RayBufferSingleQueue() {
-	}
+  ~RayBufferSingleQueue() {
+  }
 
-	void Clear() {
-		boost::unique_lock<boost::mutex> lock(queueMutex);
+  void Clear() {
+    std::unique_lock<std::mutex> lock(queueMutex);
 
-		queue.clear();
-	}
+    queue.clear();
+  }
 
-	size_t GetSize() {
-		boost::unique_lock<boost::mutex> lock(queueMutex);
+  size_t GetSize() {
+    std::unique_lock<std::mutex> lock(queueMutex);
 
-		return queue.size();
-	}
+    return queue.size();
+  }
 
-	//--------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
 
-	void Push(RayBuffer *rayBuffer) {
-		{
-			boost::unique_lock<boost::mutex> lock(queueMutex);
-			queue.push_back(rayBuffer);
-		}
+  void Push(RayBuffer *rayBuffer) {
+    {
+      std::unique_lock<std::mutex> lock(queueMutex);
+      queue.push_back(rayBuffer);
+    }
 
-		condition.notify_all();
-	}
+    condition.notify_all();
+  }
 
-	RayBuffer *Pop() {
-		boost::unique_lock<boost::mutex> lock(queueMutex);
+  RayBuffer *Pop() {
+    std::unique_lock<std::mutex> lock(queueMutex);
 
-		while (queue.size() < 1) {
-			// Wait for a new buffer to arrive
-			condition.wait(lock);
-		}
+    while (queue.size() < 1) {
+      // Wait for a new buffer to arrive
+      condition.wait(lock);
+    }
 
-		RayBuffer *rayBuffer = queue.front();
-		queue.pop_front();
-		return rayBuffer;
-	}
+    RayBuffer *rayBuffer = queue.front();
+    queue.pop_front();
+    return rayBuffer;
+  }
 
-	void Pop3x(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) {
-		boost::unique_lock<boost::mutex> lock(queueMutex);
+  void Pop3x(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) {
+    std::unique_lock<std::mutex> lock(queueMutex);
 
-		while (queue.size() < 1) {
-			// Wait for a new buffer to arrive
-			condition.wait(lock);
-		}
+    while (queue.size() < 1) {
+      // Wait for a new buffer to arrive
+      condition.wait(lock);
+    }
 
-		switch (queue.size()) {
-		default:
-		case 3:
-			*rayBuffer0 = queue[0];
-			*rayBuffer1 = queue[1];
-			*rayBuffer2 = queue[2];
-			queue.erase(queue.begin(), queue.begin() + 3);
-			break;
-		case 2:
-			*rayBuffer0 = queue[0];
-			*rayBuffer1 = queue[1];
-			*rayBuffer2 = NULL;
-			queue.erase(queue.begin(), queue.begin() + 2);
-			break;
-		case 1:
-			*rayBuffer0 = queue[0];
-			*rayBuffer1 = NULL;
-			*rayBuffer2 = NULL;
-			queue.pop_front();
-			break;
-		}
-	}
+    switch (queue.size()) {
+    default:
+    case 3:
+      *rayBuffer0 = queue[0];
+      *rayBuffer1 = queue[1];
+      *rayBuffer2 = queue[2];
+      queue.erase(queue.begin(), queue.begin() + 3);
+      break;
+    case 2:
+      *rayBuffer0 = queue[0];
+      *rayBuffer1 = queue[1];
+      *rayBuffer2 = NULL;
+      queue.erase(queue.begin(), queue.begin() + 2);
+      break;
+    case 1:
+      *rayBuffer0 = queue[0];
+      *rayBuffer1 = NULL;
+      *rayBuffer2 = NULL;
+      queue.pop_front();
+      break;
+    }
+  }
 
-	//--------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
 
-	void Push(RayBuffer *rayBuffer, const size_t queueIndex) {
-		{
-			boost::unique_lock<boost::mutex> lock(queueMutex);
-			rayBuffer->PushUserData(queueIndex);
-			queue.push_back(rayBuffer);
-		}
+  void Push(RayBuffer *rayBuffer, const size_t queueIndex) {
+    {
+      std::unique_lock<std::mutex> lock(queueMutex);
+      rayBuffer->PushUserData(queueIndex);
+      queue.push_back(rayBuffer);
+    }
 
-		condition.notify_all();
-	}
+    condition.notify_all();
+  }
 
-	RayBuffer *Pop(const size_t queueIndex) {
-		boost::unique_lock<boost::mutex> lock(queueMutex);
+  RayBuffer *Pop(const size_t queueIndex) {
+    std::unique_lock<std::mutex> lock(queueMutex);
 
-		for (;;) {
-			for (size_t i = 0; i < queue.size(); ++i) {
-				// Check if it matches the requested queueIndex
-				if (queue[i]->GetUserData() == queueIndex) {
-					RayBuffer *rayBuffer = queue[i];
-					queue.erase(queue.begin() + i);
-					rayBuffer->PopUserData();
+    for (;;) {
+      for (size_t i = 0; i < queue.size(); ++i) {
+        // Check if it matches the requested queueIndex
+        if (queue[i]->GetUserData() == queueIndex) {
+          RayBuffer *rayBuffer = queue[i];
+          queue.erase(queue.begin() + i);
+          rayBuffer->PopUserData();
 
-					return rayBuffer;
-				}
-			}
+          return rayBuffer;
+        }
+      }
 
-			// Wait for a new buffer to arrive
-			condition.wait(lock);
-		}
-	}
+      // Wait for a new buffer to arrive
+      condition.wait(lock);
+    }
+  }
 
-	//--------------------------------------------------------------------------
+  //--------------------------------------------------------------------------
 
-	void Push(RayBuffer *rayBuffer, const size_t queueIndex, const size_t queueProgressive) {
-		{
-			boost::unique_lock<boost::mutex> lock(queueMutex);
+  void Push(RayBuffer *rayBuffer, const size_t queueIndex, const size_t queueProgressive) {
+    {
+      std::unique_lock<std::mutex> lock(queueMutex);
 
-			rayBuffer->PushUserData(queueProgressive);
-			rayBuffer->PushUserData(queueIndex);
-			queue.push_back(rayBuffer);
-		}
+      rayBuffer->PushUserData(queueProgressive);
+      rayBuffer->PushUserData(queueIndex);
+      queue.push_back(rayBuffer);
+    }
 
-		condition.notify_all();
-	}
+    condition.notify_all();
+  }
 
-	RayBuffer *Pop(const size_t queueIndex, const size_t queueProgressive) {
-		boost::unique_lock<boost::mutex> lock(queueMutex);
+  RayBuffer *Pop(const size_t queueIndex, const size_t queueProgressive) {
+    std::unique_lock<std::mutex> lock(queueMutex);
 
-		for (;;) {
-			for (size_t i = 0; i < queue.size(); ++i) {
-				// Check if it matches the requested queueIndex and queueProgressive
-				if ((queue[i]->GetUserData(0) == queueIndex) && (queue[i]->GetUserData(1)
-						== queueProgressive)) {
-					RayBuffer *rayBuffer = queue[i];
-					queue.erase(queue.begin() + i);
-					rayBuffer->PopUserData();
-					rayBuffer->PopUserData();
+    for (;;) {
+      for (size_t i = 0; i < queue.size(); ++i) {
+        // Check if it matches the requested queueIndex and queueProgressive
+        if ((queue[i]->GetUserData(0) == queueIndex) && (queue[i]->GetUserData(1)
+            == queueProgressive)) {
+          RayBuffer *rayBuffer = queue[i];
+          queue.erase(queue.begin() + i);
+          rayBuffer->PopUserData();
+          rayBuffer->PopUserData();
 
-					return rayBuffer;
-				}
-			}
+          return rayBuffer;
+        }
+      }
 
-			// Wait for a new buffer to arrive
-			condition.wait(lock);
-		}
-	}
+      // Wait for a new buffer to arrive
+      condition.wait(lock);
+    }
+  }
 
 private:
-	boost::mutex queueMutex;
-	boost::condition_variable condition;
+  std::mutex queueMutex;
+  std::condition_variable condition;
 
-	std::deque<RayBuffer *> queue;
+  std::deque<RayBuffer *> queue;
 };
 
 // A one producer, one consumer queue
 class RayBufferQueueO2O: public RayBufferQueue {
 public:
-	RayBufferQueueO2O() {
-	}
-	~RayBufferQueueO2O() {
-	}
+  RayBufferQueueO2O() {
+  }
+  ~RayBufferQueueO2O() {
+  }
 
-	void Clear() {
-		todoQueue.Clear();
-		doneQueue.Clear();
-	}
+  void Clear() {
+    todoQueue.Clear();
+    doneQueue.Clear();
+  }
 
-	size_t GetSizeToDo() {
-		return todoQueue.GetSize();
-	}
-	size_t GetSizeDone() {
-		return doneQueue.GetSize();
-	}
+  size_t GetSizeToDo() {
+    return todoQueue.GetSize();
+  }
+  size_t GetSizeDone() {
+    return doneQueue.GetSize();
+  }
 
-	void PushToDo(RayBuffer *rayBuffer, const size_t /*queueIndex*/) {
-		todoQueue.Push(rayBuffer);
-	}
-	RayBuffer *PopToDo() {
-		return todoQueue.Pop();
-	}
-	void Pop3xToDo(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) {
-		todoQueue.Pop3x(rayBuffer0, rayBuffer1, rayBuffer2);
-	}
+  void PushToDo(RayBuffer *rayBuffer, const size_t /*queueIndex*/) {
+    todoQueue.Push(rayBuffer);
+  }
+  RayBuffer *PopToDo() {
+    return todoQueue.Pop();
+  }
+  void Pop3xToDo(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) {
+    todoQueue.Pop3x(rayBuffer0, rayBuffer1, rayBuffer2);
+  }
 
-	void PushDone(RayBuffer *rayBuffer) {
-		doneQueue.Push(rayBuffer);
-	}
-	RayBuffer *PopDone(const size_t /*queueIndex*/) {
-		return doneQueue.Pop();
-	}
+  void PushDone(RayBuffer *rayBuffer) {
+    doneQueue.Push(rayBuffer);
+  }
+  RayBuffer *PopDone(const size_t /*queueIndex*/) {
+    return doneQueue.Pop();
+  }
 
 private:
-	RayBufferSingleQueue todoQueue;
-	RayBufferSingleQueue doneQueue;
+  RayBufferSingleQueue todoQueue;
+  RayBufferSingleQueue doneQueue;
 };
 
 // A many producers, one consumer queue
 class RayBufferQueueM2O: public RayBufferQueue {
 public:
-	RayBufferQueueM2O() {
-	}
-	~RayBufferQueueM2O() {
-	}
+  RayBufferQueueM2O() {
+  }
+  ~RayBufferQueueM2O() {
+  }
 
-	void Clear() {
-		todoQueue.Clear();
-		doneQueue.Clear();
-	}
+  void Clear() {
+    todoQueue.Clear();
+    doneQueue.Clear();
+  }
 
-	size_t GetSizeToDo() {
-		return todoQueue.GetSize();
-	}
-	size_t GetSizeDone() {
-		return doneQueue.GetSize();
-	}
+  size_t GetSizeToDo() {
+    return todoQueue.GetSize();
+  }
+  size_t GetSizeDone() {
+    return doneQueue.GetSize();
+  }
 
-	void PushToDo(RayBuffer *rayBuffer, const size_t queueIndex) {
-		todoQueue.Push(rayBuffer, queueIndex);
-	}
-	RayBuffer *PopToDo() {
-		return todoQueue.Pop();
-	}
-	void Pop3xToDo(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) {
-		todoQueue.Pop3x(rayBuffer0, rayBuffer1, rayBuffer2);
-	}
+  void PushToDo(RayBuffer *rayBuffer, const size_t queueIndex) {
+    todoQueue.Push(rayBuffer, queueIndex);
+  }
+  RayBuffer *PopToDo() {
+    return todoQueue.Pop();
+  }
+  void Pop3xToDo(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) {
+    todoQueue.Pop3x(rayBuffer0, rayBuffer1, rayBuffer2);
+  }
 
-	void PushDone(RayBuffer *rayBuffer) {
-		doneQueue.Push(rayBuffer);
-	}
-	RayBuffer *PopDone(const size_t queueIndex) {
-		return doneQueue.Pop(queueIndex);
-	}
+  void PushDone(RayBuffer *rayBuffer) {
+    doneQueue.Push(rayBuffer);
+  }
+  RayBuffer *PopDone(const size_t queueIndex) {
+    return doneQueue.Pop(queueIndex);
+  }
 
 private:
-	RayBufferSingleQueue todoQueue;
-	RayBufferSingleQueue doneQueue;
+  RayBufferSingleQueue todoQueue;
+  RayBufferSingleQueue doneQueue;
 };
 
 // A many producers, many consumers queue
 class RayBufferQueueM2M: public RayBufferQueue {
 public:
-	RayBufferQueueM2M(const size_t consumersCount) {
-		queueToDoCounters.resize(consumersCount);
-		std::fill(queueToDoCounters.begin(), queueToDoCounters.end(), 0);
-		queueDoneCounters.resize(consumersCount, 0);
-		std::fill(queueDoneCounters.begin(), queueDoneCounters.end(), 0);
-	}
-	~RayBufferQueueM2M() {
-	}
+  RayBufferQueueM2M(const size_t consumersCount) {
+    queueToDoCounters.resize(consumersCount);
+    std::fill(queueToDoCounters.begin(), queueToDoCounters.end(), 0);
+    queueDoneCounters.resize(consumersCount, 0);
+    std::fill(queueDoneCounters.begin(), queueDoneCounters.end(), 0);
+  }
+  ~RayBufferQueueM2M() {
+  }
 
-	void Clear() {
-		todoQueue.Clear();
-		doneQueue.Clear();
-	}
+  void Clear() {
+    todoQueue.Clear();
+    doneQueue.Clear();
+  }
 
-	size_t GetSizeToDo() {
-		return todoQueue.GetSize();
-	}
-	size_t GetSizeDone() {
-		return doneQueue.GetSize();
-	}
+  size_t GetSizeToDo() {
+    return todoQueue.GetSize();
+  }
+  size_t GetSizeDone() {
+    return doneQueue.GetSize();
+  }
 
-	void PushToDo(RayBuffer *rayBuffer, const size_t queueIndex) {
-		todoQueue.Push(rayBuffer, queueIndex, queueToDoCounters[queueIndex]);
-		queueToDoCounters[queueIndex]++;
-	}
-	RayBuffer *PopToDo() {
-		return todoQueue.Pop();
-	}
-	void Pop3xToDo(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) {
-		todoQueue.Pop3x(rayBuffer0, rayBuffer1, rayBuffer2);
-	}
+  void PushToDo(RayBuffer *rayBuffer, const size_t queueIndex) {
+    todoQueue.Push(rayBuffer, queueIndex, queueToDoCounters[queueIndex]);
+    queueToDoCounters[queueIndex]++;
+  }
+  RayBuffer *PopToDo() {
+    return todoQueue.Pop();
+  }
+  void Pop3xToDo(RayBuffer **rayBuffer0, RayBuffer **rayBuffer1, RayBuffer **rayBuffer2) {
+    todoQueue.Pop3x(rayBuffer0, rayBuffer1, rayBuffer2);
+  }
 
-	void PushDone(RayBuffer *rayBuffer) {
-		doneQueue.Push(rayBuffer);
-	}
-	RayBuffer *PopDone(const size_t queueIndex) {
-		RayBuffer *rb = doneQueue.Pop(queueIndex, queueDoneCounters[queueIndex]);
-		queueDoneCounters[queueIndex]++;
+  void PushDone(RayBuffer *rayBuffer) {
+    doneQueue.Push(rayBuffer);
+  }
+  RayBuffer *PopDone(const size_t queueIndex) {
+    RayBuffer *rb = doneQueue.Pop(queueIndex, queueDoneCounters[queueIndex]);
+    queueDoneCounters[queueIndex]++;
 
-		return rb;
-	}
+    return rb;
+  }
 
 private:
-	std::vector<unsigned int> queueToDoCounters;
-	std::vector<unsigned int> queueDoneCounters;
-	RayBufferSingleQueue todoQueue;
-	RayBufferSingleQueue doneQueue;
+  std::vector<unsigned int> queueToDoCounters;
+  std::vector<unsigned int> queueDoneCounters;
+  RayBufferSingleQueue todoQueue;
+  RayBufferSingleQueue doneQueue;
 };
 
-#endif	/* _LUXRAYS_RAYBUFFER_H */
+#endif  /* _LUXRAYS_RAYBUFFER_H */

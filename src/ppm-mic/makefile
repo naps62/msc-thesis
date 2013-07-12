@@ -15,12 +15,12 @@ FREEIMAGE_ROOT := /share/edu-mei/freeimage/3.15.4
 ARCH := mic
 OMP  := openmp
 
-CFLAGS  := -m$(ARCH) -O3 -Wall -Wextra
-NVFLAGS := -m$(ARCH) -O3
+CFLAGS  := -m$(ARCH) -O3 -Wall -Wextra -std=c++11
+NVFLAGS := -m$(ARCH) -O3 -std=c++11
 LDFLAGS := -m$(ARCH)
 ARFLAGS :=
 LD_LIBS       := glut GLU GL boost_program_options boost_system boost_thread boost_chrono freeimage m
-INCLUDE_DIR   := include /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(FREEIMAGE_ROOT)/include
+INCLUDE_DIR   := include /usr/local/include /usr/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(FREEIMAGE_ROOT)/include
 LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib $(BOOST_ROOT)/lib $(FREEIMAGE_ROOT)/lib/linux $(FREEIMAGE_ROOT)/lib
 CUDA_LIBS_DIR := $(CUDA_INSTALL_PATH)/lib64 $(CUDA_INSTALL_PATH)/lib
 
