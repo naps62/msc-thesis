@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <thread>
+#include <boost/thread.hpp>
 
 
 
