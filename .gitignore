@@ -13,7 +13,7 @@ kbest_times.csv
 .metadata
 build/
 bin/
-.cscope.files
+cscope.files
 tags
 .tags
 .tags_sorted_by_file
@@ -55,3 +55,6 @@ main-blx.bib
 *.mtc0
 *.fls
 *.nls
+
+*.sublime-workspace
+*.sublime-project
