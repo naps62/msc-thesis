@@ -33,18 +33,33 @@ protected:
   // starpu stuff
   starpu_conf spu_conf;
 
-  std::vector<Seed> seeds;
-  std::vector<HitPointStaticInfo> hit_points_info;
-  std::vector<HitPoint>           hit_points;
-
   const unsigned chunk_size;
 
+  std::vector<Seed> seeds;
+  std::vector<EyePath> eye_paths;
+  vector<unsigned> eye_paths_indexes;
+  RayBuffer ray_hit_buffer;
+  std::vector<HitPointStaticInfo> hit_points_info;
+  std::vector<HitPoint>           hit_points;
+  std::vector<PhotonPath> live_photon_paths;
+
+  starpu_data_handle_t seeds_h;
+  starpu_data_handle_t eye_paths_h;
+  starpu_data_handle_t eye_paths_indexes_h;
+  starpu_data_handle_t ray_buffer_h;
+  starpu_data_handle_t hit_buffer_h;
+  starpu_data_handle_t hit_points_info_h;
+  starpu_data_handle_t hit_points_h;
+  starpu_data_handle_t live_photon_paths_h;
+
+
+  void init_starpu_handles();
   void init_seed_buffer();
   void build_hit_points();
   void init_radius();
   void advance_photon_paths();
 
-  void eye_paths_to_hit_points(vector<EyePath>& eye_paths);
+  void eye_paths_to_hit_points();
   void update_bbox();
 };
 
