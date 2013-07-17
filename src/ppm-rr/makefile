@@ -1,6 +1,7 @@
 default: bin
 BINNAME := ppm-rr
 UNAME   := $(shell uname)
+DEBUG   := 0
 
 SRC_DIR           := src
 CUDA_SUPPORT      := yes
@@ -11,16 +12,29 @@ ARCH := $(shell getconf LONG_BIT)
 OMP  := openmp
 OMP := $(addprefix -f,$(OMP))
 
-BEAST_ROOT := $(HOME)/projects/beast
-FREEIMAGE_ROOT := /share/edu-mei/freeimage/3.15.4
+STARPU_CFLAGS := $(shell pkg-config --cflags starpu-1.0)
+STARPU_LIBS   := $(shell pkg-config --libs   starpu-1.0)
 
-CFLAGS  := -m$(ARCH) -O3 -Wall -Wno-unused-result
-NVFLAGS := -m$(ARCH) -O3
-LDFLAGS := -m$(ARCH)
+FREEIMAGE_ROOT := /share/edu-mei/freeimage/3.15.4
+STARPU_WRAPPER_ROOT := $(HOME)/projects/msc-thesis/src/starpu_wrapper
+
+CFLAGS  := -m$(ARCH) $(STARPU_CFLAGS) -Wall -Wno-unused-result
+NVFLAGS := -m$(ARCH) $(STARPU_CFLAGS)
+LDFLAGS := -m$(ARCH) $(STARPU_LIBS)
+
+ifeq ($(DEBUG),1)
+CFLAGS  +=
+NVFLAGS +=
+LDFLAGS +=
+else
+CFLAGS  += -O3
+NVFLAGS += -O3
+endif
+
 ARFLAGS :=
-LD_LIBS       := beast glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage
-INCLUDE_DIR   := include include/luxrays /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include $(FREEIMAGE_ROOT)/include
-LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib $(BOOST_ROOT)/lib $(BEAST_ROOT)/lib $(FREEIMAGE_ROOT)/lib/linux $(FREEIMAGE_ROOT)/lib
+LD_LIBS       := glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage
+INCLUDE_DIR   := include include/luxrays /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(FREEIMAGE_ROOT)/include $(STARPU_WRAPPER_ROOT)/include
+LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib $(BOOST_ROOT)/lib $(FREEIMAGE_ROOT)/lib/linux $(FREEIMAGE_ROOT)/lib
 CUDA_LIBS_DIR := $(CUDA_INSTALL_PATH)/lib64 $(CUDA_INSTALL_PATH)/lib
 
 
@@ -48,17 +62,23 @@ vpath %.c $(SRC_DIR)
 
 CC   := gcc $(CFLAGS) $(OMP)
 CXX  := g++ $(CFLAGS) $(OMP)
+CC_DEP := $(CC)
+CXX_DEP := $(CXX)
 
 ifeq ($(CUDA_SUPPORT),yes)
 NVFLAGS := $(NVFLAGS) -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=sm_21 -gencode arch=compute_30,code=sm_30
 LDFLAGS := $(LDFLAGS) -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=sm_21 -gencode arch=compute_30,code=sm_30
 vpath %.cu $(SRC_DIR)
+CC_DEP := $(CC)
+CXX_DEP := $(CXX)
+CC   := nvcc        $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
+CXX  := nvcc        $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
 NVCC := nvcc -x cu  $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
 LD   := nvcc -link  $(LDFLAGS) -Xcompiler "$(OMP)"
 AR   := ar
 else
 NVCC := nvcc $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
-LD   := gcc  $(LDFLAGS) $(OMP)
+LD   := g++  $(LDFLAGS) $(OMP)
 endif
 
 define make-files
@@ -68,11 +88,11 @@ $1/%.d: %.cu
 
 $1/%.d: %.cpp
 	@echo " DEPS   $$@"
-	@$(CXX) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(CXX_DEP) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.d: %.c
 	@echo " DEPS   $$@"
-	@$(CC) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(CC_DEP) -M -MT 'build/$$*.o' $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.cu
 	@echo " NVCC   $$<"
@@ -80,11 +100,11 @@ $1/%.o: %.cu
 
 $1/%.o: %.cpp
 	@echo " CXX    $$<"
-	@$(CXX) -c $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
+	@$(CXX) -c $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.c
 	@echo " CC     $$<"
-	@$(CC) -c $(DEFINES) $(OMP) $(INCLUDES) $$< -o $$@
+	@$(CC) -c $(DEFINES) $(INCLUDES) $$< -o $$@
 endef
 
 define include-dep-file
