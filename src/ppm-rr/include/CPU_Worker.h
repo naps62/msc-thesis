@@ -12,6 +12,7 @@
 #include "pointerfreescene.h"
 #include "hitpoints.h"
 #include "List.h"
+#include "cuda_utils.h"
 #include "renderEngine.h"
 #include "lookupAcc.h"
 #include <xmmintrin.h>

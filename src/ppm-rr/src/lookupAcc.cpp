@@ -400,4 +400,35 @@ void PointerFreeHashGrid::updateLookupTable() {
 
 	}
 
+	//checkCUDAmemory("before updateLookupTable");
+
+	uint size1 = sizeof(uint) * hashGridEntryCount;
+
+	if (hashGridListsBuff)
+		cudaFree(hashGridListsBuff);
+	cudaMalloc((void**) (&hashGridListsBuff), size1);
+
+	cudaMemset(hashGridListsBuff, 0, size1);
+	cudaMemcpy(hashGridListsBuff, hashGridLists, size1, cudaMemcpyHostToDevice);
+
+	uint size2 = sizeof(uint) * engine->hitPointTotal;
+
+	if (!hashGridListsIndexBuff)
+		cudaMalloc((void**) (&hashGridListsIndexBuff), size2);
+
+	cudaMemset(hashGridListsIndexBuff, 0, size2);
+
+	cudaMemcpy(hashGridListsIndexBuff, hashGridListsIndex, size2, cudaMemcpyHostToDevice);
+
+	if (!hashGridLenghtsBuff)
+		cudaMalloc((void**) (&hashGridLenghtsBuff), size2);
+
+	cudaMemset(hashGridLenghtsBuff, 0, size2);
+
+	cudaMemcpy(hashGridLenghtsBuff, hashGridLenghts, size2, cudaMemcpyHostToDevice);
+
+	checkCUDAError();
+
+	//checkCUDAmemory("After updateLookupTable");
+
 }

@@ -5,8 +5,9 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <boost/thread.hpp>
 
+#include "cuda.h"
+#include "cuda_runtime.h"
 
 
 
@@ -24,8 +25,6 @@ std::string to_string(T t, std::ios_base & (*f)(std::ios_base&)) {
 }
 
 #if defined(__CUDACC__)
-#include "cuda.h"
-#include "cuda_runtime.h"
 #define __HD__ 			__device__
 #define __H_D__			__host__ __device__
 #define __noinline 		__noinline__
@@ -37,20 +36,6 @@ std::string to_string(T t, std::ios_base & (*f)(std::ios_base&)) {
 #define __H_D__
 #define __noinline
 #define __forceinline 	__inline__ __attribute__((__always_inline__))
-#define __device__
-#define __host__
-
-typedef struct float4 {
-  float x, y, z, w;
-} float4;
-
-typedef struct uint4 {
-  unsigned x, y, z, w;
-} uint4;
-
-typedef struct int4 {
-  int x, y, z, w;
-} int4;
 
 #endif
 

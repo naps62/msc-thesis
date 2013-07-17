@@ -192,8 +192,7 @@ CPU_Worker::~CPU_Worker() {
 //
 //}
 
-void CPU_Worker::AdvanceEyePaths( RayBuffer *rayBuffer, EyePath* todoEyePaths,
-		uint* eyePathIndexes) {
+void CPU_Worker::AdvanceEyePaths( RayBuffer *rayBuffer, EyePath* todoEyePaths, uint* eyePathIndexes) {
 
 	const uint max = rayBuffer->GetRayCount();
 

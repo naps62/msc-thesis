@@ -30,6 +30,7 @@
 PPM* engine;
 
 
+#include "cuda_utils.h"
 HitPoint *hitPoints;
 
 bool PPM::GetHitPointInformation(PointerFreeScene *ss, Ray *ray,

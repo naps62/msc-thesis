@@ -10,6 +10,7 @@
 
 #include "renderEngine.h"
 #include "core.h"
+#include "cuda_utils.h"
 
 
 enum lookupAccType {

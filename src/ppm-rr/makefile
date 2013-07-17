@@ -1,7 +1,6 @@
 default: bin
 BINNAME := ppm-rr
 UNAME   := $(shell uname)
-DEBUG := 1
 
 SRC_DIR           := src
 CUDA_SUPPORT      := yes
@@ -15,19 +14,10 @@ OMP := $(addprefix -f,$(OMP))
 BEAST_ROOT := $(HOME)/projects/beast
 FREEIMAGE_ROOT := /share/edu-mei/freeimage/3.15.4
 
-CFLAGS  := -m$(ARCH) -Wall -Wno-unused-result
-NVFLAGS := -m$(ARCH)
+CFLAGS  := -m$(ARCH) -O3 -Wall -Wno-unused-result
+NVFLAGS := -m$(ARCH) -O3
 LDFLAGS := -m$(ARCH)
-
-ifeq ($(DEBUG),1)
-CFLAGS  += -g
-NVFLAGS += -g
-LDFLAGS += -g
-else
-CFLAGS  := -O3
-NVFLAGS := -O3
-endif
-
+ARFLAGS :=
 LD_LIBS       := beast glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage
 INCLUDE_DIR   := include include/luxrays /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include $(FREEIMAGE_ROOT)/include
 LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib $(BOOST_ROOT)/lib $(BEAST_ROOT)/lib $(FREEIMAGE_ROOT)/lib/linux $(FREEIMAGE_ROOT)/lib
