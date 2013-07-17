@@ -59,14 +59,13 @@ Engine :: ~Engine() {
 void Engine :: render() {
   film.clear(Spectrum(1.f, 0.f, 0.f));
 
-  cout << "Building hit points" << endl;
+  cout << "build_hit_points" << endl;
   this->build_hit_points();
-  cout << "hit points done" << endl;
 
-  // init_radius
+  cout << "init_radius" << endl;
   this->init_radius();
 
-  // set hash_grid data
+  cout << "set hash grid data" << endl;
   this->update_bbox();
   this->hash_grid.set_bbox(this->bbox);
   this->hash_grid.set_hit_points(hit_points_info, hit_points);
@@ -76,10 +75,11 @@ void Engine :: render() {
   while(display->is_on() && iteration < config.max_iters) {
 
     // update lookup hash grid
+    cout << "rehash" << endl;
     this->hash_grid.rehash();
 
-    // advance photon patha
     // TODO receive total_photon_paths as argument, and call multiple times, making all jobs within it asynchronous
+    cout << "advance_photon_paths" << endl;
     this->advance_photon_paths();
 
     // accumulate flux
@@ -114,21 +114,14 @@ void Engine :: init_starpu_handles() {
 }
 
 void Engine :: init_seed_buffer() {
-  // TODO is it worth it to move this to a kernel?
   for(uint i = 0; i < config.total_hit_points; ++i) {
     seeds[i] = mwc(i);
   }
 }
 
 void Engine :: build_hit_points() {
-
-  // eye path generation
-  cout << "generating eye paths" << endl;
   kernels::generate_eye_paths(eye_paths_h, seeds_h);
-
-  cout << "eye paths to hit points" << endl;
   this->eye_paths_to_hit_points();
-  cout << "success!" << endl;
 }
 
 void Engine :: eye_paths_to_hit_points() {
