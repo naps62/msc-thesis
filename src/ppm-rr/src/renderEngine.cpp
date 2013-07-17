@@ -66,7 +66,11 @@ bool PPM::GetHitPointInformation(PointerFreeScene *ss, Ray *ray,
 	triIndex = currentTriangleIndex
 			- ss->meshFirstTriangleOffset[currentMeshIndex];
 
+	std::cout << " " << currentTriangleIndex << " " << currentMeshIndex << " " << ss->meshFirstTriangleOffset[currentMeshIndex] << std::endl;
+	exit(0);
+
 	POINTERFREESCENE::Mesh m = ss->meshDescs[currentMeshIndex];
+	//cout << "asd" << currentTriangleIndex << endl;
 
 	//SSCENE::Material *hitPointMat = &ss->mats[ss->meshMats[currentMeshIndex]];
 

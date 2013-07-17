@@ -93,6 +93,7 @@ void Worker::BuildHitPoints(uint /*iteration*/) {
 		}
 	}
 
+
 	// Iterate through all eye paths
 	//std::cerr << "Building eye paths hit points: " << std::endl;
 //	lastPrintTime = WallClockTime();
@@ -182,6 +183,10 @@ void Worker::BuildHitPoints(uint /*iteration*/) {
 
 	delete[] todoEyePaths;
 	delete[] eyePathIndexes;
+
+	   for(unsigned i = 0; i < hitPointTotal; ++i) {
+      cout << hitPointsStaticInfo_iterationCopy[i].position << endl;
+    }
 
 
 }

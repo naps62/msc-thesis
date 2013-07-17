@@ -14,12 +14,13 @@ using ppm::EyePath;
 namespace ppm { namespace kernels { namespace cpu {
 
 void intersect_ray_hit_buffer_impl(
-    Ray* const rays, const unsigned rays_count,
+    Ray* const rays,
     RayHit* const hits,
+    const unsigned buffer_size,
     const PtrFreeScene* scene) {
 
   #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
-  for(unsigned int i = 0; i < rays_count; ++i) {
+  for(unsigned int i = 0; i < buffer_size; ++i) {
     hits[i].SetMiss();
     scene->intersect(rays[i], hits[i]);
   }
@@ -29,17 +30,15 @@ void intersect_ray_hit_buffer_impl(
 void intersect_ray_hit_buffer(void* buffers[], void* args_orig) {
 
   // cl_args
-  const starpu_args* args = (const starpu_args*) args_orig;
+  const codelets::starpu_intersect_ray_hit_buffer_args* args = (const codelets::starpu_intersect_ray_hit_buffer_args*) args_orig;
   //const Config*       config = static_cast<const Config*>(args->cpu_config);
-  const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->cpu_scene);
 
   // buffers
-  Ray* const rays = reinterpret_cast<Ray* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
-  const unsigned rays_count = STARPU_VECTOR_GET_NX(buffers[0]);
+  Ray* const rays    = reinterpret_cast<Ray*    const>(STARPU_VECTOR_GET_PTR(buffers[0]));
   RayHit* const hits = reinterpret_cast<RayHit* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
 
 
-  intersect_ray_hit_buffer_impl(rays, rays_count, hits, scene);
+  intersect_ray_hit_buffer_impl(rays, hits, args->buffer_size, args->cpu_scene);
 }
 
 } } }

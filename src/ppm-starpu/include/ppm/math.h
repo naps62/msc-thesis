@@ -19,8 +19,6 @@ __HYBRID__ inline float degrees(float rad);
 __HYBRID__ inline float sign(float a);
 __HYBRID__ inline int   sign(int a);
 
-__HYBRID__ void concentric_sample_disk(const float u1, const float u2, float *dx, float *dy);
-
 } }
 
 #endif // _PPM_MATH_H_

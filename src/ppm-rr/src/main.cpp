@@ -125,8 +125,9 @@ int main(int argc, char *argv[]) {
 	c = max((int)hitPointTotal, (int)WORK_BUCKET_SIZE_CPU);
 	seedBuffer = new Seed[c];
 
-	for (uint i = 0; i < c; i++)
+	for (uint i = 0; i < c; i++) {
 		seedBuffer[i] = mwc(i+devID);
+	}
 
 	if (build_hit)
 		build_hit = false;

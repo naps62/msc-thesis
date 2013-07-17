@@ -10,6 +10,10 @@ namespace ppm { namespace kernels {
 
 namespace helpers {
 
+
+__HD__ void concentric_sample_disk(const float u1, const float u2, float *dx, float *dy);
+__HD__ Ray generate_ray(const float sx, const float sy, const uint width, const uint height, const float u0, const float u1, const float u2, const Camera& camera);
+
 __HD__ void tex_map_get_texel(const Spectrum* const pixels, const unsigned width, const unsigned height, const int s, const int t, Spectrum& color);
 __HD__ void tex_map_get_color(const Spectrum* const pixels, const unsigned width, const unsigned height, const float u, const float v, Spectrum& color);
 

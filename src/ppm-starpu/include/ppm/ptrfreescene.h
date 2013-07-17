@@ -54,12 +54,6 @@ public:
   unsigned uvs_count;
   unsigned triangles_count;
   unsigned mesh_descs_count;
-  //std::vector<Point>    vertexes;
-  //std::vector<Normal>   normals;
-  //std::vector<Spectrum> colors;
-  //std::vector<UV>       uvs;
-  //std::vector<Triangle> triangles;
-  //std::vector<Mesh>     mesh_descs;
   Point*    vertexes;
   Normal*   normals;
   Spectrum* colors;
@@ -67,24 +61,18 @@ public:
   Triangle* triangles;
   Mesh*     mesh_descs;
 
-  //std::vector<uint> mesh_ids;
   uint* mesh_ids; // size == mesh_count
 
-  //std::vector<uint> mesh_first_triangle_offset;
   uint* mesh_first_triangle_offset;
   BSphere bsphere; // bounding sphere of the scene
   Camera camera;   // compiled camera
 
   // materials
-  //std::vector<bool>     compiled_materials;
-  //std::vector<Material> materials;
-  //std::vector<uint>     mesh_mats;
   bool*     compiled_materials; // size = ppm::MAT_MAX
   Material* materials;
   uint*     mesh_materials; // size = mesh_mats_count
 
   // lights
-  //std::vector<TriangleLight> area_lights;
   TriangleLight*  area_lights;
   InfiniteLight   infinite_light;
   const Spectrum* infinite_light_map;
@@ -92,23 +80,16 @@ public:
   SkyLight        sky_light;
 
   // textures
-  //std::vector<TexMap> tex_maps;
-  //std::vector<Spectrum> rgb_tex;
-  //std::vector<float> alpha_tex;
-  //std::vector<uint> mesh_texs;
   TexMap*   tex_maps;
   Spectrum* rgb_tex;
   float*    alpha_tex;
   uint*     mesh_texs;
 
   // bump maps
-  //std::vector<uint> bump_map;
-  //std::vector<float> bump_map_scales;
   uint*  bump_map;
   float* bump_map_scales;
 
   // normal maps
-  //std::vector<uint> normal_map;
   uint* normal_map;
 
 

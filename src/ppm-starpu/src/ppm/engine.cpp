@@ -40,6 +40,7 @@ Engine :: Engine(const Config& _config)
   starpu_init(&this->spu_conf);
   kernels::codelets::init(&config, scene, &hash_grid, NULL, NULL, NULL); // TODO GPU versions here
 
+  cout << "scene: " << scene << endl;
   init_seed_buffer();
   init_starpu_handles();
 }
@@ -103,19 +104,19 @@ void Engine :: set_captions() {
 //
 
 void Engine :: init_starpu_handles() {
-  starpu_vector_data_register(&seeds_h,             0, (uintptr_t)&seeds[0],                     seeds.size(),                 sizeof(Seed));
-  starpu_vector_data_register(&eye_paths_h,         0, (uintptr_t)&eye_paths[0],                 eye_paths.size(),             sizeof(EyePath));
-  starpu_vector_data_register(&eye_paths_indexes_h, 0, (uintptr_t)&eye_paths_indexes[0],         eye_paths_indexes.size(),     sizeof(unsigned));
-  starpu_vector_data_register(&ray_buffer_h,        0, (uintptr_t)ray_hit_buffer.GetRayBuffer(), ray_hit_buffer.GetRayCount(), sizeof(Ray));
-  starpu_vector_data_register(&hit_buffer_h,        0, (uintptr_t)ray_hit_buffer.GetHitBuffer(), ray_hit_buffer.GetRayCount(), sizeof(RayHit));
-  starpu_vector_data_register(&hit_points_info_h,   0, (uintptr_t)&hit_points_info[0],           hit_points_info.size(),       sizeof(HitPointStaticInfo));
-  starpu_vector_data_register(&hit_points_h,        0, (uintptr_t)&hit_points[0],                hit_points.size(),            sizeof(HitPointStaticInfo));
-  starpu_vector_data_register(&live_photon_paths_h, 0, (uintptr_t)&live_photon_paths[0],         live_photon_paths.size(),     sizeof(PhotonPath));
+  starpu_vector_data_register(&seeds_h,             0, (uintptr_t)&seeds[0],                     seeds.size(),             sizeof(Seed));
+  starpu_vector_data_register(&eye_paths_h,         0, (uintptr_t)&eye_paths[0],                 eye_paths.size(),         sizeof(EyePath));
+  starpu_vector_data_register(&eye_paths_indexes_h, 0, (uintptr_t)&eye_paths_indexes[0],         eye_paths_indexes.size(), sizeof(unsigned));
+  starpu_vector_data_register(&ray_buffer_h,        0, (uintptr_t)ray_hit_buffer.GetRayBuffer(), ray_hit_buffer.GetSize(), sizeof(Ray));
+  starpu_vector_data_register(&hit_buffer_h,        0, (uintptr_t)ray_hit_buffer.GetHitBuffer(), ray_hit_buffer.GetSize(), sizeof(RayHit));
+  starpu_vector_data_register(&hit_points_info_h,   0, (uintptr_t)&hit_points_info[0],           hit_points_info.size(),   sizeof(HitPointStaticInfo));
+  starpu_vector_data_register(&hit_points_h,        0, (uintptr_t)&hit_points[0],                hit_points.size(),        sizeof(HitPointStaticInfo));
+  starpu_vector_data_register(&live_photon_paths_h, 0, (uintptr_t)&live_photon_paths[0],         live_photon_paths.size(), sizeof(PhotonPath));
 }
 
 void Engine :: init_seed_buffer() {
   for(uint i = 0; i < config.total_hit_points; ++i) {
-    seeds[i] = mwc(i);
+    seeds[i] = mwc(i+100);
   }
 }
 
@@ -125,17 +126,21 @@ void Engine :: build_hit_points() {
 }
 
 void Engine :: eye_paths_to_hit_points() {
-  unsigned todo_eye_paths = eye_paths.size();
+  int todo_eye_paths = eye_paths.size();
   const unsigned hit_points_count = hit_points_info.size();
   unsigned chunk_count = 0;
-  unsigned chunk_done_count = 0;
+  unsigned chunk_finished = 0;
 
-  while (todo_eye_paths) {
+  while (todo_eye_paths > 0) {
 
     const unsigned start = chunk_count * chunk_size;
     const unsigned end   = (hit_points_count - start  < chunk_size) ? hit_points_count : start + chunk_size;
 
-    // 1. fill the ray buffer
+    // one chunk at a time
+    //kernels::eye_paths_fill_ray_buffer(eye_paths_h, eye_paths_indexes_h, hit_points_info_h, ray_buffer_h, start, end, config.max_eye_path_depth);
+
+    unsigned current_buffer_size = 0;
+
     for(unsigned i = start; i < end; ++i) {
       EyePath& eye_path = eye_paths[i];
 
@@ -144,41 +149,44 @@ void Engine :: eye_paths_to_hit_points() {
         if (eye_path.depth > config.max_eye_path_depth) {
           // make it done
           HitPointStaticInfo& hp = hit_points_info[eye_path.sample_index];
-          hp.type  = CONSTANT_COLOR;
+          hp.type = CONSTANT_COLOR;
           hp.scr_x = eye_path.scr_x;
           hp.scr_y = eye_path.scr_y;
           hp.throughput = Spectrum();
 
           eye_path.done = true;
-
         } else {
-          // if not, add it to current buffer
           eye_path.depth++;
-          const int index = ray_hit_buffer.AddRay(eye_path.ray);
-          eye_paths_indexes[index] = i;
+          ray_hit_buffer.GetRayBuffer()[current_buffer_size] = eye_path.ray;
+          eye_paths_indexes[current_buffer_size] = i;
+          current_buffer_size++;
         }
       }
 
-      // check if this ray is already done, but not yet splatted
       if (eye_path.done && !eye_path.splat) {
+        --todo_eye_paths;
         eye_path.splat = true;
-        todo_eye_paths--;
-        chunk_done_count++;
-        if (chunk_done_count == chunk_size) {
-          // move to next chunka
+        chunk_finished++;
+        if (chunk_finished == chunk_size) {
           chunk_count++;
-          chunk_done_count = 0;
+          chunk_finished = 0;
+          //cout << "finished " << end - start + 1 << " eye paths. " << todo_eye_paths <<" to go" << endl;
         }
       }
     }
 
-    // 2. advance ray buffer
-    if (ray_hit_buffer.GetRayCount() > 0) {
-      kernels::intersect_ray_hit_buffer(ray_buffer_h, hit_buffer_h);
-      kernels::advance_eye_paths(hit_points_info_h, hit_buffer_h, eye_paths_h, eye_paths_indexes_h, seeds_h);
-      ray_hit_buffer.Reset();
+    if (current_buffer_size > 0) {
+      cout << current_buffer_size << endl;
+      kernels::intersect_ray_hit_buffer(ray_buffer_h, hit_buffer_h, current_buffer_size);
+      kernels::advance_eye_paths(hit_points_info_h, hit_buffer_h, eye_paths_h, eye_paths_indexes_h, seeds_h, current_buffer_size);
+      cout << current_buffer_size << endl;
     }
+
+    //chunk_count++;
+    //todo_eye_paths -= (end - start);
   }
+
+  exit(0);
 }
 
 void Engine :: init_radius() {
@@ -200,7 +208,7 @@ void Engine :: advance_photon_paths() {
   kernels::generate_photon_paths(hit_buffer_h, live_photon_paths_h, seeds_h);
 
   while (todo_photon_paths > 0) {
-    kernels::intersect_ray_hit_buffer(ray_buffer_h, hit_buffer_h);
+    kernels::intersect_ray_hit_buffer(ray_buffer_h, hit_buffer_h, 0); // TODO give the correct size here
     kernels::advance_photon_paths(ray_buffer_h, hit_buffer_h, live_photon_paths_h, hit_points_info_h, hit_points_h, seeds_h);
   }
 }

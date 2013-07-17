@@ -23,12 +23,23 @@ void generate_photon_paths (
     starpu_data_handle_t seed_buffer
 );
 
+void eye_paths_fill_ray_buffer(
+    starpu_data_handle_t eye_paths,
+    starpu_data_handle_t eye_paths_indexes,
+    starpu_data_handle_t hit_points_info,
+    starpu_data_handle_t ray_buffer,
+    const unsigned start,
+    const unsigned end,
+    const unsigned max_eye_path_depth
+);
+
 void advance_eye_paths (
     starpu_data_handle_t hit_points_info,
     starpu_data_handle_t hit_buffer,
     starpu_data_handle_t eye_paths,
     starpu_data_handle_t eye_paths_indexes,
-    starpu_data_handle_t seed_buffer
+    starpu_data_handle_t seed_buffer,
+    const unsigned buffer_size
 );
 
 void advance_photon_paths (
@@ -42,7 +53,9 @@ void advance_photon_paths (
 
 void intersect_ray_hit_buffer (
     starpu_data_handle_t ray_buffer,
-    starpu_data_handle_t hit_buffer);
+    starpu_data_handle_t hit_buffer,
+    const unsigned buffer_size
+);
 
 } }
 

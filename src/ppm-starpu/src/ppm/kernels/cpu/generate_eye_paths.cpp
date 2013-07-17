@@ -1,4 +1,5 @@
 #include "ppm/kernels/kernels.h"
+#include "ppm/kernels/helpers.cuh"
 
 #include "utils/config.h"
 #include "ppm/ptrfreescene.h"
@@ -28,7 +29,6 @@ void generate_eye_paths_impl(
   unsigned index = 0;
   const float sample_weight = 1.f / spp;
 
-  //printf("%d\n", starpu_combined_worker_get_size());
   #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned y = 0; y < height; ++y) {
     for(unsigned x = 0; x < width; ++x) {
@@ -45,7 +45,8 @@ void generate_eye_paths_impl(
           float u1 = floatRNG(seed_buffer[index]);
           float u2 = floatRNG(seed_buffer[index]);
 
-          eye_path.ray = scene->generate_ray(eye_path.scr_x, eye_path.scr_y, width, height, u0, u1, u2);
+          eye_path.ray = helpers::generate_ray(eye_path.scr_x, eye_path.scr_y, width, height, u0, u1, u2, scene->camera);
+
           eye_path.sample_index = index;
           ++index;
         }

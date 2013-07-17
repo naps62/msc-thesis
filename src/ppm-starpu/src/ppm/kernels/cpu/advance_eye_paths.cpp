@@ -1,6 +1,7 @@
 #include "ppm/kernels/kernels.h"
 #include "ppm/kernels/helpers.cuh"
 using namespace ppm::kernels;
+using namespace std;
 
 #include "utils/config.h"
 #include "ppm/ptrfreescene.h"
@@ -21,10 +22,11 @@ void advance_eye_paths_impl(
     EyePath*  const eye_paths,            const unsigned eye_paths_count,
     unsigned* const eye_paths_indexes,    const unsigned eye_paths_indexes_count,
     Seed*     const seed_buffer,          //const unsigned seed_buffer_count,
+    const unsigned buffer_size,
     const PtrFreeScene* const scene) {
 
-  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
-  for(unsigned i = 0; i < hits_count; ++i) {
+  //#pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+  for(unsigned i = 0; i < buffer_size; ++i) {
     EyePath& eye_path = eye_paths[eye_paths_indexes[i]];
     const RayHit& hit = hits[i];
 
@@ -58,7 +60,6 @@ void advance_eye_paths_impl(
       Point hit_point;
       Spectrum surface_color;
       Normal N, shade_N;
-
       if (helpers::get_hit_point_information(scene, eye_path.ray, hit, hit_point, surface_color, N, shade_N)) {
         continue;
       }
@@ -129,9 +130,7 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
 
   fflush(stdout);
   // cl_args
-  const starpu_args* args = (const starpu_args*) args_orig;
-  //const Config*       config = static_cast<const Config*>(args->cpu_config);
-  const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->cpu_scene);
+  const codelets::starpu_advance_eye_paths_args* args = (const codelets::starpu_advance_eye_paths_args*) args_orig;
 
   // buffers
   // hit point static info
@@ -157,7 +156,8 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
                          eye_paths,         eye_paths_count,
                          eye_paths_indexes, eye_paths_indexes_count,
                          seed_buffer, //    seed_buffer_count,
-                         scene);
+                         args->buffer_size,
+                         args->cpu_scene);
 }
 
 } } }

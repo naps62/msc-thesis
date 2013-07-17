@@ -1,11 +1,139 @@
 #include "ppm/kernels/helpers.cuh"
 #include "ppm/ptrfree_hash_grid.h"
+#include "ppm/math.h"
 #include <limits>
 #include <cfloat>
 
 namespace ppm { namespace kernels {
 
 namespace helpers {
+
+__HD__
+void concentric_sample_disk(const float u1, const float u2, float *dx, float *dy) {
+  float r, theta;
+  // Map uniform random numbers to $[-1,1]^2$
+  float sx = 2.f * u1 - 1.f;
+  float sy = 2.f * u2 - 1.f;
+  // Map square to $(r,\theta)$
+  // Handle degeneracy at the origin
+  if (sx == 0.f && sy == 0.f) {
+    *dx = 0.f;
+    *dy = 0.f;
+    return;
+  }
+  if (sx >= -sy) {
+    if (sx > sy) {
+      // Handle first region of disk
+      r = sx;
+      if (sy > 0.f)
+        theta = sy / r;
+      else
+        theta = 8.f + sy / r;
+    } else {
+      // Handle second region of disk
+      r = sy;
+      theta = 2.f - sx / r;
+    }
+  } else {
+    if (sx <= sy) {
+      // Handle third region of disk
+      r = -sx;
+      theta = 4.f - sy / r;
+    } else {
+      // Handle fourth region of disk
+      r = -sy;
+      theta = 6.f + sx / r;
+    }
+  }
+  theta *= M_PI / 4.f;
+  *dx = r * cosf(theta);
+  *dy = r * sinf(theta);
+}
+
+__HD__
+Ray generate_ray(
+    const float sx, const float sy,
+    const uint width, const uint height,
+    const float u0, const float u1, const float u2, const Camera& camera) {
+
+  Point p(sx, height - sy - 1.f, 0);
+  Point orig;
+
+  const float iw = 1.f / (camera.raster_to_camera_matrix[3][0] * p.x
+                        + camera.raster_to_camera_matrix[3][1] * p.y
+                        + camera.raster_to_camera_matrix[3][2] * p.z
+                        + camera.raster_to_camera_matrix[3][3]);
+  orig.x = (camera.raster_to_camera_matrix[0][0] * p.x
+      + camera.raster_to_camera_matrix[0][1] * p.y
+      + camera.raster_to_camera_matrix[0][2] * p.z
+      + camera.raster_to_camera_matrix[0][3]) * iw;
+  orig.y = (camera.raster_to_camera_matrix[1][0] * p.x
+      + camera.raster_to_camera_matrix[1][1] * p.y
+      + camera.raster_to_camera_matrix[1][2] * p.z
+      + camera.raster_to_camera_matrix[1][3]) * iw;
+  orig.z = (camera.raster_to_camera_matrix[2][0] * p.x
+      + camera.raster_to_camera_matrix[2][1] * p.y
+      + camera.raster_to_camera_matrix[2][2] * p.z
+      + camera.raster_to_camera_matrix[2][3]) * iw;
+
+  Vector dir(orig);
+
+  const float hither = camera.hither;
+  if (camera.lens_radius > 0.f) {
+    // sample point on lens
+    float lens_u, lens_v;
+    concentric_sample_disk(u1, u2, &lens_u, &lens_v);
+    const float lens_radius = camera.lens_radius;
+    lens_u *= lens_radius;
+    lens_v *= lens_radius;
+
+    // compute point on plane of focus
+    const float focal_distance = camera.focal_distance;
+    const float dist = focal_distance - hither;
+    const float ft = dist / dir.z;
+    Point p_focus = orig + dir * ft;
+
+    // update ray for effect on lens
+    const float k = dist / focal_distance;
+    orig.x += lens_u * k;
+    orig.y += lens_v * k;
+
+    dir = p_focus - orig;
+  }
+
+  dir = Normalize(dir);
+
+  Point torig;
+  const float iw2 = 1.f / ( camera.camera_to_world_matrix[3][0] * orig.x
+                      + camera.camera_to_world_matrix[3][1] * orig.y
+                      + camera.camera_to_world_matrix[3][2] * orig.z
+                      + camera.camera_to_world_matrix[3][3]);
+  torig.x = (camera.camera_to_world_matrix[0][0] * orig.x
+      +  camera.camera_to_world_matrix[0][1] * orig.y
+      +  camera.camera_to_world_matrix[0][2] * orig.z
+      +  camera.camera_to_world_matrix[0][3]) * iw2;
+  torig.y = (camera.camera_to_world_matrix[1][0] * orig.x
+      +  camera.camera_to_world_matrix[1][1] * orig.y
+      +  camera.camera_to_world_matrix[1][2] * orig.z
+      +  camera.camera_to_world_matrix[1][3]) * iw2;
+  torig.z = (camera.camera_to_world_matrix[2][0] * orig.x
+      +  camera.camera_to_world_matrix[2][1] * orig.y
+      +  camera.camera_to_world_matrix[2][2] * orig.z
+      +  camera.camera_to_world_matrix[2][3]) * iw2;
+
+  Vector tdir;
+  tdir.x = camera.camera_to_world_matrix[0][0] * dir.x
+       + camera.camera_to_world_matrix[0][1] * dir.y
+       + camera.camera_to_world_matrix[0][2] * dir.z;
+  tdir.y = camera.camera_to_world_matrix[1][0] * dir.x
+       + camera.camera_to_world_matrix[1][1] * dir.y
+       + camera.camera_to_world_matrix[1][2] * dir.z;
+  tdir.z = camera.camera_to_world_matrix[2][0] * dir.x
+       + camera.camera_to_world_matrix[2][1] * dir.y
+       + camera.camera_to_world_matrix[2][2] * dir.z;
+
+  return Ray(torig, tdir, RAY_EPSILON, (camera.yon - hither) / dir.z);
+}
 
 __HD__
 void tex_map_get_texel(
