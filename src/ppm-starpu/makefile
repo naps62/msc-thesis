@@ -1,7 +1,7 @@
 default: bin
 BINNAME := ppm-starpu
 UNAME   := $(shell uname)
-DEBUG   := 0
+DEBUG   := 1
 
 SRC_DIR           := src
 CUDA_SUPPORT      := yes
@@ -9,8 +9,6 @@ CUDA_INSTALL_PATH := /usr/local/cuda-5.0
 
 
 ARCH := $(shell getconf LONG_BIT)
-OMP  := openmp
-OMP := $(addprefix -f,$(OMP))
 
 STARPU_CFLAGS := $(shell pkg-config --cflags starpu-1.0)
 STARPU_LIBS   := $(shell pkg-config --libs   starpu-1.0)
@@ -27,9 +25,11 @@ ifeq ($(DEBUG),1)
 CFLAGS  += -g
 NVFLAGS += -O1 -g
 LDFLAGS += -g
+OMP :=
 else
 CFLAGS  += -O3
 NVFLAGS += -O3
+OMP := -fopenmp
 endif
 
 ARFLAGS :=

@@ -61,11 +61,11 @@ void Engine :: render() {
 
   this->build_hit_points();
 
-  cout << "init_radius" << endl;
+  cout << "init bbox and radius" << endl;
+  this->update_bbox();
   this->init_radius();
 
   cout << "set hash grid data" << endl;
-  this->update_bbox();
   this->hash_grid.set_bbox(this->bbox);
   this->hash_grid.set_hit_points(hit_points_info, hit_points);
 
@@ -79,7 +79,7 @@ void Engine :: render() {
 
     // TODO receive total_photon_paths as argument, and call multiple times, making all jobs within it asynchronous
     cout << "advance_photon_paths" << endl;
-    this->advance_photon_paths();
+    //this->advance_photon_paths();
 
     // accumulate flux
 
@@ -178,6 +178,7 @@ void Engine :: eye_paths_to_hit_points() {
 }
 
 void Engine :: init_radius() {
+  // TODO this bbox is not exactly equal to what it should. why?
   BBox bbox = this->bbox;
 
   const Vector ssize = bbox.pMax - bbox.pMin;
@@ -207,8 +208,9 @@ void Engine :: update_bbox() {
   // TODO move this to a kernel?
   for(unsigned i = 0; i < hit_points.size(); ++i) {
     HitPointStaticInfo& hpi = hit_points_info[i];
-    if (hpi.type == SURFACE)
+    if (hpi.type == SURFACE) {
       bbox = Union(bbox, hpi.position);
+    }
   }
   this->bbox = bbox;
 }

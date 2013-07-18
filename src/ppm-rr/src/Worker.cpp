@@ -296,10 +296,10 @@ void Worker::UpdateBBox() {
 	for (unsigned int i = 0; i < engine->hitPointTotal; ++i) {
 		HitPointStaticInfo *hp = GetHitPointInfo(i);
 
-		if (hp->type == SURFACE)
+		if (hp->type == SURFACE) {
 			hitPointsbbox = Union(hitPointsbbox, hp->position);
+		}
 	}
-
 	SetBBox(hitPointsbbox);
 
 }

@@ -36,7 +36,7 @@ public:
 
   ~PtrFreeHashGrid();
 
-  void set_hit_points(std::vector<HitPointStaticInfo> hit_points_info, std::vector<HitPoint> hit_points);
+  void set_hit_points(std::vector<HitPointStaticInfo>& hit_points_info, std::vector<HitPoint>& hit_points);
   void set_bbox(BBox bbox);
 
   void rehash();

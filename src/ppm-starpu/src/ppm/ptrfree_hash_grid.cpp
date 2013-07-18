@@ -18,7 +18,7 @@ PtrFreeHashGrid :: ~PtrFreeHashGrid() {
 
 }
 
-void PtrFreeHashGrid :: set_hit_points(std::vector<HitPointStaticInfo> hit_points_info, std::vector<HitPoint> hit_points) {
+void PtrFreeHashGrid :: set_hit_points(std::vector<HitPointStaticInfo>& hit_points_info, std::vector<HitPoint>& hit_points) {
   this->hit_points_info = &hit_points_info[0];
   this->hit_points      = &hit_points[0];
   this->hit_points_count = hit_points_info.size();
@@ -71,8 +71,8 @@ void PtrFreeHashGrid :: rehash() {
       const Vector b_max = ((hpi.position + rad) - bbox.pMin) * inv_cell_size;
 
       for(int iz = abs(int(b_min.z)); iz < abs(int(b_max.z)); ++iz) {
-        for(int iy = abs(int(b_min.y)); iz < abs(int(b_max.y)); ++iy) {
-          for(int ix = abs(int(b_min.x)); iz < abs(int(b_max.x)); ++ix) {
+        for(int iy = abs(int(b_min.y)); iy < abs(int(b_max.y)); ++iy) {
+          for(int ix = abs(int(b_min.x)); ix < abs(int(b_max.x)); ++ix) {
             int hv = kernels::helpers::hash(ix, iy, iz, size);
 
             if (hash_grid[hv] == NULL)
