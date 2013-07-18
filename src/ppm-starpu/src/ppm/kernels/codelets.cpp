@@ -10,21 +10,18 @@ namespace ppm { namespace kernels {
     starpu_args    generic_args;
 
     starpu_codelet generate_eye_paths;
-    starpu_codelet eye_paths_fill_ray_buffer;
     starpu_codelet intersect_ray_hit_buffer;
     starpu_codelet advance_eye_paths;
     starpu_codelet generate_photon_paths;
     starpu_codelet advance_photon_paths;
 
     starpu_perfmodel generate_eye_paths_pm;
-    starpu_perfmodel eye_paths_fill_ray_buffer_pm;
     starpu_perfmodel intersect_ray_hit_buffer_pm;
     starpu_perfmodel advance_eye_paths_pm;
     starpu_perfmodel generate_photon_paths_pm;
     starpu_perfmodel advance_photon_paths_pm;
 
     const char* generate_eye_paths_sym        = "ppm_generate_eye_paths_001";
-    const char* eye_paths_fill_ray_buffer_sym = "ppm_eye_paths_fill_ray_buffer_001";
     const char* intersect_ray_hit_buffer_sym  = "ppm_intersect_ray_hit_buffer_001";
     const char* advance_eye_paths_sym         = "ppm_advance_eye_paths_001";
     const char* generate_photon_paths_sym     = "ppm_generate_photon_paths_001";
@@ -63,26 +60,6 @@ namespace ppm { namespace kernels {
       cl->nbuffers        = 2;
       cl->modes[0]        = STARPU_RW;
       cl->modes[1]        = STARPU_RW;
-      cl->model           = pm;
-
-
-      // eye_paths_fill_ray_buffer
-      pm = &eye_paths_fill_ray_buffer_pm;
-      perfmodel_init(pm);
-      pm->type   = STARPU_HISTORY_BASED;
-      pm->symbol = eye_paths_fill_ray_buffer_sym;
-
-      cl   = &eye_paths_fill_ray_buffer;
-      starpu_codelet_init(cl);
-      cl->where           = STARPU_CPU;
-      cl->max_parallelism = 1;
-      cl->cpu_funcs[0]    = ppm::kernels::cpu::eye_paths_fill_ray_buffer;
-      cl->cpu_funcs[1]    = NULL;
-      cl->nbuffers        = 4;
-      cl->modes[0]        = STARPU_RW; // eye_paths
-      cl->modes[1]        = STARPU_RW; // eye_paths_indexes
-      cl->modes[2]        = STARPU_RW; // hit_points_info
-      cl->modes[3]        = STARPU_RW; // ray_buffer
       cl->model           = pm;
 
 

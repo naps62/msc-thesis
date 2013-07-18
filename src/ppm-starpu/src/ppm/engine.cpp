@@ -134,9 +134,6 @@ void Engine :: eye_paths_to_hit_points() {
     const unsigned start = chunk_count * chunk_size;
     const unsigned end   = (hit_points_count - start  < chunk_size) ? hit_points_count : start + chunk_size;
 
-    // one chunk at a time
-    //kernels::eye_paths_fill_ray_buffer(eye_paths_h, eye_paths_indexes_h, hit_points_info_h, ray_buffer_h, start, end, config.max_eye_path_depth);
-
     unsigned current_buffer_size = 0;
 
     for(unsigned i = start; i < end; ++i) {

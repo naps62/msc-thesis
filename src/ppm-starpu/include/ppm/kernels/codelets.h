@@ -19,12 +19,6 @@ namespace ppm { namespace kernels {
       const PtrFreeHashGrid* gpu_hash_grid;
     };
 
-    struct starpu_eye_paths_fill_ray_buffer_args {
-      const unsigned start;
-      const unsigned end;
-      const unsigned max_eye_path_depth;
-    };
-
     struct starpu_intersect_ray_hit_buffer_args {
       const PtrFreeScene* cpu_scene;
       const PtrFreeScene* gpu_scene;
@@ -40,7 +34,6 @@ namespace ppm { namespace kernels {
     };
 
     extern starpu_codelet generate_eye_paths;
-    extern starpu_codelet eye_paths_fill_ray_buffer;
     extern starpu_codelet intersect_ray_hit_buffer;
     extern starpu_codelet advance_eye_paths;
     extern starpu_codelet generate_photon_paths;
