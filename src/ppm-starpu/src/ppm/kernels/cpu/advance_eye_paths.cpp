@@ -25,7 +25,7 @@ void advance_eye_paths_impl(
     const unsigned buffer_size,
     const PtrFreeScene* const scene) {
 
-  //#pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned i = 0; i < buffer_size; ++i) {
     EyePath& eye_path = eye_paths[eye_paths_indexes[i]];
     const RayHit& hit = hits[i];
@@ -56,6 +56,7 @@ void advance_eye_paths_impl(
         eye_path.done = true;
       }
     } else {
+
       // something was hit
       Point hit_point;
       Spectrum surface_color;

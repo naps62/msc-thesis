@@ -277,7 +277,7 @@ void PtrFreeScene :: compile_materials() {
   this->mesh_materials_count = original_scene->objectMaterials.size();
   //mesh_mats.resize(mesh_coutlt);
   reset_array(this->mesh_materials, this->mesh_materials_count);
-  for(uint i = 0; i < mesh_count; ++i) {
+  for(uint i = 0; i < this->mesh_materials_count; ++i) {
     const luxrays::Material* m = original_scene->objectMaterials[i];
 
     // look for the index

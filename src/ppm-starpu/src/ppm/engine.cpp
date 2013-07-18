@@ -40,7 +40,6 @@ Engine :: Engine(const Config& _config)
   starpu_init(&this->spu_conf);
   kernels::codelets::init(&config, scene, &hash_grid, NULL, NULL, NULL); // TODO GPU versions here
 
-  cout << "scene: " << scene << endl;
   init_seed_buffer();
   init_starpu_handles();
 }
@@ -60,7 +59,6 @@ Engine :: ~Engine() {
 void Engine :: render() {
   film.clear(Spectrum(1.f, 0.f, 0.f));
 
-  cout << "build_hit_points" << endl;
   this->build_hit_points();
 
   cout << "init_radius" << endl;
@@ -161,6 +159,7 @@ void Engine :: eye_paths_to_hit_points() {
           eye_paths_indexes[current_buffer_size] = i;
           current_buffer_size++;
         }
+      } else {
       }
 
       if (eye_path.done && !eye_path.splat) {
@@ -170,23 +169,15 @@ void Engine :: eye_paths_to_hit_points() {
         if (chunk_finished == chunk_size) {
           chunk_count++;
           chunk_finished = 0;
-          //cout << "finished " << end - start + 1 << " eye paths. " << todo_eye_paths <<" to go" << endl;
         }
       }
     }
 
     if (current_buffer_size > 0) {
-      cout << current_buffer_size << endl;
       kernels::intersect_ray_hit_buffer(ray_buffer_h, hit_buffer_h, current_buffer_size);
       kernels::advance_eye_paths(hit_points_info_h, hit_buffer_h, eye_paths_h, eye_paths_indexes_h, seeds_h, current_buffer_size);
-      cout << current_buffer_size << endl;
     }
-
-    //chunk_count++;
-    //todo_eye_paths -= (end - start);
   }
-
-  exit(0);
 }
 
 void Engine :: init_radius() {

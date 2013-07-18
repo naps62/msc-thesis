@@ -1,7 +1,7 @@
 default: bin
 BINNAME := ppm-starpu
 UNAME   := $(shell uname)
-DEBUG   := 1
+DEBUG   := 0
 
 SRC_DIR           := src
 CUDA_SUPPORT      := yes
@@ -24,9 +24,9 @@ NVFLAGS := -m$(ARCH) $(STARPU_CFLAGS)
 LDFLAGS := -m$(ARCH) $(STARPU_LIBS)
 
 ifeq ($(DEBUG),1)
-CFLAGS  += -O2 -g
-NVFLAGS += -O2 -g
-LDFLAGS += -O2 -g
+CFLAGS  += -g
+NVFLAGS += -O1 -g
+LDFLAGS += -g
 else
 CFLAGS  += -O3
 NVFLAGS += -O3
