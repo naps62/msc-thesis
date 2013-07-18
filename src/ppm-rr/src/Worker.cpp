@@ -110,13 +110,7 @@ void Worker::BuildHitPoints(uint /*iteration*/) {
 
 	while (todoEyePathCount > 0) {
 
-//		if (WallClockTime() - lastPrintTime > 2.0) {
-//			std::cerr << "  " << todoEyePathCount / 1000 << "k eye paths left" << std::endl;
-//			lastPrintTime = WallClockTime();
-//		}
 
-		//std::vector<EyePath *>::iterator todoEyePathsIterator =
-		//		todoEyePaths.begin() + roundPointer;
 
 		//transversing in chunks
 		uint start = (chunk_counter / getRaybufferSize()) * getRaybufferSize();
@@ -183,62 +177,11 @@ void Worker::BuildHitPoints(uint /*iteration*/) {
 
 	delete[] todoEyePaths;
 	delete[] eyePathIndexes;
-
-	   for(unsigned i = 0; i < hitPointTotal; ++i) {
-      cout << hitPointsStaticInfo_iterationCopy[i].position << endl;
-    }
-
-
 }
 
-//void Worker::PushHitPoints() {
-//
-//	engine->lockHitPoints();
-//
-//	//	for (uint i = 0; i < engine->hitPointTotal; i++) {
-//	//
-//	//		HitPoint *hp = &(engine->hitPoints_Acc)[i];
-//	//		HitPoint *ihp = GetHitPoint(i);
-//	//
-//	//		hp->radiance = ihp->radiance;
-//	//		hp->accumRadiance = ihp->accumRadiance;
-//	//		hp->photonCount = ihp->photonCount;
-//	//		hp->reflectedFlux = ihp->reflectedFlux;
-//	//		hp->constantHitsCount = ihp->constantHitsCount;
-//	//		hp->surfaceHitsCount = ihp->surfaceHitsCount;
-//	//		hp->accumPhotonRadius2 = ihp->accumPhotonRadius2;
-//	//
-//	//	}
-//
-//	memcpy(engine->hitPoints_Acc, hitPoints_iterationCopy, sizeof(HitPoint) * engine->hitPointTotal);
-//
-//	engine->unlockHitPoints();
-//
-//}
-//
-//void Worker::PullHitPoints() {
-//
-//	engine->lockHitPoints();
-//
-//	//		for (uint i = 0; i < engine->hitPointTotal; i++) {
-//	//			HitPoint *ihp = &(engine->hitPoints)[i];
-//	//			IterationHitPoint *hp = &(iterationHitPoints)[i];
-//	//
-//	//			hp->radiance = ihp->radiance;
-//	//			hp->accumRadiance = ihp->accumRadiance;
-//	//			hp->photonCount = ihp->photonCount;
-//	//			hp->reflectedFlux = ihp->reflectedFlux;
-//	//			hp->constantHitsCount = ihp->constantHitsCount;
-//	//			hp->surfaceHitsCount = ihp->surfaceHitsCount;
-//	//			hp->accumPhotonRadius2 = ihp->accumPhotonRadius2;
-//	//
-//	//		}
-//	//
-//	memcpy(hitPoints_iterationCopy, engine->hitPoints_Acc, sizeof(HitPoint) * engine->hitPointTotal);
-//
-//	engine->unlockHitPoints();
-//
-//}
+
+
+
 
 void Worker::ProcessIterations(PPM* engine) {
 
