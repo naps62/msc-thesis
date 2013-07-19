@@ -25,7 +25,7 @@ namespace ppm { namespace kernels { namespace cpu {
       HitPoint* const hit_points,
       const unsigned CONST_max_photon_depth) {
 
-#pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+//#pragma omp parallel for num_threads(starpu_combined_worker_get_size())
     for(unsigned i = 0; i < rays_count; ++i) {
       Ray& ray    = rays[i];
       RayHit& hit = hits[i];

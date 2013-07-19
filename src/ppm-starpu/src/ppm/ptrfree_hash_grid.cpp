@@ -6,8 +6,8 @@ namespace ppm {
 PtrFreeHashGrid :: PtrFreeHashGrid(const unsigned size) {
   this->size = size;
   hash_grid = NULL;
-  lengths = NULL;
   lists = NULL;
+  lengths = NULL;
   lists_index = NULL;
   //lengths_buff = NULL;
   //lists_buff = NULL;
@@ -22,6 +22,9 @@ void PtrFreeHashGrid :: set_hit_points(std::vector<HitPointStaticInfo>& hit_poin
   this->hit_points_info = &hit_points_info[0];
   this->hit_points      = &hit_points[0];
   this->hit_points_count = hit_points_info.size();
+
+  this->lengths     = new unsigned int[hit_points_count];
+  this->lists_index = new unsigned int[hit_points_count];
 }
 
 void PtrFreeHashGrid :: set_bbox(BBox bbox) {
@@ -88,6 +91,24 @@ void PtrFreeHashGrid :: rehash() {
   }
 
   this->entry_count = entry_count;
+
+  if (lists) delete[] lists;
+  lists = new unsigned int[entry_count];
+
+  uint list_index = 0;
+  for(unsigned i = 0; i < hit_points_count; ++i) {
+    std::deque<unsigned>* hps = hash_grid[i];
+    lists_index[i] = list_index;
+
+    if (hps) {
+      lengths[i] = hps->size();
+      for(std::deque<unsigned>::iterator iter = hps->begin(); iter != hps->end(); ++iter) {
+        lists[list_index++] = *iter;
+      }
+    } else {
+      lengths[i] = 0;
+    }
+  }
 }
 
 }

@@ -197,7 +197,7 @@ void Engine :: advance_photon_paths() {
   kernels::generate_photon_paths(ray_buffer_h, live_photon_paths_h, seeds_h);
 
   while (todo_photon_paths > 0) {
-    kernels::intersect_ray_hit_buffer(ray_buffer_h, hit_buffer_h, 0); // TODO give the correct size here
+    kernels::intersect_ray_hit_buffer(ray_buffer_h, hit_buffer_h, chunk_size);
     kernels::advance_photon_paths(ray_buffer_h, hit_buffer_h, live_photon_paths_h, hit_points_info_h, hit_points_h, seeds_h);
   }
 }
