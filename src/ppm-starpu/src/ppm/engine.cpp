@@ -79,7 +79,7 @@ void Engine :: render() {
 
     // TODO receive total_photon_paths as argument, and call multiple times, making all jobs within it asynchronous
     cout << "advance_photon_paths" << endl;
-    //this->advance_photon_paths();
+    this->advance_photon_paths();
 
     // accumulate flux
 
@@ -194,7 +194,7 @@ void Engine :: init_radius() {
 void Engine :: advance_photon_paths() {
   unsigned todo_photon_paths = chunk_size;
 
-  kernels::generate_photon_paths(hit_buffer_h, live_photon_paths_h, seeds_h);
+  kernels::generate_photon_paths(ray_buffer_h, live_photon_paths_h, seeds_h);
 
   while (todo_photon_paths > 0) {
     kernels::intersect_ray_hit_buffer(ray_buffer_h, hit_buffer_h, 0); // TODO give the correct size here

@@ -75,8 +75,9 @@ void PtrFreeHashGrid :: rehash() {
           for(int ix = abs(int(b_min.x)); ix < abs(int(b_max.x)); ++ix) {
             int hv = kernels::helpers::hash(ix, iy, iz, size);
 
-            if (hash_grid[hv] == NULL)
+            if (hash_grid[hv] == NULL) {
               hash_grid[hv] = new std::deque<unsigned>();
+            }
 
             hash_grid[hv]->push_front(i);
             entry_count++;

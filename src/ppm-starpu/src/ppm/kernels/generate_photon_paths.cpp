@@ -16,7 +16,7 @@ void generate_photon_paths(
   task->cl = &codelets::generate_photon_paths;
   task->handles[0] = ray_buffer;
   task->handles[1] = photon_paths;
-  task->handles[1] = seed_buffer;
+  task->handles[2] = seed_buffer;
   task->cl_arg      = &codelets::generic_args;
   task->cl_arg_size = sizeof(codelets::generic_args);
 

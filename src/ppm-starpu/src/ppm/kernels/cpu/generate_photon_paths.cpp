@@ -21,7 +21,7 @@ namespace ppm { namespace kernels { namespace cpu {
       const Config* config,
       const PtrFreeScene* scene) {
 
-    #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+    //#pragma omp parallel for num_threads(starpu_combined_worker_get_size())
     for(unsigned i = 0; i < rays_count; ++i) {
       Ray& ray = rays[i];
       PhotonPath& path = photon_paths[i];
@@ -67,7 +67,7 @@ namespace ppm { namespace kernels { namespace cpu {
     PhotonPath* const photon_paths = reinterpret_cast<PhotonPath* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
     // const unsigned photon_paths_count = STARPU_VECTOR_GET_NX(buffers[1]);
     // seeds
-    Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
+    Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[2]));
     //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[2]);
 
 
