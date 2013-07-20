@@ -26,14 +26,15 @@ namespace ppm { namespace kernels { namespace cpu {
       const unsigned CONST_max_photon_depth) {
 
 //#pragma omp parallel for num_threads(starpu_combined_worker_get_size())
-    for(unsigned i = 0; i < rays_count; ++i) {
-      Ray& ray    = rays[i];
-      RayHit& hit = hits[i];
-      PhotonPath& path = photon_paths[i];
-      Seed& seed = seed_buffer[i];
+  for(unsigned i = 0; i < rays_count; ++i) {
+    Ray& ray    = rays[i];
+    RayHit& hit = hits[i];
+    PhotonPath& path = photon_paths[i];
+    Seed& seed = seed_buffer[i];
 
-      if (path.done)
-        continue;
+    while(!path.done) {
+      hit.SetMiss();
+      scene->intersect(ray, hit);
 
       if (hit.Miss()) {
         path.done = true;
@@ -67,36 +68,37 @@ namespace ppm { namespace kernels { namespace cpu {
 
           helpers::generic_material_sample_f(hit_point_mat, wo, wi, N, shade_N, u0, u1, u2, f_pdf, f, specular_bounce);
 
-          if (specular_bounce) {
-            // add flux
+          if (!specular_bounce) {
             helpers::add_flux(hash_grid, scene, hit_point, shade_N, wo, path.flux, hit_points_info, hit_points);
-
-            if (path.depth < CONST_max_photon_depth) {
-              if (f_pdf <= 0.f || f.Black()) {
-                path.done = true;
-              } else {
-                path.depth++;
-                path.flux *= f / f_pdf;
-
-                // russian roulette
-                const float p = 0.75;
-                if (path.depth < 3) {
-                  ray = Ray(hit_point, wi);
-                } else if (floatRNG(seed) < p) {
-                  path.flux /= p;
-                  ray = Ray(hit_point, wi);
-                } else {
-                  path.done = true;
-                }
-              }
-            } else {
-              path.done = true;
-            }
           }
+
+          if (path.depth < CONST_max_photon_depth) {
+            if (f_pdf <= 0.f || f.Black()) {
+              path.done = true;
+            } else {
+              path.depth++;
+              path.flux *= f / f_pdf;
+
+              // russian roulette
+              const float p = 0.75;
+              if (path.depth < 3) {
+                ray = Ray(hit_point, wi);
+              } else if (floatRNG(seed) < p) {
+                path.flux /= p;
+                ray = Ray(hit_point, wi);
+              } else {
+                path.done = true;
+              }
+            }
+          } else {
+            path.done = true;
+          }
+
         }
       }
     }
   }
+}
 
 
 
