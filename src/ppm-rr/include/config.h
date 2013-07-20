@@ -120,8 +120,8 @@ struct Config : public beast::program_options::options {
 
 		// window
 		flag("no_display", no_display, "Supress realtime display?");
-		value("width",   width,  uint(640),          "window width");
-		value("height",  height, uint(480),          "window height");
+		value("width",   width,  uint(320),          "window width");
+		value("height",  height, uint(240),          "window height");
 		value("title,t",   title,  string("gama-ppm"), "window title");
 		value("fps",       fps,    uint(60), "maximum FPS");
 		flag("vsync",      vsync, "V-Sync. Can cause problems sometimes, so defaults to false");
@@ -131,7 +131,7 @@ struct Config : public beast::program_options::options {
 		value("spp",       spp,         uint(4),    "samples per pixel (supersampling)");
 		value("accel",     accel_name,  string("QBVH"), "accelerator type [QBVH (default) | BVH | MQBVH)");
 		value("engine",    engine_name, string("ppm"), "render engine to use [ppm (default) | ... (others to come)]");
-		value("photons_iter", photons_first_iter_exp, uint(20),  "to compute amount of photons on first iteration");
+		value("photons_iter", photons_first_iter_exp, uint(15),  "to compute amount of photons on first iteration");
 		value("max_threads", max_threads, uint(1),  "number of cpu threads");
 		value("max_iters",   max_iters,   uint(10), "number of iterations");
 
