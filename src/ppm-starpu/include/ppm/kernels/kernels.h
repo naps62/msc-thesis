@@ -46,6 +46,11 @@ void intersect_ray_hit_buffer (
     const unsigned buffer_size
 );
 
+void accum_flux (
+    starpu_data_handle_t hit_points_info,
+    starpu_data_handle_t hit_points
+);
+
 } }
 
 #endif // _PPM_KERNELS_H_

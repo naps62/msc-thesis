@@ -38,6 +38,7 @@ namespace ppm { namespace kernels {
     extern starpu_codelet advance_eye_paths;
     extern starpu_codelet generate_photon_paths;
     extern starpu_codelet advance_photon_paths;
+    extern starpu_codelet accum_flux;
 
     extern starpu_args    generic_args;
 

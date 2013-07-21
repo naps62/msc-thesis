@@ -11,6 +11,7 @@ namespace ppm { namespace kernels {
     cpu_kernel advance_eye_paths;
     cpu_kernel generate_photon_paths;
     cpu_kernel advance_photon_paths;
+    cpu_kernel accum_flux;
 
   }
 }}

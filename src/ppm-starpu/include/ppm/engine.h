@@ -52,6 +52,9 @@ protected:
   starpu_data_handle_t hit_points_h;
   starpu_data_handle_t live_photon_paths_h;
 
+  SampleBuffer sample_buffer;
+  SampleFrameBuffer sample_frame_buffer;
+
 
   void init_starpu_handles();
   void init_seed_buffer();
@@ -61,6 +64,8 @@ protected:
 
   void eye_paths_to_hit_points();
   void update_bbox();
+
+  void update_sample_frame_buffer();
 };
 
 }

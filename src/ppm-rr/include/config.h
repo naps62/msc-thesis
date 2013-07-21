@@ -131,7 +131,7 @@ struct Config : public beast::program_options::options {
 		value("spp",       spp,         uint(4),    "samples per pixel (supersampling)");
 		value("accel",     accel_name,  string("QBVH"), "accelerator type [QBVH (default) | BVH | MQBVH)");
 		value("engine",    engine_name, string("ppm"), "render engine to use [ppm (default) | ... (others to come)]");
-		value("photons_iter", photons_first_iter_exp, uint(15),  "to compute amount of photons on first iteration");
+		value("photons_iter", photons_first_iter_exp, uint(20),  "to compute amount of photons on first iteration");
 		value("max_threads", max_threads, uint(1),  "number of cpu threads");
 		value("max_iters",   max_iters,   uint(10), "number of iterations");
 

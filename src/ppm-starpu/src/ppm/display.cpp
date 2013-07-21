@@ -16,10 +16,11 @@ Display :: Display(const Config& _config, Film& _film)
 //
 
 void Display :: render() {
+  cout << "drawing" << endl;
   glRasterPos2i(0, 0);
   // draw frame buffer
-  Spectrum* buffer = film.get_frame_buffer_ptr();
-  glDrawPixels(film.width, film.height, GL_RGB, GL_FLOAT, buffer);
+  film.UpdateScreenBuffer();
+  glDrawPixels(film.width, film.height, GL_RGB, GL_FLOAT, film.GetScreenBuffer());
 
   // draw caption background
   glEnable(GL_BLEND);

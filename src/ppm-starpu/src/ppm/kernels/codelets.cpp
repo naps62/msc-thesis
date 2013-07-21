@@ -14,18 +14,21 @@ namespace ppm { namespace kernels {
     starpu_codelet advance_eye_paths;
     starpu_codelet generate_photon_paths;
     starpu_codelet advance_photon_paths;
+    starpu_codelet accum_flux;
 
     starpu_perfmodel generate_eye_paths_pm;
     starpu_perfmodel intersect_ray_hit_buffer_pm;
     starpu_perfmodel advance_eye_paths_pm;
     starpu_perfmodel generate_photon_paths_pm;
     starpu_perfmodel advance_photon_paths_pm;
+    starpu_perfmodel accum_flux_pm;
 
     const char* generate_eye_paths_sym        = "ppm_generate_eye_paths_001";
     const char* intersect_ray_hit_buffer_sym  = "ppm_intersect_ray_hit_buffer_001";
     const char* advance_eye_paths_sym         = "ppm_advance_eye_paths_001";
     const char* generate_photon_paths_sym     = "ppm_generate_photon_paths_001";
     const char* advance_photon_paths_sym      = "ppm_advance_photon_paths_001";
+    const char* accum_flux_sym                = "ppm_accum_flux_001";
 
     void perfmodel_init(starpu_perfmodel* model) {
       memset(model, 0, sizeof(starpu_perfmodel));
@@ -143,6 +146,25 @@ namespace ppm { namespace kernels {
       cl->modes[3]        = STARPU_RW; // hit_points_info
       cl->modes[4]        = STARPU_RW; // hit_points
       cl->modes[5]        = STARPU_RW; // seeds
+      cl->model           = pm;
+
+
+      // accum_flux
+      pm = &accum_flux_pm;
+      perfmodel_init(pm);
+      pm->type = STARPU_HISTORY_BASED;
+      pm->symbol = accum_flux_sym;
+
+      cl = &accum_flux;
+      starpu_codelet_init(cl);
+      cl->where           = STARPU_CPU;
+      cl->type            = STARPU_FORKJOIN;
+      cl->max_parallelism = std::numeric_limits<int>::max();
+      cl->cpu_funcs[0]    = ppm::kernels::cpu::accum_flux;
+      cl->cpu_funcs[1]    = NULL;
+      cl->nbuffers        = 2;
+      cl->modes[0]        = STARPU_R;  // hit_points_info
+      cl->modes[1]        = STARPU_RW; // hit_points
       cl->model           = pm;
     }
   }

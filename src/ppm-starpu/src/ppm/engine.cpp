@@ -16,7 +16,7 @@ Engine :: Engine(const Config& _config)
 : config(_config),
   scene(new PtrFreeScene(config)),
   hash_grid(config.total_hit_points),
-  film(config),
+  film(config.width, config.height),
   chunk_size(config.engine_chunk_size),
 
   seeds(config.total_hit_points),
@@ -25,7 +25,13 @@ Engine :: Engine(const Config& _config)
   ray_hit_buffer(chunk_size),
   hit_points_info(config.total_hit_points),
   hit_points(config.total_hit_points),
-  live_photon_paths(chunk_size) {
+  live_photon_paths(chunk_size),
+
+  sample_buffer(config.total_hit_points),
+  sample_frame_buffer(config.width, config.height) {
+
+  sample_frame_buffer.Clear();
+  film.Reset();
 
   // load display if necessary
   if (config.use_display) {
@@ -57,33 +63,34 @@ Engine :: ~Engine() {
 // public methods
 //
 void Engine :: render() {
-  film.clear(Spectrum(1.f, 0.f, 0.f));
+  //film.clear(Spectrum(1.f, 0.f, 0.f));
 
   this->build_hit_points();
 
-  cout << "init bbox and radius" << endl;
   this->update_bbox();
   this->init_radius();
 
-  cout << "set hash grid data" << endl;
   this->hash_grid.set_bbox(this->bbox);
   this->hash_grid.set_hit_points(hit_points_info, hit_points);
 
+
+
   // main loop
   unsigned iteration = 0;
-  while(display->is_on() && iteration < config.max_iters) {
+  while((!display || display->is_on()) && iteration < config.max_iters) {
 
     // update lookup hash grid
-    cout << "rehash" << endl;
     this->hash_grid.rehash();
 
     // TODO receive total_photon_paths as argument, and call multiple times, making all jobs within it asynchronous
-    cout << "advance_photon_paths" << endl;
-    this->advance_photon_paths();
+    kernels::generate_photon_paths(ray_buffer_h, live_photon_paths_h, seeds_h);
+    kernels::advance_photon_paths(ray_buffer_h, hit_buffer_h, live_photon_paths_h, hit_points_info_h, hit_points_h, seeds_h);
+    kernels::accum_flux(hit_points_info_h, hit_points_h);
 
-    // accumulate flux
 
-    // update frame buffer
+
+    cout << "updating" << endl;
+    this->update_sample_frame_buffer();
 
     set_captions();
     display->request_update(config.min_frame_time);
@@ -191,28 +198,34 @@ void Engine :: init_radius() {
   }
 }
 
-void Engine :: advance_photon_paths() {
-  unsigned todo_photon_paths = chunk_size;
-
-  kernels::generate_photon_paths(ray_buffer_h, live_photon_paths_h, seeds_h);
-
-  while (todo_photon_paths > 0) {
-    kernels::intersect_ray_hit_buffer(ray_buffer_h, hit_buffer_h, chunk_size);
-    kernels::advance_photon_paths(ray_buffer_h, hit_buffer_h, live_photon_paths_h, hit_points_info_h, hit_points_h, seeds_h);
-  }
-}
-
 void Engine :: update_bbox() {
   BBox bbox;
 
   // TODO move this to a kernel?
   for(unsigned i = 0; i < hit_points.size(); ++i) {
     HitPointStaticInfo& hpi = hit_points_info[i];
+    cout << i << " " << hpi.type << " " << hpi.position << endl;
     if (hpi.type == SURFACE) {
       bbox = Union(bbox, hpi.position);
     }
   }
+  exit(0);
   this->bbox = bbox;
+}
+
+void Engine :: update_sample_frame_buffer() {
+  for(unsigned i = 0; i < hit_points.size(); ++i) {
+    HitPointStaticInfo& hpi = hit_points_info[i];
+    HitPoint& hp = hit_points[i];
+
+    sample_buffer.SplatSample(hpi.scr_x, hpi.scr_y, hp.radiance);
+  }
+
+  sample_frame_buffer.Clear();
+  if (sample_buffer.GetSampleCount() > 0) {
+    film.SplatSampleBuffer(&sample_frame_buffer, true, &sample_buffer);
+    sample_buffer.Reset();
+  }
 }
 
 }

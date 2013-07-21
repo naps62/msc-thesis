@@ -313,9 +313,7 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 		Ray * b = &(rayBuffer->GetRayBuffer())[p];
 
 		engine->InitPhotonPath(engine->ss, &livePhotonPaths[i], b, seedBuffer[i]);
-
 	}
-
 
 	while (todoPhotonCount < photonTarget) {
 

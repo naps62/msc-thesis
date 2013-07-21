@@ -214,8 +214,8 @@ void Worker::ProcessIterations(PPM* engine) {
 #if defined USE_SPPMPA || defined USE_SPPM
 		BuildHitPoints(iterationCount);
 		UpdateBBox();
-
 #endif
+
 
 #if defined USE_SPPM || defined USE_PPM
 		if (iterationCount == 1)
@@ -247,6 +247,8 @@ void Worker::ProcessIterations(PPM* engine) {
 #if defined USE_PPMPA
 		AccumulateFluxPPMPA(iterationCount, photonPerIteration);
 #endif
+
+
 
 		UpdateSampleFrameBuffer(photonPerIteration);
 
@@ -296,10 +298,12 @@ void Worker::UpdateBBox() {
 	for (unsigned int i = 0; i < engine->hitPointTotal; ++i) {
 		HitPointStaticInfo *hp = GetHitPointInfo(i);
 
+		cout << i << " " << hp->type << " " << hp->position << endl;
 		if (hp->type == SURFACE) {
 			hitPointsbbox = Union(hitPointsbbox, hp->position);
 		}
 	}
+	exit(0);
 	SetBBox(hitPointsbbox);
 
 }
