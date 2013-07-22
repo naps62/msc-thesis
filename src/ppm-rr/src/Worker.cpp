@@ -231,8 +231,6 @@ void Worker::ProcessIterations(PPM* engine) {
 		updateDeviceLookupAcc();
 
 		photonPerIteration = AdvancePhotonPath(photonPerIteration);
-
-
 		getDeviceHitpoints();
 
 #if defined USE_PPM
@@ -248,7 +246,14 @@ void Worker::ProcessIterations(PPM* engine) {
 		AccumulateFluxPPMPA(iterationCount, photonPerIteration);
 #endif
 
-
+  for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
+    HitPointStaticInfo& hpi = hitPointsStaticInfo_iterationCopy[i];
+    HitPoint& hp = hitPoints_iterationCopy[i];
+    if (hp.accumReflectedFlux.r != 0.f)
+    	cout << i << " " << hp.accumPhotonCount << " " << hp.accumReflectedFlux << '\n';
+  }
+exit(0);
+  //if (iterationCount == 2) exit(0);
 
 		UpdateSampleFrameBuffer(photonPerIteration);
 
@@ -298,12 +303,10 @@ void Worker::UpdateBBox() {
 	for (unsigned int i = 0; i < engine->hitPointTotal; ++i) {
 		HitPointStaticInfo *hp = GetHitPointInfo(i);
 
-		cout << i << " " << hp->type << " " << hp->position << endl;
 		if (hp->type == SURFACE) {
 			hitPointsbbox = Union(hitPointsbbox, hp->position);
 		}
 	}
-	exit(0);
 	SetBBox(hitPointsbbox);
 
 }

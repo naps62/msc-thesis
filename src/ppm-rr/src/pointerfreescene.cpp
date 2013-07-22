@@ -58,7 +58,6 @@ PointerFreeScene::PointerFreeScene(uint width, uint height, std::string sceneFil
 	Recompile(editActions);
 
 //	ofstream out("rr-ppm.scene.dump");
-//	out << *this << endl;
 //	out.close();
 	//delete scene_;
 	//scene = NULL;
@@ -991,27 +990,27 @@ void PointerFreeScene::Recompile(const EditActionList &editActions) {
 //}
 
 ostream& operator<< (ostream& os, PointerFreeScene& scene) {
-	// TODO Vertexes checked
+	// Vertexes checked
 	os << "Vertexes (" << scene.verts.size() << "):\n\t";
 	for(uint i(0); i < scene.verts.size(); ++i)
 		os << scene.verts[i] << "\n\t";
 
-	// TODO Normals checked
+	// Normals checked
 	os <<  "\n\nNormals (" << scene.normals.size() << "):\n\t";
 	for(uint i(0); i < scene.normals.size(); ++i)
 		os << scene.normals[i] << '\n';
 
-	// TODO Colors checked
+	// Colors checked
 	os <<  "\n\nColors (" << scene.colors.size() << "):\n\t";
 	for(uint i(0); i < scene.colors.size(); ++i)
 		os << scene.colors[i] << "\n\t";
 
-	// TODO UVs checked
+	// UVs checked
 	os << "\n\nUVs:\n\t";
 	for(uint i(0); i < scene.uvs.size(); ++i)
 		os << scene.uvs[i] << "\n\t";
 
-	// TODO Triangles checked
+	// Triangles checked
 	os << "\n\nTriangles (" << scene.tris.size() << "):\n\t";
 	for(uint i(0); i < scene.tris.size(); ++i)
 		os << scene.tris[i] << "\n\t";
@@ -1021,22 +1020,22 @@ ostream& operator<< (ostream& os, PointerFreeScene& scene) {
 	for(uint i(0); i < scene.meshDescs.size(); ++i)
 		os << scene.meshDescs[i] << "\n\t";
 
-	// TODO No MeshIDs to check
-	os << "\n\nMeshIDs (" << scene.meshIDs_size << "):\n\t";
-	for(uint i(0); i < scene.meshIDs_size; ++i)
+	// MeshIDs checked
+	os << "\n\nMeshIDs (" << scene.tris.size() << "):\n\t";
+	for(uint i(0); i < scene.tris.size(); ++i)
 		os << scene.meshIDs[i] << "\n\t";
 
-	// TODO MeshFirstTriangleOffset checked
+	// MeshFirstTriangleOffset checked
 	os << "\n\nMeshFirstTriangleOffset:\n\t";
 	for(uint i(0); i < scene.scene->objects.size(); ++i)
 		os << scene.meshFirstTriangleOffset[i] << "\n\t";
 
 
-	// TODO BSphere checked
+	// BSphere checked
 	os << "\n\nBSphere:\n\t";
 	os << "BSphere[" << scene.BSphereCenter << ", " << scene.BSphereRad << "]\n\t";
 
-	// TODO Camera checked
+	// Camera checked
 	os << "\n\nCamera:\n\t";
 	os << "Camera[" << scene.camera.lensRadius << ", " << scene.camera.focalDistance << ", " << scene.camera.yon << ", " << scene.camera.hither << ", ";
 	os << "raster_to_camera[";
@@ -1050,7 +1049,7 @@ ostream& operator<< (ostream& os, PointerFreeScene& scene) {
 	os << "] ]\n\t";
 //
 
-	// TODO Compiled Materials checked
+	// Compiled Materials checked
 	os << "\n\nCompiledMaterials:\n\t";
 	os << scene.enable_MAT_MATTE << "\n\t";
 	os << scene.enable_MAT_AREALIGHT << "\n\t";
@@ -1062,17 +1061,17 @@ ostream& operator<< (ostream& os, PointerFreeScene& scene) {
 	os << scene.enable_MAT_ALLOY << "\n\t";
 	os << scene.enable_MAT_ARCHGLASS << "\n\t";
 
-	// TODO Materials checked
+	// Materials checked
 	os << "\n\nMaterials:\n\t";
 	for(uint i(0); i < scene.materials.size(); ++i)
 		os << scene.materials[i] << "\n\t";
 
-	// TODO MeshMaterials checked
+	// MeshMaterials checked
 	os << "\n\nMeshMaterials:\n\t";
 	for(uint i(0); i < scene.meshMats.size(); ++i)
 		os << scene.meshMats[i] << "\n\t";
 
-	// TODO AreaLights checked
+	// AreaLights checked
 	os << "\n\nAreaLights:\n\t";
 	for(uint i(0); i < scene.areaLights.size(); ++i)
 		os << scene.areaLights[i] << "\n\t";
@@ -1083,19 +1082,19 @@ ostream& operator<< (ostream& os, PointerFreeScene& scene) {
 //	os << "\n\nSkyLight:\n\t" << scene.skyLight << "\n\t";
 
 	// TODO No TexMaps to check
-	os << "\n\nTexMaps:\n\t";
-	for(uint i(0); i < scene.gpuTexMaps.size(); ++i)
-		os << scene.gpuTexMaps[i] << "\n\t";
+	//os << "\n\nTexMaps:\n\t";
+	//for(uint i(0); i < scene.gpuTexMaps.size(); ++i)
+	//	os << scene.gpuTexMaps[i] << "\n\t";
 
 	// TODO No RGBTex to check
-	os << "\n\nRGBTex:\n\t";
-	for(uint i(0); i < scene.totRGBTexMem; ++i)
-		os << scene.rgbTexMem[i] << "\n\t";
+	//os << "\n\nRGBTex:\n\t";
+	//for(uint i(0); i < scene.totRGBTexMem; ++i)
+	//	os << scene.rgbTexMem[i] << "\n\t";
 
 	// TODO No AlphaTex to check
-	os << "\n\nAlphaTex:\n\t";
-	for(uint i(0); i < scene.totAlphaTexMem; ++i)
-		os << scene.alphaTexMem[i] << "\n\t";
+	//os << "\n\nAlphaTex:\n\t";
+	//for(uint i(0); i < scene.totAlphaTexMem; ++i)
+	//	os << scene.alphaTexMem[i] << "\n\t";
 
 	// TODO Can't check. No MeshTexs to check
 //	os << "\n\nMeshTexs:\n\t";

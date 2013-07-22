@@ -19,7 +19,7 @@ ostream& operator<< (ostream& os, const Mesh& m) {
 				os << m.trans[i][j];
 				if (j != 3) os << ", ";
 			}
-			os << " ]";
+			os << " ] ";
 		}
 		os << "], inv_trans:Matrix4x4[ ";
 		for (int i = 0; i < 4; ++i) {
@@ -28,7 +28,7 @@ ostream& operator<< (ostream& os, const Mesh& m) {
 				os << m.invTrans[i][j];
 				if (j != 3) os << ", ";
 			}
-			os << " ]";
+			os << " ] ";
 		}
 		return os << "]]";
 }

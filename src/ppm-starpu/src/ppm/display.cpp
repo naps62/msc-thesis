@@ -16,7 +16,6 @@ Display :: Display(const Config& _config, Film& _film)
 //
 
 void Display :: render() {
-  cout << "drawing" << endl;
   glRasterPos2i(0, 0);
   // draw frame buffer
   film.UpdateScreenBuffer();

@@ -63,8 +63,6 @@ Engine :: ~Engine() {
 // public methods
 //
 void Engine :: render() {
-  //film.clear(Spectrum(1.f, 0.f, 0.f));
-
   this->build_hit_points();
 
   this->update_bbox();
@@ -72,8 +70,6 @@ void Engine :: render() {
 
   this->hash_grid.set_bbox(this->bbox);
   this->hash_grid.set_hit_points(hit_points_info, hit_points);
-
-
 
   // main loop
   unsigned iteration = 0;
@@ -86,21 +82,28 @@ void Engine :: render() {
     kernels::generate_photon_paths(ray_buffer_h, live_photon_paths_h, seeds_h);
     kernels::advance_photon_paths(ray_buffer_h, hit_buffer_h, live_photon_paths_h, hit_points_info_h, hit_points_h, seeds_h);
     kernels::accum_flux(hit_points_info_h, hit_points_h);
+  for(unsigned i = 0; i < hit_points.size(); ++i) {
+    HitPointStaticInfo& hpi = hit_points_info[i];
+    HitPoint& hp = hit_points[i];
+    if (hp.accum_reflected_flux.r != 0.f)
+      cout << i << " " << hp.accum_photon_count << " " << hp.accum_reflected_flux << '\n';
+  }
+    exit(0);
 
-
-
-    cout << "updating" << endl;
+  if (iteration == 1) exit(0);
     this->update_sample_frame_buffer();
 
     set_captions();
     display->request_update(config.min_frame_time);
+
+    iteration++;
   }
 }
 
 void Engine :: set_captions() {
   stringstream header, footer;
   header << "Hello World!";
-  footer << "[Photons " << 0 << "M][Avg. photons/sec " << 0 << "K][Elapsed time " << 0 << "secs]";
+  footer << "[Photons " << rand() << "M][Avg. photons/sec " << 0 << "K][Elapsed time " << 0 << "secs]";
   display->set_captions(header, footer);
 }
 
@@ -204,12 +207,10 @@ void Engine :: update_bbox() {
   // TODO move this to a kernel?
   for(unsigned i = 0; i < hit_points.size(); ++i) {
     HitPointStaticInfo& hpi = hit_points_info[i];
-    cout << i << " " << hpi.type << " " << hpi.position << endl;
     if (hpi.type == SURFACE) {
       bbox = Union(bbox, hpi.position);
     }
   }
-  exit(0);
   this->bbox = bbox;
 }
 

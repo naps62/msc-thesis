@@ -1081,38 +1081,38 @@ __HD__ void add_flux(
 
       Vector v = ihp.position - hit_point;
 
-      if ((Dot(ihp.normal, shade_N) > 0.5f) && (Dot(v, v) <= hp.accum_photon_radius2)) {
+      //std::cout << hp.accum_photon_ount << " " << ihp.scr_x << " " << ihp.scr_y << '\n';
+      if ((Dot(ihp.normal, shade_N) <= 0.5f) || (Dot(v, v) > hp.accum_photon_radius2))
+        continue;
 
-        // atomic add
-        my_atomic_add(&hp.accum_photon_count, (unsigned)1);
+      my_atomic_add(&hp.accum_photon_count, (unsigned)1);
 
-        Spectrum f;
+      Spectrum f;
 
-        Material& hit_point_mat = scene->materials[ihp.material_ss];
-        switch(hit_point_mat.type) {
-          case MAT_MATTE: matte_f(hit_point_mat.param.matte, f);
-                          break;
-          case MAT_MATTEMIRROR: matte_mirror_f(hit_point_mat.param.matte_mirror, f);
-                                break;
-          case MAT_MATTEMETAL: matte_metal_f(hit_point_mat.param.matte_metal, f);
-                               break;
-          case MAT_ALLOY: alloy_f(hit_point_mat.param.alloy, ihp.wo, shade_N, f);
-                          break;
-        }
+      Material& hit_point_mat = scene->materials[ihp.material_ss];
+      switch(hit_point_mat.type) {
+        case MAT_MATTE: matte_f(hit_point_mat.param.matte, f);
+                        break;
+        case MAT_MATTEMIRROR: matte_mirror_f(hit_point_mat.param.matte_mirror, f);
+                              break;
+        case MAT_MATTEMETAL: matte_metal_f(hit_point_mat.param.matte_metal, f);
+                             break;
+        case MAT_ALLOY: alloy_f(hit_point_mat.param.alloy, ihp.wo, shade_N, f);
+                        break;
+      }
 
-        Spectrum flux = photon_flux * AbsDot(shade_N, wi) * ihp.throughput * f;
+      Spectrum flux = photon_flux * AbsDot(shade_N, wi) * ihp.throughput * f;
 
 #ifdef __CUDA_ARCH__
-        my_atomic_add(&hp.accum_reflected_flux.r, flux.r);
-        my_atomic_add(&hp.accum_reflected_flux.g, flux.g);
-        my_atomic_add(&hp.accum_reflected_flux.b, flux.b);
+      my_atomic_add(&hp.accum_reflected_flux.r, flux.r);
+      my_atomic_add(&hp.accum_reflected_flux.g, flux.g);
+      my_atomic_add(&hp.accum_reflected_flux.b, flux.b);
 #else
 #pragma omp critical
-        {
-          hp.accum_reflected_flux = hp.accum_reflected_flux + flux;
-        }
-#endif
+      {
+        hp.accum_reflected_flux = hp.accum_reflected_flux + flux;
       }
+#endif
     }
   }
 }

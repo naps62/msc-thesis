@@ -73,15 +73,15 @@ void PtrFreeScene :: compile_geometry() {
   delete_array(mesh_descs);
   delete_array(mesh_first_triangle_offset);
 
-  this->mesh_count = data_set->meshes.size();
+  this->mesh_count = original_scene->objects.size();//data_set->meshes.size();
 
   // copy mesh_id_table
   // TODO check if this is valid
   //mesh_ids.resize(data_set->meshes.size());
-  //this->mesh_ids = new uint[this->mesh_count];
-  this->mesh_ids = data_set->GetMeshIDTable();
-  //for(unsigned i = 0; i < data_set->totalTriangleCount; ++i)
-  //  this->mesh_ids[i] = data_set->GetMeshIDTable()[i]; // TODO probably change this to a memcpy
+  this->mesh_ids = new uint[data_set->totalTriangleCount];
+  //this->mesh_ids = data_set->GetMeshIDTable();
+  for(unsigned i = 0; i < data_set->totalTriangleCount; ++i)
+    this->mesh_ids[i] = data_set->GetMeshIDTable()[i]; // TODO probably change this to a memcpy
 
   // get scene bsphere
   this->bsphere = data_set->GetPPMBSphere();
@@ -110,6 +110,7 @@ void PtrFreeScene :: compile_materials() {
   this->materials_count = original_scene->materials.size();
   //materials.resize(materials_count);
   reset_array(this->materials, this->materials_count);
+  memset(this->materials, 0, sizeof(ppm::Material)*this->materials_count);
 
   for(uint i = 0; i < materials_count; ++i) {
     const luxrays::Material* orig_m = original_scene->materials[i];
@@ -782,70 +783,70 @@ bool PtrFreeScene :: mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1) {
 }
 
 ostream& operator<< (ostream& os, PtrFreeScene& scene) {
-  // TODO Vertexes checked
+  // Vertexes checked
   os << "Vertexes (" << scene.vertex_count << "):\n\t";
   for(uint i(0); i < scene.vertex_count; ++i)
     os << scene.vertexes[i] << "\n\t";
 
-  // TODO Normals checked
+  // Normals checked
   os <<  "\n\nNormals (" << scene.normals_count << "):\n\t";
   for(uint i(0); i < scene.normals_count; ++i)
     os << scene.normals[i] << '\n';
 
-  // TODO Colors checked
+  // Colors checked
   os <<  "\n\nColors (" << scene.colors_count << "):\n\t";
   for(uint i(0); i < scene.colors_count; ++i)
     os << scene.colors[i] << "\n\t";
 
-  // TODO UVs checked
+  // UVs checked
   os << "\n\nUVs:\n\t";
   for(uint i(0); i < scene.uvs_count; ++i)
     os << scene.uvs[i] << "\n\t";
 
-  // TODO Triangles checked
+  // Triangles checked
   os << "\n\nTriangles (" << scene.triangles_count << "):\n\t";
   for(uint i(0); i < scene.triangles_count; ++i)
     os << scene.triangles[i] << "\n\t";
 
-  // TODO MeshDescs checked
+  // MeshDescs checked
   os << "\n\nMeshDescs:\n\t";
   for(uint i(0); i < scene.mesh_descs_count; ++i)
     os << scene.mesh_descs[i] << "\n\t";
 
-  // TODO No MeshIDs to check
-  os << "\n\nMeshIDs (" << scene.mesh_count << "):\n\t";
-  for(uint i(0); i < scene.mesh_count; ++i)
+  // MeshIDs checked
+  os << "\n\nMeshIDs (" << scene.triangles_count << "):\n\t";
+  for(uint i(0); i < scene.triangles_count; ++i)
     os << scene.mesh_ids[i] << "\n\t";
 
-  // TODO MeshFirstTriangleOffset checked
+  // MeshFirstTriangleOffset checked
   os << "\n\nMeshFirstTriangleOffset:\n\t";
   for(uint i(0); i < scene.mesh_count; ++i)
     os << scene.mesh_first_triangle_offset[i] << "\n\t";
 
 
-  // TODO BSphere checked
+  // BSphere checked
   os << "\n\nBSphere:\n\t" << scene.bsphere << "\n\t";
 
-  // TODO Camera checked
+  // Camera checked
   os << "\n\nCamera:\n\t" << scene.camera << "\n\t";
 //
 
-  // TODO Compiled Materials checked
+  // Compiled Materials checked
   os << "\n\nCompiledMaterials:\n\t";
   for(uint i(0); i < scene.compiled_materials_count; ++i)
     os << scene.compiled_materials[i] << "\n\t";
 
-  // TODO Materials checked
+  // Materials checked
   os << "\n\nMaterials:\n\t";
   for(uint i(0); i < scene.materials_count; ++i)
     os << scene.materials[i] << "\n\t";
 
-  // TODO MeshMaterials checked
+  // MeshMaterials checked
   os << "\n\nMeshMaterials:\n\t";
   for(uint i(0); i < scene.mesh_materials_count; ++i)
     os << scene.mesh_materials[i] << "\n\t";
 
-  // TODO AreaLights checked
+  // AreaLights checked
   os << "\n\nAreaLights:\n\t";
   for(uint i(0); i < scene.area_lights_count; ++i)
     os << scene.area_lights[i] << "\n\t";
@@ -856,19 +857,19 @@ ostream& operator<< (ostream& os, PtrFreeScene& scene) {
 //  os << "\n\nSkyLight:\n\t" << scene.sky_light_sp[0] << "\n\t";
 
   // TODO No TexMaps to check
-  os << "\n\nTexMaps:\n\t";
-  for(uint i(0); i < scene.tex_maps_count; ++i)
-    os << scene.tex_maps[i] << "\n\t";
+  //os << "\n\nTexMaps:\n\t";
+  //for(uint i(0); i < scene.tex_maps_count; ++i)
+  //  os << scene.tex_maps[i] << "\n\t";
 
   // TODO No RGBTex to check
-  os << "\n\nRGBTex:\n\t";
-  for(uint i(0); i < scene.rgb_tex_count; ++i)
-    os << scene.rgb_tex[i] << "\n\t";
+  //os << "\n\nRGBTex:\n\t";
+  //for(uint i(0); i < scene.rgb_tex_count; ++i)
+  //  os << scene.rgb_tex[i] << "\n\t";
 
   // TODO No AlphaTex to check
-  os << "\n\nAlphaTex:\n\t";
-  for(uint i(0); i < scene.alpha_tex_count; ++i)
-    os << scene.alpha_tex[i] << "\n\t";
+  //os << "\n\nAlphaTex:\n\t";
+  //for(uint i(0); i < scene.alpha_tex_count; ++i)
+  //  os << scene.alpha_tex[i] << "\n\t";
 
   // TODO Can't check. No MeshTexs to check
 //  os << "\n\nMeshTexs:\n\t";

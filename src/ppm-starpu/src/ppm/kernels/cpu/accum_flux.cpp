@@ -41,6 +41,7 @@ void accum_flux_impl(
           const double k = 1.0 / (M_PI * hp.accum_photon_radius2 * photons_traced);
 
           hp.radiance = hp.reflected_flux * k;
+          hp.accum_photon_count = 0;
           hp.accum_reflected_flux = Spectrum();
         }
         break;

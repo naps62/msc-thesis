@@ -60,7 +60,7 @@ public:
       }
       os << " ] ";
     }
-    os << " ] ";
+    os << "]";
   }
 
   static Matrix4x4 Mul(const Matrix4x4 &m1, const Matrix4x4 &m2) {

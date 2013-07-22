@@ -315,9 +315,9 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 		engine->InitPhotonPath(engine->ss, &livePhotonPaths[i], b, seedBuffer[i]);
 	}
 
-	while (todoPhotonCount < photonTarget) {
+	while (todoPhotonCount < initc) {
 
-		Intersect(rayBuffer);
+		//Intersect(rayBuffer);
 
 #ifndef __DEBUG
 		omp_set_num_threads(config->max_threads);
@@ -328,148 +328,152 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 			Ray *ray = &rayBuffer->GetRayBuffer()[i];
 			RayHit *rayHit = &rayBuffer->GetHitBuffer()[i];
 
-			if (photonPath->done == true) {
-				continue;
-			}
+			while(!photonPath->done) {
+				rayHit->SetMiss();
+				ss->dataSet->Intersect(ray, rayHit);
 
-			if (rayHit->Miss()) {
-				photonPath->done = true;
-			} else { // Something was hit
-
-				Point hitPoint;
-				Spectrum surfaceColor;
-				Normal N, shadeN;
-
-				if (engine->GetHitPointInformation(engine->ss, ray, rayHit, hitPoint, surfaceColor,
-						N, shadeN))
-					continue;
-
-				const unsigned int currentTriangleIndex = rayHit->index;
-				const unsigned int currentMeshIndex = engine->ss->meshIDs[currentTriangleIndex];
-
-				POINTERFREESCENE::Material *hitPointMat =
-						&engine->ss->materials[engine->ss->meshMats[currentMeshIndex]];
-
-				uint matType = hitPointMat->type;
-
-				if (matType == MAT_AREALIGHT) {
+				if (rayHit->Miss()) {
 					photonPath->done = true;
-				} else {
+				} else { // Something was hit
 
-					float fPdf;
-					Vector wi;
-					Vector wo = -ray->d;
-					bool specularBounce = true;
+					Point hitPoint;
+					Spectrum surfaceColor;
+					Normal N, shadeN;
 
-					float u0 = getFloatRNG(seedBuffer[i]);
-					float u1 = getFloatRNG(seedBuffer[i]);
-					float u2 = getFloatRNG(seedBuffer[i]);
+					if (engine->GetHitPointInformation(engine->ss, ray, rayHit, hitPoint, surfaceColor,
+							N, shadeN))
+						continue;
 
-					Spectrum f;
 
-					switch (matType) {
+					const unsigned int currentTriangleIndex = rayHit->index;
+					const unsigned int currentMeshIndex = engine->ss->meshIDs[currentTriangleIndex];
 
-					case MAT_MATTE:
-						engine->ss->Matte_Sample_f(&hitPointMat->param.matte, &wo, &wi, &fPdf, &f,
-								&shadeN, u0, u1, &specularBounce);
+					POINTERFREESCENE::Material *hitPointMat =
+							&engine->ss->materials[engine->ss->meshMats[currentMeshIndex]];
 
-						f *= surfaceColor;
-						break;
+					uint matType = hitPointMat->type;
 
-					case MAT_MIRROR:
-						engine->ss->Mirror_Sample_f(&hitPointMat->param.mirror, &wo, &wi, &fPdf,
-								&f, &shadeN, &specularBounce);
-						f *= surfaceColor;
-						break;
-
-					case MAT_GLASS:
-						engine->ss->Glass_Sample_f(&hitPointMat->param.glass, &wo, &wi, &fPdf, &f,
-								&N, &shadeN, u0, &specularBounce);
-						f *= surfaceColor;
-
-						break;
-
-					case MAT_MATTEMIRROR:
-						engine->ss->MatteMirror_Sample_f(&hitPointMat->param.matteMirror, &wo, &wi,
-								&fPdf, &f, &shadeN, u0, u1, u2, &specularBounce);
-						f *= surfaceColor;
-
-						break;
-
-					case MAT_METAL:
-						engine->ss->Metal_Sample_f(&hitPointMat->param.metal, &wo, &wi, &fPdf, &f,
-								&shadeN, u0, u1, &specularBounce);
-						f *= surfaceColor;
-
-						break;
-
-					case MAT_MATTEMETAL:
-						engine->ss->MatteMetal_Sample_f(&hitPointMat->param.matteMetal, &wo, &wi,
-								&fPdf, &f, &shadeN, u0, u1, u2, &specularBounce);
-						f *= surfaceColor;
-
-						break;
-
-					case MAT_ALLOY:
-						engine->ss->Alloy_Sample_f(&hitPointMat->param.alloy, &wo, &wi, &fPdf, &f,
-								&shadeN, u0, u1, u2, &specularBounce);
-						f *= surfaceColor;
-
-						break;
-
-					case MAT_ARCHGLASS:
-						engine->ss->ArchGlass_Sample_f(&hitPointMat->param.archGlass, &wo, &wi,
-								&fPdf, &f, &N, &shadeN, u0, &specularBounce);
-						f *= surfaceColor;
-
-						break;
-
-					case MAT_NULL:
-						wi = ray->d;
-						specularBounce = 1;
-						fPdf = 1.f;
-						break;
-
-					default:
-						// Huston, we have a problem...
-						specularBounce = 1;
-						fPdf = 0.f;
-						break;
-					}
-
-					if (!specularBounce) // if difuse
-						lookupA->AddFlux(engine->ss, engine->alpha, hitPoint, shadeN, -ray->d,
-								photonPath->flux, currentPhotonRadius2);
-
-					if (photonPath->depth < MAX_PHOTON_PATH_DEPTH) {
-						// Build the next vertex path ray
-						if ((fPdf <= 0.f) || f.Black()) {
-							photonPath->done = true;
-						} else {
-							photonPath->depth++;
-							photonPath->flux *= f / fPdf;
-
-							// Russian Roulette
-							const float p = 0.75f;
-							if (photonPath->depth < 3) {
-								*ray = Ray(hitPoint, wi);
-							} else if (getFloatRNG(seedBuffer[i]) < p) {
-								photonPath->flux /= p;
-								*ray = Ray(hitPoint, wi);
-							} else {
-								photonPath->done = true;
-							}
-						}
-					} else {
+					if (matType == MAT_AREALIGHT) {
 						photonPath->done = true;
+					} else {
+						float fPdf;
+						Vector wi;
+						Vector wo = -ray->d;
+						bool specularBounce = true;
+
+						float u0 = getFloatRNG(seedBuffer[i]);
+						float u1 = getFloatRNG(seedBuffer[i]);
+						float u2 = getFloatRNG(seedBuffer[i]);
+
+						Spectrum f;
+
+						switch (matType) {
+
+						case MAT_MATTE:
+							engine->ss->Matte_Sample_f(&hitPointMat->param.matte, &wo, &wi, &fPdf, &f,
+									&shadeN, u0, u1, &specularBounce);
+
+							f *= surfaceColor;
+							break;
+
+						case MAT_MIRROR:
+							engine->ss->Mirror_Sample_f(&hitPointMat->param.mirror, &wo, &wi, &fPdf,
+									&f, &shadeN, &specularBounce);
+							f *= surfaceColor;
+							break;
+
+						case MAT_GLASS:
+							engine->ss->Glass_Sample_f(&hitPointMat->param.glass, &wo, &wi, &fPdf, &f,
+									&N, &shadeN, u0, &specularBounce);
+							f *= surfaceColor;
+
+							break;
+
+						case MAT_MATTEMIRROR:
+							engine->ss->MatteMirror_Sample_f(&hitPointMat->param.matteMirror, &wo, &wi,
+									&fPdf, &f, &shadeN, u0, u1, u2, &specularBounce);
+							f *= surfaceColor;
+
+							break;
+
+						case MAT_METAL:
+							engine->ss->Metal_Sample_f(&hitPointMat->param.metal, &wo, &wi, &fPdf, &f,
+									&shadeN, u0, u1, &specularBounce);
+							f *= surfaceColor;
+
+							break;
+
+						case MAT_MATTEMETAL:
+							engine->ss->MatteMetal_Sample_f(&hitPointMat->param.matteMetal, &wo, &wi,
+									&fPdf, &f, &shadeN, u0, u1, u2, &specularBounce);
+							f *= surfaceColor;
+
+							break;
+
+						case MAT_ALLOY:
+							engine->ss->Alloy_Sample_f(&hitPointMat->param.alloy, &wo, &wi, &fPdf, &f,
+									&shadeN, u0, u1, u2, &specularBounce);
+							f *= surfaceColor;
+
+							break;
+
+						case MAT_ARCHGLASS:
+							engine->ss->ArchGlass_Sample_f(&hitPointMat->param.archGlass, &wo, &wi,
+									&fPdf, &f, &N, &shadeN, u0, &specularBounce);
+							f *= surfaceColor;
+
+							break;
+
+						case MAT_NULL:
+							wi = ray->d;
+							specularBounce = 1;
+							fPdf = 1.f;
+							break;
+
+						default:
+							// Huston, we have a problem...
+							specularBounce = 1;
+							fPdf = 0.f;
+							break;
+						}
+
+						if (!specularBounce) {// if difuse
+							lookupA->AddFlux(engine->ss, engine->alpha, hitPoint, shadeN, -ray->d,
+									photonPath->flux, currentPhotonRadius2);
+						}
+
+						if (photonPath->depth < MAX_PHOTON_PATH_DEPTH) {
+							// Build the next vertex path ray
+							if ((fPdf <= 0.f) || f.Black()) {
+								photonPath->done = true;
+							} else {
+								photonPath->depth++;
+								photonPath->flux *= f / fPdf;
+
+								// Russian Roulette
+								const float p = 0.75f;
+								if (photonPath->depth < 3) {
+									*ray = Ray(hitPoint, wi);
+								} else if (getFloatRNG(seedBuffer[i]) < p) {
+									photonPath->flux /= p;
+									*ray = Ray(hitPoint, wi);
+								} else {
+									photonPath->done = true;
+								}
+							}
+						} else {
+							photonPath->done = true;
+						}
 					}
 				}
 			}
+			todoPhotonCount++;
+
 		}
 
-		uint oldc = rayBuffer->GetRayCount();
-
 		rayBuffer->Reset();
+		/*uint oldc = rayBuffer->GetRayCount();
+
 
 		for (unsigned int i = 0; i < oldc; ++i) {
 
@@ -490,7 +494,7 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 			} else if (!photonPath->done) {
 				rayBuffer->AddRay(*ray);
 			}
-		}
+		}*/
 	}
 
 

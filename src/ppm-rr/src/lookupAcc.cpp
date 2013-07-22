@@ -171,12 +171,13 @@ void HashGridLookup::AddFlux(PointerFreeScene *ss, const float /*alpha*/, const 
 	if (hps) {
 		std::list<unsigned int>::iterator iter = hps->begin();
 		while (iter != hps->end()) {
-
+			unsigned index = *iter;
 			HitPointStaticInfo *hp = &workerHitPointsInfo[*iter];
 			HitPoint *ihp = &workerHitPoints[*iter++];
 
 //			Vector v = hp->position - hitPoint;
 
+			//std::cout << ihp->accumPhotonCount << " " << hp->scrX << " " << hp->scrY << '\n';
 #if defined USE_SPPM || defined USE_PPM
 			//if ((Dot(hp->normal, shadeN) > 0.5f) && (Dot(v, v) <= ihp->accumPhotonRadius2)) {
 

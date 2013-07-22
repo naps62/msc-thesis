@@ -1,7 +1,7 @@
 default: bin
 BINNAME := ppm-rr
 UNAME   := $(shell uname)
-DEBUG   := 0
+DEBUG   := 1
 
 SRC_DIR           := src
 CUDA_SUPPORT      := yes

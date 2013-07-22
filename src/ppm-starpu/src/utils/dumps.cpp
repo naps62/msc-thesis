@@ -3,7 +3,7 @@
 namespace ppm {
 
 ostream& operator<< (ostream& os, const Color& c) {
-  return os << "Color[" << c.r << ", " << c.b << ", " << c.b << "]";
+  return os << "Color[" << c.r << ", " << c.g << ", " << c.b << "]";
 }
 
 // Camera

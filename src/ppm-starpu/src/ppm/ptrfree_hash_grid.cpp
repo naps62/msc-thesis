@@ -73,9 +73,9 @@ void PtrFreeHashGrid :: rehash() {
       const Vector b_min = ((hpi.position - rad) - bbox.pMin) * inv_cell_size;
       const Vector b_max = ((hpi.position + rad) - bbox.pMin) * inv_cell_size;
 
-      for(int iz = abs(int(b_min.z)); iz < abs(int(b_max.z)); ++iz) {
-        for(int iy = abs(int(b_min.y)); iy < abs(int(b_max.y)); ++iy) {
-          for(int ix = abs(int(b_min.x)); ix < abs(int(b_max.x)); ++ix) {
+      for(int iz = abs(int(b_min.z)); iz <= abs(int(b_max.z)); ++iz) {
+        for(int iy = abs(int(b_min.y)); iy <= abs(int(b_max.y)); ++iy) {
+          for(int ix = abs(int(b_min.x)); ix <= abs(int(b_max.x)); ++ix) {
             int hv = kernels::helpers::hash(ix, iy, iz, size);
 
             if (hash_grid[hv] == NULL) {

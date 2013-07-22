@@ -13,7 +13,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   flag("no-display", no_display, "Supress realtime display?");
   value("width,w",   width,  uint(320),          "window width");
   value("height,h",  height, uint(240),          "window height");
-  value("title,t",   title,  string("gama-ppm"), "window title");
+  value("title,t",   title,  string("ppm-starpu"), "window title");
   value("fps",       fps,    uint(60), "maximum FPS");
   flag("vsync",      vsync, "V-Sync. Can cause problems sometimes, so defaults to false");
 
