@@ -27,6 +27,9 @@ omp_set_num_threads(config->max_threads);
 
 		EyePath *eyePath = &todoEyePaths[eyePathIndexes[i]];
 
+		if (eyePath->done)
+			continue;
+
 		const RayHit *rayHit = &rayBuffer->GetHitBuffer()[i];
 
 		if (rayHit->Miss()) {
@@ -39,6 +42,7 @@ omp_set_num_threads(config->max_threads);
 			hp.scrX = eyePath->scrX;
 			hp.scrY = eyePath->scrY;
 
+
 			//						if (scene->infiniteLight)
 			//							hp.throughput = scene->infiniteLight->Le(
 			//									eyePath->ray.d) * eyePath->throughput;
@@ -48,9 +52,10 @@ omp_set_num_threads(config->max_threads);
 			if (ss->infiniteLight || ss->sunLight || ss->skyLight) {
 				//	hp.throughput = scene->infiniteLight->Le(eyePath->ray.d) * eyePath->throughput;
 
-				if (ss->infiniteLight)
+				if (ss->infiniteLight) {
 					ss->InfiniteLight_Le(&hp.throughput, &eyePath->ray.d, ss->infiniteLight,
 							ss->infiniteLightMap);
+				}
 				if (ss->sunLight)
 					ss->SunLight_Le(&hp.throughput, &eyePath->ray.d, ss->sunLight);
 				if (ss->skyLight)
@@ -80,6 +85,7 @@ omp_set_num_threads(config->max_threads);
 					N, shadeN))
 				continue;
 
+
 			// Get the material
 			const unsigned int currentTriangleIndex = rayHit->index;
 			const unsigned int currentMeshIndex = ss->meshIDs[currentTriangleIndex];
@@ -91,7 +97,6 @@ omp_set_num_threads(config->max_threads);
 			uint matType = hitPointMat->type;
 
 			if (matType == MAT_AREALIGHT) {
-
 				// Add an hit point
 				//HitPointInfo &hp = *(engine->GetHitPointInfo(
 				//		eyePath->pixelIndex));
@@ -259,7 +264,6 @@ omp_set_num_threads(config->max_threads);
 
 		}
 	}
-
 }
 
 
@@ -301,10 +305,9 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 
 	rayBuffer->Reset();
 
-	size_t initc = min((int) rayBuffer->GetSize(), (int) photonTarget);
+	size_t initc = rayBuffer->GetSize();//min((int) rayBuffer->GetSize(), (int) photonTarget);
 
 	double start = WallClockTime();
-
 
 	for (size_t i = 0; i < initc; ++i) {
 
@@ -314,6 +317,7 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 
 		engine->InitPhotonPath(engine->ss, &livePhotonPaths[i], b, seedBuffer[i]);
 	}
+
 
 	while (todoPhotonCount < initc) {
 
@@ -331,6 +335,8 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 			while(!photonPath->done) {
 				rayHit->SetMiss();
 				ss->dataSet->Intersect(ray, rayHit);
+
+		//rayBuffer->Reset();
 
 				if (rayHit->Miss()) {
 					photonPath->done = true;
@@ -470,8 +476,8 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 			todoPhotonCount++;
 
 		}
+		//exit(0);
 
-		rayBuffer->Reset();
 		/*uint oldc = rayBuffer->GetRayCount();
 
 

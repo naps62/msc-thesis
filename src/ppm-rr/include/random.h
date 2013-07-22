@@ -6,7 +6,7 @@
 //for( unsigned int i=0; i< size ; ++i ) seeds[i] = mwc();
 //
 //Se precisar de várias sequências de números aleatórios por tread inicializo vários buffers:
-// 
+//
 //for( unsigned int j=0; j< n_buffers ; ++j ) for( unsigned int i=0; i< size ; ++i ) seeds[j][i] = mwc();
 
 

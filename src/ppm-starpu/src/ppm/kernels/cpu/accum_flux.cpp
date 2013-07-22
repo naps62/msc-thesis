@@ -55,15 +55,16 @@ void accum_flux_impl(
 void accum_flux(void* buffers[], void* args_orig) {
 
   // cl_args
-  const starpu_args*  args   = (const starpu_args*) args_orig;
+  const codelets::starpu_accum_flux_args*  args   = (const codelets::starpu_accum_flux_args*) args_orig;
   const Config* config = args->cpu_config;
+  const unsigned photons_traced = args->photons_traced;
 
   // buffers
   const HitPointStaticInfo* const hit_points_info = reinterpret_cast<const HitPointStaticInfo* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
         HitPoint*           const hit_points      = reinterpret_cast<      HitPoint*           const>(STARPU_VECTOR_GET_PTR(buffers[1]));
   const unsigned size = STARPU_VECTOR_GET_NX(buffers[0]);
 
-  accum_flux_impl(hit_points_info, hit_points, size, config->alpha, config->engine_chunk_size);
+  accum_flux_impl(hit_points_info, hit_points, size, config->alpha, photons_traced);
 }
 
 } } }

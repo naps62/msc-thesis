@@ -70,27 +70,26 @@ void Engine :: render() {
 
   this->hash_grid.set_bbox(this->bbox);
   this->hash_grid.set_hit_points(hit_points_info, hit_points);
-
   // main loop
   unsigned iteration = 0;
+  unsigned photons_traced = 0;
   while((!display || display->is_on()) && iteration < config.max_iters) {
 
     // update lookup hash grid
     this->hash_grid.rehash();
 
-    // TODO receive total_photon_paths as argument, and call multiple times, making all jobs within it asynchronous
     kernels::generate_photon_paths(ray_buffer_h, live_photon_paths_h, seeds_h);
     kernels::advance_photon_paths(ray_buffer_h, hit_buffer_h, live_photon_paths_h, hit_points_info_h, hit_points_h, seeds_h);
-    kernels::accum_flux(hit_points_info_h, hit_points_h);
-  for(unsigned i = 0; i < hit_points.size(); ++i) {
-    HitPointStaticInfo& hpi = hit_points_info[i];
-    HitPoint& hp = hit_points[i];
-    if (hp.accum_reflected_flux.r != 0.f)
-      cout << i << " " << hp.accum_photon_count << " " << hp.accum_reflected_flux << '\n';
-  }
-    exit(0);
+    photons_traced += chunk_size;
+    kernels::accum_flux(hit_points_info_h, hit_points_h, photons_traced);
 
-  if (iteration == 1) exit(0);
+    /*for(unsigned i = 0; i < hit_points.size(); ++i) {
+      HitPointStaticInfo& hpi = hit_points_info[i];
+      HitPoint& hp = hit_points[i];
+      cout << i << " " << hpi.type << " " << hpi.scr_x << " " << hpi.scr_y << '\n';
+    }*/
+    //cout << '\n';
+    //if (iteration == 1) exit(0);
     this->update_sample_frame_buffer();
 
     set_captions();
@@ -188,9 +187,6 @@ void Engine :: eye_paths_to_hit_points() {
 }
 
 void Engine :: init_radius() {
-  // TODO this bbox is not exactly equal to what it should. why?
-  BBox bbox = this->bbox;
-
   const Vector ssize = bbox.pMax - bbox.pMin;
   const float photon_radius = ((ssize.x + ssize.y + ssize.z) / 3.f) / ((config.width * config.spp + config.height * config.spp) / 2.f) * 2.f;
   const float photon_radius2 = photon_radius * photon_radius;

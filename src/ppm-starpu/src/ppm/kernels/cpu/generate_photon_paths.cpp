@@ -21,6 +21,8 @@ namespace ppm { namespace kernels { namespace cpu {
       const Config* config,
       const PtrFreeScene* scene) {
 
+
+
     #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
     for(unsigned i = 0; i < rays_count; ++i) {
       Ray& ray = rays[i];
@@ -39,8 +41,9 @@ namespace ppm { namespace kernels { namespace cpu {
       ppm::LightType light_type;
       light_type = helpers::sample_all_lights(u0, scene->area_lights_count, scene->infinite_light, scene->sun_light, scene->sky_light, light_pdf, light_index);
 
-      if (light_type == ppm::LIGHT_IL_IS)
+      if (light_type == ppm::LIGHT_IL_IS) {
         helpers::infinite_light_sample_l(u1, u2, u3, u4, scene->infinite_light, scene->infinite_light_map, scene->bsphere, pdf, ray, path.flux);
+      }
       else if (light_type == ppm::LIGHT_SUN)
         helpers::sun_light_sample_l(u1, u2, u3, u4, scene->sun_light, scene->bsphere, pdf, ray, path.flux);
       else if (light_type == ppm::LIGHT_IL_SKY)
@@ -50,6 +53,7 @@ namespace ppm { namespace kernels { namespace cpu {
 
       path.flux /= pdf * light_pdf;
       path.depth = 0;
+      path.done = 0;
     }
   }
 

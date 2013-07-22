@@ -214,7 +214,7 @@ void PPM::InitPhotonPath(PointerFreeScene* ss, PhotonPath *photonPath, Ray *ray,
 	float u2 = getFloatRNG(seed);
 	float u3 = getFloatRNG(seed);
 	float u4 = getFloatRNG(seed);
-	float u5 = getFloatRNG(seed);
+	//float u5 = getFloatRNG(seed);
 
 //		float u0 = getFloatRNG2(seed);
 //		float u1 = getFloatRNG2(seed);
@@ -228,21 +228,22 @@ void PPM::InitPhotonPath(PointerFreeScene* ss, PhotonPath *photonPath, Ray *ray,
 	POINTERFREESCENE::LightSourceType lightT = ss->SampleAllLights(u0, &lpdf,
 			lightIndex, ss->infiniteLight, ss->sunLight, ss->skyLight);
 
-	if (lightT == POINTERFREESCENE::TYPE_IL_IS)
-		ss->InfiniteLight_Sample_L(u1, u2, u3, u4, u5, &pdf, ray,
+	if (lightT == POINTERFREESCENE::TYPE_IL_IS) {
+		ss->InfiniteLight_Sample_L(u1, u2, u3, u4, u4/*u5*/, &pdf, ray,
 				photonPath->flux, ss->infiniteLight, ss->infiniteLightMap);
-
+		//std::cout << photonPath->flux << '\n';
+	}
 	else if (lightT == POINTERFREESCENE::TYPE_SUN)
-		ss->SunLight_Sample_L(u1, u2, u3, u4, u5, &pdf, ray, photonPath->flux,
+		ss->SunLight_Sample_L(u1, u2, u3, u4, u4/*u5*/, &pdf, ray, photonPath->flux,
 				ss->sunLight);
 
 	else if (lightT == POINTERFREESCENE::TYPE_IL_SKY)
-		ss->SkyLight_Sample_L(u1, u2, u3, u4, u5, &pdf, ray, photonPath->flux,
+		ss->SkyLight_Sample_L(u1, u2, u3, u4, u4/*u5*/, &pdf, ray, photonPath->flux,
 				ss->skyLight);
 
 	else {
 		ss->TriangleLight_Sample_L(&ss->areaLights[lightIndex], u1, u2, u3, u4,
-				u5, &pdf, ray, photonPath->flux, &ss->colors[0],
+				u4/*u5*/, &pdf, ray, photonPath->flux, &ss->colors[0],
 				&ss->meshDescs[0]);
 	}
 
@@ -259,5 +260,6 @@ void PPM::InitPhotonPath(PointerFreeScene* ss, PhotonPath *photonPath, Ray *ray,
 	photonPath->flux /= pdf * lpdf;
 	photonPath->depth = 0;
 
+	//std::cout << u0 << " " << u1 << " " << lightT << " " << photonPath->flux << '\n';
 	//incPhotonCount();
 }

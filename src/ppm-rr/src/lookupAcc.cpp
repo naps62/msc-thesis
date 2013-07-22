@@ -177,9 +177,7 @@ void HashGridLookup::AddFlux(PointerFreeScene *ss, const float /*alpha*/, const 
 
 //			Vector v = hp->position - hitPoint;
 
-			//std::cout << ihp->accumPhotonCount << " " << hp->scrX << " " << hp->scrY << '\n';
 #if defined USE_SPPM || defined USE_PPM
-			//if ((Dot(hp->normal, shadeN) > 0.5f) && (Dot(v, v) <= ihp->accumPhotonRadius2)) {
 
 			const float dist2 = DistanceSquared(hp->position, hitPoint);
 			if ((dist2 > ihp->accumPhotonRadius2))
@@ -201,8 +199,6 @@ void HashGridLookup::AddFlux(PointerFreeScene *ss, const float /*alpha*/, const 
 
 			//const float g = (hp->accumPhotonCount * alpha + alpha)
 			//		/ (hp->accumPhotonCount * alpha + 1.f);
-
-
 			//hp->photonRadius2 *= g;
 			__sync_fetch_and_add(&ihp->accumPhotonCount, 1);
 
@@ -241,6 +237,7 @@ void HashGridLookup::AddFlux(PointerFreeScene *ss, const float /*alpha*/, const 
 			{
 
 				ihp->accumReflectedFlux = (ihp->accumReflectedFlux + flux) /** g*/;
+				//std::cout << index << " " << ihp->accumReflectedFlux << '\n';
 			}
 			//
 			//				hp->accumReflectedFlux.r += flux.r;

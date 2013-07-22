@@ -577,6 +577,8 @@ public:
 		TexMap_GetColor(infiniteLightMap, infiniteLight->width,
 				infiniteLight->height, u, v, le);
 
+		//std::cout << *le << '\n';
+
 		le->r *= infiniteLight->gain.r;
 		le->g *= infiniteLight->gain.g;
 		le->b *= infiniteLight->gain.b;
@@ -765,6 +767,7 @@ public:
 
 		Vector v1, v2;
 		CoordinateSystem(*(Vector*) shadeN, &v1, &v2);
+		//cout << " " << dir << '\n';
 
 		wi->x = v1.x * dir.x + v2.x * dir.y + shadeN->x * dir.z;
 		wi->y = v1.y * dir.x + v2.y * dir.y + shadeN->y * dir.z;
@@ -1007,16 +1010,12 @@ public:
 		float mpdf;
 		if (comp > mat->matteFilter) {
 			Metal_Sample_f(&mat->metal, wo, wi, pdf, f, shadeN, u0, u1
-
 			, specularBounce
-
 			);
 			mpdf = mat->metalPdf;
 		} else {
 			Matte_Sample_f(&mat->matte, wo, wi, pdf, f, shadeN, u0, u1
-
 			, specularBounce
-
 			);
 			mpdf = mat->mattePdf;
 		}
@@ -1046,6 +1045,7 @@ public:
 			f->r = mat->refl_r * Re;
 			f->g = mat->refl_g * Re;
 			f->b = mat->refl_b * Re;
+
 
 			*specularBounce = mat->specularBounce;
 

@@ -33,6 +33,12 @@ namespace ppm { namespace kernels {
       const unsigned buffer_size;
     };
 
+    struct starpu_accum_flux_args {
+      const Config* cpu_config;
+      const CUDA::Config* cuda_config;
+      unsigned photons_traced;
+    };
+
     extern starpu_codelet generate_eye_paths;
     extern starpu_codelet intersect_ray_hit_buffer;
     extern starpu_codelet advance_eye_paths;

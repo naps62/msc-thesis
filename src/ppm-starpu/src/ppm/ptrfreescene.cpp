@@ -236,9 +236,9 @@ void PtrFreeScene :: compile_materials() {
       m->param.alloy.refl.r  = am->GetKrefl().r;
       m->param.alloy.refl.g  = am->GetKrefl().g;
       m->param.alloy.refl.b  = am->GetKrefl().b;
-      m->param.alloy.refl.r  = am->GetKd().r;
-      m->param.alloy.refl.g  = am->GetKd().g;
-      m->param.alloy.refl.b  = am->GetKd().b;
+      m->param.alloy.diff.r  = am->GetKd().r;
+      m->param.alloy.diff.g  = am->GetKd().g;
+      m->param.alloy.diff.b  = am->GetKd().b;
       m->param.alloy.exp = am->GetExp();
       m->param.alloy.R0 = am->GetR0();
       m->param.alloy.specular_bounce = am->HasSpecularBounceEnabled();
@@ -783,6 +783,7 @@ bool PtrFreeScene :: mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1) {
 }
 
 ostream& operator<< (ostream& os, PtrFreeScene& scene) {
+
   // Vertexes checked
   os << "Vertexes (" << scene.vertex_count << "):\n\t";
   for(uint i(0); i < scene.vertex_count; ++i)
@@ -852,9 +853,9 @@ ostream& operator<< (ostream& os, PtrFreeScene& scene) {
     os << scene.area_lights[i] << "\n\t";
 
   // TODO cant check this because there are no values in current mesh
-//  os << "\n\nInfiniteLight:\n\t" << scene.infinite_light_sp[0] << "\n\t";
-//  os << "\n\nSunLight:\n\t" << scene.sun_light_sp[0] << "\n\t";
-//  os << "\n\nSkyLight:\n\t" << scene.sky_light_sp[0] << "\n\t";
+  os << "\n\nInfiniteLight:\n\t" << scene.infinite_light << "\n\t";
+  os << "\n\nSunLight:\n\t" << scene.sun_light << "\n\t";
+  os << "\n\nSkyLight:\n\t" << scene.sky_light << "\n\t";
 
   // TODO No TexMaps to check
   //os << "\n\nTexMaps:\n\t";

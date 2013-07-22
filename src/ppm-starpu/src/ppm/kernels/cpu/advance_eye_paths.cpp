@@ -30,6 +30,9 @@ void advance_eye_paths_impl(
     EyePath& eye_path = eye_paths[eye_paths_indexes[i]];
     const RayHit& hit = hits[i];
 
+    if (eye_path.done)
+      continue;
+
     if (hit.Miss()) {
       // add a hit point
       HitPointStaticInfo& hp = hit_points[eye_path.sample_index];
@@ -53,17 +56,19 @@ void advance_eye_paths_impl(
         hp.throughput *= eye_path.flux;
       } else {
         hp.throughput = Spectrum();
-        eye_path.done = true;
       }
+      eye_path.done = true;
     } else {
 
       // something was hit
       Point hit_point;
       Spectrum surface_color;
       Normal N, shade_N;
+
       if (helpers::get_hit_point_information(scene, eye_path.ray, hit, hit_point, surface_color, N, shade_N)) {
         continue;
       }
+
 
       // get the material
       const unsigned current_triangle_index = hit.index;

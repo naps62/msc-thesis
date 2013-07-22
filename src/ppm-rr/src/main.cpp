@@ -83,7 +83,6 @@ int main(int argc, char *argv[]) {
 	//	std::string sceneFileName = "scenes/studiotest/studiotest.scn";
 
 	engine->ss = new PointerFreeScene(width, height, sceneFileName);
-
 	engine->startTime = WallClockTime();
 	Seed* seedBuffer;
 	uint devID;
@@ -122,6 +121,7 @@ int main(int argc, char *argv[]) {
 	devID = 100;
 
 	size_t WORK_BUCKET_SIZE_CPU = 1024 * 256;
+	//size_t WORK_BUCKET_SIZE_CPU = 16;
 	c = max((int)hitPointTotal, (int)WORK_BUCKET_SIZE_CPU);
 	seedBuffer = new Seed[c];
 
@@ -158,7 +158,7 @@ int main(int argc, char *argv[]) {
 	const float itsec = engine->GetIterationNumber() / elapsedTime;
 
 	if (config->use_display) {
-		cout << "Done. waiting for display" << endl;
+		//cout << "Done. waiting for display" << endl;
 		engine->draw_thread->join();
 	}
 

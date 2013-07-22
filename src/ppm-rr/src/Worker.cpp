@@ -87,12 +87,10 @@ void Worker::BuildHitPoints(uint /*iteration*/) {
 					eyePath->sampleIndex = hitPointsIndex;
 
 					hitPointsIndex++;
-
 				}
 			}
 		}
 	}
-
 
 	// Iterate through all eye paths
 	//std::cerr << "Building eye paths hit points: " << std::endl;
@@ -122,6 +120,7 @@ void Worker::BuildHitPoints(uint /*iteration*/) {
 			end = start + getRaybufferSize();
 
 		for (uint i = start; i < end; i++) {
+
 
 			EyePath *eyePath = &todoEyePaths[i];
 
@@ -187,8 +186,14 @@ void Worker::ProcessIterations(PPM* engine) {
 
 	u_int64_t photonPerIteration = engine->photonsFirstIteration;
 
-	uint iterationCount;
+	    /*for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
+      HitPointStaticInfo& hpi = hitPointsStaticInfo_iterationCopy[i];
+      HitPoint& hp = hitPoints_iterationCopy[i];
+      cout << i << " " << hpi.type << " " << hpi.scrX << " " << hpi.scrY << '\n';
+    }
+    exit(0);*/
 
+	uint iterationCount;
 	resetRayBuffer();
 
 	UpdateBBox();
@@ -196,7 +201,7 @@ void Worker::ProcessIterations(PPM* engine) {
 
 	uint iter = 0;
 	double previousIterTime = WallClockTime();
-	fprintf(stdout, "iteration, photons_iter, photons_total, photons_sec, total_time, radius, device\n");
+	//fprintf(stdout, "iteration, photons_iter, photons_total, photons_sec, total_time, radius, device\n");
 	while (!boost::this_thread::interruption_requested() && iter < config->max_iters) {
 		++iter;
 
@@ -232,6 +237,12 @@ void Worker::ProcessIterations(PPM* engine) {
 
 		photonPerIteration = AdvancePhotonPath(photonPerIteration);
 		getDeviceHitpoints();
+		/*for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
+      HitPoint& hp = hitPoints_iterationCopy[i];
+      //cout << i << " " << hp.radiance << '\n';
+    }
+    cout << '\n';
+    exit(0);*/
 
 #if defined USE_PPM
 		AccumulateFluxPPM(iterationCount, photonPerIteration);
@@ -246,13 +257,6 @@ void Worker::ProcessIterations(PPM* engine) {
 		AccumulateFluxPPMPA(iterationCount, photonPerIteration);
 #endif
 
-  for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
-    HitPointStaticInfo& hpi = hitPointsStaticInfo_iterationCopy[i];
-    HitPoint& hp = hitPoints_iterationCopy[i];
-    if (hp.accumReflectedFlux.r != 0.f)
-    	cout << i << " " << hp.accumPhotonCount << " " << hp.accumReflectedFlux << '\n';
-  }
-exit(0);
   //if (iterationCount == 2) exit(0);
 
 		UpdateSampleFrameBuffer(photonPerIteration);
@@ -286,7 +290,7 @@ exit(0);
 
 		const uint photonTotal = engine->getPhotonTracedTotal();
 		const float photonSec   = photonTotal / (totalTime * 1000.f);
-		fprintf(stdout, "%d, %lu, %u, %f, %f, %f, %f, %d\n", iterationCount, photonPerIteration, photonTotal, photonSec, iterTime, totalTime, radius, getDeviceID());
+		//fprintf(stdout, "%d, %lu, %u, %f, %f, %f, %f, %d\n", iterationCount, photonPerIteration, photonTotal, photonSec, iterTime, totalTime, radius, getDeviceID());
 		previousIterTime = time;
 
 	}
@@ -403,6 +407,8 @@ void Worker::AccumulateFluxPPM(uint /*iteration*/, u_int64_t photonTraced) {
 		HitPointStaticInfo *ehp = GetHitPointInfo(i);
 		HitPoint *ihp = GetHitPoint(i);
 
+		//cout << i << " " << ihp->reflectedFlux << '\n';
+		//cout << ehp->type << '\n';
 		switch (ehp->type) {
 			case CONSTANT_COLOR:
 			ihp->radiance = ehp->throughput;
@@ -410,7 +416,7 @@ void Worker::AccumulateFluxPPM(uint /*iteration*/, u_int64_t photonTraced) {
 			case SURFACE:
 
 			if ((ihp->accumPhotonCount > 0)) {
-
+				//std::cout << ihp->photonCount << " " << ihp->accumPhotonCount << '\n';
 				const unsigned long long pcount = ihp->photonCount + ihp->accumPhotonCount;
 				const float alpha = engine->alpha;
 
@@ -418,12 +424,13 @@ void Worker::AccumulateFluxPPM(uint /*iteration*/, u_int64_t photonTraced) {
 
 				ihp->accumPhotonRadius2 *= g;
 
+				//std::cout << i << " " << ihp->accumReflectedFlux << '\n';
 				ihp->reflectedFlux = (ihp->reflectedFlux + ihp->accumReflectedFlux) * g;
 
 				ihp->photonCount = pcount;
 
 				const double k = 1.0 / (M_PI * ihp->accumPhotonRadius2 * photonTraced);
-
+     		//cout << i << " " << ihp->accumPhotonRadius2 << " " << photonTraced << '\n';
 				ihp->radiance = ihp->reflectedFlux * k;
 
 				ihp->accumPhotonCount = 0;
@@ -434,8 +441,8 @@ void Worker::AccumulateFluxPPM(uint /*iteration*/, u_int64_t photonTraced) {
 			default:
 			assert (false);
 		}
-
 	}
+	//exit(0);
 
 	//fprintf(stderr, "Iteration %d hit point 0 reducted radius: %f\n", iteration,
 	//		GetHitPoint(0)->accumPhotonRadius2);
