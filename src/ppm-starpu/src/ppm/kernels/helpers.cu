@@ -145,7 +145,7 @@ void tex_map_get_texel(
     Spectrum& color) {
 
   const unsigned u = Mod(s, width);
-  const unsigned v = Mod(s, height);
+  const unsigned v = Mod(t, height);
 
   const Spectrum& pixel = pixels[v * width + u];
 
@@ -204,7 +204,6 @@ void infinite_light_le (
 
   tex_map_get_color(infinite_light_map, infinite_light.width, infinite_light.height, u, v, le);
 
-  //std::cout << le << '\n';
   le.r *= infinite_light.gain.r;
   le.g *= infinite_light.gain.g;
   le.b *= infinite_light.gain.b;

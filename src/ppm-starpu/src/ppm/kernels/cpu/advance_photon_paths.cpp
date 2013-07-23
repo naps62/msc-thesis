@@ -36,14 +36,16 @@ namespace ppm { namespace kernels { namespace cpu {
       hit.SetMiss();
       scene->intersect(ray, hit);
 
-
+      //std::cout << i << " " << hit.index << " ";
       if (hit.Miss()) {
         path.done = true;
+        //std::cout << "here\n";
       } else {
         Point hit_point;
         Spectrum surface_color;
         Normal N;
         Normal shade_N;
+
 
         if (helpers::get_hit_point_information(scene, ray, hit, hit_point, surface_color, N, shade_N))
           continue;
@@ -68,6 +70,8 @@ namespace ppm { namespace kernels { namespace cpu {
           const float u2 = floatRNG(seed);
 
           helpers::generic_material_sample_f(hit_point_mat, wo, wi, N, shade_N, u0, u1, u2, f_pdf, f, specular_bounce);
+          f *= surface_color;
+
           if (!specular_bounce) {
             helpers::add_flux(hash_grid, scene, hit_point, shade_N, wo, path.flux, hit_points_info, hit_points);
           }

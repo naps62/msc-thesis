@@ -27,6 +27,8 @@ omp_set_num_threads(config->max_threads);
 
 		EyePath *eyePath = &todoEyePaths[eyePathIndexes[i]];
 
+
+
 		if (eyePath->done)
 			continue;
 
@@ -56,10 +58,12 @@ omp_set_num_threads(config->max_threads);
 					ss->InfiniteLight_Le(&hp.throughput, &eyePath->ray.d, ss->infiniteLight,
 							ss->infiniteLightMap);
 				}
-				if (ss->sunLight)
+				if (ss->sunLight) {
 					ss->SunLight_Le(&hp.throughput, &eyePath->ray.d, ss->sunLight);
-				if (ss->skyLight)
+				}
+				if (ss->skyLight) {
 					ss->SkyLight_Le(&hp.throughput, &eyePath->ray.d, ss->skyLight);
+				}
 
 				hp.throughput *= eyePath->throughput;
 			} else
@@ -80,11 +84,9 @@ omp_set_num_threads(config->max_threads);
 			Point hitPoint;
 			Spectrum surfaceColor;
 			Normal N, shadeN;
-
 			if (engine->GetHitPointInformation(ss, &eyePath->ray, rayHit, hitPoint, surfaceColor,
 					N, shadeN))
 				continue;
-
 
 			// Get the material
 			const unsigned int currentTriangleIndex = rayHit->index;
@@ -133,6 +135,7 @@ omp_set_num_threads(config->max_threads);
 				float u1 = getFloatRNG(seedBuffer[eyePath->sampleIndex]);
 				float u2 = getFloatRNG(seedBuffer[eyePath->sampleIndex]);
 				Spectrum f;
+
 
 				switch (matType) {
 
@@ -335,9 +338,9 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 			while(!photonPath->done) {
 				rayHit->SetMiss();
 				ss->dataSet->Intersect(ray, rayHit);
-
 		//rayBuffer->Reset();
 
+				//std::cout << i << " " << rayHit->index << " ";
 				if (rayHit->Miss()) {
 					photonPath->done = true;
 				} else { // Something was hit
@@ -349,7 +352,6 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 					if (engine->GetHitPointInformation(engine->ss, ray, rayHit, hitPoint, surfaceColor,
 							N, shadeN))
 						continue;
-
 
 					const unsigned int currentTriangleIndex = rayHit->index;
 					const unsigned int currentMeshIndex = engine->ss->meshIDs[currentTriangleIndex];
@@ -373,6 +375,7 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 
 						Spectrum f;
 
+						//cout << i << " " << matType << " ";
 						switch (matType) {
 
 						case MAT_MATTE:
@@ -442,6 +445,9 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 							fPdf = 0.f;
 							break;
 						}
+
+						//std::cout << " " << f << " " << surfaceColor << '\n';
+						//std::cout << " " << f << '\n';
 
 						if (!specularBounce) {// if difuse
 							lookupA->AddFlux(engine->ss, engine->alpha, hitPoint, shadeN, -ray->d,

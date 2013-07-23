@@ -45,6 +45,7 @@ void generate_eye_paths_impl(
           float u1 = floatRNG(seed_buffer[index]);
           float u2 = floatRNG(seed_buffer[index]);
 
+
           eye_path.ray = helpers::generate_ray(eye_path.scr_x, eye_path.scr_y, width, height, u0, u1, u2, scene->camera);
 
           eye_path.sample_index = index;

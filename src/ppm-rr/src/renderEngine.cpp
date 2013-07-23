@@ -223,6 +223,8 @@ void PPM::InitPhotonPath(PointerFreeScene* ss, PhotonPath *photonPath, Ray *ray,
 //		float u4 = getFloatRNG2(seed);
 //		float u5 = getFloatRNG2(seed);
 
+	//std::cout << u0 << " " << u1 << " " << u2 << " " << u3 << " " << u4 << '\n';
+
 
 	int lightIndex;
 	POINTERFREESCENE::LightSourceType lightT = ss->SampleAllLights(u0, &lpdf,
@@ -260,6 +262,5 @@ void PPM::InitPhotonPath(PointerFreeScene* ss, PhotonPath *photonPath, Ray *ray,
 	photonPath->flux /= pdf * lpdf;
 	photonPath->depth = 0;
 
-	//std::cout << u0 << " " << u1 << " " << lightT << " " << photonPath->flux << '\n';
 	//incPhotonCount();
 }

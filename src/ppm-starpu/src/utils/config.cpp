@@ -4,8 +4,8 @@ Config :: Config(const char *desc, int _argc, char **_argv)
 : beast::program_options::options(desc), argc(_argc), argv((const char**)_argv) {
 
   // scene
-  value("scene_dir",  scene_dir,  string("scenes/alloy"), "folder where scene files are stored");
-  value("scene_file", scene_file, string("alloy.scn"), "to find <scene_dir>/<scene_file>");
+  value("scene_dir",  scene_dir,  string("scenes/simple-mat"), "folder where scene files are stored");
+  value("scene_file", scene_file, string("simple-mat.scn"), "to find <scene_dir>/<scene_file>");
   value("output_dir",    output_dir,  string("."), "output image directory");
   value("output_file",   output_file, string("output.png"), "output image file");
 

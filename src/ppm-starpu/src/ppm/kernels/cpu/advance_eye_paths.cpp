@@ -69,7 +69,6 @@ void advance_eye_paths_impl(
         continue;
       }
 
-
       // get the material
       const unsigned current_triangle_index = hit.index;
       const unsigned current_mesh_index = scene->mesh_ids[current_triangle_index];
@@ -86,10 +85,9 @@ void advance_eye_paths_impl(
 
         Vector md = - eye_path.ray.d;
         helpers::area_light_le(hp.throughput, md, N, hit_point_mat.param.area_light);
-
+        hp.throughput *= eye_path.flux;
         eye_path.done = true;
       } else {
-
         Vector wo = - eye_path.ray.d;
         float material_pdf;
 
@@ -99,6 +97,7 @@ void advance_eye_paths_impl(
         float u1 = floatRNG(seed_buffer[eye_path.sample_index]);
         float u2 = floatRNG(seed_buffer[eye_path.sample_index]);
         Spectrum f;
+
 
         helpers::generic_material_sample_f(hit_point_mat, wo, wi, N, shade_N, u0, u1, u2, material_pdf, f, specular_material);
         f *= surface_color;

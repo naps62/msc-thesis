@@ -121,6 +121,7 @@ void glass_material_sample_f(
   refl_dir.y = k * N.y - wo.y;
   refl_dir.z = k * N.z - wo.z;
 
+
   const bool into = (Dot(N, shade_N) > 0.f);
   const float nc = mat.outside_ior;
   const float nt = mat.ior;
@@ -408,7 +409,7 @@ __HD__ void matte_f(
 __HD__ void matte_mirror_f(
     const MatteMirrorParam& mat,
     Spectrum& f) {
-
+  matte_f(mat.matte, f);
   f *= mat.matte_pdf;
 }
 

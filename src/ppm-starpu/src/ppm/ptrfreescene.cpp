@@ -166,7 +166,8 @@ void PtrFreeScene :: compile_materials() {
       m->param.glass.refrct.g = gm->GetKrefrct().g;
       m->param.glass.refrct.b = gm->GetKrefrct().b;
       m->param.glass.outside_ior = gm->GetOutsideIOR();
-      m->param.glass.R0 = gm->GetIOR();
+      m->param.glass.ior = gm->GetIOR();
+      m->param.glass.R0 = gm->GetR0();
       m->param.glass.reflection_specular_bounce   = gm->HasReflSpecularBounceEnabled();
       m->param.glass.transmission_specular_bounce = gm->HasRefrctSpecularBounceEnabled();
       break;
@@ -676,10 +677,10 @@ void PtrFreeScene :: translate_geometry_qbvh(const lux_ext_mesh_list_t& meshs) {
         tmp_uvs.resize(offset + mesh->GetTotalVertexCount());
         if (mesh->HasUVs())
           for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
-            tmp_uvs[offset + j] = UV(0.f, 0.f);
+            tmp_uvs[offset + j] = UV(mesh->GetUV(j));
         else
           for(uint j = 0; j < mesh->GetTotalVertexCount(); ++j)
-            tmp_uvs[offset + j] = UV(mesh->GetUV(j));
+            tmp_uvs[offset + j] = UV(0.f, 0.f);
       }
 
       // translate meshrverticener size, the content is expanded by inserting at the end as many elements as needed to reach a size of n. If val is specified, the new elements are initialized as copies of val, otherwise, they are value-initialized.s

@@ -246,7 +246,7 @@ public:
 	//------------------------------------------------------------------------------
 	__HD__
 	void GenerateRay(const float screenX, const float screenY,
-			const unsigned int /*filmWidth*/, const unsigned int filmHeight,
+			const unsigned int filmWidth, const unsigned int filmHeight,
 			Ray *ray, const float u1, const float u2, const float /*u3*/,
 			POINTERFREESCENE::Camera *camera) {
 
@@ -309,7 +309,6 @@ public:
 			dir.z = Pfocus.z - orig.z;
 
 		}
-
 		dir = Normalize(dir);
 
 		// CameraToWorld(*ray, ray);
@@ -330,6 +329,7 @@ public:
 				+ camera->cameraToWorldMatrix[2][1] * orig.y
 				+ camera->cameraToWorldMatrix[2][2] * orig.z
 				+ camera->cameraToWorldMatrix[2][3]) * iw2;
+
 
 		Vector tdir;
 		tdir.x = camera->cameraToWorldMatrix[0][0] * dir.x
@@ -420,6 +420,7 @@ public:
 		// Ray direction
 		const Normal &sampleN = l->normal;
 
+
 		//Vector dir = UniformSampleSphere(u2, u3);
 		float z = 1.f - 2.f * u2;
 		float r = sqrtf(Max(0.f, 1.f - z * z));
@@ -442,7 +443,9 @@ public:
 		POINTERFREESCENE::Mesh& m = meshDescs[l->meshIndex];
 
 		if (m.hasColors) {
-
+			f.r = l->gain_r * RdotN;
+			f.g = l->gain_g * RdotN;
+			f.b = l->gain_b * RdotN;
 			f.r = colors[m.colorsOffset + l->triIndex].r * l->gain_r * RdotN;
 			f.g = colors[m.colorsOffset + l->triIndex].g * l->gain_g * RdotN;
 			f.b = colors[m.colorsOffset + l->triIndex].b * l->gain_b * RdotN;
@@ -457,7 +460,6 @@ public:
 
 			//return lightMaterial->GetGain() * RdotN; // Light sources are supposed to have flat color
 		}
-
 	}
 	__HD__
 	void Mesh_InterpolateColor(Spectrum *colors, Triangle *triangles,
@@ -576,8 +578,6 @@ public:
 
 		TexMap_GetColor(infiniteLightMap, infiniteLight->width,
 				infiniteLight->height, u, v, le);
-
-		//std::cout << *le << '\n';
 
 		le->r *= infiniteLight->gain.r;
 		le->g *= infiniteLight->gain.g;
@@ -786,6 +786,7 @@ public:
 		}
 
 		*specularBounce = 0;
+		//std::cout << *f << '\n';
 
 	}
 	__HD__
@@ -900,7 +901,6 @@ public:
 				f->b = mat->refrct_b /*/ (*pdf)*/;
 
 				*specularBounce = mat->transmitionSpecularBounce;
-
 			}
 		}
 	}

@@ -65,6 +65,7 @@ Engine :: ~Engine() {
 void Engine :: render() {
   this->build_hit_points();
 
+
   this->update_bbox();
   this->init_radius();
 
@@ -81,13 +82,15 @@ void Engine :: render() {
     kernels::generate_photon_paths(ray_buffer_h, live_photon_paths_h, seeds_h);
     kernels::advance_photon_paths(ray_buffer_h, hit_buffer_h, live_photon_paths_h, hit_points_info_h, hit_points_h, seeds_h);
     photons_traced += chunk_size;
-    kernels::accum_flux(hit_points_info_h, hit_points_h, photons_traced);
-
-    /*for(unsigned i = 0; i < hit_points.size(); ++i) {
+    /*cout << '\n';
+    for(unsigned i = 0; i < hit_points.size(); ++i) {
       HitPointStaticInfo& hpi = hit_points_info[i];
       HitPoint& hp = hit_points[i];
-      cout << i << " " << hpi.type << " " << hpi.scr_x << " " << hpi.scr_y << '\n';
-    }*/
+      cout << i << " " << hp.accum_reflected_flux << '\n';
+    }
+    exit(0);*/
+    kernels::accum_flux(hit_points_info_h, hit_points_h, photons_traced);
+
     //cout << '\n';
     //if (iteration == 1) exit(0);
     this->update_sample_frame_buffer();

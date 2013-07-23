@@ -75,7 +75,6 @@ void Worker::BuildHitPoints(uint /*iteration*/) {
 					//								eyePath->scrY, width, height, &eyePath->ray,
 					//								u0, u1, u2);
 
-
 					ss->GenerateRay(eyePath->scrX, eyePath->scrY, width, height, &eyePath->ray, u0,
 							u1, u2, &ss->camera);
 
@@ -234,16 +233,17 @@ void Worker::ProcessIterations(PPM* engine) {
 		ReHash(currentPhotonRadius2);//argument ignored in non-PA
 
 		updateDeviceLookupAcc();
-
-		photonPerIteration = AdvancePhotonPath(photonPerIteration);
 		getDeviceHitpoints();
-		/*for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
-      HitPoint& hp = hitPoints_iterationCopy[i];
-      //cout << i << " " << hp.radiance << '\n';
-    }
-    cout << '\n';
-    exit(0);*/
+		photonPerIteration = AdvancePhotonPath(photonPerIteration);
 
+
+		/*cout << '\n';
+		for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
+			HitPointStaticInfo& hpi = hitPointsStaticInfo_iterationCopy[i];
+      HitPoint& hp = hitPoints_iterationCopy[i];
+      cout << i << " " << hp.accumReflectedFlux << '\n';
+    }
+    exit(0);*/
 #if defined USE_PPM
 		AccumulateFluxPPM(iterationCount, photonPerIteration);
 #endif
@@ -407,8 +407,6 @@ void Worker::AccumulateFluxPPM(uint /*iteration*/, u_int64_t photonTraced) {
 		HitPointStaticInfo *ehp = GetHitPointInfo(i);
 		HitPoint *ihp = GetHitPoint(i);
 
-		//cout << i << " " << ihp->reflectedFlux << '\n';
-		//cout << ehp->type << '\n';
 		switch (ehp->type) {
 			case CONSTANT_COLOR:
 			ihp->radiance = ehp->throughput;
@@ -416,7 +414,6 @@ void Worker::AccumulateFluxPPM(uint /*iteration*/, u_int64_t photonTraced) {
 			case SURFACE:
 
 			if ((ihp->accumPhotonCount > 0)) {
-				//std::cout << ihp->photonCount << " " << ihp->accumPhotonCount << '\n';
 				const unsigned long long pcount = ihp->photonCount + ihp->accumPhotonCount;
 				const float alpha = engine->alpha;
 
@@ -424,13 +421,11 @@ void Worker::AccumulateFluxPPM(uint /*iteration*/, u_int64_t photonTraced) {
 
 				ihp->accumPhotonRadius2 *= g;
 
-				//std::cout << i << " " << ihp->accumReflectedFlux << '\n';
 				ihp->reflectedFlux = (ihp->reflectedFlux + ihp->accumReflectedFlux) * g;
 
 				ihp->photonCount = pcount;
 
 				const double k = 1.0 / (M_PI * ihp->accumPhotonRadius2 * photonTraced);
-     		//cout << i << " " << ihp->accumPhotonRadius2 << " " << photonTraced << '\n';
 				ihp->radiance = ihp->reflectedFlux * k;
 
 				ihp->accumPhotonCount = 0;

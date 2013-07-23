@@ -231,6 +231,7 @@ void HashGridLookup::AddFlux(PointerFreeScene *ss, const float /*alpha*/, const 
 			//f = hp->material->f(hp->wo, wi, shadeN);
 
 			Spectrum flux = photonFlux * AbsDot(shadeN, wi) * hp->throughput * f;
+			//std::cout << index << " " << flux << '\n';
 			//if ((*iter-1) == 200) printf("%f\n", photonFlux.g);
 
 #pragma omp critical
