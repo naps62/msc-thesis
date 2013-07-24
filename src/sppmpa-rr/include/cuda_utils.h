@@ -16,29 +16,29 @@
 
 void inline checkCUDAmemory(char* t = NULL) {
 
-	//cudaDeviceSynchronize();
-	size_t free, total;
-	cuMemGetInfo(&free, &total);
-	fprintf(stderr, "%s mem %ld total %ld\n", t, free / 1024 / 1024, total / 1024 / 1024);
+  //cudaDeviceSynchronize();
+  size_t free, total;
+  cuMemGetInfo(&free, &total);
+  fprintf(stderr, "%s mem %ld total %ld\n", t, free / 1024 / 1024, total / 1024 / 1024);
 
 }
 
 void inline checkCUDAError(char* t = NULL) {
 #ifdef __DEBUG
 
-	cudaError_t err = cudaGetLastError();
-	if (cudaSuccess != err) {
-		fprintf(stderr, "Cuda error %s: %s.\n", t, cudaGetErrorString(err));
-		exit(-1);
-	}
+  cudaError_t err = cudaGetLastError();
+  if (cudaSuccess != err) {
+    fprintf(stderr, "Cuda error %s: %s.\n", t, cudaGetErrorString(err));
+    exit(-1);
+  }
 #endif
 }
 
 void inline __E(cudaError_t err) {
-	if (cudaSuccess != err) {
-		fprintf(stderr, "CUDA Runtime API error: %s.\n", cudaGetErrorString(err));
-		exit(-1);
-	}
+  if (cudaSuccess != err) {
+    fprintf(stderr, "CUDA Runtime API error: %s.\n", cudaGetErrorString(err));
+    exit(-1);
+  }
 }
 
 

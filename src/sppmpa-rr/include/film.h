@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 #ifndef _LUXRAYS_UTILS_PIXELDEVICE_FILM_H
-#define	_LUXRAYS_UTILS_PIXELDEVICE_FILM_H
+#define _LUXRAYS_UTILS_PIXELDEVICE_FILM_H
 
 #include <cstddef>
 #include <cmath>
@@ -56,47 +56,47 @@
 
 
 typedef enum {
-	TONEMAP_LINEAR, TONEMAP_REINHARD02
+  TONEMAP_LINEAR, TONEMAP_REINHARD02
 } ToneMapType;
 
 class ToneMapParams {
 public:
-	virtual ToneMapType GetType() const = 0;
-	virtual ToneMapParams *Copy() const = 0;
-	virtual ~ToneMapParams (){};
+  virtual ToneMapType GetType() const = 0;
+  virtual ToneMapParams *Copy() const = 0;
+  virtual ~ToneMapParams (){};
 };
 
 class LinearToneMapParams : public ToneMapParams {
 public:
-	LinearToneMapParams(const float s = 1.f) {
-		scale = s;
-	}
+  LinearToneMapParams(const float s = 1.f) {
+    scale = s;
+  }
 
-	ToneMapType GetType() const { return TONEMAP_LINEAR; }
+  ToneMapType GetType() const { return TONEMAP_LINEAR; }
 
-	ToneMapParams *Copy() const {
-		return new LinearToneMapParams(scale);
-	}
+  ToneMapParams *Copy() const {
+    return new LinearToneMapParams(scale);
+  }
 
-	float scale;
+  float scale;
 };
 
 class Reinhard02ToneMapParams : public ToneMapParams {
 public:
-	Reinhard02ToneMapParams(const float preS = 1.f, const float postS = 1.2f,
-			const float b = 3.75f) {
-		preScale = preS;
-		postScale = postS;
-		burn = b;
-	}
+  Reinhard02ToneMapParams(const float preS = 1.f, const float postS = 1.2f,
+      const float b = 3.75f) {
+    preScale = preS;
+    postScale = postS;
+    burn = b;
+  }
 
-	ToneMapType GetType() const { return TONEMAP_REINHARD02; }
+  ToneMapType GetType() const { return TONEMAP_REINHARD02; }
 
-	ToneMapParams *Copy() const {
-		return new Reinhard02ToneMapParams(preScale, postScale, burn);
-	}
+  ToneMapParams *Copy() const {
+    return new Reinhard02ToneMapParams(preScale, postScale, burn);
+  }
 
-	float preScale, postScale, burn;
+  float preScale, postScale, burn;
 };
 
 //------------------------------------------------------------------------------
@@ -104,212 +104,212 @@ public:
 //------------------------------------------------------------------------------
 
 typedef enum {
-	FILTER_NONE, FILTER_PREVIEW, FILTER_GAUSSIAN
+  FILTER_NONE, FILTER_PREVIEW, FILTER_GAUSSIAN
 } FilterType;
 
 class Film /*: public Film*/{
 private:
-	uint imageBufferCount;
+  uint imageBufferCount;
 
 public:
 
-	unsigned int width, height;
-	double statsTotalSampleTime, statsTotalSamplesCount;
-	unsigned int statsTotalSampleCount;
-	double statsStartSampleTime, statsAvgSampleSec;
+  unsigned int width, height;
+  double statsTotalSampleTime, statsTotalSamplesCount;
+  unsigned int statsTotalSampleCount;
+  double statsStartSampleTime, statsAvgSampleSec;
 
-	boost::mutex imageBufferMutex;
-
-
-	Pixel* imageBuffer;
-
-	FrameBuffer *frameBuffer;
-
-	//static const unsigned int GammaTableSize = 1024;
-
-	float gammaTable[GAMMA_TABLE_SIZE];
-
-	unsigned int pixelCount;
-
-	//FilterType filterType;
-	ToneMapParams *toneMapParams;
-
-	Film( const unsigned int w, const unsigned int h);
-
-	virtual ~Film() {
-	}
-
-	virtual void Init(const unsigned int w, const unsigned int h) {
-
-		width = w;
-		height = h;
+  boost::mutex imageBufferMutex;
 
 
-		delete frameBuffer;
+  Pixel* imageBuffer;
+
+  FrameBuffer *frameBuffer;
+
+  //static const unsigned int GammaTableSize = 1024;
+
+  float gammaTable[GAMMA_TABLE_SIZE];
+
+  unsigned int pixelCount;
+
+  //FilterType filterType;
+  ToneMapParams *toneMapParams;
+
+  Film( const unsigned int w, const unsigned int h);
+
+  virtual ~Film() {
+  }
+
+  virtual void Init(const unsigned int w, const unsigned int h) {
+
+    width = w;
+    height = h;
 
 
-		frameBuffer = new FrameBuffer(width, height);
-		frameBuffer->Clear();
+    delete frameBuffer;
 
-		imageBuffer = new Pixel[width*height*sizeof(Pixel)];
-		imageBufferCount=0;
 
-		memset(imageBuffer,0,width*height*sizeof(Pixel));
+    frameBuffer = new FrameBuffer(width, height);
+    frameBuffer->Clear();
 
-		width = w;
-		height = h;
-		pixelCount = w * h;
+    imageBuffer = new Pixel[width*height*sizeof(Pixel)];
+    imageBufferCount=0;
 
-		statsTotalSampleCount = 0;
-		statsAvgSampleSec = 0.0;
-		statsStartSampleTime = WallClockTime();
-	}
-	__HD__
-	float Radiance2PixelFloat(const float x) const {
-		// Very slow !
-		//return powf(Clamp(x, 0.f, 1.f), 1.f / 2.2f);
+    memset(imageBuffer,0,width*height*sizeof(Pixel));
 
-		const unsigned int index = Min<unsigned int> (
-				Floor2UInt(GAMMA_TABLE_SIZE * Clamp(x, 0.f, 1.f)),
-				GAMMA_TABLE_SIZE - 1);
-		return gammaTable[index];
-	}
-	__HD__
-	virtual void InitGammaTable(const float gamma = 2.2f) {
-		float x = 0.f;
-		const float dx = 1.f / GAMMA_TABLE_SIZE;
-		for (unsigned int i = 0; i < GAMMA_TABLE_SIZE; ++i, x += dx)
-			gammaTable[i] = powf(Clamp(x, 0.f, 1.f), 1.f / gamma);
-	}
+    width = w;
+    height = h;
+    pixelCount = w * h;
 
-	virtual void Reset() {
+    statsTotalSampleCount = 0;
+    statsAvgSampleSec = 0.0;
+    statsStartSampleTime = WallClockTime();
+  }
+  __HD__
+  float Radiance2PixelFloat(const float x) const {
+    // Very slow !
+    //return powf(Clamp(x, 0.f, 1.f), 1.f / 2.2f);
+
+    const unsigned int index = Min<unsigned int> (
+        Floor2UInt(GAMMA_TABLE_SIZE * Clamp(x, 0.f, 1.f)),
+        GAMMA_TABLE_SIZE - 1);
+    return gammaTable[index];
+  }
+  __HD__
+  virtual void InitGammaTable(const float gamma = 2.2f) {
+    float x = 0.f;
+    const float dx = 1.f / GAMMA_TABLE_SIZE;
+    for (unsigned int i = 0; i < GAMMA_TABLE_SIZE; ++i, x += dx)
+      gammaTable[i] = powf(Clamp(x, 0.f, 1.f), 1.f / gamma);
+  }
+
+  virtual void Reset() {
 
 //#if defined USE_PPM || defined USE_SPPM
-		//sampleFrameBuffer->Clear();
+    //sampleFrameBuffer->Clear();
 //#endif
-		statsTotalSampleCount = 0;
-		statsAvgSampleSec = 0.0;
-		statsStartSampleTime = WallClockTime();
-	}
-	__HD__
-	void SetGamma(const float gamma = 2.2f) {
-		float x = 0.f;
-		const float dx = 1.f / GAMMA_TABLE_SIZE;
-		for (unsigned int i = 0; i < GAMMA_TABLE_SIZE; ++i, x += dx)
-			gammaTable[i] = powf(Clamp(x, 0.f, 1.f), 1.f / gamma);
-	}
+    statsTotalSampleCount = 0;
+    statsAvgSampleSec = 0.0;
+    statsStartSampleTime = WallClockTime();
+  }
+  __HD__
+  void SetGamma(const float gamma = 2.2f) {
+    float x = 0.f;
+    const float dx = 1.f / GAMMA_TABLE_SIZE;
+    for (unsigned int i = 0; i < GAMMA_TABLE_SIZE; ++i, x += dx)
+      gammaTable[i] = powf(Clamp(x, 0.f, 1.f), 1.f / gamma);
+  }
 
-	const FrameBuffer *GetFrameBuffer() const {
-		return frameBuffer;
-	}
+  const FrameBuffer *GetFrameBuffer() const {
+    return frameBuffer;
+  }
 
-	void UpdateScreenBuffer();
+  void UpdateScreenBuffer();
 
-	const float *GetScreenBuffer() const {
-		return (const float *) GetFrameBuffer()->GetPixels();
-	}
+  const float *GetScreenBuffer() const {
+    return (const float *) GetFrameBuffer()->GetPixels();
+  }
 
-	void SplatRadiance(SampleFrameBuffer* sampleFrameBuffer,const Spectrum radiance, const unsigned int x,
-			const unsigned int y, const float weight = 1.f) {
+  void SplatRadiance(SampleFrameBuffer* sampleFrameBuffer,const Spectrum radiance, const unsigned int x,
+      const unsigned int y, const float weight = 1.f) {
 
-		const unsigned int offset = x + y * width;
-		SamplePixel *sp = &(sampleFrameBuffer->GetPixels()[offset]);
+    const unsigned int offset = x + y * width;
+    SamplePixel *sp = &(sampleFrameBuffer->GetPixels()[offset]);
 
-		sp->radiance += weight * radiance;
-		sp->weight += weight;
+    sp->radiance += weight * radiance;
+    sp->weight += weight;
 
-		//sp->radiance += radiance;
-		//sp->weight += 1;
+    //sp->radiance += radiance;
+    //sp->weight += 1;
 
-		//if (offset == 0) printf("%f\n",sp->weight);
-	}
-//	__HD__
-//	void SplatPreview(const SampleBufferElem *sampleElem) {
-//		const int splatSize = 4;
+    //if (offset == 0) printf("%f\n",sp->weight);
+  }
+//  __HD__
+//  void SplatPreview(const SampleBufferElem *sampleElem) {
+//    const int splatSize = 4;
 //
-//		// Compute sample's raster extent
-//		float dImageX = sampleElem->screenX - 0.5f;
-//		float dImageY = sampleElem->screenY - 0.5f;
-//		int x0 = Ceil2Int(dImageX - splatSize);
-//		int x1 = Floor2Int(dImageX + splatSize);
-//		int y0 = Ceil2Int(dImageY - splatSize);
-//		int y1 = Floor2Int(dImageY + splatSize);
-//		if (x1 < x0 || y1 < y0 || x1 < 0 || y1 < 0)
-//			return;
+//    // Compute sample's raster extent
+//    float dImageX = sampleElem->screenX - 0.5f;
+//    float dImageY = sampleElem->screenY - 0.5f;
+//    int x0 = Ceil2Int(dImageX - splatSize);
+//    int x1 = Floor2Int(dImageX + splatSize);
+//    int y0 = Ceil2Int(dImageY - splatSize);
+//    int y1 = Floor2Int(dImageY + splatSize);
+//    if (x1 < x0 || y1 < y0 || x1 < 0 || y1 < 0)
+//      return;
 //
-//		for (u_int y = static_cast<u_int> (Max<int> (y0, 0)); y
-//				<= static_cast<u_int> (Min<int> (y1, height - 1)); ++y)
-//			for (u_int x = static_cast<u_int> (Max<int> (x0, 0)); x
-//					<= static_cast<u_int> (Min<int> (x1, width - 1)); ++x)
-//				SplatRadiance(sampleElem->radiance, x, y, 0.01f);
-//	}
-	__HD__
-	void SplatFiltered(SampleFrameBuffer* sampleFrameBuffer,const SampleBufferElem *sampleElem) {
+//    for (u_int y = static_cast<u_int> (Max<int> (y0, 0)); y
+//        <= static_cast<u_int> (Min<int> (y1, height - 1)); ++y)
+//      for (u_int x = static_cast<u_int> (Max<int> (x0, 0)); x
+//          <= static_cast<u_int> (Min<int> (x1, width - 1)); ++x)
+//        SplatRadiance(sampleElem->radiance, x, y, 0.01f);
+//  }
+  __HD__
+  void SplatFiltered(SampleFrameBuffer* sampleFrameBuffer,const SampleBufferElem *sampleElem) {
 
-		// Compute sample's raster extent
-		const float dImageX = sampleElem->screenX - 0.5f;
-		const float dImageY = sampleElem->screenY - 0.5f;
+    // Compute sample's raster extent
+    const float dImageX = sampleElem->screenX - 0.5f;
+    const float dImageY = sampleElem->screenY - 0.5f;
 
-		const FilterLUT *filterLUT = sampleFrameBuffer->filterLUTs->GetLUT(
-				dImageX - floorf(sampleElem->screenX),
-				dImageY - floorf(sampleElem->screenY));
+    const FilterLUT *filterLUT = sampleFrameBuffer->filterLUTs->GetLUT(
+        dImageX - floorf(sampleElem->screenX),
+        dImageY - floorf(sampleElem->screenY));
 
-		const float *lut = filterLUT->GetLUT();
+    const float *lut = filterLUT->GetLUT();
 
-		const int x0 = Ceil2Int(dImageX - sampleFrameBuffer->filter->xWidth);
-		const int x1 = x0 + filterLUT->GetWidth();
-		const int y0 = Ceil2Int(dImageY - sampleFrameBuffer->filter->yWidth);
-		const int y1 = y0 + filterLUT->GetHeight();
+    const int x0 = Ceil2Int(dImageX - sampleFrameBuffer->filter->xWidth);
+    const int x1 = x0 + filterLUT->GetWidth();
+    const int y0 = Ceil2Int(dImageY - sampleFrameBuffer->filter->yWidth);
+    const int y1 = y0 + filterLUT->GetHeight();
 
-		for (int iy = y0; iy < y1; ++iy) {
-			if (iy < 0) {
-				lut += filterLUT->GetWidth();
-				continue;
-			} else if (iy >= int(height))
-				break;
+    for (int iy = y0; iy < y1; ++iy) {
+      if (iy < 0) {
+        lut += filterLUT->GetWidth();
+        continue;
+      } else if (iy >= int(height))
+        break;
 
-			for (int ix = x0; ix < x1; ++ix) {
-				const float filterWt = *lut++;
+      for (int ix = x0; ix < x1; ++ix) {
+        const float filterWt = *lut++;
 
-				if ((ix < 0) || (ix >= int(width)))
-					continue;
+        if ((ix < 0) || (ix >= int(width)))
+          continue;
 
-				SplatRadiance(sampleFrameBuffer,sampleElem->radiance, ix, iy, filterWt);
-			}
-		}
-	}
-	__HD__
-	void SplatSampleBuffer(SampleFrameBuffer* sampleFrameBuffer,const bool preview, SampleBuffer *sampleBuffer) {
-
-
-		//statsTotalSampleCount += (unsigned int) sampleBuffer->GetSampleCount();
-
-		//boost::mutex::scoped_lock lock(sampleFrameBufferMutex);
-
-		//const double t = WallClockTime();
-
-		const SampleBufferElem *sbe = sampleBuffer->GetSampleBuffer();
-
-		for (unsigned int i = 0; i < sampleBuffer->GetSampleCount(); ++i)
-			//SplatFiltered(sampleFrameBuffer,&sbe[i]);
-			//SplatPreview(&sbe[i]);
-			SplatRadiance(sampleFrameBuffer,sbe[i].radiance,(uint)sbe[i].screenX,(uint)sbe[i].screenY);
-
-		//statsTotalSampleTime += WallClockTime() - t;
-		//statsTotalSamplesCount += sampleBuffer->GetSampleCount();
-
-		AddImageToBuffer(sampleFrameBuffer);
+        SplatRadiance(sampleFrameBuffer,sampleElem->radiance, ix, iy, filterWt);
+      }
+    }
+  }
+  __HD__
+  void SplatSampleBuffer(SampleFrameBuffer* sampleFrameBuffer,const bool preview, SampleBuffer *sampleBuffer) {
 
 
+    //statsTotalSampleCount += (unsigned int) sampleBuffer->GetSampleCount();
 
-	}
+    //boost::mutex::scoped_lock lock(sampleFrameBufferMutex);
 
-	void SaveImpl(const std::string &fileName);
-	 void AddImageToBuffer(SampleFrameBuffer* sampleFrameBuffer);
+    //const double t = WallClockTime();
+
+    const SampleBufferElem *sbe = sampleBuffer->GetSampleBuffer();
+
+    for (unsigned int i = 0; i < sampleBuffer->GetSampleCount(); ++i)
+      //SplatFiltered(sampleFrameBuffer,&sbe[i]);
+      //SplatPreview(&sbe[i]);
+      SplatRadiance(sampleFrameBuffer,sbe[i].radiance,(uint)sbe[i].screenX,(uint)sbe[i].screenY);
+
+    //statsTotalSampleTime += WallClockTime() - t;
+    //statsTotalSamplesCount += sampleBuffer->GetSampleCount();
+
+    AddImageToBuffer(sampleFrameBuffer);
+
+
+
+  }
+
+  void SaveImpl(const std::string &fileName);
+   void AddImageToBuffer(SampleFrameBuffer* sampleFrameBuffer);
 
 };
 
 
 
 
-#endif	/* _LUXRAYS_FILM_FILM_H */
+#endif  /* _LUXRAYS_FILM_FILM_H */

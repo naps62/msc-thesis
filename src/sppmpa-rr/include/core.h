@@ -1,5 +1,5 @@
 #ifndef _LUXRAYS_H
-#define	_LUXRAYS_H
+#define _LUXRAYS_H
 
 #include <iostream>
 #include <fstream>
@@ -17,23 +17,23 @@
 
 template<class T>
 std::string to_string(T t, std::ios_base & (*f)(std::ios_base&)) {
-	std::ostringstream oss;
-	oss << f << t;
-	return oss.str();
+  std::ostringstream oss;
+  oss << f << t;
+  return oss.str();
 }
 
 #if defined(__CUDACC__)
-#define __HD__ 			__device__
-#define __H_D__			__host__ __device__
-#define __noinline 		__noinline__
-#define __forceinline 	__forceinline__
+#define __HD__      __device__
+#define __H_D__     __host__ __device__
+#define __noinline    __noinline__
+#define __forceinline   __forceinline__
 
 
 #else
 #define __HD__
 #define __H_D__
 #define __noinline
-#define __forceinline 	__inline__ __attribute__((__always_inline__))
+#define __forceinline   __inline__ __attribute__((__always_inline__))
 
 #endif
 
@@ -61,4 +61,4 @@ typedef unsigned long u_long;
 
 
 
-#endif	/* _LUXRAYS_H */
+#endif  /* _LUXRAYS_H */

@@ -14,128 +14,128 @@
 
 
 enum lookupAccType {
-	HASH_GRID
+  HASH_GRID
 };
 
 class lookupAcc {
 public:
-	lookupAcc();
-	virtual ~lookupAcc();
+  lookupAcc();
+  virtual ~lookupAcc();
 
-	virtual void ReHash(float currentPhotonRadius2) =0;
+  virtual void ReHash(float currentPhotonRadius2) =0;
 
-	virtual void AddFlux(PointerFreeScene *ss, const float alpha, const Point &hitPoint,
-			const Normal &shadeN, const Vector wi, const Spectrum photonFlux, float currentPhotonRadius2) =0;
+  virtual void AddFlux(PointerFreeScene *ss, const float alpha, const Point &hitPoint,
+      const Normal &shadeN, const Vector wi, const Spectrum photonFlux, float currentPhotonRadius2) =0;
 };
 
 class HashGridLookup {
 public:
 
-	std::list<unsigned int> **hashGrid;
-	unsigned int hashGridSize;
-	float invCellSize;
-	unsigned int hashGridEntryCount;
+  std::list<unsigned int> **hashGrid;
+  unsigned int hashGridSize;
+  float invCellSize;
+  unsigned int hashGridEntryCount;
 
-	HitPointStaticInfo* workerHitPointsInfo;
-	HitPoint* workerHitPoints;
+  HitPointStaticInfo* workerHitPointsInfo;
+  HitPoint* workerHitPoints;
 
-	BBox hitPointsbbox;
+  BBox hitPointsbbox;
 
-	HashGridLookup(uint size) {
+  HashGridLookup(uint size) {
 
 
-		hashGridSize = size;
-		hashGrid = NULL;
-		workerHitPointsInfo = NULL;
+    hashGridSize = size;
+    hashGrid = NULL;
+    workerHitPointsInfo = NULL;
 
-	}
+  }
 
-	void setHitpoints(HitPointStaticInfo* d,HitPoint* workerHitPoints_) {
-		workerHitPointsInfo = d;
-		workerHitPoints = workerHitPoints_;
-	}
+  void setHitpoints(HitPointStaticInfo* d,HitPoint* workerHitPoints_) {
+    workerHitPointsInfo = d;
+    workerHitPoints = workerHitPoints_;
+  }
 
-	void setBBox(BBox d) {
-		hitPointsbbox = d;
-	}
+  void setBBox(BBox d) {
+    hitPointsbbox = d;
+  }
 
-	~HashGridLookup();
+  ~HashGridLookup();
 
-	void ReHash(float currentPhotonRadius2);
+  void ReHash(float currentPhotonRadius2);
 
-	void AddFlux(PointerFreeScene *ss, const float alpha, const Point &hitPoint, const Normal &shadeN,
-			const Vector wi, const Spectrum photonFlux, float currentPhotonRadius2);
+  void AddFlux(PointerFreeScene *ss, const float alpha, const Point &hitPoint, const Normal &shadeN,
+      const Vector wi, const Spectrum photonFlux, float currentPhotonRadius2);
 
 private:
-	unsigned int Hash(const int ix, const int iy, const int iz) {
-		return (unsigned int) ((ix * 73856093) ^ (iy * 19349663) ^ (iz * 83492791)) % hashGridSize;
-	}
+  unsigned int Hash(const int ix, const int iy, const int iz) {
+    return (unsigned int) ((ix * 73856093) ^ (iy * 19349663) ^ (iz * 83492791)) % hashGridSize;
+  }
 
 };
 
 class PointerFreeHashGrid {
 public:
 
-	std::list<unsigned int> **hashGrid;
+  std::list<unsigned int> **hashGrid;
 
-	unsigned int* hashGridLists;
-	unsigned int* hashGridLenghts;
-	unsigned int* hashGridListsIndex;
+  unsigned int* hashGridLists;
+  unsigned int* hashGridLenghts;
+  unsigned int* hashGridListsIndex;
 
-	unsigned int hashGridSize;
-	float invCellSize;
-	unsigned int hashGridEntryCount;
+  unsigned int hashGridSize;
+  float invCellSize;
+  unsigned int hashGridEntryCount;
 
-	unsigned int* hashGridListsBuff;
-	unsigned int* hashGridLenghtsBuff;
-	unsigned int* hashGridListsIndexBuff;
+  unsigned int* hashGridListsBuff;
+  unsigned int* hashGridLenghtsBuff;
+  unsigned int* hashGridListsIndexBuff;
 
-	HitPointStaticInfo* workerHitPointsInfo;
-	HitPoint* workerHitPoints;
+  HitPointStaticInfo* workerHitPointsInfo;
+  HitPoint* workerHitPoints;
 
-	//IterationHitPoint* iterationHitPointsBuff;
+  //IterationHitPoint* iterationHitPointsBuff;
 
-	BBox hitPointsbbox;
+  BBox hitPointsbbox;
 
 
-	PointerFreeHashGrid(uint size) {
+  PointerFreeHashGrid(uint size) {
 
-		hashGridSize = size;
+    hashGridSize = size;
 
-		hashGrid = NULL;
+    hashGrid = NULL;
 
-		hashGridLenghts = NULL;
-		hashGridLists = NULL;
-		hashGridListsIndex = NULL;
+    hashGridLenghts = NULL;
+    hashGridLists = NULL;
+    hashGridListsIndex = NULL;
 
-		hashGridLenghtsBuff = NULL;
-		hashGridListsBuff = NULL;
-		hashGridListsIndexBuff = NULL;
-	}
+    hashGridLenghtsBuff = NULL;
+    hashGridListsBuff = NULL;
+    hashGridListsIndexBuff = NULL;
+  }
 
-	~PointerFreeHashGrid();
+  ~PointerFreeHashGrid();
 
-	void setHitpoints(HitPointStaticInfo* d,HitPoint* workerHitPoints_) {
-		workerHitPointsInfo = d;
-		workerHitPoints = workerHitPoints_;
-	}
+  void setHitpoints(HitPointStaticInfo* d,HitPoint* workerHitPoints_) {
+    workerHitPointsInfo = d;
+    workerHitPoints = workerHitPoints_;
+  }
 
-	void setBBox(BBox d) {
-		hitPointsbbox = d;
-	}
+  void setBBox(BBox d) {
+    hitPointsbbox = d;
+  }
 
-	void ReHash(float currentPhotonRadius2);
+  void ReHash(float currentPhotonRadius2);
 
-	void AddFlux(PointerFreeScene *ss, const float alpha, const Point &hitPoint, const Normal &shadeN,
-			const Vector wi, const Spectrum photonFlux,float currentPhotonRadius2);
+  void AddFlux(PointerFreeScene *ss, const float alpha, const Point &hitPoint, const Normal &shadeN,
+      const Vector wi, const Spectrum photonFlux,float currentPhotonRadius2);
 
-	void updateLookupTable();
+  void updateLookupTable();
 
 
 private:
-	unsigned int Hash(const int ix, const int iy, const int iz) {
-		return (unsigned int) ((ix * 73856093) ^ (iy * 19349663) ^ (iz * 83492791)) % hashGridSize;
-	}
+  unsigned int Hash(const int ix, const int iy, const int iz) {
+    return (unsigned int) ((ix * 73856093) ^ (iy * 19349663) ^ (iz * 83492791)) % hashGridSize;
+  }
 
 };
 

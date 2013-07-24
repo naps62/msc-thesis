@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 #ifndef _OCLDATATYPES_H
-#define	_OCLDATATYPES_H
+#define _OCLDATATYPES_H
 
 #include "core.h"
 
@@ -28,21 +28,21 @@ namespace POINTERFREESCENE {
 
 
 typedef struct QuadRay {
-	float4 ox, oy, oz;
-	float4 dx, dy, dz;
-	float4 mint, maxt;
+  float4 ox, oy, oz;
+  float4 dx, dy, dz;
+  float4 mint, maxt;
 } QuadRay;
 
 typedef struct {
-	float4 origx, origy, origz;
-	float4 edge1x, edge1y, edge1z;
-	float4 edge2x, edge2y, edge2z;
-	uint4 primitives;
+  float4 origx, origy, origz;
+  float4 edge1x, edge1y, edge1z;
+  float4 edge2x, edge2y, edge2z;
+  uint4 primitives;
 } QuadTriangle;
 
 typedef struct {
-	float4 bboxes[2][3];
-	int4 children;
+  float4 bboxes[2][3];
+  int4 children;
 } QBVHNode;
 
 #define _emptyLeafNode 0xffffffff
@@ -54,48 +54,48 @@ typedef struct {
 
 
 enum LightSourceType {
-	TYPE_IL_BF, TYPE_IL_PORTAL, TYPE_IL_IS, TYPE_IL_SKY,
-	TYPE_SUN, TYPE_TRIANGLE
+  TYPE_IL_BF, TYPE_IL_PORTAL, TYPE_IL_IS, TYPE_IL_SKY,
+  TYPE_SUN, TYPE_TRIANGLE
 };
 
 //typedef struct {
-//	unsigned int s1, s2, s3;
+//  unsigned int s1, s2, s3;
 //} Seed;
 
 typedef struct {
-	unsigned int state;
-	unsigned int depth;
-	//unsigned int diffuseVertexCount;
+  unsigned int state;
+  unsigned int depth;
+  //unsigned int diffuseVertexCount;
 
-	Spectrum throughput;
+  Spectrum throughput;
 } PathState;
 
 typedef struct {
-	unsigned int state;
-	unsigned int depth;
-	//unsigned int diffuseVertexCount;
+  unsigned int state;
+  unsigned int depth;
+  //unsigned int diffuseVertexCount;
 
-	Spectrum throughput;
+  Spectrum throughput;
 
-	float bouncePdf;
-	int specularBounce;
+  float bouncePdf;
+  int specularBounce;
 
-	Ray nextPathRay;
-	Spectrum nextThroughput;
-	Spectrum lightRadiance;
+  Ray nextPathRay;
+  Spectrum nextThroughput;
+  Spectrum lightRadiance;
 } PathStateDL;
 
 typedef struct {
-	Spectrum c;
-	float count;
+  Spectrum c;
+  float count;
 } Pixel;
 
 typedef struct {
-	float alpha;
+  float alpha;
 } AlphaPixel;
 
 typedef struct {
-	unsigned int sampleCount;
+  unsigned int sampleCount;
 } GPUTaskStats;
 
 //------------------------------------------------------------------------------
@@ -103,43 +103,43 @@ typedef struct {
 //------------------------------------------------------------------------------
 
 typedef enum {
-	NONE, BOX, GAUSSIAN, MITCHELL
+  NONE, BOX, GAUSSIAN, MITCHELL
 } FilterType;
 
 class Filter {
 public:
-	Filter(const FilterType t, const float wx, const float wy) :
-		type(t), widthX(wx), widthY(wy) { }
+  Filter(const FilterType t, const float wx, const float wy) :
+    type(t), widthX(wx), widthY(wy) { }
 
-	FilterType type;
-	float widthX, widthY;
+  FilterType type;
+  float widthX, widthY;
 };
 
 class NoneFilter : public Filter {
 public:
-	NoneFilter() : Filter(NONE, 0.f, 0.f) { }
+  NoneFilter() : Filter(NONE, 0.f, 0.f) { }
 };
 
 class BoxFilter : public Filter {
 public:
-	BoxFilter(const float wx, const float wy) :
-		Filter(BOX, wx, wy) { }
+  BoxFilter(const float wx, const float wy) :
+    Filter(BOX, wx, wy) { }
 };
 
 class GaussianFilter : public Filter {
 public:
-	GaussianFilter(const float wx, const float wy, const float a) :
-		Filter(GAUSSIAN, wx, wy), alpha(a) { }
+  GaussianFilter(const float wx, const float wy, const float a) :
+    Filter(GAUSSIAN, wx, wy), alpha(a) { }
 
-	float alpha;
+  float alpha;
 };
 
 class MitchellFilter : public Filter {
 public:
-	MitchellFilter(const float wx, const float wy, const float b, const float c) :
-		Filter(MITCHELL, wx, wy), B(b), C(c) { }
+  MitchellFilter(const float wx, const float wy, const float b, const float c) :
+    Filter(MITCHELL, wx, wy), B(b), C(c) { }
 
-	float B, C;
+  float B, C;
 };
 
 //------------------------------------------------------------------------------
@@ -147,52 +147,52 @@ public:
 //------------------------------------------------------------------------------
 
 typedef enum {
-	INLINED_RANDOM, RANDOM, STRATIFIED, METROPOLIS
+  INLINED_RANDOM, RANDOM, STRATIFIED, METROPOLIS
 } SamplerType;
 
 class Sampler {
 public:
-	Sampler(const SamplerType t) :
-		type(t) { }
+  Sampler(const SamplerType t) :
+    type(t) { }
 
-	SamplerType type;
+  SamplerType type;
 };
 
 class InlinedRandomSampler : public Sampler {
 public:
-	InlinedRandomSampler() :
-		Sampler(INLINED_RANDOM) { }
+  InlinedRandomSampler() :
+    Sampler(INLINED_RANDOM) { }
 
-	SamplerType type;
+  SamplerType type;
 };
 
 class RandomSampler : public Sampler {
 public:
-	RandomSampler() :
-		Sampler(RANDOM) { }
+  RandomSampler() :
+    Sampler(RANDOM) { }
 
-	SamplerType type;
+  SamplerType type;
 };
 
 class StratifiedSampler : public Sampler {
 public:
-	StratifiedSampler(const unsigned int x, const unsigned int y) :
-		Sampler(STRATIFIED), xSamples(x), ySamples(y) { }
+  StratifiedSampler(const unsigned int x, const unsigned int y) :
+    Sampler(STRATIFIED), xSamples(x), ySamples(y) { }
 
-	SamplerType type;
-	unsigned int xSamples, ySamples;
+  SamplerType type;
+  unsigned int xSamples, ySamples;
 };
 
 
 class MetropolisSampler : public Sampler {
 public:
-	MetropolisSampler(const float rate, const float reject, const float mutationRate) :
-		Sampler(METROPOLIS), largeStepRate(rate), imageMutationRate(mutationRate),
-		maxConsecutiveReject(reject) { }
+  MetropolisSampler(const float rate, const float reject, const float mutationRate) :
+    Sampler(METROPOLIS), largeStepRate(rate), imageMutationRate(mutationRate),
+    maxConsecutiveReject(reject) { }
 
-	SamplerType type;
-	float largeStepRate, imageMutationRate;
-	unsigned int maxConsecutiveReject;
+  SamplerType type;
+  float largeStepRate, imageMutationRate;
+  unsigned int maxConsecutiveReject;
 };
 
 //------------------------------------------------------------------------------
@@ -230,9 +230,9 @@ typedef struct {
 } GlassParam;
 
 typedef struct {
-	MatteParam matte;
-	MirrorParam mirror;
-	float matteFilter, totFilter, mattePdf, mirrorPdf;
+  MatteParam matte;
+  MirrorParam mirror;
+  float matteFilter, totFilter, mattePdf, mirrorPdf;
 } MatteMirrorParam;
 
 typedef struct {
@@ -242,14 +242,14 @@ typedef struct {
 } MetalParam;
 
 typedef struct {
-	MatteParam matte;
-	MetalParam metal;
-	float matteFilter, totFilter, mattePdf, metalPdf;
+  MatteParam matte;
+  MetalParam metal;
+  float matteFilter, totFilter, mattePdf, metalPdf;
 } MatteMetalParam;
 
 typedef struct {
     float diff_r, diff_g, diff_b;
-	float refl_r, refl_g, refl_b;
+  float refl_r, refl_g, refl_b;
     float exponent;
     float R0;
     int specularBounce;
@@ -258,90 +258,90 @@ typedef struct {
 typedef struct {
     float refl_r, refl_g, refl_b;
     float refrct_r, refrct_g, refrct_b;
-	float transFilter, totFilter, reflPdf, transPdf;
-	bool reflectionSpecularBounce, transmitionSpecularBounce;
+  float transFilter, totFilter, reflPdf, transPdf;
+  bool reflectionSpecularBounce, transmitionSpecularBounce;
 } ArchGlassParam;
 
 typedef struct {
-	unsigned int type;
-	bool difuse;
-	bool specular;
-	union {
-		MatteParam matte;
+  unsigned int type;
+  bool difuse;
+  bool specular;
+  union {
+    MatteParam matte;
         AreaLightParam areaLight;
-		MirrorParam mirror;
+    MirrorParam mirror;
         GlassParam glass;
-		MatteMirrorParam matteMirror;
+    MatteMirrorParam matteMirror;
         MetalParam metal;
         MatteMetalParam matteMetal;
         AlloyParam alloy;
         ArchGlassParam archGlass;
-	} param;
+  } param;
 } Material;
 
 //------------------------------------------------------------------------------
 
 typedef struct {
-	Point v0, v1, v2;
-	Normal normal;
-	float area;
-	float gain_r, gain_g, gain_b;
-	unsigned int meshIndex,triIndex;
+  Point v0, v1, v2;
+  Normal normal;
+  float area;
+  float gain_r, gain_g, gain_b;
+  unsigned int meshIndex,triIndex;
 
 } TriangleLight;
 
 typedef struct {
-	float shiftU, shiftV;
-	Spectrum gain;
-	unsigned int width, height;
+  float shiftU, shiftV;
+  Spectrum gain;
+  unsigned int width, height;
 } InfiniteLight;
 
 typedef struct {
-	Vector sundir;
-	Spectrum gain;
-	float turbidity;
-	float relSize;
-	// XY Vectors for cone sampling
-	Vector x, y;
-	float cosThetaMax;
-	Spectrum suncolor;
+  Vector sundir;
+  Spectrum gain;
+  float turbidity;
+  float relSize;
+  // XY Vectors for cone sampling
+  Vector x, y;
+  float cosThetaMax;
+  Spectrum suncolor;
 } SunLight;
 
 typedef struct {
-	Spectrum gain;
-	float thetaS;
-	float phiS;
-	float zenith_Y, zenith_x, zenith_y;
-	float perez_Y[6], perez_x[6], perez_y[6];
+  Spectrum gain;
+  float thetaS;
+  float phiS;
+  float zenith_Y, zenith_x, zenith_y;
+  float perez_Y[6], perez_x[6], perez_y[6];
 } SkyLight;
 
 //------------------------------------------------------------------------------
 
 typedef struct {
-	unsigned int rgbOffset, alphaOffset;
-	unsigned int width, height;
+  unsigned int rgbOffset, alphaOffset;
+  unsigned int width, height;
 } TexMap;
 
 typedef struct {
-	unsigned int vertsOffset;
-	unsigned int trisOffset;
-	unsigned int colorsOffset;
-	bool hasColors;
+  unsigned int vertsOffset;
+  unsigned int trisOffset;
+  unsigned int colorsOffset;
+  bool hasColors;
 
-	float trans[4][4];
-	float invTrans[4][4];
+  float trans[4][4];
+  float invTrans[4][4];
 } Mesh;
 
 typedef struct {
-	float lensRadius;
-	float focalDistance;
-	float yon, hither;
+  float lensRadius;
+  float focalDistance;
+  float yon, hither;
 
-	float rasterToCameraMatrix[4][4];
-	float cameraToWorldMatrix[4][4];
+  float rasterToCameraMatrix[4][4];
+  float cameraToWorldMatrix[4][4];
 } Camera;
 
 }
 
 
-#endif	/* _OCLDATATYPES_H */
+#endif  /* _OCLDATATYPES_H */

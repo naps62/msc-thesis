@@ -15,27 +15,27 @@
 
 class EyePath {
 public:
-	// Screen information
-	float scrX, scrY;
+  // Screen information
+  float scrX, scrY;
 
-	// Eye path information
-	Ray ray;
-	unsigned int depth;
-	Spectrum throughput;
+  // Eye path information
+  Ray ray;
+  unsigned int depth;
+  Spectrum throughput;
 
-	bool done;
-	bool splat;
-	uint sampleIndex;
+  bool done;
+  bool splat;
+  uint sampleIndex;
 };
 
 class PhotonPath {
 public:
-	// The ray is stored in the RayBuffer and the index is implicitly stored
-	// in the array of PhotonPath
-	Spectrum flux;
-	unsigned int depth;
-	bool done;
-	//Seed seed;
+  // The ray is stored in the RayBuffer and the index is implicitly stored
+  // in the array of PhotonPath
+  Spectrum flux;
+  unsigned int depth;
+  bool done;
+  //Seed seed;
 };
 
 //------------------------------------------------------------------------------
@@ -43,41 +43,41 @@ public:
 //------------------------------------------------------------------------------
 
 enum HitPointType {
-	SURFACE, CONSTANT_COLOR
+  SURFACE, CONSTANT_COLOR
 };
 
 //class IterationHitPoint {
 //public:
-//	//float photonRadius2;
-//	unsigned int accumPhotonCount;
-//	Spectrum accumReflectedFlux;
-//	Spectrum reflectedFlux;
-//	//unsigned int photonCount;
+//  //float photonRadius2;
+//  unsigned int accumPhotonCount;
+//  Spectrum accumReflectedFlux;
+//  Spectrum reflectedFlux;
+//  //unsigned int photonCount;
 //
-//	Spectrum accumRadiance;
-//	unsigned int constantHitsCount;
-//	unsigned long long photonCount; // used only in dependent radius redcution
+//  Spectrum accumRadiance;
+//  unsigned int constantHitsCount;
+//  unsigned long long photonCount; // used only in dependent radius redcution
 //
-//	float accumPhotonRadius2;
-//	unsigned int surfaceHitsCount;
-//	Spectrum radiance;
+//  float accumPhotonRadius2;
+//  unsigned int surfaceHitsCount;
+//  Spectrum radiance;
 //
-//	HitPointType type;
+//  HitPointType type;
 //
-//	float scrX, scrY;
+//  float scrX, scrY;
 //
-//	// Used for CONSTANT_COLOR and SURFACE type
-//	Spectrum throughput;
+//  // Used for CONSTANT_COLOR and SURFACE type
+//  Spectrum throughput;
 //
-//	// Used for SURFACE type
-//	Point position;
-//	Vector wo;
-//	Normal normal;
-//	//const SurfaceMaterial *material;
+//  // Used for SURFACE type
+//  Point position;
+//  Vector wo;
+//  Normal normal;
+//  //const SurfaceMaterial *material;
 //
-//	uint materialSS;
+//  uint materialSS;
 //
-//	float initialRadius;
+//  float initialRadius;
 
 //};
 
@@ -87,34 +87,34 @@ enum HitPointType {
 class HitPointPositionInfo {
 public:
 
-	HitPointType type;
+  HitPointType type;
 
-	float scrX, scrY;
+  float scrX, scrY;
 
-	// Used for CONSTANT_COLOR and SURFACE type
-	Spectrum throughput;
+  // Used for CONSTANT_COLOR and SURFACE type
+  Spectrum throughput;
 
-	// Used for SURFACE type
-	Point position;
-	Vector wo;
-	Normal normal;
+  // Used for SURFACE type
+  Point position;
+  Vector wo;
+  Normal normal;
 
-	uint materialSS;
+  uint materialSS;
 
 };
 
 class HitPointRadianceFlux {
 public:
 
-	unsigned int accumPhotonCount;
-	Spectrum accumReflectedFlux;
-	Spectrum radiance;
+  unsigned int accumPhotonCount;
+  Spectrum accumReflectedFlux;
+  Spectrum radiance;
 
-	unsigned long long photonCount;
-	Spectrum reflectedFlux;
+  unsigned long long photonCount;
+  Spectrum reflectedFlux;
 
 #if defined USE_SPPM || defined USE_PPM
-	float accumPhotonRadius2;
+  float accumPhotonRadius2;
 #endif
 
 
@@ -122,7 +122,7 @@ public:
 
 __HD__
 inline unsigned int Hash(const int ix, const int iy, const int iz, unsigned int hashGridSize) {
-	return (unsigned int) ((ix * 73856093) ^ (iy * 19349663) ^ (iz * 83492791)) % hashGridSize;
+  return (unsigned int) ((ix * 73856093) ^ (iy * 19349663) ^ (iz * 83492791)) % hashGridSize;
 }
 
 #endif /* HITPOINTS_H_ */

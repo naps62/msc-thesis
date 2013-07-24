@@ -28,44 +28,44 @@
 
 
 inline void AtomicAdd(float *val, const float delta) {
-	union bits {
-		float f;
-		boost::uint32_t i;
+  union bits {
+    float f;
+    boost::uint32_t i;
 
-	};
+  };
 
-	bits oldVal, newVal;
+  bits oldVal, newVal;
 
-	do {
-		oldVal.f = *val;
-		newVal.f = oldVal.f + delta;
-	} while (boost::interprocess::ipcdetail::atomic_cas32(
-			((boost::uint32_t *) val), newVal.i, oldVal.i) != oldVal.i);
+  do {
+    oldVal.f = *val;
+    newVal.f = oldVal.f + delta;
+  } while (boost::interprocess::ipcdetail::atomic_cas32(
+      ((boost::uint32_t *) val), newVal.i, oldVal.i) != oldVal.i);
 }
 
 inline void AtomicAdd(unsigned int *val, const unsigned int delta) {
 #if defined(WIN32)
-	boost::uint32_t newVal;
-	do
-	{
+  boost::uint32_t newVal;
+  do
+  {
 #if (defined(__i386__) || defined(__amd64__))
-		__asm__ __volatile__("pause\n");
+    __asm__ __volatile__("pause\n");
 #endif
-		newVal = *val + delta;
-	}while (
+    newVal = *val + delta;
+  }while (
 #if (BOOST_VERSION < 104800)
-			boost::interprocess::detail::atomic_cas32(
+      boost::interprocess::detail::atomic_cas32(
 #else
-					boost::interprocess::ipcdetail::atomic_cas32(
+          boost::interprocess::ipcdetail::atomic_cas32(
 #endif
-							((boost::uint32_t*)val), newVal, *val) != *val);
+              ((boost::uint32_t*)val), newVal, *val) != *val);
 #else
 
 #if (BOOST_VERSION < 104800)
-	boost::interprocess::detail::atomic_add32(((boost::uint32_t *)val), (boost::uint32_t)delta);
+  boost::interprocess::detail::atomic_add32(((boost::uint32_t *)val), (boost::uint32_t)delta);
 #else
-	boost::interprocess::ipcdetail::atomic_add32(((boost::uint32_t *) val),
-			(boost::uint32_t) delta);
+  boost::interprocess::ipcdetail::atomic_add32(((boost::uint32_t *) val),
+      (boost::uint32_t) delta);
 #endif
 
 #endif
@@ -73,12 +73,12 @@ inline void AtomicAdd(unsigned int *val, const unsigned int delta) {
 
 inline void AtomicInc(unsigned int *val) {
 #if (BOOST_VERSION < 104800)
-	boost::interprocess::detail::atomic_inc32(((boost::uint32_t *)val));
+  boost::interprocess::detail::atomic_inc32(((boost::uint32_t *)val));
 #else
-	boost::interprocess::ipcdetail::atomic_inc32(((boost::uint32_t *) val));
+  boost::interprocess::ipcdetail::atomic_inc32(((boost::uint32_t *) val));
 #endif
 }
 
 
 
-#endif	/* _LUXRAYS_ATOMIC_H */
+#endif  /* _LUXRAYS_ATOMIC_H */

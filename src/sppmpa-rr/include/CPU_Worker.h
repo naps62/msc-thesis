@@ -26,114 +26,114 @@ class CPU_Worker;
 class CPU_Worker: public Worker {
 public:
 
-	HashGridLookup* lookupA;
+  HashGridLookup* lookupA;
 
-	RayBuffer *rayBuffer;
+  RayBuffer *rayBuffer;
 
-	CPU_Worker(uint device, PointerFreeScene *ss, uint buffer_size, Seed* sb,
-			bool buildHitPoints = false) :
-		Worker(sb) {
+  CPU_Worker(uint device, PointerFreeScene *ss, uint buffer_size, Seed* sb,
+      bool buildHitPoints = false) :
+    Worker(sb) {
 
-		deviceID = device;
+    deviceID = device;
 
-		rayBuffer = new RayBuffer(buffer_size);
+    rayBuffer = new RayBuffer(buffer_size);
 
-		lookupA = new HashGridLookup(engine->hitPointTotal* 2 );
+    lookupA = new HashGridLookup(engine->hitPointTotal* 2 );
 
-		setScene(ss);
+    setScene(ss);
 
-		thread = new boost::thread(boost::bind(CPU_Worker::Entry, this, buildHitPoints));
+    thread = new boost::thread(boost::bind(CPU_Worker::Entry, this, buildHitPoints));
 
-		//Entry(this,true);
+    //Entry(this,true);
 
-	}
+  }
 
-	~CPU_Worker();
+  ~CPU_Worker();
 
-	BBox* GetHostBBox(){
-		return &(lookupA->hitPointsbbox);
-	}
+  BBox* GetHostBBox(){
+    return &(lookupA->hitPointsbbox);
+  }
 
-	void resetRayBuffer() {
+  void resetRayBuffer() {
 
-		rayBuffer->Reset();
-		memset(rayBuffer->GetHitBuffer(), 0, sizeof(RayHit) * rayBuffer->GetSize());
-		memset(rayBuffer->GetRayBuffer(), 0, sizeof(Ray) * rayBuffer->GetSize());
+    rayBuffer->Reset();
+    memset(rayBuffer->GetHitBuffer(), 0, sizeof(RayHit) * rayBuffer->GetSize());
+    memset(rayBuffer->GetRayBuffer(), 0, sizeof(Ray) * rayBuffer->GetSize());
 
-	}
+  }
 
-	void AdvanceEyePaths(RayBuffer *rayBuffer, EyePath *todoEyePaths, uint *eyePathIndexes);
+  void AdvanceEyePaths(RayBuffer *rayBuffer, EyePath *todoEyePaths, uint *eyePathIndexes);
 
-	u_int64_t AdvancePhotonPath(u_int64_t photontarget);
+  u_int64_t AdvancePhotonPath(u_int64_t photontarget);
 
-	void updateDeviceHitPoints();
+  void updateDeviceHitPoints();
 
-	void CommitIterationHitPoints(u_int64_t photonPerIteration);
-	void MirrorHitPoints();
+  void CommitIterationHitPoints(u_int64_t photonPerIteration);
+  void MirrorHitPoints();
 
-	void Intersect(RayBuffer *rayBuffer);
-	void IntersectRay(const Ray *ray, RayHit *rayHit);
-	void AccumulateFluxPPMPA(uint iteration, u_int64_t photonTraced);
+  void Intersect(RayBuffer *rayBuffer);
+  void IntersectRay(const Ray *ray, RayHit *rayHit);
+  void AccumulateFluxPPMPA(uint iteration, u_int64_t photonTraced);
 
-	void updateDeviceLookupAcc() {
+  void updateDeviceLookupAcc() {
 
-	}
+  }
 
-	void getDeviceHitpoints() {
+  void getDeviceHitpoints() {
 
-	}
+  }
 
-	void Render(bool buildHitPoints) {
+  void Render(bool buildHitPoints) {
 
 #if defined USE_PPMPA || defined USE_PPM
-		if (buildHitPoints) {
-			BuildHitPoints(1);
+    if (buildHitPoints) {
+      BuildHitPoints(1);
 
-		}
+    }
 
 #if defined USE_PPMPA
-		engine->waitForHitPoints->wait();
+    engine->waitForHitPoints->wait();
 #endif
 #endif
 
-		ProcessIterations(engine);
-	}
+    ProcessIterations(engine);
+  }
 
-	size_t getRaybufferSize() {
-		return rayBuffer->GetSize();
-	}
+  size_t getRaybufferSize() {
+    return rayBuffer->GetSize();
+  }
 
-	void SetBBox(BBox hitPointsbbox) {
-		lookupA->setBBox(hitPointsbbox);
-	}
+  void SetBBox(BBox hitPointsbbox) {
+    lookupA->setBBox(hitPointsbbox);
+  }
 
-	size_t RaybufferAddRay(const Ray &ray) {
-		return rayBuffer->AddRay(ray);
-	}
+  size_t RaybufferAddRay(const Ray &ray) {
+    return rayBuffer->AddRay(ray);
+  }
 
-	uint getRayBufferRayCount() {
-		return rayBuffer->GetRayCount();
-	}
+  uint getRayBufferRayCount() {
+    return rayBuffer->GetRayCount();
+  }
 
-	void AdvanceEyePaths(EyePath* todoEyePaths, uint* eyePathIndexes) {
-		AdvanceEyePaths(rayBuffer, todoEyePaths, eyePathIndexes);
-	}
+  void AdvanceEyePaths(EyePath* todoEyePaths, uint* eyePathIndexes) {
+    AdvanceEyePaths(rayBuffer, todoEyePaths, eyePathIndexes);
+  }
 
-	void IntersectRayBuffer() {
-		Intersect(rayBuffer);
-	}
+  void IntersectRayBuffer() {
+    Intersect(rayBuffer);
+  }
 
-	void ReHash(float currentPhotonRadius2) {
-		lookupA->ReHash(currentPhotonRadius2,HPsIterationRadianceFlux);
-	}
+  void ReHash(float currentPhotonRadius2) {
+    lookupA->ReHash(currentPhotonRadius2,HPsIterationRadianceFlux);
+  }
 
-	RayBuffer* GetRayBuffer() {
-		return rayBuffer;
-	}
+  RayBuffer* GetRayBuffer() {
+    return rayBuffer;
+  }
 
-	static void Entry(CPU_Worker *worker, bool buildHitPoints) {
-		worker->Render(buildHitPoints);
-	}
+  static void Entry(CPU_Worker *worker, bool buildHitPoints) {
+    worker->Render(buildHitPoints);
+  }
 
 };
 
