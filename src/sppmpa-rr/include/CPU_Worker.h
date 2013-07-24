@@ -76,10 +76,6 @@ public:
 	void AccumulateFluxPPMPA(uint iteration, u_int64_t photonTraced);
 
 	void updateDeviceLookupAcc() {
-//		__BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Build Point Free lookup");
-//		__BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Build Point Free lookup");
-//		__BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Copy lookup to device");
-//		__BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Copy lookup to device");
 
 	}
 
@@ -90,24 +86,17 @@ public:
 	void Render(bool buildHitPoints) {
 
 #if defined USE_PPMPA || defined USE_PPM
-//		__BENCH.REGISTER("Build Hit Points");
-
 		if (buildHitPoints) {
 			BuildHitPoints(1);
 
 		}
-//		__BENCH.STOP("Build Hit Points");
 
 #if defined USE_PPMPA
 		engine->waitForHitPoints->wait();
 #endif
 #endif
-//		__BENCH.REGISTER("Process Iterations");
 
 		ProcessIterations(engine);
-
-//		__BENCH.STOP("Process Iterations");
-
 	}
 
 	size_t getRaybufferSize() {

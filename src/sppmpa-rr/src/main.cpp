@@ -26,7 +26,11 @@ static void Draw(int argc, char *argv[]) {
 
 }
 
+const Config* config;
+
 int main(int argc, char *argv[]) {
+	// load configurations
+	config = new Config("Options", argc, argv);
 
 	srand(1000);
 
@@ -36,49 +40,15 @@ int main(int argc, char *argv[]) {
 	uint superSampling;
 	unsigned long long photonsFirstIteration;
 
-#ifdef RENDER_FAST_PHOTON
-	alpha = alpha;
-	width = 640;
-	height = 480;
-	superSampling = 4;
-	photonsFirstIteration = 1 << 19;//0.5M;
-#endif
-
-#ifdef RENDER_TINY
-	alpha = alpha;
-	width = 480;
-	height = 480;
-	superSampling = 4;
-	photonsFirstIteration = 1 << 21;//0.5M;
-#endif
-
-#ifdef RENDER_MEDIUM
-	alpha = alpha;
-	width = 640;
-	height = 480;
-	superSampling = 3;
-	photonsFirstIteration = 1 << 21;//2M
-#endif
-
-#ifdef RENDER_BIG
-	alpha = alpha;
-	width = 640;
-	height = 480;
-	superSampling = 4;
-	photonsFirstIteration = 1 << 22;//4M
-#endif
-
-#ifdef RENDER_HUGE
-	alpha = alpha;
-	width = 640;
-	height = 480;
-	superSampling = 6;
-	photonsFirstIteration = 1 << 23;//8M
-#endif
 
 #if defined USE_SPPM || defined USE_SPPMPA
 	superSampling=1;
 #endif
+
+	width = config->width;
+	height = config->height;
+	superSampling = config->spp;
+	photonsFirstIteration = 1 << config->photons_first_iter_exp;
 
 //	__BENCH.REGISTER("Total Job");
 
@@ -106,9 +76,9 @@ int main(int argc, char *argv[]) {
 
 	engine = new PPM(alpha, width, height, superSampling, photonsFirstIteration, ndvices);
 
-	std::string sceneFileName = "scenes/kitchen/kitchen.scn";
+	std::string sceneFileName = config->scene_file.c_str(); "scenes/kitchen/kitchen.scn";
 
-	engine->fileName = "kitchen.png";
+	engine->fileName = config->output_file;"kitchen.png";
 
 	//	std::string sceneFileName = "scenes/alloy/alloy.scn";
 	//	std::string sceneFileName = "scenes/bigmonkey/bigmonkey.scn";
@@ -177,9 +147,8 @@ int main(int argc, char *argv[]) {
 			build_hit);
 #endif
 
-#ifdef USE_GLUT
-	engine->draw_thread = new boost::thread(boost::bind(Draw, argc, argv));
-#endif
+	if (config->use_display)
+		engine->draw_thread = new boost::thread(boost::bind(Draw, argc, argv));
 
 #ifdef GPU0
 	gpuWorker0->thread->join();
@@ -195,6 +164,13 @@ int main(int argc, char *argv[]) {
 	const double elapsedTime = WallClockTime() - engine->startTime;
 	float MPhotonsSec = engine->getPhotonTracedTotal() / (elapsedTime * 1000000.f);
 	const float itsec = engine->GetIterationNumber() / elapsedTime;
+
+	if (config->use_display) {
+		//cout << "Done. waiting for display" << endl;
+		engine->draw_thread->join();
+	}
+
+	engine->SaveImpl(config->output_file.c_str());
 
 	printf("Avg. %.2f MPhotons/sec\n", MPhotonsSec);
 	printf("Avg. %.3f iteration/sec\n", itsec);

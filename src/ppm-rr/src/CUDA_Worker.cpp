@@ -9,7 +9,7 @@
 #include "omp.h"
 
 //extern uint _num_threads;
-extern Config config;
+extern Config* config;
 
 CUDA_Worker::~CUDA_Worker() {
 
@@ -18,7 +18,7 @@ CUDA_Worker::~CUDA_Worker() {
 void CUDA_Worker::AdvanceEyePaths(RayBuffer *rayBuffer, EyePath* todoEyePaths, uint* eyePathIndexes) {
 
 #ifndef __DEBUG
-	omp_set_num_threads(config.max_threads);
+	omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
 #endif
 	for (uint i = 0; i < rayBuffer->GetRayCount(); i++) {

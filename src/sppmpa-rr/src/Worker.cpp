@@ -8,6 +8,8 @@
 #include "Worker.h"
 #include "omp.h"
 
+ extern Config* config;
+
 Worker::~Worker() {
 	// TODO Auto-generated destructor stub
 }
@@ -319,7 +321,7 @@ void Worker::InitRadius(uint iteration) {
 void Worker::UpdateSampleFrameBuffer(unsigned long long iterationPhotonCount) {
 
 #ifndef __DEBUG
-	omp_set_num_threads(8);
+	omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
 #endif
 	for (unsigned int i = 0; i < engine->hitPointTotal; ++i) {
@@ -354,7 +356,7 @@ void Worker::AccumulateFluxPPM(uint iteration, u_int64_t photonTraced) {
 	photonTraced += engine->getPhotonTracedTotal();
 
 #ifndef __DEBUG
-	omp_set_num_threads(8);
+	omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
 #endif
 	for (uint i = 0; i < engine->hitPointTotal; i++) {
@@ -406,7 +408,7 @@ void Worker::AccumulateFluxSPPM(uint iteration, u_int64_t photonTraced) {
 	photonTraced += engine->getPhotonTracedTotal();
 
 #ifndef __DEBUG
-	omp_set_num_threads(8);
+	omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
 #endif
 	for (uint i = 0; i < engine->hitPointTotal; i++) {
@@ -462,7 +464,7 @@ void Worker::AccumulateFluxSPPM(uint iteration, u_int64_t photonTraced) {
 void Worker::AccumulateFluxSPPMPA(uint iteration, u_int64_t photonTraced) {
 
 #ifndef __DEBUG
-	omp_set_num_threads(8);
+	omp_set_num_threads(config->max_threads);
 #pragma omp parallel for schedule(guided)
 #endif
 	for (uint i = 0; i < engine->hitPointTotal; i++) {
