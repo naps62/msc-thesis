@@ -34,6 +34,9 @@
 
 //#include "my_cutil_math.h"
 #include <float.h>
+#include <ostream>
+using std::ostream;
+using std::endl;
 
 using namespace std;
 
@@ -57,6 +60,7 @@ public:
   vector<UV> uvs;
   vector<Triangle> tris;
   vector<POINTERFREESCENE::Mesh> meshDescs;
+  unsigned int meshIDs_size;
   const unsigned int *meshIDs;
 
   // One element for each mesh, it used to translate the RayBuffer currentTriangleIndex
@@ -66,7 +70,7 @@ public:
   // Compiled AreaLights
   vector<POINTERFREESCENE::TriangleLight> areaLights;
 
-  uint lightCount;
+  uint lightCount; // this is actually the number of area lights
 
   // Compiled InfiniteLights
   POINTERFREESCENE::InfiniteLight *infiniteLight;
@@ -134,6 +138,7 @@ private:
   void CompileTextureMaps();
 
 public:
+  friend ostream& operator<< (ostream& os, PointerFreeScene& scene);
 
   //------------------------------------------------------------------------------
   // Auxiliar
@@ -242,7 +247,7 @@ public:
   __HD__
   void GenerateRay(const float screenX, const float screenY,
       const unsigned int filmWidth, const unsigned int filmHeight,
-      Ray *ray, const float u1, const float u2, const float u3,
+      Ray *ray, const float u1, const float u2, const float /*u3*/,
       POINTERFREESCENE::Camera *camera) {
 
     Point Pras;
@@ -304,7 +309,6 @@ public:
       dir.z = Pfocus.z - orig.z;
 
     }
-
     dir = Normalize(dir);
 
     // CameraToWorld(*ray, ray);
@@ -325,6 +329,7 @@ public:
         + camera->cameraToWorldMatrix[2][1] * orig.y
         + camera->cameraToWorldMatrix[2][2] * orig.z
         + camera->cameraToWorldMatrix[2][3]) * iw2;
+
 
     Vector tdir;
     tdir.x = camera->cameraToWorldMatrix[0][0] * dir.x
@@ -405,7 +410,7 @@ public:
   }
   __HD__
   void TriangleLight_Sample_L(POINTERFREESCENE::TriangleLight *l, const float u0,
-      const float u1, const float u2, const float u3, const float u4,
+      const float u1, const float u2, const float u3, const float /*u4*/,
       float *pdf, Ray *ray, Spectrum& f, Spectrum* colors,
       POINTERFREESCENE::Mesh* meshDescs) {
 
@@ -414,6 +419,7 @@ public:
 
     // Ray direction
     const Normal &sampleN = l->normal;
+
 
     //Vector dir = UniformSampleSphere(u2, u3);
     float z = 1.f - 2.f * u2;
@@ -452,7 +458,6 @@ public:
 
       //return lightMaterial->GetGain() * RdotN; // Light sources are supposed to have flat color
     }
-
   }
   __HD__
   void Mesh_InterpolateColor(Spectrum *colors, Triangle *triangles,
@@ -510,9 +515,9 @@ public:
     if (!skipInfiniteLight && (infiniteLight || sunLight || skyLight)) {
 
       unsigned int lightCount = lightsSize;
-      int ilx1;
-      int ilx2;
-      int ilx3;
+      int ilx1 = 0;
+      int ilx2 = 0;
+      int ilx3 = 0;
 
       if (infiniteLight) {
         ilx1 = lightCount;
@@ -578,7 +583,7 @@ public:
   }
   __HD__
   void inline InfiniteLight_Sample_L(const float u0, const float u1,
-      const float u2, const float u3, const float u4, float *pdf,
+      const float u2, const float u3, const float /*u4*/, float *pdf,
       Ray *ray, Spectrum& f, POINTERFREESCENE::InfiniteLight * infiniteLight,
       const Spectrum *infiniteLightMap) {
 
@@ -638,7 +643,7 @@ public:
   // used in PM
   __HD__
   void inline SunLight_Sample_L(const float u0, const float u1,
-      const float u2, const float u3, const float u4, float *pdf,
+      const float u2, const float u3, const float /*u4*/, float *pdf,
       Ray *ray, Spectrum &f, POINTERFREESCENE::SunLight *sunLight) {
 
     // Choose point on disk oriented toward infinite light direction
@@ -678,7 +683,7 @@ public:
   // used in PM
   __HD__
   void inline SkyLight_Sample_L(const float u0, const float u1,
-      const float u2, const float u3, const float u4, float *pdf,
+      const float u2, const float u3, const float /*u4*/, float *pdf,
       Ray *ray, Spectrum& f, POINTERFREESCENE::SkyLight *skyLight) {
 
     // Choose two points p1 and p2 on scene bounding sphere
@@ -704,8 +709,8 @@ public:
   // Material samplers
   //------------------------------------------------------------------------------
   __HD__
-  void inline Matte_f(POINTERFREESCENE::MatteParam *mat, const Vector &wo,
-      const Vector &wi, const Normal &N, Spectrum& f) {
+  void inline Matte_f(POINTERFREESCENE::MatteParam *mat, const Vector &/*wo*/,
+      const Vector &/*wi*/, const Normal &/*N*/, Spectrum& f) {
     f.r = mat->r * INV_PI; // added
     f.g = mat->g * INV_PI;
     f.b = mat->b * INV_PI;
@@ -724,7 +729,7 @@ public:
   }
   __HD__
   void inline Alloy_f(POINTERFREESCENE::AlloyParam *mat, const Vector &wo,
-      const Vector &wi, const Normal &N, Spectrum& f) {
+      const Vector &/*wi*/, const Normal &N, Spectrum& f) {
     // Schilick's approximation
      float c = 1.f - Dot(wo, N);
      float Re = mat->R0 + (1.f - mat->R0) * c * c * c * c * c;
@@ -751,7 +756,7 @@ public:
     Le->b = brightSide ? mat->gain_b : 0.f;
   }
   __HD__
-  void Matte_Sample_f(POINTERFREESCENE::MatteParam *mat, const Vector *wo,
+  void Matte_Sample_f(POINTERFREESCENE::MatteParam *mat, const Vector */*wo*/,
       Vector *wi, float *pdf, Spectrum *f, const Normal *shadeN,
       const float u0, const float u1, bool *specularBounce) {
     Vector dir;
@@ -760,6 +765,7 @@ public:
 
     Vector v1, v2;
     CoordinateSystem(*(Vector*) shadeN, &v1, &v2);
+    //cout << " " << dir << '\n';
 
     wi->x = v1.x * dir.x + v2.x * dir.y + shadeN->x * dir.z;
     wi->y = v1.y * dir.x + v2.y * dir.y + shadeN->y * dir.z;
@@ -778,6 +784,7 @@ public:
     }
 
     *specularBounce = 0;
+    //std::cout << *f << '\n';
 
   }
   __HD__
@@ -892,7 +899,6 @@ public:
         f->b = mat->refrct_b /*/ (*pdf)*/;
 
         *specularBounce = mat->transmitionSpecularBounce;
-
       }
     }
   }
@@ -1002,16 +1008,12 @@ public:
     float mpdf;
     if (comp > mat->matteFilter) {
       Metal_Sample_f(&mat->metal, wo, wi, pdf, f, shadeN, u0, u1
-
       , specularBounce
-
       );
       mpdf = mat->metalPdf;
     } else {
       Matte_Sample_f(&mat->matte, wo, wi, pdf, f, shadeN, u0, u1
-
       , specularBounce
-
       );
       mpdf = mat->mattePdf;
     }
@@ -1041,6 +1043,7 @@ public:
       f->r = mat->refl_r * Re;
       f->g = mat->refl_g * Re;
       f->b = mat->refl_b * Re;
+
 
       *specularBounce = mat->specularBounce;
 

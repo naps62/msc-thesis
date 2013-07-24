@@ -98,8 +98,8 @@ public:
 
 	LightSourceType GetType() const { return TYPE_IL_BF; }
 
-	virtual Spectrum Sample_L(const Scene *scene, const Point &p, const Normal *N,
-		const float u0, const float u1, const float u2, float *pdf, Ray *shadowRay) const {
+	virtual Spectrum Sample_L(const Scene */*scene*/, const Point &/*p*/, const Normal */*N*/,
+		const float /*u0*/, const float /*u1*/, const float /*u2*/, float *pdf, Ray */*shadowRay*/) const {
 		*pdf = 0;
 		return Spectrum();
 	}

@@ -22,6 +22,8 @@
 #include "pointerfreescene.h"
 #include "luxrays/utils/sdl/scene.h"
 #include "luxrays/accelerators/qbvhaccel.h"
+#include <ostream>
+#include "dumps.h"
 
 PointerFreeScene::PointerFreeScene(uint width, uint height, std::string sceneFileName,
     const int aType) {
@@ -54,6 +56,9 @@ PointerFreeScene::PointerFreeScene(uint width, uint height, std::string sceneFil
   EditActionList editActions;
   editActions.AddAllAction();
   Recompile(editActions);
+
+//  ofstream out("rr-ppm.scene.dump");
+//  out.close();
   //delete scene_;
   //scene = NULL;
 }
@@ -110,6 +115,7 @@ void PointerFreeScene::CompileGeometry() {
   tris.resize(0);
   meshDescs.resize(0);
 
+  meshIDs_size = dataSet->meshes.size();
   meshIDs = dataSet->GetMeshIDTable();
 
   BSphereCenter = dataSet->GetBSphere().center;
@@ -188,7 +194,6 @@ void PointerFreeScene::CompileGeometry() {
         mesh = imesh->GetExtTriangleMesh();
       } else {
         currentMeshDesc = newMeshDesc;
-
         newMeshDesc.vertsOffset += mesh->GetTotalVertexCount();
         newMeshDesc.trisOffset += mesh->GetTotalTriangleCount();
 
@@ -984,3 +989,132 @@ void PointerFreeScene::Recompile(const EditActionList &editActions) {
 //  //    deviceDesc->AllocMemory((*buff)->getInfo<CL_MEM_SIZE>());
 //}
 
+ostream& operator<< (ostream& os, PointerFreeScene& scene) {
+  // Vertexes checked
+  os << "Vertexes (" << scene.verts.size() << "):\n\t";
+  for(uint i(0); i < scene.verts.size(); ++i)
+    os << scene.verts[i] << "\n\t";
+
+  // Normals checked
+  os <<  "\n\nNormals (" << scene.normals.size() << "):\n\t";
+  for(uint i(0); i < scene.normals.size(); ++i)
+    os << scene.normals[i] << '\n';
+
+  // Colors checked
+  os <<  "\n\nColors (" << scene.colors.size() << "):\n\t";
+  for(uint i(0); i < scene.colors.size(); ++i)
+    os << scene.colors[i] << "\n\t";
+
+  // UVs checked
+  os << "\n\nUVs:\n\t";
+  for(uint i(0); i < scene.uvs.size(); ++i)
+    os << scene.uvs[i] << "\n\t";
+
+  // Triangles checked
+  os << "\n\nTriangles (" << scene.tris.size() << "):\n\t";
+  for(uint i(0); i < scene.tris.size(); ++i)
+    os << scene.tris[i] << "\n\t";
+
+  // TODO MeshDescs checked
+  os << "\n\nMeshDescs:\n\t";
+  for(uint i(0); i < scene.meshDescs.size(); ++i)
+    os << scene.meshDescs[i] << "\n\t";
+
+  // MeshIDs checked
+  os << "\n\nMeshIDs (" << scene.tris.size() << "):\n\t";
+  for(uint i(0); i < scene.tris.size(); ++i)
+    os << scene.meshIDs[i] << "\n\t";
+
+  // MeshFirstTriangleOffset checked
+  os << "\n\nMeshFirstTriangleOffset:\n\t";
+  for(uint i(0); i < scene.scene->objects.size(); ++i)
+    os << scene.meshFirstTriangleOffset[i] << "\n\t";
+
+
+  // BSphere checked
+  os << "\n\nBSphere:\n\t";
+  os << "BSphere[" << scene.BSphereCenter << ", " << scene.BSphereRad << "]\n\t";
+
+  // Camera checked
+  os << "\n\nCamera:\n\t";
+  os << "Camera[" << scene.camera.lensRadius << ", " << scene.camera.focalDistance << ", " << scene.camera.yon << ", " << scene.camera.hither << ", ";
+  os << "raster_to_camera[";
+  for(uint i = 0; i < 4; ++i)
+    for(uint j = 0; j < 4; ++j)
+      os << scene.camera.rasterToCameraMatrix[i][j] << ", ";
+  os << "], camera_to_world[";
+    for(uint i = 0; i < 4; ++i)
+      for(uint j = 0; j < 4; ++j)
+        os << scene.camera.cameraToWorldMatrix[i][j] << ", ";
+  os << "] ]\n\t";
+//
+
+  // Compiled Materials checked
+  os << "\n\nCompiledMaterials:\n\t";
+  os << scene.enable_MAT_MATTE << "\n\t";
+  os << scene.enable_MAT_AREALIGHT << "\n\t";
+  os << scene.enable_MAT_MIRROR << "\n\t";
+  os << scene.enable_MAT_GLASS << "\n\t";
+  os << scene.enable_MAT_MATTEMIRROR << "\n\t";
+  os << scene.enable_MAT_METAL << "\n\t";
+  os << scene.enable_MAT_MATTEMETAL << "\n\t";
+  os << scene.enable_MAT_ALLOY << "\n\t";
+  os << scene.enable_MAT_ARCHGLASS << "\n\t";
+
+  // Materials checked
+  os << "\n\nMaterials:\n\t";
+  for(uint i(0); i < scene.materials.size(); ++i)
+    os << scene.materials[i] << "\n\t";
+
+  // MeshMaterials checked
+  os << "\n\nMeshMaterials:\n\t";
+  for(uint i(0); i < scene.meshMats.size(); ++i)
+    os << scene.meshMats[i] << "\n\t";
+
+  // AreaLights checked
+  os << "\n\nAreaLights:\n\t";
+  for(uint i(0); i < scene.areaLights.size(); ++i)
+    os << scene.areaLights[i] << "\n\t";
+
+  // TODO cant check this because there are no values in current mesh
+//  os << "\n\nInfiniteLight:\n\t" << scene.infiniteLight << "\n\t";
+//  os << "\n\nSunLight:\n\t" << scene.sunLight << "\n\t";
+//  os << "\n\nSkyLight:\n\t" << scene.skyLight << "\n\t";
+
+  // TODO No TexMaps to check
+  //os << "\n\nTexMaps:\n\t";
+  //for(uint i(0); i < scene.gpuTexMaps.size(); ++i)
+  //  os << scene.gpuTexMaps[i] << "\n\t";
+
+  // TODO No RGBTex to check
+  //os << "\n\nRGBTex:\n\t";
+  //for(uint i(0); i < scene.totRGBTexMem; ++i)
+  //  os << scene.rgbTexMem[i] << "\n\t";
+
+  // TODO No AlphaTex to check
+  //os << "\n\nAlphaTex:\n\t";
+  //for(uint i(0); i < scene.totAlphaTexMem; ++i)
+  //  os << scene.alphaTexMem[i] << "\n\t";
+
+  // TODO Can't check. No MeshTexs to check
+//  os << "\n\nMeshTexs:\n\t";
+//  for(uint i(0); i < scene.meshMats.size(); ++i)
+//    os << scene.meshTexs[i] << "\n\t";
+
+  // TODO Can't check. No BumpMap to check
+//  os << "\n\nBumpMap:\n\t";
+//  for(uint i(0); i < scene.meshMats.size(); ++i)
+//    os << scene.meshBumps[i] << "\n\t";
+
+  // TODO Can't check. No BumpMapScales to check
+//  os << "\n\nBumpMapScales:\n\t";
+//  for(uint i(0); i < scene.meshMats.size(); ++i)
+//    os << scene.bumpMapScales[i] << "\n\t";
+
+  // TODO Can't check. No NormalMap to check
+//  os << "\n\nNormalMap:\n\t";
+//  for(uint i(0); i < scene.meshMats.size(); ++i)
+//    os << scene.meshNormalMaps[i] << "\n\t";
+
+  return os;
+}

@@ -28,7 +28,8 @@
 //
 //extern void (*LuxRaysSDLDebugHandler)(const char *msg);
 
-#define SDL_LOG(a) { std::cerr << a << std::endl; }
+//#define SDL_LOG(a) { std::cerr << a << std::endl; }
+#define SDL_LOG(a) ;
 
 //}
 //}

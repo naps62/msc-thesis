@@ -113,6 +113,7 @@ private:
 		const unsigned int v = Mod<int>(t, height);
 
 		const unsigned index = v * width + u;
+		assert (index >= 0);
 		assert (index < width * height);
 
 		return pixels[index];
@@ -123,6 +124,7 @@ private:
 		const unsigned int v = Mod(t, height);
 
 		const unsigned index = v * width + u;
+		assert (index >= 0);
 		assert (index < width * height);
 
 		return alpha[index];

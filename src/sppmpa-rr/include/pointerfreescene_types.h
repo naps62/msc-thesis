@@ -343,5 +343,4 @@ typedef struct {
 
 }
 
-
 #endif  /* _OCLDATATYPES_H */

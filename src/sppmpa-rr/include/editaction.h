@@ -28,7 +28,7 @@ using namespace std;
 
 #include "core.h"
 
-enum EditAction {
+enum Action {
   FILM_EDIT, // Use this for image Film resize
   CAMERA_EDIT, // Use this for any Camera parameter editing
   GEOMETRY_EDIT, // Use this for any DataSet related editing
@@ -48,7 +48,7 @@ public:
   ~EditActionList() { };
 
   void Reset() { actions.clear(); }
-  void AddAction(const EditAction a) { actions.insert(a); };
+  void AddAction(const Action a) { actions.insert(a); };
   void AddAllAction() {
     AddAction(FILM_EDIT);
     AddAction(CAMERA_EDIT);
@@ -62,19 +62,19 @@ public:
     AddAction(SKYLIGHT_EDIT);
     AddAction(TEXTUREMAPS_EDIT);
   }
-  bool Has(const EditAction a) const { return (actions.find(a) != actions.end()); };
+  bool Has(const Action a) const { return (actions.find(a) != actions.end()); };
   size_t Size() const { return actions.size(); };
 
   friend std::ostream &operator<<(std::ostream &os, const EditActionList &eal);
 private:
-  set<EditAction> actions;
+  set<Action> actions;
 };
 
 inline std::ostream &operator<<(std::ostream &os, const EditActionList &eal) {
   os << "EditActionList[";
 
   bool sep = false;
-  for (set<EditAction>::const_iterator it = eal.actions.begin(); it!=eal.actions.end(); ++it) {
+  for (set<Action>::const_iterator it = eal.actions.begin(); it!=eal.actions.end(); ++it) {
     if (sep)
       os << ", ";
 

@@ -47,7 +47,9 @@ public:
 	void SplatSample(const float scrX, const float scrY, const Spectrum &radiance) {
 		// Safety check
 		if (!radiance.IsNaN()) {
-			SampleBufferElem *s = &samples[currentFreeSample++];
+
+			size_t currentFreeSample_AT =  __sync_fetch_and_add(&currentFreeSample,1);
+			SampleBufferElem *s = &samples[currentFreeSample_AT];
 
 			s->screenX = scrX;
 			s->screenY = scrY;

@@ -443,9 +443,7 @@ public:
     POINTERFREESCENE::Mesh& m = meshDescs[l->meshIndex];
 
     if (m.hasColors) {
-      f.r = l->gain_r * RdotN;
-      f.g = l->gain_g * RdotN;
-      f.b = l->gain_b * RdotN;
+
       f.r = colors[m.colorsOffset + l->triIndex].r * l->gain_r * RdotN;
       f.g = colors[m.colorsOffset + l->triIndex].g * l->gain_g * RdotN;
       f.b = colors[m.colorsOffset + l->triIndex].b * l->gain_b * RdotN;

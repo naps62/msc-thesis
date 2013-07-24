@@ -76,7 +76,7 @@ public:
 	*/
 	void AddAlpha(const std::string &alphaMap);
   
-	const bool HasAlpha() const { return alpha != NULL; }
+	bool HasAlpha() const { return alpha != NULL; }
 	float GetAlpha(const UV &uv) const {
 		assert (alpha != NULL);
 

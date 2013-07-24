@@ -11,8 +11,10 @@
 
 
 
-#define LR_LOG(a) { std::cerr << a << std::endl;}
-#define LR_LOG_C(a) { fprintf(stderr,a);fprintf(stderr,"\n");}
+//#define LR_LOG(a) { std::cerr << a << std::endl;}
+//#define LR_LOG_C(a) { fprintf(stderr,a);fprintf(stderr,"\n");}
+#define LR_LOG(a) ;
+#define LR_LOG_C(a) ;
 
 
 template<class T>

@@ -29,6 +29,7 @@
 #include "luxrays/core/dataset.h"
 #include "luxrays/utils/properties.h"
 #include "luxrays/utils/sdl/sdl.h"
+#include "luxrays/utils/sdl/material.h"
 #include "luxrays/utils/sdl/scene.h"
 
 
@@ -435,4 +436,5 @@ Material *Scene::CreateMaterial(const std::string &propName, const Properties &p
 		return new AlloyMaterial(Kdiff, Krfl, vf.at(6), vf.at(7), vf.at(8) != 0.f);
 	} else
 		throw std::runtime_error("Unknown material type " + matType);
+	return (Material*)0;
 }

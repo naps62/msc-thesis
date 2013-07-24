@@ -53,7 +53,7 @@ public:
 	virtual Point GetVertex(const unsigned int vertIndex) const = 0;
 	__HD__
 	virtual float GetTriangleArea(const unsigned int triIndex) const = 0;
-
+	__HD__
 	virtual Point *GetVertices() const = 0;
 	__HD__
 	virtual Triangle *GetTriangles() const = 0;
@@ -91,7 +91,7 @@ public:
 	Point GetVertex(const unsigned int vertIndex) const { return vertices[vertIndex]; }
 	__HD__
 	float GetTriangleArea(const unsigned int triIndex) const { return tris[triIndex].Area(vertices); }
-
+	__HD__
 	Point *GetVertices() const { return vertices; }
 	__HD__
 	Triangle *GetTriangles() const { return tris; }
@@ -147,6 +147,7 @@ public:
 
 	const Transform &GetTransformation() const { return trans; }
 	const Transform &GetInvTransformation() const { return invTrans; }
+	__HD__
 	Point *GetVertices() const { return mesh->GetVertices(); }
 	__HD__
 	Triangle *GetTriangles() const { return mesh->GetTriangles(); }

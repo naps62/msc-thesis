@@ -65,7 +65,7 @@ public:
 protected:
 	void UpdateMeshes();
 
-private:
+public:
 	unsigned int dataSetID;
 
 	//const Context *context;

@@ -38,7 +38,7 @@
 #endif
 typedef unsigned int u_int;
 #else
-using std::isnan;
+//using std::isnan;
 #endif
 
 #if defined(__APPLE__) // OSX adaptions Jens Verwiebe
@@ -366,7 +366,7 @@ public:
 		return AllocAligned<char>(s, 16);
 	}
 
-	void *operator new (size_t s, void *q) {
+	void *operator new (size_t /*s*/, void *q) {
 		return q;
 	}
 
