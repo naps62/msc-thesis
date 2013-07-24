@@ -42,8 +42,8 @@ public:
 
 #if defined USE_PPMPA || defined USE_PPM
   boost::barrier* waitForHitPoints;
-  HitPointPositionInfo* HPsPositionInfo;
 #endif
+  HitPointPositionInfo* HPsPositionInfo;
 
 
   PointerFreeScene *ss;

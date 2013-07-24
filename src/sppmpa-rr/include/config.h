@@ -12,7 +12,7 @@
 
 #define REBUILD_HASH
 
-#define MAX_ITERATIONS 11
+#define MAX_ITERATIONS 20000
 
 //#define USE_PPM
 /**
@@ -32,7 +32,7 @@
  * Keep local statistics.
  */
 
-//#define USE_SPPMPA
+#define USE_SPPMPA
 /**
  * SPPM:PA
  * Each device builds hitpoints and hash.
@@ -42,7 +42,7 @@
  * Paper PPM:PA approach reversed.
  */
 
-#define USE_PPMPA
+//#define USE_PPMPA
 /**
  * PPM:PA
  * Single hit points, each device mirrors hpts and builds hash grid.

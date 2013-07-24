@@ -140,8 +140,9 @@ void Worker::ProcessIterations(PPM* engine) {
 
   UpdateBBox();
 
-  while (!boost::this_thread::interruption_requested()) {
-
+  uint iter = 0;
+  while (!boost::this_thread::interruption_requested() && iter < config->max_iters) {
+    ++iter;
 
     double start = WallClockTime();
 

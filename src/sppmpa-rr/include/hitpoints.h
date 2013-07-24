@@ -37,7 +37,6 @@ public:
   bool done;
   //Seed seed;
 };
-
 //------------------------------------------------------------------------------
 // Eye path hit points
 //------------------------------------------------------------------------------
@@ -52,7 +51,7 @@ enum HitPointType {
 //  unsigned int accumPhotonCount;
 //  Spectrum accumReflectedFlux;
 //  Spectrum reflectedFlux;
-//  //unsigned int photonCount;
+//  //unsigned int photonCount;rribeiro
 //
 //  Spectrum accumRadiance;
 //  unsigned int constantHitsCount;
@@ -108,8 +107,11 @@ public:
 
   unsigned int accumPhotonCount;
   Spectrum accumReflectedFlux;
+  Spectrum accumRadiance;
   Spectrum radiance;
 
+  unsigned long long constantHitsCount;
+  unsigned long long surfaceHitsCount;
   unsigned long long photonCount;
   Spectrum reflectedFlux;
 
