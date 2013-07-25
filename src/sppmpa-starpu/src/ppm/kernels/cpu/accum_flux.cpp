@@ -18,7 +18,8 @@ void accum_flux_impl(
     HitPointRadiance* const hit_points,
     const unsigned size,
     const float alpha,
-    const unsigned photons_traced) {
+    const unsigned photons_traced,
+    const unsigned current_photon_radius2) {
 
   #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned int i = 0; i < size; ++i) {
@@ -42,7 +43,7 @@ void accum_flux_impl(
     }
 
     if (hp.hits_count > 0) {
-      const double k = 1.0 / (M_PI * hp.accum_photon_radius2 * photons_traced);
+      const double k = 1.0 / (M_PI * current_photon_radius2 * photons_traced);
       hp.radiance = (hp.accum_radiance + hp.reflected_flux * k);
     }
     hp.hits_count = 0;
@@ -57,13 +58,14 @@ void accum_flux(void* buffers[], void* args_orig) {
   const codelets::starpu_accum_flux_args*  args   = (const codelets::starpu_accum_flux_args*) args_orig;
   const Config* config = args->cpu_config;
   const unsigned photons_traced = args->photons_traced;
+  const float current_photon_radius2 = args->current_photon_radius2;
 
   // buffers
   const HitPointPosition* const hit_points_info = reinterpret_cast<const HitPointPosition* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
         HitPointRadiance*           const hit_points      = reinterpret_cast<      HitPointRadiance*           const>(STARPU_VECTOR_GET_PTR(buffers[1]));
   const unsigned size = STARPU_VECTOR_GET_NX(buffers[0]);
 
-  accum_flux_impl(hit_points_info, hit_points, size, config->alpha, photons_traced);
+  accum_flux_impl(hit_points_info, hit_points, size, config->alpha, photons_traced, current_photon_radius2);
 }
 
 } } }

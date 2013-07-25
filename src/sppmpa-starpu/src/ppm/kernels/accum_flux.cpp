@@ -8,12 +8,14 @@ namespace ppm { namespace kernels {
 void accum_flux(
   starpu_data_handle_t hit_points_info,
   starpu_data_handle_t hit_points,
-  const unsigned photons_traced) {
+  const unsigned photons_traced,
+  const float current_photon_radius2) {
 
   codelets::starpu_accum_flux_args args = {
     codelets::generic_args.cpu_config,
     codelets::generic_args.gpu_config,
-    photons_traced
+    photons_traced,
+    current_photon_radius2
   };
 
   // task definition

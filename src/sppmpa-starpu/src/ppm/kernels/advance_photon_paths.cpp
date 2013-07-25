@@ -11,7 +11,18 @@ void advance_photon_paths(
   starpu_data_handle_t photon_paths,
   starpu_data_handle_t hit_points_info,
   starpu_data_handle_t hit_points,
-  starpu_data_handle_t seed_buffer) {
+  starpu_data_handle_t seed_buffer,
+  const float photon_radius2) {
+
+  codelets::starpu_advance_photon_paths_args args = {
+    codelets::generic_args.cpu_config,
+    codelets::generic_args.cpu_scene,
+    codelets::generic_args.cpu_hash_grid,
+    codelets::generic_args.gpu_config,
+    codelets::generic_args.gpu_scene,
+    codelets::generic_args.gpu_hash_grid,
+    photon_radius2
+  };
 
   // task definition
   struct starpu_task* task = starpu_task_create();

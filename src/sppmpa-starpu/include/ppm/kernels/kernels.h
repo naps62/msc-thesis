@@ -37,7 +37,8 @@ void advance_photon_paths (
     starpu_data_handle_t photon_paths,
     starpu_data_handle_t hit_points_info,
     starpu_data_handle_t hit_points,
-    starpu_data_handle_t seed_buffer
+    starpu_data_handle_t seed_buffer,
+    const float photon_radius2
 );
 
 void intersect_ray_hit_buffer (
@@ -49,7 +50,8 @@ void intersect_ray_hit_buffer (
 void accum_flux (
     starpu_data_handle_t hit_points_info,
     starpu_data_handle_t hit_points,
-    const unsigned photons_traced
+    const unsigned photons_traced,
+    const float current_photon_radius2
 );
 
 } }

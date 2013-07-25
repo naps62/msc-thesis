@@ -453,6 +453,7 @@ __HD__ void add_flux(
     const Normal& shade_N,
     const Vector& wi,
     const Spectrum& photon_flux,
+    const float photon_radius2,
     HitPointPosition* const hit_points_info,
     HitPointRadiance* const hit_points) {
 
@@ -472,7 +473,10 @@ __HD__ void add_flux(
       HitPointRadiance& hp = hit_points[hit_point_index];
 
       //if ((Dot(ihp.normal, shade_N) <= 0.5f) || (Dot(v, v) > hp.accum_photon_radius2))
-      if (DistanceSquared(ihp.position, hit_point) > hp.accum_photon_radius2 || Dot(ihp.normal, wi) <= 0.0001f)
+      //if (DistanceSquared(ihp.position, hit_point) > hp.accum_photon_radius2 || Dot(ihp.normal, wi) <= 0.0001f)
+      //  continue;
+
+      if (DistanceSquared(ihp.position, hit_point) > photon_radius2 || Dot(ihp.normal, wi))
         continue;
 
       my_atomic_add(&hp.accum_photon_count, (unsigned)1);

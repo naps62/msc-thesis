@@ -33,10 +33,21 @@ namespace ppm { namespace kernels {
       const unsigned buffer_size;
     };
 
+    struct starpu_advance_photon_paths_args {
+      const Config*          cpu_config;
+      const PtrFreeScene*    cpu_scene;
+      const PtrFreeHashGrid* cpu_hash_grid;
+      const CUDA::Config*    gpu_config;
+      const PtrFreeScene*    gpu_scene;
+      const PtrFreeHashGrid* gpu_hash_grid;
+      const float photon_radius2;
+    };
+
     struct starpu_accum_flux_args {
       const Config* cpu_config;
       const CUDA::Config* cuda_config;
-      unsigned photons_traced;
+      const unsigned photons_traced;
+      const unsigned current_photon_radius2;
     };
 
     extern starpu_codelet generate_eye_paths;

@@ -295,6 +295,7 @@ void Worker::InitRadius(uint iteration) {
   g /= iteration;
 
   photonRadius2 = photonRadius2 * g;
+  std::cout << "photon_radius: " << photonRadius2 << '\n';
 #endif
 
 #ifdef REBUILD_HASH

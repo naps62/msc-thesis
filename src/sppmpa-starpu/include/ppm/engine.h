@@ -24,6 +24,8 @@ public:
 
 protected:
   unsigned worker_count;
+  unsigned iteration;
+  float current_photon_radius2;
   const Config& config;
   PtrFreeScene* scene;
   PtrFreeHashGrid hash_grid;

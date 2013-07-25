@@ -23,7 +23,8 @@ namespace ppm { namespace kernels { namespace cpu {
       const PtrFreeScene* scene,
       HitPointPosition* const hit_points_info,
       HitPointRadiance* const hit_points,
-      const unsigned CONST_max_photon_depth) {
+      const unsigned CONST_max_photon_depth,
+      const float photon_radius2) {
 
   #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned i = 0; i < rays_count; ++i) {
@@ -73,7 +74,7 @@ namespace ppm { namespace kernels { namespace cpu {
           f *= surface_color;
 
           if (!specular_bounce) {
-            helpers::add_flux(hash_grid, scene, hit_point, shade_N, wo, path.flux, hit_points_info, hit_points);
+            helpers::add_flux(hash_grid, scene, hit_point, shade_N, wo, path.flux, photon_radius2, hit_points_info, hit_points);
           }
 
           if (path.depth < CONST_max_photon_depth) {
@@ -107,10 +108,11 @@ namespace ppm { namespace kernels { namespace cpu {
 
 void advance_photon_paths(void* buffers[], void* args_orig) {
   // cl_args
-  const starpu_args* args    = (const starpu_args*) args_orig;
+  const codelets::starpu_advance_photon_paths_args* args    = (const codelets::starpu_advance_photon_paths_args*) args_orig;
   const Config*       config = static_cast<const Config*>(args->cpu_config);
   const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->cpu_scene);
   const PtrFreeHashGrid* hash_grid = static_cast<const PtrFreeHashGrid*>(args->cpu_hash_grid);
+  const float photon_radius2 = args->photon_radius2;
 
   // buffers
   // rays
@@ -141,7 +143,8 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
                             scene,
                             hit_points_info,
                             hit_points,
-                            config->max_photon_depth);
+                            config->max_photon_depth,
+                            photon_radius2);
 
 
 }

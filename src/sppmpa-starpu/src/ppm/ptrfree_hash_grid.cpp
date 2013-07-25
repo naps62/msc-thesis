@@ -32,21 +32,11 @@ void PtrFreeHashGrid :: set_bbox(BBox bbox) {
 }
 
 
-void PtrFreeHashGrid :: rehash() {
+void PtrFreeHashGrid :: rehash(const float current_photon_radius_2) {
   const unsigned hit_points_count = this->hit_points_count;
   const BBox bbox = this->bbox;
 
-  // calculate size of the grid cell
-  float max_photon_radius = 0.f;
-  for(unsigned i = 0; i < hit_points_count; ++i) {
-    HitPointPosition& hpi = hit_points_info[i];
-    HitPointRadiance& hp = hit_points[i];
-
-    if (hpi.type == SURFACE)
-      max_photon_radius = Max(max_photon_radius, hp.accum_photon_radius2);
-  }
-
-  const float cell_size = sqrtf(max_photon_radius) * 2.f;
+  const float cell_size = sqrtf(current_photon_radius_2) * 2.f;
   this->inv_cell_size = 1.f / cell_size;
 
   if (!hash_grid) {
@@ -61,13 +51,13 @@ void PtrFreeHashGrid :: rehash() {
     }
   }
 
+
   unsigned long long entry_count = 0;
   for(unsigned i = 0; i < hit_points_count; ++i) {
     HitPointPosition& hpi = hit_points_info[i];
 
     if (hpi.type == SURFACE) {
-      HitPointRadiance& hp = hit_points[i];
-      const float photon_radius = sqrtf(hp.accum_photon_radius2);
+      const float photon_radius = sqrtf(current_photon_radius_2);
 
       const Vector rad(photon_radius, photon_radius, photon_radius);
       const Vector b_min = ((hpi.position - rad) - bbox.pMin) * inv_cell_size;

@@ -59,7 +59,7 @@ __HD__ void matte_mirror_f(const MatteMirrorParam& mat, Spectrum& f);
 __HD__ void matte_metal_f(const MatteMetalParam& mat, Spectrum& f);
 __HD__ void alloy_f(const MatteParam& mat, const Vector& wo, const Normal& N, Spectrum& f);
 
-__HD__ void add_flux(const PtrFreeHashGrid* const hash_grid, const PtrFreeScene* const scene, const Point& hit_point, const Normal& shade_N, const Vector& wi, const Spectrum& photon_flux, HitPointPosition* const hit_points_info, HitPointRadiance* const hit_points);
+__HD__ void add_flux(const PtrFreeHashGrid* const hash_grid, const PtrFreeScene* const scene, const Point& hit_point, const Normal& shade_N, const Vector& wi, const Spectrum& photon_flux, const float photon_radius2, HitPointPosition* const hit_points_info, HitPointRadiance* const hit_points);
 
 __HD__ unsigned hash(const int ix, const int iy, const int iz, unsigned size);
 

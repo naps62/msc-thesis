@@ -39,7 +39,7 @@ public:
   void set_hit_points(std::vector<HitPointPosition>& hit_points_info, std::vector<HitPointRadiance>& hit_points);
   void set_bbox(BBox bbox);
 
-  void rehash();
+  void rehash(const float current_photon_radius_2);
 
   //void AddFlux(PointerFreeScene *ss, const float alpha, const Point &hitPoint, const Normal &shadeN,
   //    const Vector wi, const Spectrum photonFlux,float currentPhotonRadius2);

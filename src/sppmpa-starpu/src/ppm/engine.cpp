@@ -13,7 +13,8 @@ namespace ppm {
 //
 
 Engine :: Engine(const Config& _config, unsigned worker_count)
-: config(_config),
+: iteration(1),
+  config(_config),
   scene(new PtrFreeScene(config)),
   hash_grid(config.total_hit_points  /* TODO why is this? */),
   film(config.width, config.height),
@@ -36,7 +37,7 @@ Engine :: Engine(const Config& _config, unsigned worker_count)
   // load display if necessary
   if (config.use_display) {
     display = new Display(config, film);
-    display->start(true);
+    display->start(true);size
   }
 
   // load starpu
@@ -70,7 +71,6 @@ void Engine :: render() {
   this->hash_grid.set_bbox(this->bbox);
   this->hash_grid.set_hit_points(hit_points_info, hit_points);
   // main loop
-  unsigned iteration = 0;
   unsigned photons_traced = 0;
   while((!display || display->is_on()) && iteration < config.max_iters) {
     this->build_hit_points();
@@ -78,10 +78,11 @@ void Engine :: render() {
     this->init_radius();
 
     this->hash_grid.set_bbox(this->bbox);
-    this->hash_grid.rehash();
+    this->hash_grid.rehash(current_photon_radius2);
 
     kernels::generate_photon_paths(ray_buffer_h, live_photon_paths_h, seeds_h);
-    kernels::advance_photon_paths(ray_buffer_h, hit_buffer_h, live_photon_paths_h, hit_points_info_h, hit_points_h, seeds_h);
+    kernels::advance_photon_paths(ray_buffer_h, hit_buffer_h, live_photon_paths_h, hit_points_info_h, hit_points_h, seeds_h, current_photon_radius2);
+
     photons_traced += chunk_size;
     /*cout << '\n';
     for(unsigned i = 0; i < hit_points.size(); ++i) {
@@ -90,7 +91,7 @@ void Engine :: render() {
       cout << i << " " << hp.accum_reflected_flux << '\n';
     }
     exit(0);*/
-    kernels::accum_flux(hit_points_info_h, hit_points_h, photons_traced);
+    kernels::accum_flux(hit_points_info_h, hit_points_h, photons_traced, current_photon_radius2);
 
     //cout << '\n';
     //if (iteration == 1) exit(0);
@@ -193,12 +194,15 @@ void Engine :: eye_paths_to_hit_points() {
 void Engine :: init_radius() {
   const Vector ssize = bbox.pMax - bbox.pMin;
   const float photon_radius = ((ssize.x + ssize.y + ssize.z) / 3.f) / ((config.width * config.spp + config.height * config.spp) / 2.f) * 2.f;
-  const float photon_radius2 = photon_radius * photon_radius;
+  current_photon_radius2 = photon_radius * photon_radius;
 
+  float g = 1;
+  for(uint k = 1; k < iteration; ++k)
+    g *= (k + config.alpha) / k;
+
+  g /= iteration;
+  current_photon_radius2 *= g;
   bbox.Expand(photon_radius);
-  for(unsigned i = 0; i < hit_points.size(); ++i) {
-    hit_points[i].accum_photon_radius2 = photon_radius2;
-  }
 }
 
 void Engine :: update_bbox() {
