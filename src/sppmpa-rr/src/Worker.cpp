@@ -24,6 +24,7 @@ void Worker::BuildHitPoints(uint iteration) {
 
   EyePath* todoEyePaths = new EyePath[hitPointTotal];
 
+
 #ifndef USE_SPPM
   memset(HPsIterationRadianceFlux, 0, sizeof(HitPointRadianceFlux) * engine->hitPointTotal);
 #endif
@@ -71,6 +72,8 @@ void Worker::BuildHitPoints(uint iteration) {
   uint chunk_counter = 0;
 
   uint* eyePathIndexes = new uint[getRaybufferSize()];
+
+  resetRayBuffer();
 
   while (todoEyePathCount > 0) {
 
@@ -156,8 +159,8 @@ void Worker::ProcessIterations(PPM* engine) {
 
     photonPerIteration = engine->photonsFirstIteration;
 
-    fprintf(stderr, "\n#######\n Processing iteration %d with %lu photons in device %d...\n",
-        iterationCount, photonPerIteration, getDeviceID());
+    //fprintf(stderr, "\n#######\n Processing iteration %d with %lu photons in device %d...\n",
+     //   iterationCount, photonPerIteration, getDeviceID());
 
 #if defined USE_SPPMPA || defined USE_SPPM
     BuildHitPoints(iterationCount);
@@ -203,6 +206,12 @@ void Worker::ProcessIterations(PPM* engine) {
 
 //    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Build Photon Map");
 
+/*for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
+      HitPointRadianceFlux& hpi = *GetHitPoint(i);
+      std::cout << i << " " << hpi.accumReflectedFlux << '\n';
+    }
+    std::cout << "\n\n";
+    exit(0);*/
 #if defined USE_PPM
 //    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Get HPs");
     getDeviceHitpoints();
@@ -213,11 +222,6 @@ void Worker::ProcessIterations(PPM* engine) {
 //    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Radiance calc");
 
 #endif
-for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
-      HitPointRadianceFlux& hpi = *GetHitPoint(i);
-      std::cout << i << " " << hpi.accumReflectedFlux << '\n';
-    }
-    exit(0);
 #if defined USE_SPPM
     AccumulateFluxSPPM(iterationCount, photonPerIteration);
 #endif

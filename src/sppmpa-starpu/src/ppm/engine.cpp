@@ -91,6 +91,7 @@ void Engine :: render() {
       HitPointRadiance& hp = hit_points[i];
       std::cout << i << " " << hp.accum_reflected_flux << '\n';
     }
+    std::cout << "\n\n";
     exit(0);
     kernels::accum_flux(hit_points_info_h, hit_points_h, photons_traced, current_photon_radius2);
 

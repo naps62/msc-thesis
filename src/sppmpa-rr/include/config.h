@@ -127,8 +127,8 @@ struct Config : public beast::program_options::options {
 
     // window
     flag("no_display", no_display, "Supress realtime display?");
-    value("width",   width,  uint(4),          "window width");
-    value("height",  height, uint(4),          "window height");
+    value("width",   width,  uint(320),          "window width");
+    value("height",  height, uint(240),          "window height");
     value("title,t",   title,  string("gama-ppm"), "window title");
     value("fps",       fps,    uint(60), "maximum FPS");
     flag("vsync",      vsync, "V-Sync. Can cause problems sometimes, so defaults to false");
