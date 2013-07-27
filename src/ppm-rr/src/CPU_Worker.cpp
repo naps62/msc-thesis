@@ -338,7 +338,7 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
       while(!photonPath->done) {
         rayHit->SetMiss();
         ss->dataSet->Intersect(ray, rayHit);
-    //rayBuffer->Reset();
+        //rayBuffer->Reset();
 
         //std::cout << i << " " << rayHit->index << " ";
         if (rayHit->Miss()) {
@@ -477,8 +477,8 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
         }
       }
       todoPhotonCount++;
-
     }
+
     //exit(0);
 
     /*uint oldc = rayBuffer->GetRayCount();
@@ -506,6 +506,8 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
     }*/
   }
 
+  rayBuffer->Reset();
+  delete[] livePhotonPaths;
 
 //  float MPhotonsSec = todoPhotonCount / ((WallClockTime()-start) * 1000000.f);
 

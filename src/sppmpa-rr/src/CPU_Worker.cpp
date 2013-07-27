@@ -262,10 +262,9 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 
   }
 
-  while (todoPhotonCount < photonTarget) {
+  while (todoPhotonCount < initc) {
 
     //Intersect(rayBuffer);
-
 
 #ifndef __DEBUG
     omp_set_num_threads(config->max_threads);
@@ -412,18 +411,17 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
             } else {
               photonPath->done = true;
             }
-
           }
         }
       }
       todoPhotonCount++;
     }
 
-    /*uint oldc = rayBuffer->GetRayCount();
+    uint oldc = rayBuffer->GetRayCount();
 
     rayBuffer->Reset();
 
-    for (unsigned int i = 0; i < oldc; ++i) {
+    /*for (unsigned int i = 0; i < oldc; ++i) {
 
       PhotonPath *photonPath = &livePhotonPaths[i];
       Ray *ray = &rayBuffer->GetRayBuffer()[i];
@@ -445,18 +443,18 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
     }*/
   }
 
-  /*profiler->addPhotonTracingTime(WallClockTime() - start);
-  profiler->addPhotonsTraced(todoPhotonCount);
 
   rayBuffer->Reset();
 
   delete[] livePhotonPaths;
+  /*profiler->addPhotonTracingTime(WallClockTime() - start);
+  profiler->addPhotonsTraced(todoPhotonCount);
 
   float MPhotonsSec = todoPhotonCount / ((WallClockTime()-start) * 1000000.f);
 
     //printf("\nCPU Rate: %.3f MPhotons/sec\n",MPhotonsSec);*/
 
-  return todoPhotonCount;
+  return initc;
 }
 
 void CPU_Worker::updateDeviceHitPoints() {
@@ -505,4 +503,3 @@ void CPU_Worker::AccumulateFluxPPMPA(uint iteration, u_int64_t photonTraced) {
 
   }
 }
-

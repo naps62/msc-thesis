@@ -60,7 +60,7 @@ public:
 
   void printStats(uint id) {
 
-    stringstream s;
+    /*stringstream s;
 
 
 
@@ -78,7 +78,7 @@ public:
 
     s  << "#####################\n";
 
-    cout << s.str();
+    cout << s.str();*/
 
 
   }
