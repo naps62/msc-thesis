@@ -34,8 +34,8 @@ void advance_photon_paths(
   task->handles[3] = hit_points_info;
   task->handles[4] = hit_points;
   task->handles[5] = seed_buffer;
-  task->cl_arg      = &codelets::generic_args;
-  task->cl_arg_size = sizeof(codelets::generic_args);
+  task->cl_arg      = &args;
+  task->cl_arg_size = sizeof(args);
 
   // submit
   starpu_task_submit(task);

@@ -439,7 +439,7 @@ __device__ void AddFlux(CUDA_Worker* worker, PPM* engine, PointerFreeHashGrid* h
 
         atomicAdd(&hp->accumPhotonCount, 1);
 
-        Spectrum* f = new Spectrum();
+        Spectrum f;
 
         POINTERFREESCENE::Material *hitPointMat = &worker->materialsBuff[ihp->materialSS];
 
@@ -447,22 +447,22 @@ __device__ void AddFlux(CUDA_Worker* worker, PPM* engine, PointerFreeHashGrid* h
 
           case MAT_MATTE:
           ss->Matte_f(&hitPointMat->param.matte, ihp->wo, wi,
-              shadeN, *f);
+              shadeN, f);
           break;
 
           case MAT_MATTEMIRROR:
           ss->MatteMirror_f(&hitPointMat->param.matteMirror,
-              ihp->wo, wi, shadeN, *f);
+              ihp->wo, wi, shadeN, f);
           break;
 
           case MAT_MATTEMETAL:
           ss->MatteMetal_f(&hitPointMat->param.matteMetal, ihp->wo,
-              wi, shadeN, *f);
+              wi, shadeN, f);
           break;
 
           case MAT_ALLOY:
           ss->Alloy_f(&hitPointMat->param.alloy, ihp->wo, wi,
-              shadeN,*f);
+              shadeN, f);
 
           break;
           default:
@@ -472,15 +472,13 @@ __device__ void AddFlux(CUDA_Worker* worker, PPM* engine, PointerFreeHashGrid* h
         }
 
         Spectrum flux = photonFlux * AbsDot(shadeN,
-            wi) * ihp->throughput *(*f);
+            wi) * ihp->throughput *f;
 
         //hp->accumReflectedFlux = (hp->accumReflectedFlux + flux) /** g*/;
 
         atomicAdd(&hp->accumReflectedFlux.r ,flux.r);
         atomicAdd(&hp->accumReflectedFlux.g ,flux.g);
         atomicAdd(&hp->accumReflectedFlux.b ,flux.b);
-
-        delete f;
 
       }
     }

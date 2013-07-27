@@ -125,6 +125,7 @@ void HashGridLookup::AddFlux(HitPointRadianceFlux *workerHitPoints, PointerFreeS
     const Normal &shadeN, const Vector wi, const Spectrum photonFlux,
     float currentPhotonRadius2) {
 
+
   // Look for eye path hit points near the current hit point
   Vector hh = (hitPoint - hitPointsbbox.pMin) * invCellSize;
   const int ix = abs(int(hh.x));
@@ -171,6 +172,7 @@ void HashGridLookup::AddFlux(HitPointRadianceFlux *workerHitPoints, PointerFreeS
       const float dot = Dot(hp->normal, wi);
       if (dot <= 0.0001f)
         continue;
+
 #endif
 
       //const float g = (hp->accumPhotonCount * alpha + alpha)
@@ -322,9 +324,9 @@ void PointerFreeHashGrid::ReHash(float currentPhotonRadius2,HitPointRadianceFlux
   hashGridEntryCount = entryCount;
 
   //std::cerr << "Max. hit points in a single hash grid entry: " << maxPathCount << std::endl;
-  std::cerr << "Total hash grid entry: " << entryCount << std::endl;
-  std::cerr << "Avg. hit points in a single hash grid entry: " << entryCount / hashGridSize
-      << std::endl;
+  //std::cerr << "Total hash grid entry: " << entryCount << std::endl;
+  //std::cerr << "Avg. hit points in a single hash grid entry: " << entryCount / hashGridSize
+  //    << std::endl;
 
   //printf("Sizeof %d\n", sizeof(HitPoint*));
 

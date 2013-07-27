@@ -37,7 +37,6 @@ namespace ppm { namespace kernels { namespace cpu {
       hit.SetMiss();
       scene->intersect(ray, hit);
 
-      //std::cout << i << " " << hit.index << " ";
       if (hit.Miss()) {
         path.done = true;
         //std::cout << "here\n";
@@ -46,7 +45,6 @@ namespace ppm { namespace kernels { namespace cpu {
         Spectrum surface_color;
         Normal N;
         Normal shade_N;
-
 
         if (helpers::get_hit_point_information(scene, ray, hit, hit_point, surface_color, N, shade_N))
           continue;
@@ -99,6 +97,7 @@ namespace ppm { namespace kernels { namespace cpu {
             path.done = true;
           }
         }
+
       }
     }
   }

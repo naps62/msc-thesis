@@ -37,7 +37,7 @@ Engine :: Engine(const Config& _config, unsigned worker_count)
   // load display if necessary
   if (config.use_display) {
     display = new Display(config, film);
-    display->start(true);size
+    display->start(true);
   }
 
   // load starpu
@@ -77,6 +77,7 @@ void Engine :: render() {
     this->update_bbox();
     this->init_radius();
 
+
     this->hash_grid.set_bbox(this->bbox);
     this->hash_grid.rehash(current_photon_radius2);
 
@@ -84,14 +85,14 @@ void Engine :: render() {
     kernels::advance_photon_paths(ray_buffer_h, hit_buffer_h, live_photon_paths_h, hit_points_info_h, hit_points_h, seeds_h, current_photon_radius2);
 
     photons_traced += chunk_size;
-    /*cout << '\n';
-    for(unsigned i = 0; i < hit_points.size(); ++i) {
+
+    kernels::accum_flux(hit_points_info_h, hit_points_h, photons_traced, current_photon_radius2);
+    /*for(unsigned i = 0; i < config.total_hit_points; ++i) {
       HitPointPosition& hpi = hit_points_info[i];
       HitPointRadiance& hp = hit_points[i];
-      cout << i << " " << hp.accum_reflected_flux << '\n';
-    }
-    exit(0);*/
-    kernels::accum_flux(hit_points_info_h, hit_points_h, photons_traced, current_photon_radius2);
+      std::cout << i << " " << hp.radiance << '\n';
+    }*/
+    //exit(0);
 
     //cout << '\n';
     //if (iteration == 1) exit(0);
@@ -223,7 +224,10 @@ void Engine :: update_sample_frame_buffer() {
     HitPointPosition& hpi = hit_points_info[i];
     HitPointRadiance& hp = hit_points[i];
 
-    sample_buffer.SplatSample(hpi.scr_x, hpi.scr_y, hp.radiance);
+    const float scr_x = i % config.width;
+    const float scr_y = i / config.width;
+
+    sample_buffer.SplatSample(scr_x, scr_y, hp.radiance);
   }
 
   sample_frame_buffer.Clear();

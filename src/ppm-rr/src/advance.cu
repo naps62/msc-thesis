@@ -440,8 +440,7 @@ __device__ void AddFlux(CUDA_Worker* worker, PPM* engine, PointerFreeHashGrid* h
 
         atomicAdd(&hp->accumPhotonCount, 1);
 
-        Spectrum f;// = new Spectrum();
-        // TODO mudar daqui para baixo conforme a alteração em cima. f deixou de ser um apontador, passou a ser uma struct
+        Spectrum f;
 
         POINTERFREESCENE::Material *hitPointMat = &worker->materialsBuff[ihp->materialSS];
 

@@ -47,7 +47,7 @@ namespace ppm { namespace kernels {
       const Config* cpu_config;
       const CUDA::Config* cuda_config;
       const unsigned photons_traced;
-      const unsigned current_photon_radius2;
+      const float current_photon_radius2;
     };
 
     extern starpu_codelet generate_eye_paths;

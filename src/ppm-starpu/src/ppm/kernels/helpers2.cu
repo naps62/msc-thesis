@@ -354,6 +354,7 @@ void arch_glass_material_sample_f(
       specular_bounce = mat.reflection_specular_bounce;
     } else {
       wi = -wo;
+      pdf = mat.trans_pdf;
       f.r = mat.refrct.r;
       f.g = mat.refrct.g;
       f.b = mat.refrct.b;

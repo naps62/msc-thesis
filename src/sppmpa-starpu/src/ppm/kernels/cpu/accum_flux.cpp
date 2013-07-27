@@ -19,7 +19,7 @@ void accum_flux_impl(
     const unsigned size,
     const float alpha,
     const unsigned photons_traced,
-    const unsigned current_photon_radius2) {
+    const float current_photon_radius2) {
 
   #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned int i = 0; i < size; ++i) {

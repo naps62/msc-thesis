@@ -446,9 +446,6 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
               break;
             }
 
-            //std::cout << " " << f << " " << surfaceColor << '\n';
-            //std::cout << " " << f << '\n';
-
             if (!specularBounce) {// if difuse
               lookupA->AddFlux(engine->ss, engine->alpha, hitPoint, shadeN, -ray->d,
                   photonPath->flux, currentPhotonRadius2);

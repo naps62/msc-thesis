@@ -20,57 +20,57 @@
  ***************************************************************************/
 
 #ifndef _SAMPLEBUFFER_H
-#define	_SAMPLEBUFFER_H
+#define  _SAMPLEBUFFER_H
 
 #include "luxrays/core/pixel/spectrum.h"
 
 
 
 typedef struct {
-	float screenX, screenY;
-	Spectrum radiance;
+  float screenX, screenY;
+  Spectrum radiance;
 } SampleBufferElem;
 
 class SampleBuffer {
 public:
-	SampleBuffer(const size_t bufferSize) : size(bufferSize) {
-		samples = new SampleBufferElem[size];
-		Reset();
-	}
-	virtual ~SampleBuffer() {
-		delete[] samples;
-	}
+  SampleBuffer(const size_t bufferSize) : size(bufferSize) {
+    samples = new SampleBufferElem[size];
+    Reset();
+  }
+  virtual ~SampleBuffer() {
+    delete[] samples;
+  }
 
-	void Reset() { currentFreeSample = 0; };
-	bool IsFull() const { return (currentFreeSample >= size); }
-	__HD__
-	void SplatSample(const float scrX, const float scrY, const Spectrum &radiance) {
-		// Safety check
-		if (!radiance.IsNaN()) {
+  void Reset() { currentFreeSample = 0; };
+  bool IsFull() const { return (currentFreeSample >= size); }
+  __HD__
+  void SplatSample(const float scrX, const float scrY, const Spectrum &radiance) {
+    // Safety check
+    if (!radiance.IsNaN()) {
 
-			size_t currentFreeSample_AT =  __sync_fetch_and_add(&currentFreeSample,1);
-			SampleBufferElem *s = &samples[currentFreeSample_AT];
+      size_t currentFreeSample_AT =  __sync_fetch_and_add(&currentFreeSample,1);
+      SampleBufferElem *s = &samples[currentFreeSample_AT];
 
-			s->screenX = scrX;
-			s->screenY = scrY;
-			s->radiance = radiance;
-		}/* else {
-			cerr << "Internal error: NaN in SampleBuffer::SplatSample()" << endl;
-		}*/
-	}
+      s->screenX = scrX;
+      s->screenY = scrY;
+      s->radiance = radiance;
+    }/* else {
+      cerr << "Internal error: NaN in SampleBuffer::SplatSample()" << endl;
+    }*/
+  }
 
-	SampleBufferElem *GetSampleBuffer() const { return samples; }
+  SampleBufferElem *GetSampleBuffer() const { return samples; }
 
-	size_t GetSampleCount() const { return currentFreeSample; }
-	size_t GetSize() const { return size; }
+  size_t GetSampleCount() const { return currentFreeSample; }
+  size_t GetSize() const { return size; }
 
 private:
-	size_t size;
-	size_t currentFreeSample;
+  size_t size;
+  size_t currentFreeSample;
 
-	SampleBufferElem *samples;
+  SampleBufferElem *samples;
 };
 
 
 
-#endif	/* _SAMPLEBUFFER_H */
+#endif  /* _SAMPLEBUFFER_H */

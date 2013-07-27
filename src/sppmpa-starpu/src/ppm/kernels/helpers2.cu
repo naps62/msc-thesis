@@ -329,6 +329,7 @@ void arch_glass_material_sample_f(
     Spectrum& f,
     bool& specular_bounce) {
 
+
   const bool into = (Dot(N, shade_N) > 0.f);
 
   if (!into) {
@@ -346,14 +347,15 @@ void arch_glass_material_sample_f(
       wi.x = k * N.x - wo.x;
       wi.y = k * N.y - wo.y;
       wi.z = k * N.z - wo.z;
-
       pdf = mat.refl_pdf;
+
       f.r = mat.refl.r;
       f.g = mat.refl.g;
       f.b = mat.refl.b;
       specular_bounce = mat.reflection_specular_bounce;
     } else {
       wi = -wo;
+      pdf = mat.trans_pdf;
       f.r = mat.refrct.r;
       f.g = mat.refrct.g;
       f.b = mat.refrct.b;
@@ -465,6 +467,7 @@ __HD__ void add_flux(
   unsigned grid_index = hash(ix, iy, iz, hash_grid->size);
   unsigned length = hash_grid->lengths[grid_index];
 
+
   if (length > 0) {
     unsigned local_list = hash_grid->lists_index[grid_index];
     for(unsigned i = local_list; i < local_list + length; ++i) {
@@ -472,11 +475,7 @@ __HD__ void add_flux(
       HitPointPosition& ihp = hit_points_info[hit_point_index];
       HitPointRadiance& hp = hit_points[hit_point_index];
 
-      //if ((Dot(ihp.normal, shade_N) <= 0.5f) || (Dot(v, v) > hp.accum_photon_radius2))
-      //if (DistanceSquared(ihp.position, hit_point) > hp.accum_photon_radius2 || Dot(ihp.normal, wi) <= 0.0001f)
-      //  continue;
-
-      if (DistanceSquared(ihp.position, hit_point) > photon_radius2 || Dot(ihp.normal, wi))
+      if (DistanceSquared(ihp.position, hit_point) > photon_radius2 || Dot(ihp.normal, wi) <= 0.0001f)
         continue;
 
       my_atomic_add(&hp.accum_photon_count, (unsigned)1);
