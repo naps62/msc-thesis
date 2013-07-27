@@ -9,10 +9,15 @@
 #include "cuda.h"
 #include "cuda_runtime.h"
 
+#define USE_SPPMPA
+#define SPPMPA
 
 
-#define LR_LOG(a) { std::cerr << a << std::endl;}
-#define LR_LOG_C(a) { fprintf(stderr,a);fprintf(stderr,"\n");}
+
+//#define LR_LOG(a) { std::cerr << a << std::endl;}
+//#define LR_LOG_C(a) { fprintf(stderr,a);fprintf(stderr,"\n");}
+#define LR_LOG(a) { }
+#define LR_LOG_C(a) { }
 
 
 template<class T>

@@ -213,6 +213,11 @@ void Worker::ProcessIterations(PPM* engine) {
 //    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Radiance calc");
 
 #endif
+for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
+      HitPointRadianceFlux& hpi = *GetHitPoint(i);
+      std::cout << i << " " << hpi.accumReflectedFlux << '\n';
+    }
+    exit(0);
 #if defined USE_SPPM
     AccumulateFluxSPPM(iterationCount, photonPerIteration);
 #endif
@@ -230,7 +235,6 @@ void Worker::ProcessIterations(PPM* engine) {
 
 #endif
 //    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Splat radiance");
-
     UpdateSampleFrameBuffer(photonPerIteration);
 
 //    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Splat radiance");

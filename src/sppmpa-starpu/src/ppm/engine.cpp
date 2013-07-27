@@ -86,13 +86,13 @@ void Engine :: render() {
 
     photons_traced += chunk_size;
 
-    kernels::accum_flux(hit_points_info_h, hit_points_h, photons_traced, current_photon_radius2);
-    /*for(unsigned i = 0; i < config.total_hit_points; ++i) {
+    for(unsigned i = 0; i < config.total_hit_points; ++i) {
       HitPointPosition& hpi = hit_points_info[i];
       HitPointRadiance& hp = hit_points[i];
-      std::cout << i << " " << hp.radiance << '\n';
-    }*/
-    //exit(0);
+      std::cout << i << " " << hp.accum_reflected_flux << '\n';
+    }
+    exit(0);
+    kernels::accum_flux(hit_points_info_h, hit_points_h, photons_traced, current_photon_radius2);
 
     //cout << '\n';
     //if (iteration == 1) exit(0);
