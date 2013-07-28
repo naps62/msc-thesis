@@ -116,6 +116,8 @@ struct Config : public beast::program_options::options {
   uint max_threads;
   uint max_iters;
 
+  unsigned engine_chunk_size;
+
   Config(const char *desc, int _argc, char **_argv)
   : beast::program_options::options(desc), argc(_argc), argv((const char**)_argv) {
 
@@ -127,8 +129,8 @@ struct Config : public beast::program_options::options {
 
     // window
     flag("no_display", no_display, "Supress realtime display?");
-    value("width",   width,  uint(320),          "window width");
-    value("height",  height, uint(240),          "window height");
+    value("width",   width,  uint(4),          "window width");
+    value("height",  height, uint(4),          "window height");
     value("title,t",   title,  string("gama-ppm"), "window title");
     value("fps",       fps,    uint(60), "maximum FPS");
     flag("vsync",      vsync, "V-Sync. Can cause problems sometimes, so defaults to false");
@@ -141,6 +143,8 @@ struct Config : public beast::program_options::options {
     value("photons_iter", photons_first_iter_exp, uint(20),  "to compute amount of photons on first iteration");
     value("max_threads", max_threads, uint(1),  "number of cpu threads");
     value("max_iters",   max_iters,   uint(10), "number of iterations");
+
+    value("chunk_size", engine_chunk_size, unsigned(16/*1024*256*/), "chunk size for ray and photon buffers (defaults to 1024*256)");
 
     // now parse the arguments
     parse(_argc, _argv);

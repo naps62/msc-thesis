@@ -120,8 +120,8 @@ int main(int argc, char *argv[]) {
 #ifdef CPU
   devID = 100;
 
-  size_t WORK_BUCKET_SIZE_CPU = 1024 * 256;
-  //size_t WORK_BUCKET_SIZE_CPU = 16;
+  //size_t WORK_BUCKET_SIZE_CPU = 1024 * 256;
+  size_t WORK_BUCKET_SIZE_CPU = config->engine_chunk_size;
   c = max((int)hitPointTotal, (int)WORK_BUCKET_SIZE_CPU);
   seedBuffer = new Seed[c];
 

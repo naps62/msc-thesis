@@ -26,6 +26,8 @@ protected:
   unsigned worker_count;
   unsigned iteration;
   float current_photon_radius2;
+  unsigned long long total_photons_traced;
+  double start_time;
   const Config& config;
   PtrFreeScene* scene;
   PtrFreeHashGrid hash_grid;

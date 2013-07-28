@@ -14,13 +14,14 @@ namespace ppm {
 
 Engine :: Engine(const Config& _config, unsigned worker_count)
 : iteration(1),
+  total_photons_traced(0),
   config(_config),
   scene(new PtrFreeScene(config)),
-  hash_grid(config.total_hit_points  /* TODO why is this? */),
+  hash_grid(config.total_hit_points /* TODO why is this? */),
   film(config.width, config.height),
   chunk_size(config.engine_chunk_size),
 
-  seeds(config.total_hit_points),
+  seeds(max(config.total_hit_points, chunk_size)),
   eye_paths(config.total_hit_points),
   eye_paths_indexes(chunk_size),
   ray_hit_buffer(chunk_size),
@@ -64,58 +65,44 @@ Engine :: ~Engine() {
 // public methods
 //
 void Engine :: render() {
-  //this->build_hit_points();
-  //this->update_bbox();
-  //this->init_radius();
+  start_time = WallClockTime();
 
   this->hash_grid.set_bbox(this->bbox);
   this->hash_grid.set_hit_points(hit_points_info, hit_points);
+
   // main loop
-  unsigned photons_traced = 0;
-  while((!display || display->is_on()) && iteration < config.max_iters) {
+  while((!display || display->is_on()) && iteration <= config.max_iters) {
     this->build_hit_points();
     this->update_bbox();
     this->init_radius();
-
-
     this->hash_grid.set_bbox(this->bbox);
-
     this->hash_grid.rehash(current_photon_radius2);
 
     kernels::generate_photon_paths(ray_buffer_h, live_photon_paths_h, seeds_h);
     kernels::advance_photon_paths(ray_buffer_h, hit_buffer_h, live_photon_paths_h, hit_points_info_h, hit_points_h, seeds_h, current_photon_radius2);
 
-    photons_traced += chunk_size;
-
-    for(unsigned i = 0; i < config.total_hit_points; ++i) {
-      HitPointPosition& hpi = hit_points_info[i];
-      HitPointRadiance& hp = hit_points[i];
-      if (i % 1000 == 0) std::cout << i << " " << hp.accum_reflected_flux << '\n';
-    }
 
     kernels::accum_flux(hit_points_info_h, hit_points_h, chunk_size, current_photon_radius2);
-
-    for(unsigned i = 0; i < config.total_hit_points; ++i) {
-      HitPointPosition& hpi = hit_points_info[i];
-      HitPointRadiance& hp = hit_points[i];
-      if (i % 1000 == 0) std::cout << i << " " << hp.radiance << '\n';
-    }
-    std::cout << "\n\n";
-    //cout << '\n';
-    if (iteration == 5) exit(0);
     this->update_sample_frame_buffer();
 
-    set_captions();
-    display->request_update(config.min_frame_time);
-
+    total_photons_traced += chunk_size;
     iteration++;
+
+    if (display) {
+      set_captions();
+      display->request_update(config.min_frame_time);
+    }
   }
 }
 
 void Engine :: set_captions() {
+  const double elapsed_time = WallClockTime() - start_time;
+  const unsigned long long total_photons_M = float(total_photons_traced / 1000000.f);
+  const unsigned long long photons_per_sec = total_photons_traced / (elapsed_time * 1000.f);
+
   stringstream header, footer;
   header << "Hello World!";
-  footer << "[Photons " << rand() << "M][Avg. photons/sec " << 0 << "K][Elapsed time " << 0 << "secs]";
+  footer << std::setprecision(2) << "[Photons " << total_photons_M << "M][Avg. photons/sec " << photons_per_sec << "K][Elapsed time " << int(elapsed_time) << "secs]";
   display->set_captions(header, footer);
 }
 
@@ -135,7 +122,7 @@ void Engine :: init_starpu_handles() {
 }
 
 void Engine :: init_seed_buffer() {
-  for(uint i = 0; i < config.total_hit_points; ++i) {
+  for(uint i = 0; i < seeds.size(); ++i) {
     seeds[i] = mwc(i+100);
   }
 }

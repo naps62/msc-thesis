@@ -36,7 +36,6 @@ namespace ppm { namespace kernels { namespace cpu {
       const float u4 = floatRNG(seed_buffer[i]);
 
 
-//std::cout << u0 << " " << u1 << " " << u2 << " " << u3 << " " << u4 << '\n';
       int light_index;
       ppm::LightType light_type;
       light_type = helpers::sample_all_lights(u0, scene->area_lights_count, scene->infinite_light, scene->sun_light, scene->sky_light, light_pdf, light_index);
