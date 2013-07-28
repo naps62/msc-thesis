@@ -260,6 +260,7 @@ void PPM::InitPhotonPath(PointerFreeScene* ss, PhotonPath *photonPath, Ray *ray,
 
 
   photonPath->flux /= pdf * lpdf;
+  photonPath->done = 0;
   photonPath->depth = 0;
 
   //incPhotonCount();

@@ -48,6 +48,7 @@ void accum_flux_impl(
     }
     hp.hits_count = 0;
     hp.accum_radiance = Spectrum();
+    hp.reflected_flux = Spectrum();
   }
 }
 

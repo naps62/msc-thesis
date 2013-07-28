@@ -39,7 +39,6 @@ namespace ppm { namespace kernels { namespace cpu {
 
       if (hit.Miss()) {
         path.done = true;
-        //std::cout << "here\n";
       } else {
         Point hit_point;
         Spectrum surface_color;
@@ -97,7 +96,6 @@ namespace ppm { namespace kernels { namespace cpu {
             path.done = true;
           }
         }
-
       }
     }
   }

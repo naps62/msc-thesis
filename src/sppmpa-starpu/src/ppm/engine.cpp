@@ -28,7 +28,7 @@ Engine :: Engine(const Config& _config, unsigned worker_count)
   hit_points(config.total_hit_points),
   live_photon_paths(chunk_size),
 
-  sample_buffer(config.total_hit_points),
+  sample_buffer(config.width * config.height * config.spp * config.spp),
   sample_frame_buffer(config.width, config.height) {
 
   sample_frame_buffer.Clear();
@@ -79,6 +79,7 @@ void Engine :: render() {
 
 
     this->hash_grid.set_bbox(this->bbox);
+
     this->hash_grid.rehash(current_photon_radius2);
 
     kernels::generate_photon_paths(ray_buffer_h, live_photon_paths_h, seeds_h);
@@ -86,17 +87,17 @@ void Engine :: render() {
 
     photons_traced += chunk_size;
 
-    for(unsigned i = 0; i < config.total_hit_points; ++i) {
+
+    kernels::accum_flux(hit_points_info_h, hit_points_h, chunk_size, current_photon_radius2);
+
+    /*for(unsigned i = 0; i < config.total_hit_points; ++i) {
       HitPointPosition& hpi = hit_points_info[i];
       HitPointRadiance& hp = hit_points[i];
-      std::cout << i << " " << hp.accum_reflected_flux << '\n';
-    }
+      std::cout << i << " " << hp.radiance << '\n';
+    }*/
     std::cout << "\n\n";
-    exit(0);
-    kernels::accum_flux(hit_points_info_h, hit_points_h, photons_traced, current_photon_radius2);
-
     //cout << '\n';
-    //if (iteration == 1) exit(0);
+    if (iteration == 5) exit(0);
     this->update_sample_frame_buffer();
 
     set_captions();
@@ -204,7 +205,7 @@ void Engine :: init_radius() {
 
   g /= iteration;
   current_photon_radius2 *= g;
-  bbox.Expand(photon_radius);
+  bbox.Expand(sqrt(current_photon_radius2));
 }
 
 void Engine :: update_bbox() {
@@ -227,6 +228,8 @@ void Engine :: update_sample_frame_buffer() {
 
     const float scr_x = i % config.width;
     const float scr_y = i / config.width;
+
+    if (i % 1000 == 0) std::cout << scr_x << " " << scr_y << " " << hp.radiance << '\n';
 
     sample_buffer.SplatSample(scr_x, scr_y, hp.radiance);
   }

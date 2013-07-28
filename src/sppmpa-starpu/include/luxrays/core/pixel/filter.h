@@ -20,9 +20,9 @@
  ***************************************************************************/
 
 #ifndef _FILTER_H
-#define  _FILTER_H
+#define _FILTER_H
 
-namespace luxrays {
+
 
 //------------------------------------------------------------------------------
 // Filters
@@ -34,7 +34,7 @@ public:
   Filter(const float xw, const float yw) : xWidth(xw), yWidth(yw),
       invXWidth(1.f / xw), invYWidth(1.f / yw) { }
   virtual ~Filter() { }
-//  __HD__
+  __HD__
   virtual float Evaluate(const float x, const float y) const = 0;
 
   // Filter Public Data
@@ -45,7 +45,7 @@ public:
 class GaussianFilter : public Filter {
 public:
   // GaussianFilter Public Methods
-//  __HD__
+  __HD__
   GaussianFilter(const float xw = 2.f, const float yw = 2.f, const float a = 2.f) :
     Filter(xw, yw) {
     alpha = a;
@@ -54,7 +54,7 @@ public:
   }
 
   virtual ~GaussianFilter() { }
-//  __HD__
+  __HD__
   float Evaluate(const float x, const float y) const {
     return Gaussian(x, expX) * Gaussian(y, expY);
   }
@@ -65,7 +65,7 @@ private:
   float expX, expY;
 
   // GaussianFilter Utility Functions
-//  __HD__
+  __HD__
   float Gaussian(float d, float expv) const {
     return Max(0.f, expf(-alpha * d * d) - expv);
   }
@@ -77,7 +77,7 @@ private:
 
 class FilterLUT {
 public:
-//  __HD__
+  __HD__
   FilterLUT(const Filter &filter, const float offsetX, const float offsetY) {
     const int x0 = Ceil2Int(offsetX - filter.xWidth);
     const int x1 = Floor2Int(offsetX + filter.xWidth);
@@ -172,7 +172,7 @@ public:
 
     delete[] luts;
   }
-//  __HD__
+  __HD__
   const FilterLUT *GetLUT(const float x, const float y) const {
     const int ix = Max<unsigned int>(0, Min<unsigned int>(Floor2Int(lutsSize * (x + 0.5f)), lutsSize - 1));
     const int iy = Max<unsigned int>(0, Min<unsigned int>(Floor2Int(lutsSize * (y + 0.5f)), lutsSize - 1));
@@ -186,6 +186,6 @@ private:
   FilterLUT **luts;
 };
 
-}
+
 
 #endif  /* _FILTER_H */

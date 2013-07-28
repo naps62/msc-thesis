@@ -53,16 +53,16 @@ void Film::AddImageToBuffer(SampleFrameBuffer* sampleFrameBuffer) {
 
       if (weight > 0.f) {
         const float invWeight = tm.scale / weight;
-#if defined USE_SPPM || defined USE_PPM
-        p[i].r = Radiance2PixelFloat(sp[i].radiance.r * invWeight);
-        p[i].g = Radiance2PixelFloat(sp[i].radiance.g * invWeight);
-        p[i].b = Radiance2PixelFloat(sp[i].radiance.b * invWeight);
-#else
+//#if defined USE_SPPM || defined USE_PPM
+//        p[i].r = Radiance2PixelFloat(sp[i].radiance.r * invWeight);
+//        p[i].g = Radiance2PixelFloat(sp[i].radiance.g * invWeight);
+//        p[i].b = Radiance2PixelFloat(sp[i].radiance.b * invWeight);
+//#else
 
         p[i].r += Radiance2PixelFloat(sp[i].radiance.r * invWeight);
         p[i].g += Radiance2PixelFloat(sp[i].radiance.g * invWeight);
         p[i].b += Radiance2PixelFloat(sp[i].radiance.b * invWeight);
-#endif
+//#endif
       }
     }
     break;
@@ -73,9 +73,9 @@ void Film::AddImageToBuffer(SampleFrameBuffer* sampleFrameBuffer) {
     break;
   }
 
-#if defined USE_PPMPA || defined USE_SPPMPA
+//#if defined USE_PPMPA || defined USE_SPPMPA
   imageBufferCount++;
-#endif
+//#endif
 
 }
 

@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 #ifndef _LUXRAYS_UTILS_PIXELDEVICE_FILM_H
-#define  _LUXRAYS_UTILS_PIXELDEVICE_FILM_H
+#define _LUXRAYS_UTILS_PIXELDEVICE_FILM_H
 
 #include <cstddef>
 #include <cmath>
@@ -32,8 +32,8 @@
 #include <FreeImage.h>
 
 #include "luxrays/core.h"
-//#include "config.h"
- using namespace luxrays;
+#include "utils/config.h"
+using namespace luxrays;
 
 #include <boost/thread/mutex.hpp>
 
@@ -280,7 +280,7 @@ public:
     }
   }
   __HD__
-  void SplatSampleBuffer(SampleFrameBuffer* sampleFrameBuffer,const bool /*preview*/, SampleBuffer *sampleBuffer) {
+  void SplatSampleBuffer(SampleFrameBuffer* sampleFrameBuffer,const bool preview, SampleBuffer *sampleBuffer) {
 
 
     //statsTotalSampleCount += (unsigned int) sampleBuffer->GetSampleCount();
@@ -291,15 +291,19 @@ public:
 
     const SampleBufferElem *sbe = sampleBuffer->GetSampleBuffer();
 
-    for (unsigned int i = 0; i < sampleBuffer->GetSampleCount(); ++i)
-      SplatFiltered(sampleFrameBuffer,&sbe[i]);
+    for (unsigned int i = 0; i < sampleBuffer->GetSampleCount(); ++i) {
+      //SplatFiltered(sampleFrameBuffer,&sbe[i]);
       //SplatPreview(&sbe[i]);
-      //SplatRadiance(sbe[i].radiance,(uint)sbe[i].screenX,(uint)sbe[i].screenY);
+      SplatRadiance(sampleFrameBuffer,sbe[i].radiance,(uint)sbe[i].screenX,(uint)sbe[i].screenY);
+      if (i % 1000 == 0) std::cout << i << " " << sbe[i].radiance << '\n';
+    }
 
     //statsTotalSampleTime += WallClockTime() - t;
     //statsTotalSamplesCount += sampleBuffer->GetSampleCount();
 
     AddImageToBuffer(sampleFrameBuffer);
+
+
 
   }
 

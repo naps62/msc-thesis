@@ -63,7 +63,6 @@ void PtrFreeHashGrid :: rehash(const float current_photon_radius_2) {
       const Vector b_min = ((hpi.position - rad) - bbox.pMin) * inv_cell_size;
       const Vector b_max = ((hpi.position + rad) - bbox.pMin) * inv_cell_size;
 
-
       for(int iz = abs(int(b_min.z)); iz <= abs(int(b_max.z)); ++iz) {
         for(int iy = abs(int(b_min.y)); iy <= abs(int(b_max.y)); ++iy) {
           for(int ix = abs(int(b_min.x)); ix <= abs(int(b_max.x)); ++ix) {
