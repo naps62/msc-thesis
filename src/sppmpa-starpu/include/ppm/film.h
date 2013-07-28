@@ -295,7 +295,7 @@ public:
       //SplatFiltered(sampleFrameBuffer,&sbe[i]);
       //SplatPreview(&sbe[i]);
       SplatRadiance(sampleFrameBuffer,sbe[i].radiance,(uint)sbe[i].screenX,(uint)sbe[i].screenY);
-      if (i % 1000 == 0) std::cout << i << " " << sbe[i].radiance << '\n';
+      //if (i % 1000 == 0) std::cout << i << " " << sbe[i].radiance << '\n';
     }
 
     //statsTotalSampleTime += WallClockTime() - t;

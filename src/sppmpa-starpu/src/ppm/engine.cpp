@@ -87,14 +87,19 @@ void Engine :: render() {
 
     photons_traced += chunk_size;
 
+    for(unsigned i = 0; i < config.total_hit_points; ++i) {
+      HitPointPosition& hpi = hit_points_info[i];
+      HitPointRadiance& hp = hit_points[i];
+      if (i % 1000 == 0) std::cout << i << " " << hp.accum_reflected_flux << '\n';
+    }
 
     kernels::accum_flux(hit_points_info_h, hit_points_h, chunk_size, current_photon_radius2);
 
-    /*for(unsigned i = 0; i < config.total_hit_points; ++i) {
+    for(unsigned i = 0; i < config.total_hit_points; ++i) {
       HitPointPosition& hpi = hit_points_info[i];
       HitPointRadiance& hp = hit_points[i];
-      std::cout << i << " " << hp.radiance << '\n';
-    }*/
+      if (i % 1000 == 0) std::cout << i << " " << hp.radiance << '\n';
+    }
     std::cout << "\n\n";
     //cout << '\n';
     if (iteration == 5) exit(0);
@@ -229,7 +234,7 @@ void Engine :: update_sample_frame_buffer() {
     const float scr_x = i % config.width;
     const float scr_y = i / config.width;
 
-    if (i % 1000 == 0) std::cout << scr_x << " " << scr_y << " " << hp.radiance << '\n';
+    //if (i % 1000 == 0) std::cout << scr_x << " " << scr_y << " " << hp.radiance << '\n';
 
     sample_buffer.SplatSample(scr_x, scr_y, hp.radiance);
   }

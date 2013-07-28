@@ -290,10 +290,12 @@ public:
 
     const SampleBufferElem *sbe = sampleBuffer->GetSampleBuffer();
 
-    for (unsigned int i = 0; i < sampleBuffer->GetSampleCount(); ++i)
+    for (unsigned int i = 0; i < sampleBuffer->GetSampleCount(); ++i) {
       //SplatFiltered(sampleFrameBuffer,&sbe[i]);
       //SplatPreview(&sbe[i]);
       SplatRadiance(sampleFrameBuffer,sbe[i].radiance,(uint)sbe[i].screenX,(uint)sbe[i].screenY);
+      //if (i % 1000 == 0) std::cout << i << " "<< sbe[i].radiance << '\n';
+    }
 
     //statsTotalSampleTime += WallClockTime() - t;
     //statsTotalSamplesCount += sampleBuffer->GetSampleCount();

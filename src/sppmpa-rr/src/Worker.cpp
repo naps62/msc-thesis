@@ -171,11 +171,11 @@ void Worker::ProcessIterations(PPM* engine) {
 #if defined USE_SPPM || defined USE_PPM
     if (iterationCount == 1)
     InitRadius(iterationCount);
-    fprintf(stderr, "Iteration radius: %f\n", HPsIterationRadianceFlux[0].accumPhotonRadius2);
+    //fprintf(stderr, "Iteration radius: %f\n", HPsIterationRadianceFlux[0].accumPhotonRadius2);
 
 #else
     InitRadius(iterationCount);
-    fprintf(stderr, "Iteration radius: %f\n", currentPhotonRadius2);
+    //fprintf(stderr, "Iteration radius: %f\n", currentPhotonRadius2);
 
 #endif
 //    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Cpy HPs to device");
@@ -206,12 +206,6 @@ void Worker::ProcessIterations(PPM* engine) {
 
 //    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Build Photon Map");
 
-/*for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
-      HitPointRadianceFlux& hpi = *GetHitPoint(i);
-      std::cout << i << " " << hpi.accumReflectedFlux << '\n';
-    }
-    std::cout << "\n\n";
-    exit(0);*/
 #if defined USE_PPM
 //    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Get HPs");
     getDeviceHitpoints();
@@ -226,7 +220,17 @@ void Worker::ProcessIterations(PPM* engine) {
     AccumulateFluxSPPM(iterationCount, photonPerIteration);
 #endif
 #if defined USE_SPPMPA
+    for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
+      HitPointRadianceFlux& hpi = *GetHitPoint(i);
+      if (i % 1000 == 0) std::cout << i << " " << hpi.accumReflectedFlux << '\n';
+    }
     AccumulateFluxSPPMPA(iterationCount, photonPerIteration);
+    for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
+      HitPointRadianceFlux& hpi = *GetHitPoint(i);
+      if (i % 1000 == 0) std::cout << i << " " << hpi.radiance << '\n';
+    }
+    std::cout << "\n\n";
+    if (iterationCount == 5) exit(0);
 #endif
 #if defined USE_PPMPA
 //    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Radiance calc");
@@ -278,7 +282,6 @@ void Worker::UpdateBBox() {
     if (hp->type == SURFACE)
       hitPointsbbox = Union(hitPointsbbox, hp->position);
   }
-
   SetBBox(hitPointsbbox);
 
 }
@@ -303,7 +306,8 @@ void Worker::InitRadius(uint iteration) {
   g /= iteration;
 
   photonRadius2 = photonRadius2 * g;
-  std::cout << "photon_radius: " << photonRadius2 << '\n';
+
+  //std::cout << "photon_radius: " << photonRadius2 << '\n';
 #endif
 
 #ifdef REBUILD_HASH
@@ -341,6 +345,8 @@ void Worker::UpdateSampleFrameBuffer(unsigned long long iterationPhotonCount) {
 #if defined USE_SPPM || defined USE_SPPMPA
     const float scrX = i % engine->width;
     const float scrY = i / engine->width;
+
+    //if (i %1000 == 0) std::cout << scrX << " " << scrY << " " << ihp->radiance << '\n';
 
     sampleBuffer->SplatSample(scrX, scrY, ihp->radiance);
 #endif
@@ -465,8 +471,8 @@ void Worker::AccumulateFluxSPPM(uint iteration, u_int64_t photonTraced) {
     }
   }
 
-  fprintf(stderr, "Iteration %d hit point 0 reducted radius: %f\n", iteration,
-      GetHitPoint(0)->accumPhotonRadius2);
+  //fprintf(stderr, "Iteration %d hit point 0 reducted radius: %f\n", iteration,
+  //    GetHitPoint(0)->accumPhotonRadius2);
 }
 #endif
 
@@ -507,7 +513,6 @@ void Worker::AccumulateFluxSPPMPA(uint iteration, u_int64_t photonTraced) {
       const double k = 1.0 / (M_PI * currentPhotonRadius2 * photonTraced);
 
       ihp->radiance = (ihp->accumRadiance + ihp->reflectedFlux * k);
-
     }
 
   }
@@ -520,8 +525,8 @@ void Worker::AccumulateFluxSPPMPA(uint iteration, u_int64_t photonTraced) {
     ihp ->accumRadiance = Spectrum();
   }
 
-  fprintf(stderr, "Iteration %d hit point 0 reducted radius: %f\n", iteration,
-      currentPhotonRadius2);
+  //fprintf(stderr, "Iteration %d hit point 0 reducted radius: %f\n", iteration,
+  //    currentPhotonRadius2);
 }
 #endif
 

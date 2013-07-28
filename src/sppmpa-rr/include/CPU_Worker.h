@@ -38,7 +38,7 @@ public:
 
     rayBuffer = new RayBuffer(buffer_size);
 
-    lookupA = new HashGridLookup(engine->hitPointTotal* 2 );
+    lookupA = new HashGridLookup(engine->hitPointTotal );
 
     setScene(ss);
 

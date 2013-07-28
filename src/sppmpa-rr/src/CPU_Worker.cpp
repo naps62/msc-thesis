@@ -279,7 +279,6 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
       while(!photonPath->done) {
         rayHit->SetMiss();
         ss->dataSet->Intersect(ray, rayHit);
-
         if (rayHit->Miss()) {
           photonPath->done = true;
         } else { // Something was hit

@@ -142,11 +142,11 @@ void HashGridLookup::AddFlux(HitPointRadianceFlux *workerHitPoints, PointerFreeS
 
   uint gridEntry = Hash(ix, iy, iz);
   std::list<unsigned int>* hps = hashGrid[gridEntry];
-
   if (hps) {
     std::list<unsigned int>::iterator iter = hps->begin();
+    static int x; x = 0;
     while (iter != hps->end()) {
-
+      unsigned index = *iter;
       HitPointPositionInfo *hp = engine->GetHitPointInfo(*iter);
 
       HitPointRadianceFlux *ihp = &workerHitPoints[*iter++];
@@ -165,6 +165,7 @@ void HashGridLookup::AddFlux(HitPointRadianceFlux *workerHitPoints, PointerFreeS
       continue;
 
 #else
+
       const float dist2 = DistanceSquared(hp->position, hitPoint);
       if ((dist2 > currentPhotonRadius2))
         continue;
@@ -172,6 +173,7 @@ void HashGridLookup::AddFlux(HitPointRadianceFlux *workerHitPoints, PointerFreeS
       const float dot = Dot(hp->normal, wi);
       if (dot <= 0.0001f)
         continue;
+
 
 #endif
 
@@ -310,6 +312,7 @@ void PointerFreeHashGrid::ReHash(float currentPhotonRadius2,HitPointRadianceFlux
               hashGrid[hv] = new std::list<uint>();
 
             hashGrid[hv]->push_front(i);
+
             ++entryCount;
 
             /*// hashGrid[hv]->size() is very slow to execute
