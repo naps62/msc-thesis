@@ -76,8 +76,10 @@ void Engine :: render() {
     starpu_task_wait_for_all(); // TODO remove this from here later
 
     this->update_bbox_and_radius();
+    starpu_task_wait_for_all(); // TODO remove this from here later
     this->hash_grid.set_bbox(this->bbox);
     //this->hash_grid.rehash(current_photon_radius2);
+    std::cout << current_photon_radius2 << '\n';
     this->rehash();
     starpu_task_wait_for_all(); // TODO remove this from here later
 

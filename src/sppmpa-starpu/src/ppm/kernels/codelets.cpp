@@ -9,14 +9,14 @@ namespace ppm { namespace kernels {
   namespace codelets {
     starpu_args    generic_args;
 
-    starpu_codelet generate_eye_paths;
-    starpu_codelet advance_eye_paths;
-    starpu_codelet bbox_zero_initialize;
-    starpu_codelet bbox_reduce;
-    starpu_codelet rehash;
-    starpu_codelet generate_photon_paths;
-    starpu_codelet advance_photon_paths;
-    starpu_codelet accum_flux;
+    struct starpu_codelet generate_eye_paths;
+    struct starpu_codelet advance_eye_paths;
+    struct starpu_codelet bbox_zero_initialize;
+    struct starpu_codelet bbox_reduce;
+    struct starpu_codelet rehash;
+    struct starpu_codelet generate_photon_paths;
+    struct starpu_codelet advance_photon_paths;
+    struct starpu_codelet accum_flux;
 
     starpu_perfmodel generate_eye_paths_pm;
     starpu_perfmodel advance_eye_paths_pm;
@@ -51,7 +51,7 @@ namespace ppm { namespace kernels {
 
 
       starpu_perfmodel* pm;
-      starpu_codelet* cl;
+      struct starpu_codelet* cl;
 
       // generate_eye_paths
       pm = &generate_eye_paths_pm;

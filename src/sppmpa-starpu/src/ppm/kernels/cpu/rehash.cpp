@@ -98,7 +98,7 @@ void rehash(void* buffers[], void* args_orig) {
   const unsigned hit_points_count = STARPU_VECTOR_GET_NX(buffers[0]);
 
   unsigned long long* entry_count = reinterpret_cast<unsigned long long* const>(STARPU_VARIABLE_GET_PTR(buffers[1]));
-
+  std::cout << current_photon_radius2 << '\n';
   rehash_impl(hit_points_info,
               hit_points_count,
               *(args.cpu_hash_grid),
