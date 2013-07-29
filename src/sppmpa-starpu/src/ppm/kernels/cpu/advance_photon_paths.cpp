@@ -15,8 +15,6 @@ using ppm::EyePath;
 namespace ppm { namespace kernels { namespace cpu {
 
   void advance_photon_paths_impl(
-      Ray* const rays,                   const unsigned rays_count,
-      RayHit* const hits,             // const unsigned hits_count,
       PhotonPath* const photon_paths,    const unsigned photon_paths_count,
       Seed* const seed_buffer,        // const unsigned seed_buffer_count,
       const PtrFreeHashGrid* hash_grid,
@@ -27,10 +25,10 @@ namespace ppm { namespace kernels { namespace cpu {
       const float photon_radius2) {
 
   #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
-  for(unsigned i = 0; i < rays_count; ++i) {
-    Ray& ray    = rays[i];
-    RayHit& hit = hits[i];
+  for(unsigned i = 0; i < photon_paths_count; ++i) {
     PhotonPath& path = photon_paths[i];
+    Ray& ray    = path.ray;
+    RayHit hit;
     Seed& seed = seed_buffer[i];
 
     while(!path.done) {
@@ -112,29 +110,20 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
   const float photon_radius2 = args->photon_radius2;
 
   // buffers
-  // rays
-  Ray* const rays           = reinterpret_cast<Ray* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
-  const unsigned rays_count = STARPU_VECTOR_GET_NX(buffers[0]);
-  // hits
-  RayHit* const hits = reinterpret_cast<RayHit* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
-  // const unsigned hits_count = STARPU_VECTOR_GET_NX(buffers[1]);
-  // photon_paths
-  PhotonPath* const photon_paths = reinterpret_cast<PhotonPath* const>(STARPU_VECTOR_GET_PTR(buffers[2]));
-  const unsigned photon_paths_count = STARPU_VECTOR_GET_NX(buffers[2]);
+  PhotonPath* const photon_paths = reinterpret_cast<PhotonPath* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
+  const unsigned photon_paths_count = STARPU_VECTOR_GET_NX(buffers[0]);
   // hit_points_static_info
-  HitPointPosition* const hit_points_info = reinterpret_cast<HitPointPosition* const>(STARPU_VECTOR_GET_PTR(buffers[3]));
-  //const unsigned hit_points_count = STARPU_VECTOR_GET_NX(buffers[3]);
+  HitPointPosition* const hit_points_info = reinterpret_cast<HitPointPosition* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
+  //const unsigned hit_points_count = STARPU_VECTOR_GET_NX(buffers[1]);
   // hit_points
-  HitPointRadiance* const hit_points = reinterpret_cast<HitPointRadiance* const>(STARPU_VECTOR_GET_PTR(buffers[4]));
-  //const unsigned hit_points_count = STARPU_VECTOR_GET_NX(buffers[4]);
+  HitPointRadiance* const hit_points = reinterpret_cast<HitPointRadiance* const>(STARPU_VECTOR_GET_PTR(buffers[2]));
+  //const unsigned hit_points_count = STARPU_VECTOR_GET_NX(buffers[2]);
   // seeds
-  Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[5]));
-  //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[5]);
+  Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[3]));
+  //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[3]);
 
 
-  advance_photon_paths_impl(rays,         rays_count,
-                            hits,         // hits_count
-                            photon_paths, photon_paths_count,
+  advance_photon_paths_impl(photon_paths, photon_paths_count,
                             seed_buffer,  // seed_buffer_count,
                             hash_grid,
                             scene,

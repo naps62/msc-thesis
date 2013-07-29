@@ -4,15 +4,15 @@ Config :: Config(const char *desc, int _argc, char **_argv)
 : beast::program_options::options(desc), argc(_argc), argv((const char**)_argv) {
 
   // scene
-  value("scene_dir",  scene_dir,  string("scenes/simple-mat"), "folder where scene files are stored");
-  value("scene_file", scene_file, string("simple-mat.scn"), "to find <scene_dir>/<scene_file>");
+  value("scene_dir",  scene_dir,  string("scenes/kitchen"), "folder where scene files are stored");
+  value("scene_file", scene_file, string("kitchen.scn"), "to find <scene_dir>/<scene_file>");
   value("output_dir",    output_dir,  string("."), "output image directory");
   value("output_file",   output_file, string("output.png"), "output image file");
 
   // window
   flag("no-display", no_display, "Supress realtime display?");
-  value("width,w",   width,  uint(4),          "window width");
-  value("height,h",  height, uint(4),          "window height");
+  value("width,w",   width,  uint(320),          "window width");
+  value("height,h",  height, uint(240),          "window height");
   value("title,t",   title,  string("ppm-starpu"), "window title");
   value("fps",       fps,    uint(60), "maximum FPS");
   flag("vsync",      vsync, "V-Sync. Can cause problems sometimes, so defaults to false");
@@ -29,7 +29,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   value("max_photon_depth",   max_photon_depth,   uint(8),  "max photon path depth");
 
   // engine
-  value("chunk_size", engine_chunk_size, unsigned(16/*1024*256*/), "chunk size for ray and photon buffers (defaults to 1024*256)");
+  value("chunk_size", engine_chunk_size, unsigned(1024*256), "chunk size for ray and photon buffers (defaults to 1024*256)");
 
   // starpu
   value("sched", sched_policy, string("pheft"), "scheduling policy (pheft (default) | pgreedy)");

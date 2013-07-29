@@ -15,16 +15,15 @@ using ppm::EyePath;
 namespace ppm { namespace kernels { namespace cpu {
 
   void generate_photon_paths_impl(
-      Ray* const rays,                const unsigned rays_count,
-      PhotonPath* const photon_paths, // const unsigned photon_paths_count,
+      PhotonPath* const photon_paths, const unsigned photon_paths_count,
       Seed* const seed_buffer,        // const unsigned seed_buffer_count,
       const Config* config,
       const PtrFreeScene* scene) {
 
     #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
-    for(unsigned i = 0; i < rays_count; ++i) {
-      Ray& ray = rays[i];
+    for(unsigned i = 0; i < photon_paths_count; ++i) {
       PhotonPath& path = photon_paths[i];
+      Ray& ray = path.ray;
       float light_pdf;
       float pdf;
       Spectrum f;
@@ -63,19 +62,15 @@ namespace ppm { namespace kernels { namespace cpu {
     const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->cpu_scene);
 
     // buffers
-    // rays
-    Ray* const rays           = reinterpret_cast<Ray* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
-    const unsigned rays_count = STARPU_VECTOR_GET_NX(buffers[0]);
     // photon paths
-    PhotonPath* const photon_paths = reinterpret_cast<PhotonPath* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
-    // const unsigned photon_paths_count = STARPU_VECTOR_GET_NX(buffers[1]);
+    PhotonPath* const photon_paths = reinterpret_cast<PhotonPath* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
+    const unsigned photon_paths_count = STARPU_VECTOR_GET_NX(buffers[0]);
     // seeds
-    Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[2]));
-    //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[2]);
+    Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
+    //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[1]);
 
 
-    generate_photon_paths_impl(rays,         rays_count,
-                               photon_paths, // photon_paths_count
+    generate_photon_paths_impl(photon_paths, photon_paths_count,
                                seed_buffer,  // seed_buffer_count,
                                config,
                                scene);

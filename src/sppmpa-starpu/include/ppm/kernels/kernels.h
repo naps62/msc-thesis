@@ -15,36 +15,31 @@ namespace ppm { namespace kernels {
 
 void generate_eye_paths (
     starpu_data_handle_t eye_paths,
-    starpu_data_handle_t seed_buffer);
+    starpu_data_handle_t seed_buffer
+);
+
+void advance_eye_paths (
+    starpu_data_handle_t hit_points_info,
+    starpu_data_handle_t eye_paths,
+    starpu_data_handle_t seed_buffer
+);
+
+void update_bbox (
+    starpu_data_handle_t hit_points_info,
+    starpu_data_handle_t bbox
+);
 
 void generate_photon_paths (
-    starpu_data_handle_t ray_buffer,
     starpu_data_handle_t photon_paths,
     starpu_data_handle_t seed_buffer
 );
-void advance_eye_paths (
-    starpu_data_handle_t hit_points_info,
-    starpu_data_handle_t hit_buffer,
-    starpu_data_handle_t eye_paths,
-    starpu_data_handle_t eye_paths_indexes,
-    starpu_data_handle_t seed_buffer,
-    const unsigned buffer_size
-);
 
 void advance_photon_paths (
-    starpu_data_handle_t ray_buffer,
-    starpu_data_handle_t hit_buffer,
     starpu_data_handle_t photon_paths,
     starpu_data_handle_t hit_points_info,
     starpu_data_handle_t hit_points,
     starpu_data_handle_t seed_buffer,
     const float photon_radius2
-);
-
-void intersect_ray_hit_buffer (
-    starpu_data_handle_t ray_buffer,
-    starpu_data_handle_t hit_buffer,
-    const unsigned buffer_size
 );
 
 void accum_flux (

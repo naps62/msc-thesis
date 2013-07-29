@@ -7,21 +7,21 @@ namespace ppm {
 
 struct Path {
   Spectrum flux;
+  Ray ray;
   uint depth;
   bool done;
 
   Path()
-  : flux(1.f, 1.f, 1.f), depth(0), done(false) { }
+  : flux(1.f, 1.f, 1.f), ray(), depth(0), done(false) { }
 };
 
 struct EyePath : Path {
   float scr_x, scr_y;
-  Ray ray;
   bool splat;
   uint sample_index;
 
   EyePath()
-  : Path(), scr_x(0), scr_y(0), ray(), splat(false) { }
+  : Path(), scr_x(0), scr_y(0), splat(false) { }
 };
 
 struct PhotonPath : Path {

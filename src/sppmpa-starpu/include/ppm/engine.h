@@ -42,17 +42,12 @@ protected:
 
   std::vector<Seed> seeds;
   std::vector<EyePath> eye_paths;
-  vector<unsigned> eye_paths_indexes;
-  RayBuffer ray_hit_buffer;
   std::vector<HitPointPosition> hit_points_info;
-  std::vector<HitPointRadiance>           hit_points;
+  std::vector<HitPointRadiance> hit_points;
   std::vector<PhotonPath> live_photon_paths;
 
   starpu_data_handle_t seeds_h;
   starpu_data_handle_t eye_paths_h;
-  starpu_data_handle_t eye_paths_indexes_h;
-  starpu_data_handle_t ray_buffer_h;
-  starpu_data_handle_t hit_buffer_h;
   starpu_data_handle_t hit_points_info_h;
   starpu_data_handle_t hit_points_h;
   starpu_data_handle_t live_photon_paths_h;

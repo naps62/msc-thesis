@@ -61,28 +61,10 @@ namespace ppm { namespace kernels {
       cl->cpu_funcs[0]    = ppm::kernels::cpu::generate_eye_paths;
       cl->cpu_funcs[1]    = NULL;
       cl->nbuffers        = 2;
-      cl->modes[0]        = STARPU_RW;
-      cl->modes[1]        = STARPU_RW;
+      cl->modes[0]        = STARPU_RW; // eye_paths
+      cl->modes[1]        = STARPU_RW; // seeds
       cl->model           = pm;
 
-
-      // intersect_ray_hit_buffer
-      pm = &intersect_ray_hit_buffer_pm;
-      perfmodel_init(pm);
-      pm->type = STARPU_HISTORY_BASED;
-      pm->symbol = intersect_ray_hit_buffer_sym;
-
-      cl = &intersect_ray_hit_buffer;
-      starpu_codelet_init(cl);
-      cl->where           = STARPU_CPU;
-      cl->type            = STARPU_FORKJOIN;
-      cl->max_parallelism = std::numeric_limits<int>::max();
-      cl->cpu_funcs[0]    = ppm::kernels::cpu::intersect_ray_hit_buffer;
-      cl->cpu_funcs[1]    = NULL;
-      cl->nbuffers        = 2;
-      cl->modes[0]        = STARPU_R;  // rays
-      cl->modes[1]        = STARPU_RW; // hits
-      cl->model           = pm;
 
       // advance_eye_paths
       pm = &advance_eye_paths_pm;
@@ -97,12 +79,10 @@ namespace ppm { namespace kernels {
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_eye_paths;
       cl->cpu_funcs[1]    = NULL;
-      cl->nbuffers        = 5;
-      cl->modes[0]        = STARPU_RW;
-      cl->modes[1]        = STARPU_R;
-      cl->modes[2]        = STARPU_RW;
-      cl->modes[3]        = STARPU_R;
-      cl->modes[4]        = STARPU_RW;
+      cl->nbuffers        = 3;
+      cl->modes[0]        = STARPU_RW; // hit points
+      cl->modes[1]        = STARPU_RW; // eye_paths
+      cl->modes[2]        = STARPU_RW; // seed_buffer
       cl->model           = pm;
 
 
@@ -119,10 +99,9 @@ namespace ppm { namespace kernels {
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::generate_photon_paths;
       cl->cpu_funcs[1]    = NULL;
-      cl->nbuffers        = 3;
-      cl->modes[0]        = STARPU_W;  // ray_buffer
-      cl->modes[1]        = STARPU_RW; // live_photon_paths
-      cl->modes[2]        = STARPU_RW; // seeds
+      cl->nbuffers        = 2;
+      cl->modes[0]        = STARPU_RW; // live_photon_paths
+      cl->modes[1]        = STARPU_RW; // seeds
       cl->model           = pm;
 
 
@@ -139,13 +118,11 @@ namespace ppm { namespace kernels {
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_photon_paths;
       cl->cpu_funcs[1]    = NULL;
-      cl->nbuffers        = 6;
-      cl->modes[0]        = STARPU_RW; // ray_buffer
-      cl->modes[1]        = STARPU_RW; // hit buffer
-      cl->modes[2]        = STARPU_RW; // live_photon_paths
-      cl->modes[3]        = STARPU_RW; // hit_points_info
-      cl->modes[4]        = STARPU_RW; // hit_points
-      cl->modes[5]        = STARPU_RW; // seeds
+      cl->nbuffers        = 4;
+      cl->modes[0]        = STARPU_RW; // live_photon_paths
+      cl->modes[1]        = STARPU_RW; // hit_points_info
+      cl->modes[2]        = STARPU_RW; // hit_points
+      cl->modes[3]        = STARPU_RW; // seeds
       cl->model           = pm;
 
 
