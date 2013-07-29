@@ -1,4 +1,6 @@
-#include "ppm/kernels/kernels.h"
+#include "ppm/kernels/codelets.h"
+using namespace ppm::kernels::codelets;
+
 #include "ppm/kernels/helpers.cuh"
 
 #include "utils/config.h"

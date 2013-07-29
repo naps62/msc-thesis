@@ -1,4 +1,5 @@
-#include "ppm/kernels/kernels.h"
+#include "ppm/kernels/codelets.h"
+using namespace ppm::kernels::codelets;
 
 #include "utils/config.h"
 #include "ppm/ptrfreescene.h"

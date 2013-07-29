@@ -13,24 +13,27 @@ namespace ppm { namespace kernels {
     struct starpu_args {
       const Config*          cpu_config;
       const PtrFreeScene*    cpu_scene;
-      const PtrFreeHashGrid* cpu_hash_grid;
+      PtrFreeHashGrid* cpu_hash_grid;
       const CUDA::Config*    gpu_config;
       const PtrFreeScene*    gpu_scene;
-      const PtrFreeHashGrid* gpu_hash_grid;
+      PtrFreeHashGrid* gpu_hash_grid;
 
       starpu_args() { };
     };
 
     extern starpu_codelet generate_eye_paths;
     extern starpu_codelet advance_eye_paths;
+    extern starpu_codelet bbox_zero_initialize;
+    extern starpu_codelet bbox_reduce;
+    extern starpu_codelet rehash;
     extern starpu_codelet generate_photon_paths;
     extern starpu_codelet advance_photon_paths;
     extern starpu_codelet accum_flux;
 
     extern starpu_args    generic_args;
 
-    void init(const Config* cpu_config,       const PtrFreeScene* cpu_scene, const PtrFreeHashGrid* cpu_hash_grid,
-              const CUDA::Config* gpu_config, const PtrFreeScene* gpu_scene, const PtrFreeHashGrid* gpu_hash_grid);
+    void init(const Config* cpu_config,       const PtrFreeScene* cpu_scene, PtrFreeHashGrid* cpu_hash_grid,
+              const CUDA::Config* gpu_config, const PtrFreeScene* gpu_scene, PtrFreeHashGrid* gpu_hash_grid);
 
   }
 

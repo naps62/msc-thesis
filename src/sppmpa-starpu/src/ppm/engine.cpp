@@ -2,7 +2,6 @@
 #include "ppm/kernels/codelets.h"
 #include "utils/random.h"
 #include "ppm/kernels/codelets.h"
-#include "ppm/kernels/kernels.h"
 #include "ppm/types.h"
 
 #include <starpu.h>
@@ -71,48 +70,21 @@ void Engine :: render() {
 
   // main loop
   while((!display || display->is_on()) && iteration <= config.max_iters) {
-    starpu_insert_task(&codelets::generate_eye_paths,
-      STARPU_RW, eye_paths_h,
-      STARPU_RW, seeds_h,
-      STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
-      0);
+    this->generate_eye_paths();
+    this->advance_eye_paths();
 
-    starpu_insert_task(&codelets::advance_eye_paths,
-      STARPU_RW, hit_points_info_h,
-      STARPU_RW, eye_paths_h,
-      STARPU_RW, seeds_h,
-      STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
-      0);
     starpu_task_wait_for_all(); // TODO remove this from here later
 
-    this->update_bbox();
-    this->init_radius();
+    this->update_bbox_and_radius();
     this->hash_grid.set_bbox(this->bbox);
-    this->hash_grid.rehash(current_photon_radius2);
+    //this->hash_grid.rehash(current_photon_radius2);
+    this->rehash();
+    starpu_task_wait_for_all(); // TODO remove this from here later
 
-    starpu_insert_task(&codelets::generate_photon_paths,
-      STARPU_RW, live_photon_paths_h,
-      STARPU_RW, seeds_h,
-      STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
-      0);
+    this->generate_photon_paths();
+    this->advance_photon_paths();
+    this->accumulate_flux();
 
-    starpu_insert_task(&codelets::advance_photon_paths,
-      STARPU_RW, live_photon_paths_h,
-      STARPU_R,  hit_points_info_h,
-      STARPU_RW, hit_points_h,
-      STARPU_RW, seeds_h,
-      STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
-      STARPU_VALUE, &current_photon_radius2, sizeof(current_photon_radius2),
-      0);
-
-
-    starpu_insert_task(&codelets::accum_flux,
-      STARPU_R,  hit_points_info_h,
-      STARPU_RW, hit_points_h,
-      STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
-      STARPU_VALUE, &chunk_size,             sizeof(chunk_size),
-      STARPU_VALUE, &current_photon_radius2, sizeof(current_photon_radius2),
-      0);
     starpu_task_wait_for_all(); // TODO remove this from here later
 
     this->update_sample_frame_buffer();
@@ -148,6 +120,11 @@ void Engine :: init_starpu_handles() {
   starpu_vector_data_register(&hit_points_info_h,   0, (uintptr_t)&hit_points_info[0],   hit_points_info.size(),   sizeof(HitPointPosition));
   starpu_vector_data_register(&hit_points_h,        0, (uintptr_t)&hit_points[0],        hit_points.size(),        sizeof(HitPointPosition));
   starpu_vector_data_register(&live_photon_paths_h, 0, (uintptr_t)&live_photon_paths[0], live_photon_paths.size(), sizeof(PhotonPath));
+
+  //starpu_variable_data_register(&bbox_h, 0, (uintptr_t)NULL, sizeof(bbox));
+  //starpu_data_set_reduction_methods(bbox_h, &codelets::bbox_reduce, &codelets::bbox_zero_initialize);
+
+  starpu_variable_data_register(&hash_grid_entry_count_h, 0, (uintptr_t)&hash_grid.entry_count, sizeof(hash_grid.entry_count));
 }
 
 void Engine :: init_seed_buffer() {
@@ -156,24 +133,63 @@ void Engine :: init_seed_buffer() {
   }
 }
 
-void Engine :: build_hit_points() {
+void Engine :: generate_eye_paths() {
+  starpu_insert_task(&codelets::generate_eye_paths,
+    STARPU_RW, eye_paths_h,
+    STARPU_RW, seeds_h,
+    STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+    0);
+
+}
+void Engine :: advance_eye_paths() {
+  starpu_insert_task(&codelets::advance_eye_paths,
+    STARPU_RW, hit_points_info_h,
+    STARPU_RW, eye_paths_h,
+    STARPU_RW, seeds_h,
+    STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+    0);
 }
 
-void Engine :: init_radius() {
-  const Vector ssize = bbox.pMax - bbox.pMin;
-  const float photon_radius = ((ssize.x + ssize.y + ssize.z) / 3.f) / ((config.width * config.spp + config.height * config.spp) / 2.f) * 2.f;
-  current_photon_radius2 = photon_radius * photon_radius;
-
-  float g = 1;
-  for(uint k = 1; k < iteration; ++k)
-    g *= (k + config.alpha) / k;
-
-  g /= iteration;
-  current_photon_radius2 *= g;
-  bbox.Expand(sqrt(current_photon_radius2));
+void Engine :: rehash() {
+  starpu_insert_task(&codelets::rehash,
+    STARPU_R,     hit_points_info_h,
+    STARPU_W,     hash_grid_entry_count_h,
+    STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+    STARPU_VALUE, &bbox,                   sizeof(bbox),
+    STARPU_VALUE, &current_photon_radius2, sizeof(current_photon_radius2),
+    0);
 }
 
-void Engine :: update_bbox() {
+void Engine :: generate_photon_paths() {
+  starpu_insert_task(&codelets::generate_photon_paths,
+    STARPU_RW, live_photon_paths_h,
+    STARPU_RW, seeds_h,
+    STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+    0);
+}
+
+void Engine :: advance_photon_paths() {
+  starpu_insert_task(&codelets::advance_photon_paths,
+    STARPU_RW, live_photon_paths_h,
+    STARPU_R,  hit_points_info_h,
+    STARPU_RW, hit_points_h,
+    STARPU_RW, seeds_h,
+    STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+    STARPU_VALUE, &current_photon_radius2, sizeof(current_photon_radius2),
+    0);
+}
+
+void Engine :: accumulate_flux() {
+  starpu_insert_task(&codelets::accum_flux,
+    STARPU_R,  hit_points_info_h,
+    STARPU_RW, hit_points_h,
+    STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+    STARPU_VALUE, &chunk_size,             sizeof(chunk_size),
+    STARPU_VALUE, &current_photon_radius2, sizeof(current_photon_radius2),
+    0);
+}
+
+void Engine :: update_bbox_and_radius() {
   BBox bbox;
 
   // TODO move this to a kernel?
@@ -184,7 +200,24 @@ void Engine :: update_bbox() {
     }
   }
   this->bbox = bbox;
+
+  const Vector ssize = bbox.pMax - bbox.pMin;
+  const float photon_radius = ((ssize.x + ssize.y + ssize.z) / 3.f) / ((config.width * config.spp + config.height * config.spp) / 2.f) * 2.f;
+  current_photon_radius2 = photon_radius * photon_radius;
+
+  float g = 1;
+  for(uint k = 1; k < iteration; ++k)
+    g *= (k + config.alpha) / k;
+
+  g /= iteration;
+  current_photon_radius2 *= g;
+  this->bbox.Expand(sqrt(current_photon_radius2));
 }
+
+//void Engine :: init_radius() {
+
+//}
+
 
 void Engine :: update_sample_frame_buffer() {
   for(unsigned i = 0; i < hit_points.size(); ++i) {

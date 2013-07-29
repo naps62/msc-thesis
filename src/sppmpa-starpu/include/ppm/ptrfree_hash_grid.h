@@ -19,7 +19,7 @@ public:
 
   unsigned int size;
   float inv_cell_size;
-  unsigned int entry_count;
+  unsigned long long entry_count;
 
   //unsigned int* lists_buff;
   //unsigned int* lengths_buff;
