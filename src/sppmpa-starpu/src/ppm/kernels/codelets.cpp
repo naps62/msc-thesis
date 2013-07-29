@@ -120,7 +120,7 @@ namespace ppm { namespace kernels {
       cl->cpu_funcs[1]    = NULL;
       cl->nbuffers        = 4;
       cl->modes[0]        = STARPU_RW; // live_photon_paths
-      cl->modes[1]        = STARPU_RW; // hit_points_info
+      cl->modes[1]        = STARPU_R;  // hit_points_info
       cl->modes[2]        = STARPU_RW; // hit_points
       cl->modes[3]        = STARPU_RW; // seeds
       cl->model           = pm;

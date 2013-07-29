@@ -9,17 +9,12 @@ void generate_photon_paths(
     starpu_data_handle_t photon_paths,
     starpu_data_handle_t seed_buffer) {
 
-  // task definition
-  struct starpu_task* task = starpu_task_create();
-  task->synchronous = 1;
-  task->cl = &codelets::generate_photon_paths;
-  task->handles[0] = photon_paths;
-  task->handles[1] = seed_buffer;
-  task->cl_arg      = &codelets::generic_args;
-  task->cl_arg_size = sizeof(codelets::generic_args);
-
-  // submit
-  starpu_task_submit(task);
+  starpu_insert_task(&codelets::generate_photon_paths,
+    STARPU_RW, photon_paths,
+    STARPU_RW, seed_buffer,
+    STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+    0
+  );
 }
 
 } }

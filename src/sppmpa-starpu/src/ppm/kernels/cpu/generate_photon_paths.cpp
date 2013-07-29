@@ -57,9 +57,9 @@ namespace ppm { namespace kernels { namespace cpu {
 
 
   void generate_photon_paths(void* buffers[], void* args_orig) {
-    const starpu_args*  args   = (const starpu_args*) args_orig;
-    const Config*       config = static_cast<const Config*>(args->cpu_config);
-    const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->cpu_scene);
+
+    const starpu_args args;
+    starpu_codelet_unpack_args(args_orig, &args);
 
     // buffers
     // photon paths
@@ -72,8 +72,8 @@ namespace ppm { namespace kernels { namespace cpu {
 
     generate_photon_paths_impl(photon_paths, photon_paths_count,
                                seed_buffer,  // seed_buffer_count,
-                               config,
-                               scene);
+                               args.cpu_config,
+                               args.cpu_scene);
 
 
   }

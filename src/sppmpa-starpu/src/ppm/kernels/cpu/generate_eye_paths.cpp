@@ -61,9 +61,8 @@ void generate_eye_paths_impl(
 
 void generate_eye_paths(void* buffers[], void* args_orig) {
   // cl_args
-  const starpu_args* args = (starpu_args*) args_orig;
-  const Config*       config = static_cast<const Config*>(args->cpu_config);
-  const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->cpu_scene);
+  const starpu_args args;
+  starpu_codelet_unpack_args(args_orig, &args);
 
   // buffers
   // eye_paths
@@ -76,8 +75,8 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
 
   generate_eye_paths_impl(eye_paths,   // eye_path_count,
                           seed_buffer, // seed_buffer_count,
-                          config,
-                          scene);
+                          args.cpu_config,
+                          args.cpu_scene);
 
 
 }

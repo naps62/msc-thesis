@@ -10,25 +10,14 @@ void advance_eye_paths(
     starpu_data_handle_t eye_paths,
     starpu_data_handle_t seed_buffer) {
 
-  codelets::starpu_advance_eye_paths_args args = {
-    codelets::generic_args.cpu_scene,
-    codelets::generic_args.gpu_scene,
-    codelets::generic_args.cpu_config,
-    codelets::generic_args.gpu_config,
-  };
-
-  // task definition
-  struct starpu_task* task = starpu_task_create();
-  task->synchronous = 1;
-  task->cl = &codelets::advance_eye_paths;
-  task->handles[0] = hit_points_info;
-  task->handles[1] = eye_paths;
-  task->handles[2] = seed_buffer;
-  task->cl_arg      = &args;
-  task->cl_arg_size = sizeof(args);
-
-  // submit
-  starpu_task_submit(task);
+  starpu_insert_task(&codelets::advance_eye_paths,
+    STARPU_RW, hit_points_info,
+    STARPU_RW, eye_paths,
+    STARPU_RW, seed_buffer,
+    STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+    0
+  );
+  starpu_task_wait_for_all(); // TODO remove this from here later
 }
 
 } }

@@ -103,11 +103,10 @@ namespace ppm { namespace kernels { namespace cpu {
 
 void advance_photon_paths(void* buffers[], void* args_orig) {
   // cl_args
-  const codelets::starpu_advance_photon_paths_args* args    = (const codelets::starpu_advance_photon_paths_args*) args_orig;
-  const Config*       config = static_cast<const Config*>(args->cpu_config);
-  const PtrFreeScene* scene  = static_cast<const PtrFreeScene*>(args->cpu_scene);
-  const PtrFreeHashGrid* hash_grid = static_cast<const PtrFreeHashGrid*>(args->cpu_hash_grid);
-  const float photon_radius2 = args->photon_radius2;
+
+  const starpu_args args;
+  float photon_radius2;
+  starpu_codelet_unpack_args(args_orig, &args, &photon_radius2);
 
   // buffers
   PhotonPath* const photon_paths = reinterpret_cast<PhotonPath* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
@@ -125,11 +124,11 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
 
   advance_photon_paths_impl(photon_paths, photon_paths_count,
                             seed_buffer,  // seed_buffer_count,
-                            hash_grid,
-                            scene,
+                            args.cpu_hash_grid,
+                            args.cpu_scene,
                             hit_points_info,
                             hit_points,
-                            config->max_photon_depth,
+                            args.cpu_config->max_photon_depth,
                             photon_radius2);
 
 

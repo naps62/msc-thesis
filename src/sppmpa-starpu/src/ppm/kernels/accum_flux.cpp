@@ -11,24 +11,14 @@ void accum_flux(
   const unsigned photons_traced,
   const float current_photon_radius2) {
 
-  codelets::starpu_accum_flux_args args = {
-    codelets::generic_args.cpu_config,
-    codelets::generic_args.gpu_config,
-    photons_traced,
-    current_photon_radius2
-  };
-
-  // task definition
-  struct starpu_task* task = starpu_task_create();
-  task->synchronous = 1;
-  task->cl = &codelets::accum_flux;
-  task->handles[0]  = hit_points_info;
-  task->handles[1]  = hit_points;
-  task->cl_arg      = &args;
-  task->cl_arg_size = sizeof(args);
-
-  // submit
-  starpu_task_submit(task);
+  starpu_insert_task(&codelets::accum_flux,
+    STARPU_R,  hit_points_info,
+    STARPU_RW, hit_points,
+    STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+    STARPU_VALUE, &photons_traced,         sizeof(photons_traced),
+    STARPU_VALUE, &current_photon_radius2,  sizeof(current_photon_radius2),
+    0);
+  starpu_task_wait_for_all(); // TODO remove this from here later
 }
 
 } }

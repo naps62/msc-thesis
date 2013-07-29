@@ -147,9 +147,9 @@ void advance_eye_paths_impl(
 
 void advance_eye_paths(void* buffers[], void* args_orig) {
 
-  fflush(stdout);
   // cl_args
-  const codelets::starpu_advance_eye_paths_args* args = (const codelets::starpu_advance_eye_paths_args*) args_orig;
+  const starpu_args args;
+  starpu_codelet_unpack_args(args_orig, &args);
 
   // buffers
   // hit point static info
@@ -167,8 +167,8 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
   advance_eye_paths_impl(hit_points, // hit_points_count,
                          eye_paths,         eye_paths_count,
                          seed_buffer, //    seed_buffer_count,
-                         args->cpu_scene,
-                         args->cpu_config->max_eye_path_depth);
+                         args.cpu_scene,
+                         args.cpu_config->max_eye_path_depth);
 }
 
 } } }

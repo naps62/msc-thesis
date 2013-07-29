@@ -17,30 +17,8 @@ namespace ppm { namespace kernels {
       const CUDA::Config*    gpu_config;
       const PtrFreeScene*    gpu_scene;
       const PtrFreeHashGrid* gpu_hash_grid;
-    };
 
-    struct starpu_advance_eye_paths_args {
-      const PtrFreeScene* cpu_scene;
-      const PtrFreeScene* gpu_scene;
-      const Config*       cpu_config;
-      const CUDA::Config* gpu_config;
-    };
-
-    struct starpu_advance_photon_paths_args {
-      const Config*          cpu_config;
-      const PtrFreeScene*    cpu_scene;
-      const PtrFreeHashGrid* cpu_hash_grid;
-      const CUDA::Config*    gpu_config;
-      const PtrFreeScene*    gpu_scene;
-      const PtrFreeHashGrid* gpu_hash_grid;
-      const float photon_radius2;
-    };
-
-    struct starpu_accum_flux_args {
-      const Config* cpu_config;
-      const CUDA::Config* cuda_config;
-      const unsigned photons_traced;
-      const float current_photon_radius2;
+      starpu_args() { };
     };
 
     extern starpu_codelet generate_eye_paths;
