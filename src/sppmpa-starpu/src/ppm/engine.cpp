@@ -1,10 +1,12 @@
 #include "ppm/engine.h"
 #include "ppm/kernels/codelets.h"
 #include "utils/random.h"
+#include "ppm/kernels/codelets.h"
 #include "ppm/kernels/kernels.h"
 #include "ppm/types.h"
 
 #include <starpu.h>
+using namespace ppm::kernels;
 
 namespace ppm {
 
@@ -39,7 +41,7 @@ Engine :: Engine(const Config& _config, unsigned worker_count)
     display->start(true);
   }
 
-  // load starpu
+  // load starpuk
   starpu_conf_init(&this->spu_conf);
   spu_conf.sched_policy_name = config.sched_policy.c_str();
 
@@ -69,19 +71,50 @@ void Engine :: render() {
 
   // main loop
   while((!display || display->is_on()) && iteration <= config.max_iters) {
-    kernels::generate_eye_paths(eye_paths_h, seeds_h);
-    kernels::advance_eye_paths(hit_points_info_h, eye_paths_h, seeds_h);
+    starpu_insert_task(&codelets::generate_eye_paths,
+      STARPU_RW, eye_paths_h,
+      STARPU_RW, seeds_h,
+      STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+      0);
+
+    starpu_insert_task(&codelets::advance_eye_paths,
+      STARPU_RW, hit_points_info_h,
+      STARPU_RW, eye_paths_h,
+      STARPU_RW, seeds_h,
+      STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+      0);
+    starpu_task_wait_for_all(); // TODO remove this from here later
 
     this->update_bbox();
     this->init_radius();
     this->hash_grid.set_bbox(this->bbox);
     this->hash_grid.rehash(current_photon_radius2);
 
-    kernels::generate_photon_paths(live_photon_paths_h, seeds_h);
-    kernels::advance_photon_paths(live_photon_paths_h, hit_points_info_h, hit_points_h, seeds_h, current_photon_radius2);
+    starpu_insert_task(&codelets::generate_photon_paths,
+      STARPU_RW, live_photon_paths_h,
+      STARPU_RW, seeds_h,
+      STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+      0);
+
+    starpu_insert_task(&codelets::advance_photon_paths,
+      STARPU_RW, live_photon_paths_h,
+      STARPU_R,  hit_points_info_h,
+      STARPU_RW, hit_points_h,
+      STARPU_RW, seeds_h,
+      STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+      STARPU_VALUE, &current_photon_radius2, sizeof(current_photon_radius2),
+      0);
 
 
-    kernels::accum_flux(hit_points_info_h, hit_points_h, chunk_size, current_photon_radius2);
+    starpu_insert_task(&codelets::accum_flux,
+      STARPU_R,  hit_points_info_h,
+      STARPU_RW, hit_points_h,
+      STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+      STARPU_VALUE, &chunk_size,             sizeof(chunk_size),
+      STARPU_VALUE, &current_photon_radius2, sizeof(current_photon_radius2),
+      0);
+    starpu_task_wait_for_all(); // TODO remove this from here later
+
     this->update_sample_frame_buffer();
 
     total_photons_traced += chunk_size;
