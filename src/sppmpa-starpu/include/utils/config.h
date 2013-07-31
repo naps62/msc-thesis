@@ -41,10 +41,11 @@ struct Config : public beast::program_options::options {
   uint max_photon_depth;
 
   // engine
-  unsigned engine_chunk_size;
+  unsigned photons_per_iter;
 
   // starpu
   string sched_policy;
+  uint max_iters_at_once;
 
   Config(const char *desc, int _argc, char **_argv);
 };

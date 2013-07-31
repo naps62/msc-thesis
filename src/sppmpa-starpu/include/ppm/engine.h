@@ -20,6 +20,7 @@ public:
   Engine(const Config& _config, unsigned worker_count);
   ~Engine();
   void render();
+  void output();
   void set_captions();
 
 protected:
@@ -33,12 +34,13 @@ protected:
   PtrFreeHashGrid hash_grid;
   Display* display;
   BBox bbox;
-  Film film;
+  Film* film;
 
   // starpu stuff
   starpu_conf spu_conf;
 
-  const unsigned chunk_size;
+  SampleBuffer* sample_buffer;
+  SampleFrameBuffer* frame_buffer;
 
   std::vector<Seed> seeds;
   std::vector<EyePath> eye_paths;
@@ -54,23 +56,23 @@ protected:
   starpu_data_handle_t bbox_h;
   starpu_data_handle_t hash_grid_entry_count_h;
   starpu_data_handle_t current_photon_radius2_h;
-
-  SampleBuffer sample_buffer;
-  SampleFrameBuffer sample_frame_buffer;
+  starpu_data_handle_t sample_buffer_h;
+  starpu_data_handle_t frame_buffer_h;
+  starpu_data_handle_t film_h;
 
   void init_starpu_handles();
   void init_seed_buffer();
 
-  void update_bbox_and_radius();
-
   void generate_eye_paths();
   void advance_eye_paths();
+  void bbox_compute();
   void rehash();
   void generate_photon_paths();
   void advance_photon_paths();
   void accumulate_flux();
+  void update_sample_buffer();
+  void splat_to_film();
 
-  void update_sample_frame_buffer();
 };
 
 }

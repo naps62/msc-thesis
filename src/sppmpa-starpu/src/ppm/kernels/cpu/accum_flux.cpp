@@ -58,20 +58,21 @@ void accum_flux(void* buffers[], void* args_orig) {
   // cl_args
   const starpu_args args;
   unsigned photons_traced;
-  float current_photon_radius2;
-  starpu_codelet_unpack_args(args_orig, &args, &photons_traced, &current_photon_radius2);
+  starpu_codelet_unpack_args(args_orig, &args, &photons_traced);
 
   // buffers
   const HitPointPosition* const hit_points_info = reinterpret_cast<const HitPointPosition* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
         HitPointRadiance*           const hit_points      = reinterpret_cast<      HitPointRadiance*           const>(STARPU_VECTOR_GET_PTR(buffers[1]));
   const unsigned size = STARPU_VECTOR_GET_NX(buffers[0]);
 
+  const float* const photon_radius2 = (const float* const)STARPU_VARIABLE_GET_PTR(buffers[2]);
+
   accum_flux_impl(hit_points_info,
                   hit_points,
                   size,
                   args.cpu_config->alpha,
                   photons_traced,
-                  current_photon_radius2);
+                  *photon_radius2);
 }
 
 } } }

@@ -21,15 +21,16 @@ namespace ppm { namespace kernels {
       starpu_args() { };
     };
 
+    extern struct starpu_codelet init_seeds;
     extern struct starpu_codelet generate_eye_paths;
     extern struct starpu_codelet advance_eye_paths;
     extern struct starpu_codelet bbox_compute;
-    extern struct starpu_codelet bbox_zero_initialize;
-    extern struct starpu_codelet bbox_reduce;
     extern struct starpu_codelet rehash;
     extern struct starpu_codelet generate_photon_paths;
     extern struct starpu_codelet advance_photon_paths;
     extern struct starpu_codelet accum_flux;
+    extern struct starpu_codelet update_sample_buffer;
+    extern struct starpu_codelet splat_to_film;
 
     extern starpu_args    generic_args;
 

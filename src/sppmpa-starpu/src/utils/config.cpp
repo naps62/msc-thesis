@@ -29,10 +29,11 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   value("max_photon_depth",   max_photon_depth,   uint(8),  "max photon path depth");
 
   // engine
-  value("chunk_size", engine_chunk_size, unsigned(1024*256), "chunk size for ray and photon buffers (defaults to 1024*256)");
+  value("photons_per_iter", photons_per_iter, unsigned(1024*256), "chunk size for ray and photon buffers (defaults to 1024*256)");
 
   // starpu
   value("sched", sched_policy, string("pheft"), "scheduling policy (pheft (default) | pgreedy)");
+  value("max_iters_at_once", max_iters_at_once, uint(0), "maximum amount of iterations running at once");
 
   // now parse the arguments
   parse(_argc, _argv);

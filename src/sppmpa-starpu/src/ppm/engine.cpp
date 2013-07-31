@@ -18,26 +18,26 @@ Engine :: Engine(const Config& _config, unsigned worker_count)
   total_photons_traced(0),
   config(_config),
   scene(new PtrFreeScene(config)),
-  hash_grid(config.total_hit_points /* TODO why is this? */),
-  film(config.width, config.height),
-  chunk_size(config.engine_chunk_size),
+  hash_grid(config.total_hit_points, config.total_hit_points),
+  film(new Film(config.width, config.height)),
 
-  seeds(max(config.total_hit_points, chunk_size)),
+  sample_buffer(new SampleBuffer(config.width * config.height * config.spp * config.spp)),
+  frame_buffer(new SampleFrameBuffer(config.width, config.height)),
+
+  seeds(max(config.total_hit_points, config.photons_per_iter)),
   eye_paths(config.total_hit_points),
   hit_points_info(config.total_hit_points),
   hit_points(config.total_hit_points),
-  live_photon_paths(chunk_size),
+  live_photon_paths(config.photons_per_iter) {
 
-  sample_buffer(config.width * config.height * config.spp * config.spp),
-  sample_frame_buffer(config.width, config.height) {
-
-  sample_frame_buffer.Clear();
-  film.Reset();
+  film->Reset();
 
   // load display if necessary
   if (config.use_display) {
-    display = new Display(config, film);
+    display = new Display(config, *film);
     display->start(true);
+  } else {
+    display = NULL;
   }
 
   // load starpuk
@@ -47,7 +47,6 @@ Engine :: Engine(const Config& _config, unsigned worker_count)
   starpu_init(&this->spu_conf);
   kernels::codelets::init(&config, scene, &hash_grid, NULL, NULL, NULL); // TODO GPU versions here
 
-  init_seed_buffer();
   init_starpu_handles();
 }
 
@@ -66,37 +65,39 @@ Engine :: ~Engine() {
 void Engine :: render() {
   start_time = WallClockTime();
 
-  this->hash_grid.set_hit_points(hit_points_info, hit_points);
+  this->init_seed_buffer();
 
   // main loop
   while((!display || display->is_on()) && iteration <= config.max_iters) {
     this->generate_eye_paths();
     this->advance_eye_paths();
-
-    starpu_task_wait_for_all(); // TODO remove this from here later
-
-    //this->update_bbox_and_radius();
-    starpu_task_wait_for_all(); // TODO remove this from here later
-    this->hash_grid.set_bbox(this->bbox);
+    this->bbox_compute();
     this->rehash();
-    starpu_task_wait_for_all(); // TODO remove this from here later
-
     this->generate_photon_paths();
     this->advance_photon_paths();
     this->accumulate_flux();
+    this->update_sample_buffer();
+    this->splat_to_film();
 
-    starpu_task_wait_for_all(); // TODO remove this from here later
-
-    this->update_sample_frame_buffer();
-
-    total_photons_traced += chunk_size;
+    total_photons_traced += config.photons_per_iter;
     iteration++;
+
+    if ((config.max_iters_at_once > 0 && iteration % config.max_iters_at_once == 0)) {
+      starpu_task_wait_for_all();
+    } else if (config.max_iters_at_once == 0 && display) {
+      starpu_task_wait_for_all();
+    }
 
     if (display) {
       set_captions();
       display->request_update(config.min_frame_time);
     }
   }
+  starpu_task_wait_for_all();
+}
+
+void Engine :: output() {
+  film->SaveImpl(config.output_file);
 }
 
 void Engine :: set_captions() {
@@ -121,17 +122,19 @@ void Engine :: init_starpu_handles() {
   starpu_vector_data_register(&hit_points_h,        0, (uintptr_t)&hit_points[0],        hit_points.size(),        sizeof(HitPointPosition));
   starpu_vector_data_register(&live_photon_paths_h, 0, (uintptr_t)&live_photon_paths[0], live_photon_paths.size(), sizeof(PhotonPath));
 
-  starpu_variable_data_register(&bbox_h, -1, (uintptr_t)&bbox, sizeof(bbox));
-  starpu_data_set_reduction_methods(bbox_h, &codelets::bbox_reduce, &codelets::bbox_zero_initialize);
-
-  starpu_variable_data_register(&hash_grid_entry_count_h, 0, (uintptr_t)&hash_grid.entry_count, sizeof(hash_grid.entry_count));
+  starpu_variable_data_register(&bbox_h, 0, (uintptr_t)&bbox, sizeof(bbox));
+  starpu_variable_data_register(&hash_grid_entry_count_h,  0, (uintptr_t)&hash_grid.entry_count,  sizeof(hash_grid.entry_count));
   starpu_variable_data_register(&current_photon_radius2_h, 0, (uintptr_t)&current_photon_radius2, sizeof(current_photon_radius2));
+  starpu_variable_data_register(&sample_buffer_h,          0, (uintptr_t)&sample_buffer,          sizeof(sample_buffer));
+  starpu_variable_data_register(&frame_buffer_h,           0, (uintptr_t)&frame_buffer,           sizeof(frame_buffer));
+  starpu_variable_data_register(&film_h,                   0, (uintptr_t)&film,                   sizeof(film));
 }
 
 void Engine :: init_seed_buffer() {
-  for(uint i = 0; i < seeds.size(); ++i) {
-    seeds[i] = mwc(i+100);
-  }
+  starpu_insert_task(&codelets::init_seeds,
+    STARPU_RW, seeds_h,
+    STARPU_VALUE, &iteration, sizeof(iteration),
+    0);
 }
 
 void Engine :: generate_eye_paths() {
@@ -151,38 +154,26 @@ void Engine :: advance_eye_paths() {
     0);
 }
 
+void Engine :: bbox_compute() {
+  unsigned total_spp = config.width * config.spp + config.height * config.spp;
+
+  starpu_insert_task(&codelets::bbox_compute,
+    STARPU_R, hit_points_info_h,
+    STARPU_W, bbox_h,
+    STARPU_W, current_photon_radius2_h,
+    STARPU_VALUE, &iteration,    sizeof(iteration),
+    STARPU_VALUE, &total_spp,    sizeof(total_spp),
+    STARPU_VALUE, &config.alpha, sizeof(config.alpha),
+    0);
+}
+
 void Engine :: rehash() {
-  /*starpu_insert_task(&codelets::bbox_compute,
-    STARPU_R,     hit_points_info_h,
-    STARPU_REDUX, bbox_h,
-    0);*/
-  for(unsigned i = 0; i < hit_points.size(); ++i) {
-    HitPointPosition& hpi = hit_points_info[i];
-    if (hpi.type == SURFACE) {
-      bbox = Union(bbox, hpi.position);
-    }
-  }
-  starpu_task_wait_for_all();
-
-  const Vector ssize = bbox.pMax - bbox.pMin;
-  const float photon_radius = ((ssize.x + ssize.y + ssize.z) / 3.f) / ((config.width * config.spp + config.height * config.spp) / 2.f) * 2.f;
-  current_photon_radius2 = photon_radius * photon_radius;
-
-  float g = 1;
-  for(uint k = 1; k < iteration; ++k)
-    g *= (k + config.alpha) / k;
-
-  g /= iteration;
-  current_photon_radius2 *= g;
-  this->bbox.Expand(sqrt(current_photon_radius2));
-
-
   starpu_insert_task(&codelets::rehash,
     STARPU_R,     hit_points_info_h,
+    STARPU_R,     bbox_h,
+    STARPU_R,     current_photon_radius2_h,
     STARPU_W,     hash_grid_entry_count_h,
     STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
-    STARPU_VALUE, &bbox,                   sizeof(bbox),
-    STARPU_VALUE, &current_photon_radius2, sizeof(current_photon_radius2),
     0);
 }
 
@@ -200,9 +191,9 @@ void Engine :: advance_photon_paths() {
     STARPU_R,  hit_points_info_h,
     STARPU_RW, hit_points_h,
     STARPU_RW, seeds_h,
+    STARPU_R,  bbox_h,
+    STARPU_R,  current_photon_radius2_h,
     STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
-    STARPU_VALUE, &bbox,                   sizeof(bbox),
-    STARPU_VALUE, &current_photon_radius2, sizeof(current_photon_radius2),
     0);
 }
 
@@ -210,53 +201,28 @@ void Engine :: accumulate_flux() {
   starpu_insert_task(&codelets::accum_flux,
     STARPU_R,  hit_points_info_h,
     STARPU_RW, hit_points_h,
-    STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
-    STARPU_VALUE, &chunk_size,             sizeof(chunk_size),
-    STARPU_VALUE, &current_photon_radius2, sizeof(current_photon_radius2),
+    STARPU_R,  current_photon_radius2_h,
+    STARPU_VALUE, &codelets::generic_args,  sizeof(codelets::generic_args),
+    STARPU_VALUE, &config.photons_per_iter, sizeof(config.photons_per_iter),
     0);
 }
 
-void Engine :: update_bbox_and_radius() {
-  BBox bbox;
 
-  // TODO move this to a kernel?
-  for(unsigned i = 0; i < hit_points.size(); ++i) {
-    HitPointPosition& hpi = hit_points_info[i];
-    if (hpi.type == SURFACE) {
-      bbox = Union(bbox, hpi.position);
-    }
-  }
-  this->bbox = bbox;
-
-  const Vector ssize = bbox.pMax - bbox.pMin;
-  const float photon_radius = ((ssize.x + ssize.y + ssize.z) / 3.f) / ((config.width * config.spp + config.height * config.spp) / 2.f) * 2.f;
-  current_photon_radius2 = photon_radius * photon_radius;
-
-  float g = 1;
-  for(uint k = 1; k < iteration; ++k)
-    g *= (k + config.alpha) / k;
-
-  g /= iteration;
-  current_photon_radius2 *= g;
-  this->bbox.Expand(sqrt(current_photon_radius2));
+void Engine :: update_sample_buffer() {
+  starpu_insert_task(&codelets::update_sample_buffer,
+    STARPU_R,  hit_points_h,
+    STARPU_RW, sample_buffer_h,
+    STARPU_VALUE, &config.width, sizeof(config.width),
+    0);
 }
 
-
-void Engine :: update_sample_frame_buffer() {
-  for(unsigned i = 0; i < hit_points.size(); ++i) {
-    HitPointRadiance& hp = hit_points[i];
-
-    const float scr_x = i % config.width;
-    const float scr_y = i / config.width;
-
-    sample_buffer.SplatSample(scr_x, scr_y, hp.radiance);
-  }
-
-  sample_frame_buffer.Clear();
-  if (sample_buffer.GetSampleCount() > 0) {
-    film.SplatSampleBuffer(&sample_frame_buffer, true, &sample_buffer);
-    sample_buffer.Reset();
-  }
+void Engine :: splat_to_film() {
+  starpu_insert_task(&codelets::splat_to_film,
+    STARPU_R,  sample_buffer_h,
+    STARPU_RW, film_h,
+    STARPU_VALUE, &config.width, sizeof(config.width),
+    STARPU_VALUE, &config.height, sizeof(config.height),
+    0);
 }
 
 }

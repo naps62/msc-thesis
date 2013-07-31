@@ -107,9 +107,9 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
   // cl_args
 
   const starpu_args args;
-  BBox bbox;
-  float photon_radius2;
-  starpu_codelet_unpack_args(args_orig, &args, &bbox, &photon_radius2);
+  //BBox bbox;
+  //float photon_radius2;
+  starpu_codelet_unpack_args(args_orig, &args);
 
   // buffers
   PhotonPath* const photon_paths = reinterpret_cast<PhotonPath* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
@@ -124,7 +124,8 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
   Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[3]));
   //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[3]);
 
-  //const BBox* const bbox = (const BBox* const)STARPU_VARIABLE_GET_PTR(buffers[4]);
+  const BBox* const bbox = (const BBox* const)STARPU_VARIABLE_GET_PTR(buffers[4]);
+  const float* const photon_radius2 = (const float* const)STARPU_VARIABLE_GET_PTR(buffers[5]);
 
   advance_photon_paths_impl(photon_paths, photon_paths_count,
                             seed_buffer,  // seed_buffer_count,
@@ -132,9 +133,9 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
                             args.cpu_scene,
                             hit_points_info,
                             hit_points,
-                            bbox,
+                            *bbox,
                             args.cpu_config->max_photon_depth,
-                            photon_radius2);
+                            *photon_radius2);
 
 }
 

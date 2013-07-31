@@ -16,4 +16,5 @@ int main(int argc, char** argv) {
   // load render engine
   ppm::Engine engine(config, 1);
   engine.render();
+  engine.output();
 }

@@ -90,22 +90,22 @@ void rehash_impl(
 
 void rehash(void* buffers[], void* args_orig) {
   starpu_args args;
-  BBox bbox;
-  float current_photon_radius2;
-  starpu_codelet_unpack_args(args_orig, &args, &bbox, &current_photon_radius2);
+  starpu_codelet_unpack_args(args_orig, &args);
 
 
   const HitPointPosition* const hit_points_info = reinterpret_cast<const HitPointPosition* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
   const unsigned hit_points_count = STARPU_VECTOR_GET_NX(buffers[0]);
 
-  unsigned long long* entry_count = reinterpret_cast<unsigned long long* const>(STARPU_VARIABLE_GET_PTR(buffers[1]));
+  const BBox* const bbox = (const BBox* const)STARPU_VARIABLE_GET_PTR(buffers[1]);
+  const float* const current_photon_radius2 = (const float* const)STARPU_VARIABLE_GET_PTR(buffers[2]);
 
+  unsigned long long* entry_count = reinterpret_cast<unsigned long long* const>(STARPU_VARIABLE_GET_PTR(buffers[3]));
   rehash_impl(hit_points_info,
               hit_points_count,
               *(args.cpu_hash_grid),
               entry_count,
-              bbox,
-              current_photon_radius2);
+              *bbox,
+              *current_photon_radius2);
 
 }
 

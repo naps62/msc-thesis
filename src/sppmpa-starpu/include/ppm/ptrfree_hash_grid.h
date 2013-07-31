@@ -20,18 +20,9 @@ public:
   float inv_cell_size;
   unsigned long long entry_count;
 
-  HitPointPosition* hit_points_info;
-  HitPointRadiance* hit_points;
-  unsigned hit_points_count;
-
-  BBox bbox;
-
-  PtrFreeHashGrid(const unsigned size);
+  PtrFreeHashGrid(const unsigned size, const unsigned hit_points_count);
 
   ~PtrFreeHashGrid();
-
-  void set_hit_points(std::vector<HitPointPosition>& hit_points_info, std::vector<HitPointRadiance>& hit_points);
-  void set_bbox(BBox bbox);
 };
 
 }
