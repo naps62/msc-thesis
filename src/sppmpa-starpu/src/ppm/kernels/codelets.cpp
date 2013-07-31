@@ -74,7 +74,7 @@ namespace ppm { namespace kernels {
       cl->cpu_funcs[0]    = ppm::kernels::cpu::init_seeds;
       cl->cpu_funcs[1]    = NULL;
       cl->nbuffers        = 1;
-      cl->modes[0]        = STARPU_RW; // seeds
+      cl->modes[0]        = STARPU_W; // seeds
       cl->model           = pm;
 
 
@@ -92,7 +92,7 @@ namespace ppm { namespace kernels {
       cl->cpu_funcs[0]    = ppm::kernels::cpu::generate_eye_paths;
       cl->cpu_funcs[1]    = NULL;
       cl->nbuffers        = 2;
-      cl->modes[0]        = STARPU_RW; // eye_paths
+      cl->modes[0]        = STARPU_W;  // eye_paths
       cl->modes[1]        = STARPU_RW; // seeds
       cl->model           = pm;
 
@@ -111,8 +111,8 @@ namespace ppm { namespace kernels {
       cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_eye_paths;
       cl->cpu_funcs[1]    = NULL;
       cl->nbuffers        = 3;
-      cl->modes[0]        = STARPU_RW; // hit points
-      cl->modes[1]        = STARPU_RW; // eye_paths
+      cl->modes[0]        = STARPU_W;  // hit points
+      cl->modes[1]        = STARPU_R;  // eye_paths
       cl->modes[2]        = STARPU_RW; // seed_buffer
       cl->model           = pm;
 
@@ -156,26 +156,6 @@ namespace ppm { namespace kernels {
       cl->model           = pm;
 
 
-      // advance_eye_paths
-      pm = &advance_eye_paths_pm;
-      perfmodel_init(pm);
-      pm->type = STARPU_HISTORY_BASED;
-      pm->symbol = advance_eye_paths_sym;
-
-      cl = &advance_eye_paths;
-      starpu_codelet_init(cl);
-      cl->where           = STARPU_CPU;
-      cl->type            = STARPU_FORKJOIN;
-      cl->max_parallelism = std::numeric_limits<int>::max();
-      cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_eye_paths;
-      cl->cpu_funcs[1]    = NULL;
-      cl->nbuffers        = 3;
-      cl->modes[0]        = STARPU_RW; // hit points
-      cl->modes[1]        = STARPU_RW; // eye_paths
-      cl->modes[2]        = STARPU_RW; // seed_buffer
-      cl->model           = pm;
-
-
       // generate_photon_paths
       pm = &generate_photon_paths_pm;
       perfmodel_init(pm);
@@ -190,7 +170,7 @@ namespace ppm { namespace kernels {
       cl->cpu_funcs[0]    = ppm::kernels::cpu::generate_photon_paths;
       cl->cpu_funcs[1]    = NULL;
       cl->nbuffers        = 2;
-      cl->modes[0]        = STARPU_RW; // live_photon_paths
+      cl->modes[0]        = STARPU_W;  // live_photon_paths
       cl->modes[1]        = STARPU_RW; // seeds
       cl->model           = pm;
 
@@ -209,9 +189,9 @@ namespace ppm { namespace kernels {
       cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_photon_paths;
       cl->cpu_funcs[1]    = NULL;
       cl->nbuffers        = 6;
-      cl->modes[0]        = STARPU_RW; // live_photon_paths
+      cl->modes[0]        = STARPU_R;  // live_photon_paths
       cl->modes[1]        = STARPU_R;  // hit_points_info
-      cl->modes[2]        = STARPU_RW; // hit_points
+      cl->modes[2]        = STARPU_W;  // hit_points
       cl->modes[3]        = STARPU_RW; // seeds
       cl->modes[4]        = STARPU_R;  // bbox
       cl->modes[5]        = STARPU_R;  // current_photon_radius2
