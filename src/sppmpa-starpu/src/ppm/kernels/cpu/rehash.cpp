@@ -26,17 +26,11 @@ void rehash_impl(
   const float cell_size = sqrtf(current_photon_radius2) * 2.f;
   hash_grid.inv_cell_size = 1.f / cell_size;
 
-  if (!hash_grid.hash_grid) {
-    hash_grid.hash_grid = new std::deque<unsigned>*[size];
-    for(unsigned i = 0; i < size; ++i)
-      hash_grid.hash_grid[i] = NULL;
+  std::deque<unsigned>* hash_grid_deque[size];
+  for(unsigned i = 0; i < size; ++i) {
+    hash_grid_deque[i] = NULL;
   }
-  else {
-    for(unsigned i = 0; i < size; ++i) {
-      delete hash_grid.hash_grid[i];
-      hash_grid.hash_grid[i] = NULL;
-    }
-  }
+
 
   unsigned local_entry_count = 0;
   for(unsigned i = 0; i < size; ++i) {
@@ -54,11 +48,11 @@ void rehash_impl(
           for(int ix = abs(int(b_min.x)); ix <= abs(int(b_max.x)); ++ix) {
             int hv = helpers::hash(ix, iy, iz, size);
 
-            if (hash_grid.hash_grid[hv] == NULL) {
-              hash_grid.hash_grid[hv] = new std::deque<unsigned>();
+            if (hash_grid_deque[hv] == NULL) {
+              hash_grid_deque[hv] = new std::deque<unsigned>();
             }
 
-            hash_grid.hash_grid[hv]->push_front(i);
+            hash_grid_deque[hv]->push_front(i);
             local_entry_count++;
           }
         }
@@ -73,7 +67,7 @@ void rehash_impl(
 
   uint list_index = 0;
   for(unsigned i = 0; i < size; ++i) {
-    std::deque<unsigned>* hps = hash_grid.hash_grid[i];
+    std::deque<unsigned>* hps = hash_grid_deque[i];
     hash_grid.lists_index[i] = list_index;
 
     if (hps) {

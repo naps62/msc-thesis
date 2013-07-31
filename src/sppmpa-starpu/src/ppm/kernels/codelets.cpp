@@ -60,7 +60,7 @@ namespace ppm { namespace kernels {
       struct starpu_codelet* cl;
 
 
-      // generate_eye_paths
+      // init_seeds
       pm = &init_seeds_pm;
       perfmodel_init(pm);
       pm->type   = STARPU_HISTORY_BASED;
@@ -68,7 +68,7 @@ namespace ppm { namespace kernels {
 
       cl   = &init_seeds;
       starpu_codelet_init(cl);
-      cl->where           = STARPU_CPU;
+      cl->where           = STARPU_CPU | STARPU_CUDA;
       cl->type            = STARPU_FORKJOIN;
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::init_seeds;

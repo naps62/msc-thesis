@@ -55,6 +55,7 @@ protected:
   starpu_data_handle_t live_photon_paths_h;
   starpu_data_handle_t bbox_h;
   starpu_data_handle_t hash_grid_entry_count_h;
+
   starpu_data_handle_t current_photon_radius2_h;
   starpu_data_handle_t sample_buffer_h;
   starpu_data_handle_t frame_buffer_h;
@@ -72,6 +73,8 @@ protected:
   void accumulate_flux();
   void update_sample_buffer();
   void splat_to_film();
+
+  void starpu_scene_register();
 
 };
 

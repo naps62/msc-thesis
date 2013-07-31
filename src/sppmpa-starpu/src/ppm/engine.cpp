@@ -225,4 +225,8 @@ void Engine :: splat_to_film() {
     0);
 }
 
+void Engine :: starpu_scene_register() {
+
+}
+
 }

@@ -5,7 +5,6 @@ namespace ppm {
 
 PtrFreeHashGrid :: PtrFreeHashGrid(const unsigned size, const unsigned hit_points_count) {
   this->size = size;
-  hash_grid = NULL;
   lists = NULL;
   lengths = NULL;
   lists_index = NULL;
