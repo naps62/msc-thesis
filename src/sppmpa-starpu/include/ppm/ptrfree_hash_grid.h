@@ -9,8 +9,6 @@ namespace ppm {
 
 class PtrFreeHashGrid {
 public:
-  std::deque<unsigned> **hash_grid;
-
   unsigned int* lists;
   unsigned int* lengths;
   unsigned int* lists_index;
