@@ -70,13 +70,10 @@ namespace ppm { namespace kernels { namespace cpu {
     Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
     //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[1]);
 
-
     generate_photon_paths_impl(photon_paths, photon_paths_count,
                                seed_buffer,  // seed_buffer_count,
                                args.cpu_config,
                                args.cpu_scene);
-
-
   }
 
 } } }

@@ -450,6 +450,7 @@ template<class T> __host__ __device__ void my_atomic_add(T* var, T inc) {
 
 __HD__ void add_flux(
     const PtrFreeHashGrid* const hash_grid,
+    const BBox& bbox,
     const PtrFreeScene* const scene,
     const Point& hit_point,
     const Normal& shade_N,
@@ -459,14 +460,14 @@ __HD__ void add_flux(
     HitPointPosition* const hit_points_info,
     HitPointRadiance* const hit_points) {
 
-  const Vector hh = (hit_point - hash_grid->bbox.pMin) * hash_grid->inv_cell_size;
+  const Vector hh = (hit_point - bbox.pMin) * hash_grid->inv_cell_size;
+
   const int ix = abs(int(hh.x));
   const int iy = abs(int(hh.y));
   const int iz = abs(int(hh.z));
 
   unsigned grid_index = hash(ix, iy, iz, hash_grid->size);
   unsigned length = hash_grid->lengths[grid_index];
-
 
   if (length > 0) {
     unsigned local_list = hash_grid->lists_index[grid_index];

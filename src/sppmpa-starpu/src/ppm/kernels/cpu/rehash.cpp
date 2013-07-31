@@ -24,7 +24,7 @@ void rehash_impl(
     const float current_photon_radius2) {
 
   const float cell_size = sqrtf(current_photon_radius2) * 2.f;
-  const float inv_cell_size = 1.f / cell_size;
+  hash_grid.inv_cell_size = 1.f / cell_size;
 
   if (!hash_grid.hash_grid) {
     hash_grid.hash_grid = new std::deque<unsigned>*[size];
@@ -46,8 +46,8 @@ void rehash_impl(
       const float photon_radius = sqrtf(current_photon_radius2);
 
       const Vector rad(photon_radius, photon_radius, photon_radius);
-      const Vector b_min = ((hpi.position - rad) - bbox.pMin) * inv_cell_size;
-      const Vector b_max = ((hpi.position + rad) - bbox.pMin) * inv_cell_size;
+      const Vector b_min = ((hpi.position - rad) - bbox.pMin) * hash_grid.inv_cell_size;
+      const Vector b_max = ((hpi.position + rad) - bbox.pMin) * hash_grid.inv_cell_size;
 
       for(int iz = abs(int(b_min.z)); iz <= abs(int(b_max.z)); ++iz) {
         for(int iy = abs(int(b_min.y)); iy <= abs(int(b_max.y)); ++iy) {
@@ -94,17 +94,19 @@ void rehash(void* buffers[], void* args_orig) {
   float current_photon_radius2;
   starpu_codelet_unpack_args(args_orig, &args, &bbox, &current_photon_radius2);
 
+
   const HitPointPosition* const hit_points_info = reinterpret_cast<const HitPointPosition* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
   const unsigned hit_points_count = STARPU_VECTOR_GET_NX(buffers[0]);
 
   unsigned long long* entry_count = reinterpret_cast<unsigned long long* const>(STARPU_VARIABLE_GET_PTR(buffers[1]));
-  std::cout << current_photon_radius2 << '\n';
+
   rehash_impl(hit_points_info,
               hit_points_count,
               *(args.cpu_hash_grid),
               entry_count,
               bbox,
               current_photon_radius2);
+
 }
 
 } } }

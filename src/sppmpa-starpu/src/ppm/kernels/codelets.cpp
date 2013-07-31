@@ -11,8 +11,10 @@ namespace ppm { namespace kernels {
 
     struct starpu_codelet generate_eye_paths;
     struct starpu_codelet advance_eye_paths;
+    struct starpu_codelet bbox_compute;
     struct starpu_codelet bbox_zero_initialize;
     struct starpu_codelet bbox_reduce;
+    struct starpu_codelet compute_photon_radius;
     struct starpu_codelet rehash;
     struct starpu_codelet generate_photon_paths;
     struct starpu_codelet advance_photon_paths;
@@ -20,8 +22,10 @@ namespace ppm { namespace kernels {
 
     starpu_perfmodel generate_eye_paths_pm;
     starpu_perfmodel advance_eye_paths_pm;
+    starpu_perfmodel bbox_compute_pm;
     starpu_perfmodel bbox_zero_initialize_pm;
     starpu_perfmodel bbox_reduce_pm;
+    starpu_perfmodel compute_photon_radius_pm;
     starpu_perfmodel rehash_pm;
     starpu_perfmodel generate_photon_paths_pm;
     starpu_perfmodel advance_photon_paths_pm;
@@ -29,8 +33,10 @@ namespace ppm { namespace kernels {
 
     const char* generate_eye_paths_sym        = "ppm_generate_eye_paths_001";
     const char* advance_eye_paths_sym         = "ppm_advance_eye_paths_001";
+    const char* bbox_compute_sym              = "ppm_bbox_compute_001";
     const char* bbox_zero_initialize_sym      = "ppm_bbox_zero_initialize_001";
     const char* bbox_reduce_sym               = "ppm_bbox_reduce_001";
+    const char* compute_photon_radius_sym     = "ppm_bbox_reduce_001";
     const char* rehash_sym                    = "ppm_rehash_001";
     const char* generate_photon_paths_sym     = "ppm_generate_photon_paths_001";
     const char* advance_photon_paths_sym      = "ppm_advance_photon_paths_001";
@@ -92,6 +98,24 @@ namespace ppm { namespace kernels {
       cl->model           = pm;
 
 
+      // bbox_compute
+      pm = &bbox_compute_pm;
+      perfmodel_init(pm);
+      pm->type = STARPU_HISTORY_BASED;
+      pm->symbol = bbox_compute_sym;
+
+      cl = &bbox_compute;
+      starpu_codelet_init(cl);
+      cl->where           = STARPU_CPU;
+      cl->max_parallelism = 1;
+      cl->cpu_funcs[0]    = ppm::kernels::cpu::bbox_compute;
+      cl->cpu_funcs[1]    = NULL;
+      cl->nbuffers        = 2;
+      cl->modes[0]        = STARPU_R;     // hit_points_info
+      cl->modes[1]        = STARPU_REDUX; // bbox buffer
+      cl->model           = pm;
+
+
       // bbox_zero_initialize
       pm = &bbox_zero_initialize_pm;
       perfmodel_init(pm);
@@ -109,7 +133,7 @@ namespace ppm { namespace kernels {
       cl->model           = pm;
 
 
-      // bbox_zero_initialize
+      // bbox_reduce
       pm = &bbox_reduce_pm;
       perfmodel_init(pm);
       pm->type = STARPU_HISTORY_BASED;
@@ -122,8 +146,8 @@ namespace ppm { namespace kernels {
       cl->cpu_funcs[0]    = ppm::kernels::cpu::bbox_reduce;
       cl->cpu_funcs[1]    = NULL;
       cl->nbuffers        = 2;
-      cl->modes[0]        = STARPU_RW; // bbox buffer
-      cl->modes[1]        = STARPU_R;  // hit_points_info
+      cl->modes[0]        = STARPU_RW; // bbox_dst
+      cl->modes[1]        = STARPU_R;  // bbox_src
       cl->model           = pm;
 
 
@@ -142,6 +166,7 @@ namespace ppm { namespace kernels {
       cl->nbuffers        = 2;
       cl->modes[0]        = STARPU_R; // hit_points_info
       cl->modes[1]        = STARPU_W; // entry_count
+      //cl->modes[2]        = STARPU_R; // bbox
       cl->model           = pm;
 
 

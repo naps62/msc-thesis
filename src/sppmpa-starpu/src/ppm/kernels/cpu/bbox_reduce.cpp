@@ -14,13 +14,23 @@ using ppm::EyePath;
 
 namespace ppm { namespace kernels { namespace cpu {
 
+void bbox_compute(void* buffers[], void* args_orig) {
+  const HitPointPosition* const points = reinterpret_cast<const HitPointPosition* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
+  const unsigned size = STARPU_VECTOR_GET_NX(buffers[0]);
+
+  BBox* const bbox = reinterpret_cast<BBox* const>(STARPU_VARIABLE_GET_PTR(buffers[1]));
+  for(unsigned i = 0; i < size; ++i)
+    if (points[i].type == SURFACE) {
+      *bbox = Union(*bbox, points[i].position);
+    }
+}
+
 
 void bbox_reduce(void* buffers[], void* args_orig) {
-  BBox* const bbox = reinterpret_cast<BBox* const>(STARPU_VARIABLE_GET_PTR(buffers[0]));
-  const HitPointPosition* const point = reinterpret_cast<const HitPointPosition* const>(STARPU_VARIABLE_GET_PTR(buffers[1]));
+  BBox* const bbox_dst = reinterpret_cast<BBox* const>(STARPU_VARIABLE_GET_PTR(buffers[0]));
+  BBox* const bbox_src = reinterpret_cast<BBox* const>(STARPU_VARIABLE_GET_PTR(buffers[1]));
 
-  if (point->type == SURFACE)
-    *bbox = Union(*bbox, point->position);
+  *bbox_dst = Union(*bbox_dst, *bbox_src);
 }
 
 

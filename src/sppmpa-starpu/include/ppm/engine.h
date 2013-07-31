@@ -53,6 +53,7 @@ protected:
   starpu_data_handle_t live_photon_paths_h;
   starpu_data_handle_t bbox_h;
   starpu_data_handle_t hash_grid_entry_count_h;
+  starpu_data_handle_t current_photon_radius2_h;
 
   SampleBuffer sample_buffer;
   SampleFrameBuffer sample_frame_buffer;

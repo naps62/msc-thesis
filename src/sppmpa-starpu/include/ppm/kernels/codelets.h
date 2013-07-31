@@ -23,6 +23,7 @@ namespace ppm { namespace kernels {
 
     extern struct starpu_codelet generate_eye_paths;
     extern struct starpu_codelet advance_eye_paths;
+    extern struct starpu_codelet bbox_compute;
     extern struct starpu_codelet bbox_zero_initialize;
     extern struct starpu_codelet bbox_reduce;
     extern struct starpu_codelet rehash;
