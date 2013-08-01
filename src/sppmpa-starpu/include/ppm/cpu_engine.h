@@ -12,11 +12,11 @@ public:
 
 protected:
   BBox bbox;
+  float current_photon_radius2;
 
   // starpu stuff
   starpu_conf spu_conf;
 
-  SampleBuffer* sample_buffer;
   SampleFrameBuffer* frame_buffer;
 
   std::vector<Seed> seeds;

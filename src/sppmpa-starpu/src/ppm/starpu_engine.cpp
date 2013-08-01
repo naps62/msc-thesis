@@ -9,15 +9,7 @@ namespace ppm {
 //
 
 StarpuEngine :: StarpuEngine(const Config& _config)
-: Engine(_config),
-
-  sample_buffer(new SampleBuffer(config.width * config.height * config.spp * config.spp)),
-
-  seeds(max(config.total_hit_points, config.photons_per_iter)),
-  eye_paths(config.total_hit_points),
-  hit_points_info(config.total_hit_points),
-  hit_points(config.total_hit_points),
-  live_photon_paths(config.photons_per_iter) {
+: Engine(_config) {
 
   // load starpuk
   starpu_conf_init(&this->spu_conf);
@@ -77,17 +69,17 @@ void StarpuEngine :: render() {
 //
 
 void StarpuEngine :: init_starpu_handles() {
-  starpu_vector_data_register(&seeds_h,             -1, (uintptr_t)NULL,             seeds.size(),             sizeof(Seed));
-  starpu_vector_data_register(&eye_paths_h,         -1, (uintptr_t)NULL,         eye_paths.size(),         sizeof(EyePath));
-  starpu_vector_data_register(&hit_points_info_h,   -1, (uintptr_t)NULL,   hit_points_info.size(),   sizeof(HitPointPosition));
-  starpu_vector_data_register(&hit_points_h,        0 , (uintptr_t)&hit_points[0],        hit_points.size(),        sizeof(HitPointPosition));
-  starpu_vector_data_register(&live_photon_paths_h, -1, (uintptr_t)NULL, live_photon_paths.size(), sizeof(PhotonPath));
+  starpu_vector_data_register(&seeds_h,             -1, (uintptr_t)NULL, config.seed_size,        sizeof(Seed));
+  starpu_vector_data_register(&eye_paths_h,         -1, (uintptr_t)NULL, config.total_hit_points, sizeof(EyePath));
+  starpu_vector_data_register(&hit_points_info_h,   -1, (uintptr_t)NULL, config.total_hit_points, sizeof(HitPointPosition));
+  starpu_vector_data_register(&hit_points_h,        -1, (uintptr_t)NULL, config.total_hit_points, sizeof(HitPointPosition));
+  starpu_vector_data_register(&live_photon_paths_h, -1, (uintptr_t)NULL, config.photons_per_iter, sizeof(PhotonPath));
 
-  starpu_variable_data_register(&bbox_h, 0, (uintptr_t)&bbox, sizeof(bbox));
-  starpu_variable_data_register(&hash_grid_entry_count_h,  0, (uintptr_t)&hash_grid.entry_count,  sizeof(hash_grid.entry_count));
-  starpu_variable_data_register(&current_photon_radius2_h, 0, (uintptr_t)&current_photon_radius2, sizeof(current_photon_radius2));
-  starpu_variable_data_register(&sample_buffer_h,          0, (uintptr_t)&sample_buffer,          sizeof(sample_buffer));
-  starpu_variable_data_register(&film_h,                   0, (uintptr_t)&film,                   sizeof(film));
+  starpu_variable_data_register(&bbox_h,                   -1, (uintptr_t)NULL, sizeof(BBox));
+  starpu_variable_data_register(&hash_grid_entry_count_h,   0, (uintptr_t)&hash_grid.entry_count,  sizeof(hash_grid.entry_count));
+  starpu_variable_data_register(&current_photon_radius2_h, -1, (uintptr_t)NULL, sizeof(float));
+  starpu_variable_data_register(&sample_buffer_h,           0, (uintptr_t)&sample_buffer,          sizeof(sample_buffer));
+  starpu_variable_data_register(&film_h,                    0, (uintptr_t)&film,                   sizeof(film));
 }
 
 void StarpuEngine :: init_seed_buffer() {
@@ -154,6 +146,7 @@ void StarpuEngine :: advance_photon_paths() {
     STARPU_R,  bbox_h,
     STARPU_R,  current_photon_radius2_h,
     STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+    STARPU_VALUE, &config.total_hit_points, sizeof(config.total_hit_points),
     0);
 }
 

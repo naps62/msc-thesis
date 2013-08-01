@@ -11,7 +11,6 @@ namespace ppm {
 CPUEngine :: CPUEngine(const Config& _config)
 : Engine(_config),
 
-  sample_buffer(new SampleBuffer(config.width * config.height * config.spp * config.spp)),
   frame_buffer(new SampleFrameBuffer(config.width, config.height)),
 
   seeds(max(config.total_hit_points, config.photons_per_iter)),

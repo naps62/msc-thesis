@@ -22,7 +22,9 @@ public:
       config(_config),
       scene(new PtrFreeScene(config)),
       hash_grid(config.total_hit_points, config.total_hit_points),
-      film(new Film(config.width, config.height)) {
+      film(new Film(config.width, config.height)),
+      sample_buffer(new SampleBuffer(config.width * config.height * config.spp * config.spp)) {
+
 
     film->Reset();
 
@@ -62,7 +64,6 @@ public:
 
 protected:
   unsigned iteration;
-  float current_photon_radius2;
   unsigned long long total_photons_traced;
   double start_time;
   const Config& config;
@@ -70,6 +71,7 @@ protected:
   PtrFreeHashGrid hash_grid;
   Display* display;
   Film* film;
+  SampleBuffer* sample_buffer;
 };
 
 }

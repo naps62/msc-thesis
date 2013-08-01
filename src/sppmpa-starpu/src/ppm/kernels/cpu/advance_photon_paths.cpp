@@ -24,7 +24,20 @@ namespace ppm { namespace kernels { namespace cpu {
       HitPointRadiance* const hit_points,
       const BBox& bbox,
       const unsigned CONST_max_photon_depth,
-      const float photon_radius2) {
+      const float photon_radius2,
+      const unsigned hit_points_count) {
+
+  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+  for(unsigned i = 0; i < hit_points_count; ++i) {
+    HitPointRadiance& hp = hit_points[i];
+    hp.accum_photon_count = 0;
+    hp.accum_reflected_flux = 0;
+    hp.accum_radiance = 0;
+    hp.radiance = 0;
+    hp.hits_count = 0;
+    hp.photon_count = 0;
+    hp.reflected_flux = Spectrum();
+  }
 
   #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned i = 0; i < photon_paths_count; ++i) {
@@ -107,9 +120,8 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
   // cl_args
 
   const starpu_args args;
-  //BBox bbox;
-  //float photon_radius2;
-  starpu_codelet_unpack_args(args_orig, &args);
+  unsigned hit_points_count;
+  starpu_codelet_unpack_args(args_orig, &args, &hit_points_count);
 
   // buffers
   PhotonPath* const photon_paths = reinterpret_cast<PhotonPath* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
@@ -135,7 +147,8 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
                             hit_points,
                             *bbox,
                             args.cpu_config->max_photon_depth,
-                            *photon_radius2);
+                            *photon_radius2,
+                            hit_points_count);
 
 }
 

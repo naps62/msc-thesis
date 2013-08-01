@@ -42,6 +42,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   use_display = ! no_display;
   min_frame_time = 1.f / fps;
   total_hit_points = width * height * spp * spp;
+  seed_size = std::max(total_hit_points, photons_per_iter);
 
   accel_type = ppm::ACCEL_QBVH;
 
