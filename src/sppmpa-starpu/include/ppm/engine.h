@@ -41,7 +41,6 @@ public:
   }
 
   virtual void render() = 0;
-  virtual void output() = 0;
 
   void set_captions() {
     const double elapsed_time = WallClockTime() - start_time;
@@ -55,6 +54,10 @@ public:
                                       "[iter: " << iteration << "]" <<
                                       "[" << int(elapsed_time) << "secs]";
     display->set_captions(header, footer);
+  }
+
+  void output() {
+    film->SaveImpl(config.output_file);
   }
 
 protected:

@@ -4,6 +4,7 @@
 
 #include "utils/config.h"
 #include "ppm/starpu_engine.h"
+#include "ppm/cpu_engine.h"
 
 #include "unistd.h"
 #include <iostream>
@@ -16,10 +17,15 @@ int main(int argc, char** argv) {
   ppm::Engine* engine;
   // load render engine
   switch(config.engine) {
-    //case 1: engine = new ppm::CPUEngine(config);
-    //case 2: engine = new ppm::CUDAEngine(config);
+    case 1:
+      engine = new ppm::CPUEngine(config);
+      break;
+    //case 2:
+    //  engine = new ppm::CUDAEngine(config);
     case 0:
-    default: engine = new ppm::StarpuEngine(config);
+    default:
+      engine = new ppm::StarpuEngine(config);
+      break;
   }
   //  ppm::Engine engine(config, 1);
   engine->render();

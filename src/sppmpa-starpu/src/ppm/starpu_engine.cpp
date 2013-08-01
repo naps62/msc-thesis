@@ -12,7 +12,6 @@ StarpuEngine :: StarpuEngine(const Config& _config)
 : Engine(_config),
 
   sample_buffer(new SampleBuffer(config.width * config.height * config.spp * config.spp)),
-  frame_buffer(new SampleFrameBuffer(config.width, config.height)),
 
   seeds(max(config.total_hit_points, config.photons_per_iter)),
   eye_paths(config.total_hit_points),
@@ -33,6 +32,7 @@ StarpuEngine :: StarpuEngine(const Config& _config)
 StarpuEngine :: ~StarpuEngine() {
   starpu_task_wait_for_all();
   starpu_shutdown();
+  delete sample_buffer;
 }
 
 //
@@ -72,10 +72,6 @@ void StarpuEngine :: render() {
   starpu_task_wait_for_all();
 }
 
-void StarpuEngine :: output() {
-  film->SaveImpl(config.output_file);
-}
-
 //
 // private methods
 //
@@ -91,7 +87,6 @@ void StarpuEngine :: init_starpu_handles() {
   starpu_variable_data_register(&hash_grid_entry_count_h,  0, (uintptr_t)&hash_grid.entry_count,  sizeof(hash_grid.entry_count));
   starpu_variable_data_register(&current_photon_radius2_h, 0, (uintptr_t)&current_photon_radius2, sizeof(current_photon_radius2));
   starpu_variable_data_register(&sample_buffer_h,          0, (uintptr_t)&sample_buffer,          sizeof(sample_buffer));
-  starpu_variable_data_register(&frame_buffer_h,           0, (uintptr_t)&frame_buffer,           sizeof(frame_buffer));
   starpu_variable_data_register(&film_h,                   0, (uintptr_t)&film,                   sizeof(film));
 }
 
