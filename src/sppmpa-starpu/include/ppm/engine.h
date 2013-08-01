@@ -15,16 +15,49 @@
 namespace ppm {
 
 class Engine {
-
 public:
-  Engine(const Config& _config, unsigned worker_count);
-  ~Engine();
-  void render();
-  void output();
-  void set_captions();
+  Engine(const Config& _config)
+  :   iteration(1),
+      total_photons_traced(0),
+      config(_config),
+      scene(new PtrFreeScene(config)),
+      hash_grid(config.total_hit_points, config.total_hit_points),
+      film(new Film(config.width, config.height)) {
+
+    film->Reset();
+
+    if (config.use_display) {
+      display = new Display(config, *film);
+      display->start(true);
+    } else {
+      display = NULL;
+    }
+  }
+
+  virtual ~Engine() {
+    if (config.use_display) {
+      display->join();
+    }
+  }
+
+  virtual void render() = 0;
+  virtual void output() = 0;
+
+  void set_captions() {
+    const double elapsed_time = WallClockTime() - start_time;
+    const unsigned long long total_photons_M = float(total_photons_traced / 1000000.f);
+    const unsigned long long photons_per_sec = total_photons_traced / (elapsed_time * 1000.f);
+
+    stringstream header, footer;
+    header << "Hello World!";
+    footer << std::setprecision(2) << "[" << total_photons_M << "M Photons]" <<
+                                      "[" << photons_per_sec << "K photons/sec]" <<
+                                      "[iter: " << iteration << "]" <<
+                                      "[" << int(elapsed_time) << "secs]";
+    display->set_captions(header, footer);
+  }
 
 protected:
-  unsigned worker_count;
   unsigned iteration;
   float current_photon_radius2;
   unsigned long long total_photons_traced;
@@ -33,49 +66,7 @@ protected:
   PtrFreeScene* scene;
   PtrFreeHashGrid hash_grid;
   Display* display;
-  BBox bbox;
   Film* film;
-
-  // starpu stuff
-  starpu_conf spu_conf;
-
-  SampleBuffer* sample_buffer;
-  SampleFrameBuffer* frame_buffer;
-
-  std::vector<Seed> seeds;
-  std::vector<EyePath> eye_paths;
-  std::vector<HitPointPosition> hit_points_info;
-  std::vector<HitPointRadiance> hit_points;
-  std::vector<PhotonPath> live_photon_paths;
-
-  starpu_data_handle_t seeds_h;
-  starpu_data_handle_t eye_paths_h;
-  starpu_data_handle_t hit_points_info_h;
-  starpu_data_handle_t hit_points_h;
-  starpu_data_handle_t live_photon_paths_h;
-  starpu_data_handle_t bbox_h;
-  starpu_data_handle_t hash_grid_entry_count_h;
-
-  starpu_data_handle_t current_photon_radius2_h;
-  starpu_data_handle_t sample_buffer_h;
-  starpu_data_handle_t frame_buffer_h;
-  starpu_data_handle_t film_h;
-
-  void init_starpu_handles();
-  void init_seed_buffer();
-
-  void generate_eye_paths();
-  void advance_eye_paths();
-  void bbox_compute();
-  void rehash();
-  void generate_photon_paths();
-  void advance_photon_paths();
-  void accumulate_flux();
-  void update_sample_buffer();
-  void splat_to_film();
-
-  void starpu_scene_register();
-
 };
 
 }

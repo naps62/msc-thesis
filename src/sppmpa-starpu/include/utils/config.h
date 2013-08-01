@@ -28,7 +28,7 @@ struct Config : public beast::program_options::options {
   bool vsync;
 
   // render
-  string engine_name;
+  uint engine;
   string accel_name;
   float alpha;
   uint spp;
