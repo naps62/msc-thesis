@@ -107,7 +107,10 @@ void Engine :: set_captions() {
 
   stringstream header, footer;
   header << "Hello World!";
-  footer << std::setprecision(2) << "[Photons " << total_photons_M << "M][Avg. photons/sec " << photons_per_sec << "K][Elapsed time " << int(elapsed_time) << "secs]";
+  footer << std::setprecision(2) << "[" << total_photons_M << "M Photons]" <<
+                                    "[" << photons_per_sec << "K photons/sec]" <<
+                                    "[iter: " << iteration << "]" <<
+                                    "[" << int(elapsed_time) << "secs]";
   display->set_captions(header, footer);
 }
 
@@ -119,7 +122,7 @@ void Engine :: init_starpu_handles() {
   starpu_vector_data_register(&seeds_h,             -1, (uintptr_t)NULL,             seeds.size(),             sizeof(Seed));
   starpu_vector_data_register(&eye_paths_h,         -1, (uintptr_t)NULL,         eye_paths.size(),         sizeof(EyePath));
   starpu_vector_data_register(&hit_points_info_h,   -1, (uintptr_t)NULL,   hit_points_info.size(),   sizeof(HitPointPosition));
-  starpu_vector_data_register(&hit_points_h,        0, (uintptr_t)&hit_points[0],        hit_points.size(),        sizeof(HitPointPosition));
+  starpu_vector_data_register(&hit_points_h,        0 , (uintptr_t)&hit_points[0],        hit_points.size(),        sizeof(HitPointPosition));
   starpu_vector_data_register(&live_photon_paths_h, -1, (uintptr_t)NULL, live_photon_paths.size(), sizeof(PhotonPath));
 
   starpu_variable_data_register(&bbox_h, 0, (uintptr_t)&bbox, sizeof(bbox));
