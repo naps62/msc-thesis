@@ -74,7 +74,7 @@ protected:
   unsigned int* hash_grid;
   unsigned int* hash_grid_lengths;
   unsigned int* hash_grid_indexes;
-  unsigned int  hash_grid_entry_count;
+  unsigned long long hash_grid_entry_count;
   float         hash_grid_inv_cell_size;
 };
 

@@ -61,7 +61,7 @@ __HD__ void alloy_f(const MatteParam& mat, const Vector& wo, const Normal& N, Sp
 
 //__HD__ void add_flux(const PtrFreeHashGrid* const hash_grid, const BBox& bbox, const PtrFreeScene* const scene, const Point& hit_point, const Normal& shade_N, const Vector& wi, const Spectrum& photon_flux, const float photon_radius2, HitPointPosition* const hit_points_info, HitPointRadiance* const hit_points);
 __HD__ void add_flux(
-    const unsigned** hash_grid_ptr,
+    const unsigned*  hash_grid,
     const unsigned*  hash_grid_lengths,
     const unsigned*  hash_grid_indexes,
     const unsigned   hash_grid_entry_count,

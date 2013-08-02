@@ -449,7 +449,7 @@ template<class T> __host__ __device__ void my_atomic_add(T* var, T inc) {
 
 
 __HD__ void add_flux(
-    const unsigned** hash_grid_ptr,
+    const unsigned*  hash_grid,
     const unsigned*  hash_grid_lengths,
     const unsigned*  hash_grid_indexes,
     const unsigned   hash_grid_entry_count,
@@ -478,7 +478,7 @@ __HD__ void add_flux(
   if (length > 0) {
     unsigned local_list = hash_grid_indexes[grid_index];
     for(unsigned i = local_list; i < local_list + length; ++i) {
-      unsigned hit_point_index = (*hash_grid_ptr)[i];
+      unsigned hit_point_index = hash_grid[i];
       HitPointPosition& ihp = hit_points_info[hit_point_index];
       HitPointRadiance& hp = hit_points[hit_point_index];
 

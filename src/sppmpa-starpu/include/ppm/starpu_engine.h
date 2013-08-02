@@ -28,7 +28,7 @@ protected:
   starpu_data_handle_t sample_buffer_h;
   starpu_data_handle_t film_h;
 
-  starpu_data_handle_t hash_grid_ptr_h;
+  starpu_data_handle_t hash_grid_h;
   starpu_data_handle_t hash_grid_lengths_h;
   starpu_data_handle_t hash_grid_indexes_h;
   starpu_data_handle_t hash_grid_entry_count_h;

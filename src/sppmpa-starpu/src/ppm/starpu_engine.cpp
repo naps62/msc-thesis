@@ -72,12 +72,12 @@ void StarpuEngine :: init_starpu_handles() {
   starpu_vector_data_register(&seeds_h,             -1, (uintptr_t)NULL, config.seed_size,        sizeof(Seed));
   starpu_vector_data_register(&eye_paths_h,         -1, (uintptr_t)NULL, config.total_hit_points, sizeof(EyePath));
   starpu_vector_data_register(&hit_points_info_h,   -1, (uintptr_t)NULL, config.total_hit_points, sizeof(HitPointPosition));
-  starpu_vector_data_register(&hit_points_h,        -1, (uintptr_t)NULL, config.total_hit_points, sizeof(HitPointPosition));
+  starpu_vector_data_register(&hit_points_h,        -1, (uintptr_t)NULL, config.total_hit_points, sizeof(HitPointRadiance));
   starpu_vector_data_register(&live_photon_paths_h, -1, (uintptr_t)NULL, config.photons_per_iter, sizeof(PhotonPath));
 
+  starpu_vector_data_register(&hash_grid_h,                -1, (uintptr_t)NULL,                     8 * config.total_hit_points,     sizeof(unsigned));
   starpu_vector_data_register(&hash_grid_lengths_h,        -1, (uintptr_t)NULL,                     config.total_hit_points,         sizeof(unsigned));
   starpu_vector_data_register(&hash_grid_indexes_h,        -1, (uintptr_t)NULL,                     config.total_hit_points,         sizeof(unsigned));
-  starpu_variable_data_register(&hash_grid_ptr_h,           0, (uintptr_t)&hash_grid,               sizeof(hash_grid));
   starpu_variable_data_register(&hash_grid_entry_count_h,   0, (uintptr_t)&hash_grid_entry_count,   sizeof(hash_grid_entry_count));
   starpu_variable_data_register(&hash_grid_inv_cell_size_h, 0, (uintptr_t)&hash_grid_inv_cell_size, sizeof(hash_grid_inv_cell_size));
 
@@ -137,7 +137,7 @@ void StarpuEngine :: rehash() {
     STARPU_R,     hit_points_info_h,
     STARPU_R,     bbox_h,
     STARPU_R,     current_photon_radius2_h,
-    STARPU_W,     hash_grid_ptr_h,
+    STARPU_W,     hash_grid_h,
     STARPU_W,     hash_grid_lengths_h,
     STARPU_W,     hash_grid_indexes_h,
     STARPU_W,     hash_grid_entry_count_h,
@@ -162,6 +162,11 @@ void StarpuEngine :: advance_photon_paths() {
     STARPU_RW, seeds_h,
     STARPU_R,  bbox_h,
     STARPU_R,  current_photon_radius2_h,
+    STARPU_R,  hash_grid_h,
+    STARPU_R,  hash_grid_lengths_h,
+    STARPU_R,  hash_grid_indexes_h,
+    STARPU_R,  hash_grid_entry_count_h,
+    STARPU_R,  hash_grid_inv_cell_size_h,
     STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
     STARPU_VALUE, &config.total_hit_points, sizeof(config.total_hit_points),
     0);

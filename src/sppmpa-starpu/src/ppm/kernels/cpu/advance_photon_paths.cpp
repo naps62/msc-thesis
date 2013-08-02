@@ -19,7 +19,6 @@ namespace ppm { namespace kernels { namespace cpu {
       PhotonPath* const photon_paths,    const unsigned photon_paths_count,
       Seed* const seed_buffer,        // const unsigned seed_buffer_count,
       const PtrFreeScene* scene,
-      //const PtrFreeHashGrid* hash_grid,
 
       HitPointPosition* const hit_points_info,
       HitPointRadiance* const hit_points,
@@ -28,23 +27,14 @@ namespace ppm { namespace kernels { namespace cpu {
       const float photon_radius2,
       const unsigned hit_points_count,
 
-      const unsigned**          hash_grid_ptr,
+      const unsigned*           hash_grid,
       const unsigned*           hash_grid_lengths,
       const unsigned*           hash_grid_indexes,
       const unsigned long long  hash_grid_entry_count,
       const float               hash_grid_inv_cell_size) {
 
-  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
-  for(unsigned i = 0; i < hit_points_count; ++i) {
-    HitPointRadiance& hp = hit_points[i];
-    hp.accum_photon_count = 0;
-    hp.accum_reflected_flux = 0;
-    hp.accum_radiance = 0;
-    hp.radiance = 0;
-    hp.hits_count = 0;
-    hp.photon_count = 0;
-    hp.reflected_flux = Spectrum();
-  }
+
+  //memset(hit_points, 0, sizeof(HitPointRadiance)*hit_points_count);
 
   #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned i = 0; i < photon_paths_count; ++i) {
@@ -91,7 +81,7 @@ namespace ppm { namespace kernels { namespace cpu {
           f *= surface_color;
 
           if (!specular_bounce) {
-            helpers::add_flux(hash_grid_ptr, hash_grid_lengths, hash_grid_indexes, hash_grid_entry_count, hash_grid_inv_cell_size, bbox, scene, hit_point, shade_N, wo, path.flux, photon_radius2, hit_points_info, hit_points, hit_points_count);
+            helpers::add_flux(hash_grid, hash_grid_lengths, hash_grid_indexes, hash_grid_entry_count, hash_grid_inv_cell_size, bbox, scene, hit_point, shade_N, wo, path.flux, photon_radius2, hit_points_info, hit_points, hit_points_count);
           }
 
           if (path.depth < CONST_max_photon_depth) {
@@ -146,9 +136,9 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
   const BBox* const bbox = (const BBox* const)STARPU_VARIABLE_GET_PTR(buffers[4]);
   const float* const photon_radius2 = (const float* const)STARPU_VARIABLE_GET_PTR(buffers[5]);
 
-  const unsigned**          hash_grid_ptr  = (const unsigned**)STARPU_VARIABLE_GET_PTR(buffers[6]);
-  const unsigned*           lengths        = (const unsigned*) STARPU_VARIABLE_GET_PTR(buffers[7]);
-  const unsigned*           indexes        = (const unsigned*) STARPU_VARIABLE_GET_PTR(buffers[8]);
+  const unsigned*           hash_grid      = (const unsigned*) STARPU_VECTOR_GET_PTR(buffers[6]);
+  const unsigned*           lengths        = (const unsigned*) STARPU_VECTOR_GET_PTR(buffers[7]);
+  const unsigned*           indexes        = (const unsigned*) STARPU_VECTOR_GET_PTR(buffers[8]);
   const unsigned long long* entry_count    = (const unsigned long long* const)STARPU_VARIABLE_GET_PTR(buffers[9]);
   const float*              inv_cell_size  = (const float*) STARPU_VARIABLE_GET_PTR(buffers[10]);
 
@@ -163,9 +153,9 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
                             *photon_radius2,
                             hit_points_count,
 
-                            hash_grid_ptr,
-                            indexes,
+                            hash_grid,
                             lengths,
+                            indexes,
                             *entry_count,
                             *inv_cell_size);
 

@@ -18,16 +18,16 @@ namespace ppm { namespace kernels { namespace cpu {
 
 void rehash_impl(
     const HitPointPosition* const hit_points_info, unsigned size,
-    unsigned** hash_grid_ptr,
+    unsigned*  hash_grid,
     unsigned*  hash_grid_lengths,
     unsigned*  hash_grid_indexes,
-    unsigned long long& entry_count,
-    float& inv_cell_size,
+    unsigned long long* entry_count,
+    float* inv_cell_size,
     const BBox& bbox,
     const float current_photon_radius2) {
 
   const float cell_size = sqrtf(current_photon_radius2) * 2.f;
-  inv_cell_size = 1.f / cell_size;
+  *inv_cell_size = 1.f / cell_size;
 
   std::deque<unsigned>* hash_grid_deque[size];
   for(unsigned i = 0; i < size; ++i) {
@@ -43,8 +43,8 @@ void rehash_impl(
       const float photon_radius = sqrtf(current_photon_radius2);
 
       const Vector rad(photon_radius, photon_radius, photon_radius);
-      const Vector b_min = ((hpi.position - rad) - bbox.pMin) * inv_cell_size;
-      const Vector b_max = ((hpi.position + rad) - bbox.pMin) * inv_cell_size;
+      const Vector b_min = ((hpi.position - rad) - bbox.pMin) * (*inv_cell_size);
+      const Vector b_max = ((hpi.position + rad) - bbox.pMin) * (*inv_cell_size);
 
       for(int iz = abs(int(b_min.z)); iz <= abs(int(b_max.z)); ++iz) {
         for(int iy = abs(int(b_min.y)); iy <= abs(int(b_max.y)); ++iy) {
@@ -63,11 +63,10 @@ void rehash_impl(
     }
   }
 
-  entry_count = local_entry_count;
+  *entry_count = local_entry_count;
 
   //if (hash_grid_ptr) delete[] hash_grid.lists;
   //hash_grid.lists = new unsigned int[local_entry_count];
-  *hash_grid_ptr = new unsigned[local_entry_count];
 
   uint list_index = 0;
   for(unsigned i = 0; i < size; ++i) {
@@ -77,7 +76,8 @@ void rehash_impl(
     if (hps) {
       hash_grid_lengths[i] = hps->size();
       for(std::deque<unsigned>::iterator iter = hps->begin(); iter != hps->end(); ++iter) {
-        (*hash_grid_ptr)[list_index++] = *iter;
+        assert(list_index < size*8);
+        hash_grid[list_index++] = *iter;
       }
     } else {
       hash_grid_lengths[i] = 0;
@@ -97,19 +97,19 @@ void rehash(void* buffers[], void* args_orig) {
   const BBox* const bbox = (const BBox* const)STARPU_VARIABLE_GET_PTR(buffers[1]);
   const float* const current_photon_radius2 = (const float* const)STARPU_VARIABLE_GET_PTR(buffers[2]);
 
-  unsigned**          hash_grid_ptr  = (unsigned**)STARPU_VARIABLE_GET_PTR(buffers[3]);
-  unsigned*           lengths        = (unsigned*) STARPU_VARIABLE_GET_PTR(buffers[4]);
-  unsigned*           indexes        = (unsigned*) STARPU_VARIABLE_GET_PTR(buffers[5]);
+  unsigned*           hash_grid      = (unsigned*)  STARPU_VECTOR_GET_PTR(buffers[3]);
+  unsigned*           lengths        = (unsigned*)  STARPU_VECTOR_GET_PTR(buffers[4]);
+  unsigned*           indexes        = (unsigned*)  STARPU_VECTOR_GET_PTR(buffers[5]);
   unsigned long long* entry_count    = (unsigned long long* const)STARPU_VARIABLE_GET_PTR(buffers[6]);
   float*              inv_cell_size  = (float*) STARPU_VARIABLE_GET_PTR(buffers[7]);
 
   rehash_impl(hit_points_info,
               hit_points_count,
-              hash_grid_ptr,
+              hash_grid,
               lengths,
               indexes,
-              *entry_count,
-              *inv_cell_size,
+              entry_count,
+              inv_cell_size,
               *bbox,
               *current_photon_radius2);
 

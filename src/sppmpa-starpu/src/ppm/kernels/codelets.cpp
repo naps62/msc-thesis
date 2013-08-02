@@ -192,7 +192,7 @@ namespace ppm { namespace kernels {
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_photon_paths;
       cl->cpu_funcs[1]    = NULL;
-      cl->nbuffers        = 6;
+      cl->nbuffers        = 11;
       cl->modes[0]        = STARPU_R;  // live_photon_paths
       cl->modes[1]        = STARPU_R;  // hit_points_info
       cl->modes[2]        = STARPU_W;  // hit_points
