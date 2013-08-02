@@ -1,0 +1,14 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\subsection{Motivation \& Goals}
+
+As the complexity of applications increases, so does the difficulty of efficiently managing the different available resources. In a \ac{HetPlat}, resource management is a key problem that depends on several different factors, and can be a difficult one to solve, especially for more complex applications. This is an even greater problem for irregular applications, where memory access patterns and task execution times are not always predictable.
+
+In the past recent years, some frameworks have been designed to deal with \hetplats. These frameworks are often target at data-parallel applications, and provide mechanisms to deal with issues such as scheduling and communication. Among these frameworks are \gama and \starpu \todo{refs para cada um deles}
+\todo{ref para uma secção em que se detalhe as duas frameworks}
+
+These frameworks tend to work by providing the concept of task, which is usually not present in the underlying programming models of the programming languages used, and data dependencies, and employ a task scheduler to assign the existing workload to the available resources.
+The scheduler may take into account multiple different factors in order to decide when and where to run the submitted tasks. These factors can range from the architectural details of the detected resources, to the measured performance of each task on each device, which can be done by building a history based on previous executions.
+
+\end{document}
