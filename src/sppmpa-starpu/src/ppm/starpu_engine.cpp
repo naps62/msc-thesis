@@ -16,7 +16,7 @@ StarpuEngine :: StarpuEngine(const Config& _config)
   spu_conf.sched_policy_name = config.sched_policy.c_str();
 
   starpu_init(&this->spu_conf);
-  kernels::codelets::init(&config, scene, &hash_grid, NULL, NULL, NULL); // TODO GPU versions here
+  kernels::codelets::init(&config, scene, NULL, NULL, NULL, NULL); // TODO GPU versions here
 
   init_starpu_handles();
 }
@@ -75,11 +75,24 @@ void StarpuEngine :: init_starpu_handles() {
   starpu_vector_data_register(&hit_points_h,        -1, (uintptr_t)NULL, config.total_hit_points, sizeof(HitPointPosition));
   starpu_vector_data_register(&live_photon_paths_h, -1, (uintptr_t)NULL, config.photons_per_iter, sizeof(PhotonPath));
 
+  starpu_vector_data_register(&hash_grid_lengths_h,        -1, (uintptr_t)NULL,                     config.total_hit_points,         sizeof(unsigned));
+  starpu_vector_data_register(&hash_grid_indexes_h,        -1, (uintptr_t)NULL,                     config.total_hit_points,         sizeof(unsigned));
+  starpu_variable_data_register(&hash_grid_ptr_h,           0, (uintptr_t)&hash_grid,               sizeof(hash_grid));
+  starpu_variable_data_register(&hash_grid_entry_count_h,   0, (uintptr_t)&hash_grid_entry_count,   sizeof(hash_grid_entry_count));
+  starpu_variable_data_register(&hash_grid_inv_cell_size_h, 0, (uintptr_t)&hash_grid_inv_cell_size, sizeof(hash_grid_inv_cell_size));
+
   starpu_variable_data_register(&bbox_h,                   -1, (uintptr_t)NULL, sizeof(BBox));
-  starpu_variable_data_register(&hash_grid_entry_count_h,   0, (uintptr_t)&hash_grid.entry_count,  sizeof(hash_grid.entry_count));
+  starpu_variable_data_register(&hash_grid_entry_count_h,   0, (uintptr_t)&hash_grid_entry_count,  sizeof(hash_grid_entry_count));
   starpu_variable_data_register(&current_photon_radius2_h, -1, (uintptr_t)NULL, sizeof(float));
   starpu_variable_data_register(&sample_buffer_h,           0, (uintptr_t)&sample_buffer,          sizeof(sample_buffer));
   starpu_variable_data_register(&film_h,                    0, (uintptr_t)&film,                   sizeof(film));
+
+  // data partitions
+  // filter_by_hit_points.filter_func = starpu_vector_filter_block;
+  // filter_by_hit_points.nchildren   = config.total_hit_points / config.partition_size;
+  // starpu_data_partition(eye_paths_h,       &filter_by_hit_points);
+  // starpu_data_partition(hit_points_info_h, &filter_by_hit_points);
+  //starpu_data_partition(hit_points,        &filter_by_hit_points);
 }
 
 void StarpuEngine :: init_seed_buffer() {
@@ -91,12 +104,12 @@ void StarpuEngine :: init_seed_buffer() {
 
 void StarpuEngine :: generate_eye_paths() {
   starpu_insert_task(&codelets::generate_eye_paths,
-    STARPU_W, eye_paths_h,
+    STARPU_W,  eye_paths_h,
     STARPU_RW, seeds_h,
     STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
     0);
-
 }
+
 void StarpuEngine :: advance_eye_paths() {
   starpu_insert_task(&codelets::advance_eye_paths,
     STARPU_W,  hit_points_info_h,
@@ -124,7 +137,11 @@ void StarpuEngine :: rehash() {
     STARPU_R,     hit_points_info_h,
     STARPU_R,     bbox_h,
     STARPU_R,     current_photon_radius2_h,
+    STARPU_W,     hash_grid_ptr_h,
+    STARPU_W,     hash_grid_lengths_h,
+    STARPU_W,     hash_grid_indexes_h,
     STARPU_W,     hash_grid_entry_count_h,
+    STARPU_W,     hash_grid_inv_cell_size_h,
     STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
     0);
 }

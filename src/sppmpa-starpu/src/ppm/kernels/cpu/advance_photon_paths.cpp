@@ -18,14 +18,21 @@ namespace ppm { namespace kernels { namespace cpu {
   void advance_photon_paths_impl(
       PhotonPath* const photon_paths,    const unsigned photon_paths_count,
       Seed* const seed_buffer,        // const unsigned seed_buffer_count,
-      const PtrFreeHashGrid* hash_grid,
       const PtrFreeScene* scene,
+      //const PtrFreeHashGrid* hash_grid,
+
       HitPointPosition* const hit_points_info,
       HitPointRadiance* const hit_points,
       const BBox& bbox,
       const unsigned CONST_max_photon_depth,
       const float photon_radius2,
-      const unsigned hit_points_count) {
+      const unsigned hit_points_count,
+
+      const unsigned**          hash_grid_ptr,
+      const unsigned*           hash_grid_lengths,
+      const unsigned*           hash_grid_indexes,
+      const unsigned long long  hash_grid_entry_count,
+      const float               hash_grid_inv_cell_size) {
 
   #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned i = 0; i < hit_points_count; ++i) {
@@ -84,7 +91,7 @@ namespace ppm { namespace kernels { namespace cpu {
           f *= surface_color;
 
           if (!specular_bounce) {
-            helpers::add_flux(hash_grid, bbox, scene, hit_point, shade_N, wo, path.flux, photon_radius2, hit_points_info, hit_points);
+            helpers::add_flux(hash_grid_ptr, hash_grid_lengths, hash_grid_indexes, hash_grid_entry_count, hash_grid_inv_cell_size, bbox, scene, hit_point, shade_N, wo, path.flux, photon_radius2, hit_points_info, hit_points, hit_points_count);
           }
 
           if (path.depth < CONST_max_photon_depth) {
@@ -139,16 +146,28 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
   const BBox* const bbox = (const BBox* const)STARPU_VARIABLE_GET_PTR(buffers[4]);
   const float* const photon_radius2 = (const float* const)STARPU_VARIABLE_GET_PTR(buffers[5]);
 
+  const unsigned**          hash_grid_ptr  = (const unsigned**)STARPU_VARIABLE_GET_PTR(buffers[6]);
+  const unsigned*           lengths        = (const unsigned*) STARPU_VARIABLE_GET_PTR(buffers[7]);
+  const unsigned*           indexes        = (const unsigned*) STARPU_VARIABLE_GET_PTR(buffers[8]);
+  const unsigned long long* entry_count    = (const unsigned long long* const)STARPU_VARIABLE_GET_PTR(buffers[9]);
+  const float*              inv_cell_size  = (const float*) STARPU_VARIABLE_GET_PTR(buffers[10]);
+
+
   advance_photon_paths_impl(photon_paths, photon_paths_count,
                             seed_buffer,  // seed_buffer_count,
-                            args.cpu_hash_grid,
                             args.cpu_scene,
                             hit_points_info,
                             hit_points,
                             *bbox,
                             args.cpu_config->max_photon_depth,
                             *photon_radius2,
-                            hit_points_count);
+                            hit_points_count,
+
+                            hash_grid_ptr,
+                            indexes,
+                            lengths,
+                            *entry_count,
+                            *inv_cell_size);
 
 }
 

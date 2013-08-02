@@ -1,5 +1,5 @@
 #include "ppm/kernels/helpers.cuh"
-#include "ppm/ptrfree_hash_grid.h"
+//#include "ppm/ptrfree_hash_grid.h"
 #include "ppm/math.h"
 #include <limits>
 #include <cfloat>
@@ -449,7 +449,12 @@ template<class T> __host__ __device__ void my_atomic_add(T* var, T inc) {
 
 
 __HD__ void add_flux(
-    const PtrFreeHashGrid* const hash_grid,
+    const unsigned** hash_grid_ptr,
+    const unsigned*  hash_grid_lengths,
+    const unsigned*  hash_grid_indexes,
+    const unsigned   hash_grid_entry_count,
+    const float      hash_grid_inv_cell_size,
+
     const BBox& bbox,
     const PtrFreeScene* const scene,
     const Point& hit_point,
@@ -458,21 +463,22 @@ __HD__ void add_flux(
     const Spectrum& photon_flux,
     const float photon_radius2,
     HitPointPosition* const hit_points_info,
-    HitPointRadiance* const hit_points) {
+    HitPointRadiance* const hit_points,
+    const unsigned hit_points_count) {
 
-  const Vector hh = (hit_point - bbox.pMin) * hash_grid->inv_cell_size;
+  const Vector hh = (hit_point - bbox.pMin) * hash_grid_inv_cell_size;
 
   const int ix = abs(int(hh.x));
   const int iy = abs(int(hh.y));
   const int iz = abs(int(hh.z));
 
-  unsigned grid_index = hash(ix, iy, iz, hash_grid->size);
-  unsigned length = hash_grid->lengths[grid_index];
+  unsigned grid_index = hash(ix, iy, iz, hit_points_count);
+  unsigned length = hash_grid_lengths[grid_index];
 
   if (length > 0) {
-    unsigned local_list = hash_grid->lists_index[grid_index];
+    unsigned local_list = hash_grid_indexes[grid_index];
     for(unsigned i = local_list; i < local_list + length; ++i) {
-      unsigned hit_point_index = hash_grid->lists[i];
+      unsigned hit_point_index = (*hash_grid_ptr)[i];
       HitPointPosition& ihp = hit_points_info[hit_point_index];
       HitPointRadiance& hp = hit_points[hit_point_index];
 

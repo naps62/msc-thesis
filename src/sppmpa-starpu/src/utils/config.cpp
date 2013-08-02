@@ -33,6 +33,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
 
   // starpu
   value("sched", sched_policy, string("pheft"), "scheduling policy (pheft (default) | pgreedy)");
+  value("partition_size", partition_size, uint(1024), "size of each starpu data partition");
   value("max_iters_at_once", max_iters_at_once, uint(0), "maximum amount of iterations running at once");
 
   // now parse the arguments

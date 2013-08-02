@@ -10,8 +10,8 @@ namespace ppm {
 class PtrFreeHashGrid {
 public:
   unsigned int* lists;
-  unsigned int* lengths;
-  unsigned int* lists_index;
+  //unsigned int* lengths;
+  //unsigned int* lists_index;
 
   unsigned int size;
   float inv_cell_size;

@@ -6,11 +6,11 @@ namespace ppm {
 PtrFreeHashGrid :: PtrFreeHashGrid(const unsigned size, const unsigned hit_points_count) {
   this->size = size;
   lists = NULL;
-  lengths = NULL;
-  lists_index = NULL;
+  //lengths = NULL;
+  //lists_index = NULL;
 
-  this->lengths     = new unsigned int[hit_points_count];
-  this->lists_index = new unsigned int[hit_points_count];
+  //this->lengths     = new unsigned int[hit_points_count];
+  //this->lists_index = new unsigned int[hit_points_count];
 }
 
 PtrFreeHashGrid :: ~PtrFreeHashGrid() {

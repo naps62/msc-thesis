@@ -21,7 +21,6 @@ public:
       total_photons_traced(0),
       config(_config),
       scene(new PtrFreeScene(config)),
-      hash_grid(config.total_hit_points, config.total_hit_points),
       film(new Film(config.width, config.height)),
       sample_buffer(new SampleBuffer(config.width * config.height * config.spp * config.spp)) {
 
@@ -68,10 +67,15 @@ protected:
   double start_time;
   const Config& config;
   PtrFreeScene* scene;
-  PtrFreeHashGrid hash_grid;
   Display* display;
   Film* film;
   SampleBuffer* sample_buffer;
+
+  unsigned int* hash_grid;
+  unsigned int* hash_grid_lengths;
+  unsigned int* hash_grid_indexes;
+  unsigned int  hash_grid_entry_count;
+  float         hash_grid_inv_cell_size;
 };
 
 }
