@@ -34,13 +34,11 @@ void StarpuEngine :: render() {
   start_time = WallClockTime();
   const unsigned total_spp = config.width * config.spp + config.height * config.spp;
 
-  starpu_vector_data_register(&seeds_h,           -1, (uintptr_t)NULL, config.seed_size, sizeof(Seed));
   starpu_variable_data_register(&sample_buffer_h,  0, (uintptr_t)&sample_buffer,         sizeof(sample_buffer));
   starpu_variable_data_register(&film_h,           0, (uintptr_t)&film,                  sizeof(film));
-    starpu_vector_data_register(&live_photon_paths_h, -1, (uintptr_t)NULL, config.photons_per_iter, sizeof(PhotonPath));
 
-
-    starpu_variable_data_register(&bbox_h,                   -1, (uintptr_t)NULL, sizeof(BBox));
+  vector_handle(&seeds_h,             config.seed_size,        sizeof(Seed));
+  vector_handle(&live_photon_paths_h, config.photons_per_iter, sizeof(PhotonPath));
 
   // 1. INIT SEEDS
   starpu_insert_task(&codelets::init_seeds,
@@ -53,7 +51,7 @@ void StarpuEngine :: render() {
 
 
     // 2. GENERATE EYE PATHS
-    starpu_vector_data_register(&eye_paths_h, -1, (uintptr_t)NULL, config.total_hit_points, sizeof(EyePath));
+    vector_handle(&eye_paths_h, config.total_hit_points, sizeof(EyePath));
     starpu_insert_task( &codelets::generate_eye_paths,
                         STARPU_W,  eye_paths_h,
                         STARPU_RW, seeds_h,
@@ -61,17 +59,18 @@ void StarpuEngine :: render() {
 
 
     // 3. ADVANCE EYE PATHS
-    starpu_vector_data_register(&hit_points_info_h, -1, (uintptr_t)NULL, config.total_hit_points, sizeof(HitPointPosition));
+    vector_handle(&hit_points_info_h, config.total_hit_points, sizeof(HitPointPosition));
     starpu_insert_task( &codelets::advance_eye_paths,
                         STARPU_W,  hit_points_info_h,
                         STARPU_R,  eye_paths_h,
                         STARPU_RW, seeds_h,
                         STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args), 0);
-    starpu_data_unregister_submit(eye_paths_h);
+    free_handle(eye_paths_h);
 
 
     // 4. BBOX COMPUTE
-    starpu_variable_data_register(&current_photon_radius2_h, -1, (uintptr_t)NULL, sizeof(float));
+    variable_handle(&bbox_h,                   sizeof(BBox));
+    variable_handle(&current_photon_radius2_h, sizeof(float));
     starpu_insert_task( &codelets::bbox_compute,
                         STARPU_R, hit_points_info_h,
                         STARPU_W, bbox_h,
@@ -79,11 +78,11 @@ void StarpuEngine :: render() {
                         STARPU_VALUE, &iteration,    sizeof(iteration),
                         STARPU_VALUE, &total_spp,    sizeof(total_spp),
                         STARPU_VALUE, &config.alpha, sizeof(config.alpha), 0);
+    vector_handle(&hash_grid_h,         8 * config.total_hit_points, sizeof(unsigned));
+    vector_handle(&hash_grid_lengths_h, config.total_hit_points,     sizeof(unsigned));
+    vector_handle(&hash_grid_indexes_h, config.total_hit_points,     sizeof(unsigned));
+    variable_handle(&hash_grid_inv_cell_size_h, sizeof(float));
 
-    starpu_vector_data_register(&hash_grid_h,                 -1, (uintptr_t)NULL,   8 * config.total_hit_points,     sizeof(unsigned));
-    starpu_vector_data_register(&hash_grid_lengths_h,         -1, (uintptr_t)NULL,   config.total_hit_points,         sizeof(unsigned));
-    starpu_vector_data_register(&hash_grid_indexes_h,         -1, (uintptr_t)NULL,   config.total_hit_points,         sizeof(unsigned));
-    starpu_variable_data_register(&hash_grid_inv_cell_size_h, -1, (uintptr_t)NULL,   sizeof(float));
 
     // 5. REHASH
     starpu_insert_task( &codelets::rehash,
@@ -96,14 +95,16 @@ void StarpuEngine :: render() {
                         STARPU_W,     hash_grid_inv_cell_size_h,
                         STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args), 0);
 
+
     // 6. GENERATE PHOTON PATHS
     starpu_insert_task( &codelets::generate_photon_paths,
                         STARPU_W,  live_photon_paths_h,
                         STARPU_RW, seeds_h,
                         STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args), 0);
 
+
     // 7. ADVANCE PHOTON PATHS
-    starpu_vector_data_register(&hit_points_h, -1, (uintptr_t)NULL, config.total_hit_points, sizeof(HitPointRadiance));
+    vector_handle(&hit_points_h, config.total_hit_points, sizeof(HitPointRadiance));
     starpu_insert_task( &codelets::advance_photon_paths,
                         STARPU_R,  live_photon_paths_h,
                         STARPU_R,  hit_points_info_h,
@@ -117,11 +118,12 @@ void StarpuEngine :: render() {
                         STARPU_R,  hash_grid_inv_cell_size_h,
                         STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
                         STARPU_VALUE, &config.total_hit_points, sizeof(config.total_hit_points), 0);
+    free_handle(bbox_h);
+    free_handle(hash_grid_h);
+    free_handle(hash_grid_lengths_h);
+    free_handle(hash_grid_indexes_h);
+    free_handle(hash_grid_inv_cell_size_h);
 
-    starpu_data_unregister_submit(hash_grid_h);
-    starpu_data_unregister_submit(hash_grid_lengths_h);
-    starpu_data_unregister_submit(hash_grid_indexes_h);
-    starpu_data_unregister_submit(hash_grid_inv_cell_size_h);
 
     // 8. ACCUM FLUX
     starpu_insert_task( &codelets::accum_flux,
@@ -130,8 +132,8 @@ void StarpuEngine :: render() {
                         STARPU_R,  current_photon_radius2_h,
                         STARPU_VALUE, &codelets::generic_args,  sizeof(codelets::generic_args),
                         STARPU_VALUE, &config.photons_per_iter, sizeof(config.photons_per_iter), 0);
-    starpu_data_unregister_submit(hit_points_info_h);
-    starpu_data_unregister_submit(current_photon_radius2_h);
+    free_handle(hit_points_info_h);
+    free_handle(current_photon_radius2_h);
 
 
     // 9. UPDATE SAMPLE BUFFER
@@ -139,7 +141,8 @@ void StarpuEngine :: render() {
                         STARPU_R,  hit_points_h,
                         STARPU_RW, sample_buffer_h,
                         STARPU_VALUE, &config.width, sizeof(config.width), 0);
-    starpu_data_unregister_submit(hit_points_h);
+    free_handle(hit_points_h);
+
 
     // 10. SPLAT TO FILM
     starpu_insert_task( &codelets::splat_to_film,
@@ -165,12 +168,10 @@ void StarpuEngine :: render() {
     }
   }
 
-  starpu_data_unregister_submit(live_photon_paths_h);
-
-  starpu_data_unregister_submit(bbox_h);
-  starpu_data_unregister_submit(sample_buffer_h);
-  starpu_data_unregister_submit(film_h);
-  starpu_data_unregister_submit(seeds_h);
+  free_handle(live_photon_paths_h);
+  free_handle(sample_buffer_h);
+  free_handle(film_h);
+  free_handle(seeds_h);
   starpu_task_wait_for_all();
 }
 
