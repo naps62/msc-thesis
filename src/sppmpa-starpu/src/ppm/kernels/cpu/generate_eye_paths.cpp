@@ -31,7 +31,7 @@ void generate_eye_paths_impl(
   //unsigned index = 0;
   //const float sample_weight = 1.f / spp;
 
-  //#pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned y = 0; y < height; ++y) {
     for(unsigned x = 0; x < width; ++x) {
       //for(unsigned sy = 0; sy < spp; ++sy) {
@@ -39,7 +39,6 @@ void generate_eye_paths_impl(
 
           unsigned index =  x + width * y;
 
-          // TODO tirar esta dependencia no index
           EyePath& eye_path = eye_paths[index];
 
           eye_path = EyePath();
