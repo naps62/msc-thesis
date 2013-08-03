@@ -40,6 +40,10 @@ protected:
 
   void render();
   void output();
+
+  void vector_handle(starpu_data_handle_t* handle, unsigned total, size_t size);
+  void variable_handle(starpu_data_handle_t* handle, size_t size);
+  void free_handle(starpu_data_handle_t handle);
 };
 
 }
