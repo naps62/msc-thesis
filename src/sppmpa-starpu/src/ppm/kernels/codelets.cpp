@@ -148,15 +148,14 @@ namespace ppm { namespace kernels {
       cl->max_parallelism = 1;
       cl->cpu_funcs[0]    = ppm::kernels::cpu::rehash;
       cl->cpu_funcs[1]    = NULL;
-      cl->nbuffers        = 8;
+      cl->nbuffers        = 7;
       cl->modes[0]        = STARPU_R; // hit_points_info
       cl->modes[1]        = STARPU_R; // bbox
       cl->modes[2]        = STARPU_R; // current_photon_radius2
       cl->modes[3]        = STARPU_W; // hash_grid_ptr
       cl->modes[4]        = STARPU_W; // hash_grid_lengths
       cl->modes[5]        = STARPU_W; // hash_grid_indexes
-      cl->modes[6]        = STARPU_W; // hash_grid_entry_count
-      cl->modes[7]        = STARPU_W; // hash_grid_inv_cell_size
+      cl->modes[6]        = STARPU_W; // hash_grid_inv_cell_size
       cl->model           = pm;
 
 
@@ -192,7 +191,7 @@ namespace ppm { namespace kernels {
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_photon_paths;
       cl->cpu_funcs[1]    = NULL;
-      cl->nbuffers        = 11;
+      cl->nbuffers        = 10;
       cl->modes[0]        = STARPU_R;  // live_photon_paths
       cl->modes[1]        = STARPU_R;  // hit_points_info
       cl->modes[2]        = STARPU_W;  // hit_points
@@ -202,8 +201,7 @@ namespace ppm { namespace kernels {
       cl->modes[6]        = STARPU_R;  // hash_grid_ptr
       cl->modes[7]        = STARPU_R;  // hash_grid_lengths
       cl->modes[8]        = STARPU_R;  // hash_grid_indexes
-      cl->modes[9]        = STARPU_R;  // hash_grid_entry_count
-      cl->modes[10]       = STARPU_R;  // hash_grid_inv_cell_size
+      cl->modes[9]        = STARPU_R;  // hash_grid_inv_cell_size
       cl->model           = pm;
 
 

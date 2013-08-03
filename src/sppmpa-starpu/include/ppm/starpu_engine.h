@@ -31,7 +31,6 @@ protected:
   starpu_data_handle_t hash_grid_h;
   starpu_data_handle_t hash_grid_lengths_h;
   starpu_data_handle_t hash_grid_indexes_h;
-  starpu_data_handle_t hash_grid_entry_count_h;
   starpu_data_handle_t hash_grid_inv_cell_size_h;
 
   starpu_data_filter filter_by_hit_points;

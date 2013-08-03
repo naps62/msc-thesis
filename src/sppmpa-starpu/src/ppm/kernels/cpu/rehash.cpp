@@ -21,7 +21,6 @@ void rehash_impl(
     unsigned*  hash_grid,
     unsigned*  hash_grid_lengths,
     unsigned*  hash_grid_indexes,
-    unsigned long long* entry_count,
     float* inv_cell_size,
     const BBox& bbox,
     const float current_photon_radius2) {
@@ -35,7 +34,7 @@ void rehash_impl(
   }
 
 
-  unsigned local_entry_count = 0;
+  // unsigned entry_count = 0;
   for(unsigned i = 0; i < size; ++i) {
     const HitPointPosition& hpi = hit_points_info[i];
 
@@ -56,17 +55,12 @@ void rehash_impl(
             }
 
             hash_grid_deque[hv]->push_front(i);
-            local_entry_count++;
+            // entry_count++;
           }
         }
       }
     }
   }
-
-  *entry_count = local_entry_count;
-
-  //if (hash_grid_ptr) delete[] hash_grid.lists;
-  //hash_grid.lists = new unsigned int[local_entry_count];
 
   uint list_index = 0;
   for(unsigned i = 0; i < size; ++i) {
@@ -97,18 +91,16 @@ void rehash(void* buffers[], void* args_orig) {
   const BBox* const bbox = (const BBox* const)STARPU_VARIABLE_GET_PTR(buffers[1]);
   const float* const current_photon_radius2 = (const float* const)STARPU_VARIABLE_GET_PTR(buffers[2]);
 
-  unsigned*           hash_grid      = (unsigned*)  STARPU_VECTOR_GET_PTR(buffers[3]);
-  unsigned*           lengths        = (unsigned*)  STARPU_VECTOR_GET_PTR(buffers[4]);
-  unsigned*           indexes        = (unsigned*)  STARPU_VECTOR_GET_PTR(buffers[5]);
-  unsigned long long* entry_count    = (unsigned long long* const)STARPU_VARIABLE_GET_PTR(buffers[6]);
-  float*              inv_cell_size  = (float*) STARPU_VARIABLE_GET_PTR(buffers[7]);
+  unsigned*           hash_grid      = (unsigned*) STARPU_VECTOR_GET_PTR(buffers[3]);
+  unsigned*           lengths        = (unsigned*) STARPU_VECTOR_GET_PTR(buffers[4]);
+  unsigned*           indexes        = (unsigned*) STARPU_VECTOR_GET_PTR(buffers[5]);
+  float*              inv_cell_size  = (float*)    STARPU_VARIABLE_GET_PTR(buffers[6]);
 
   rehash_impl(hit_points_info,
               hit_points_count,
               hash_grid,
               lengths,
               indexes,
-              entry_count,
               inv_cell_size,
               *bbox,
               *current_photon_radius2);

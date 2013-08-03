@@ -30,7 +30,6 @@ namespace ppm { namespace kernels { namespace cpu {
       const unsigned*           hash_grid,
       const unsigned*           hash_grid_lengths,
       const unsigned*           hash_grid_indexes,
-      const unsigned long long  hash_grid_entry_count,
       const float               hash_grid_inv_cell_size) {
 
 
@@ -81,7 +80,7 @@ namespace ppm { namespace kernels { namespace cpu {
           f *= surface_color;
 
           if (!specular_bounce) {
-            helpers::add_flux(hash_grid, hash_grid_lengths, hash_grid_indexes, hash_grid_entry_count, hash_grid_inv_cell_size, bbox, scene, hit_point, shade_N, wo, path.flux, photon_radius2, hit_points_info, hit_points, hit_points_count);
+            helpers::add_flux(hash_grid, hash_grid_lengths, hash_grid_indexes, hash_grid_inv_cell_size, bbox, scene, hit_point, shade_N, wo, path.flux, photon_radius2, hit_points_info, hit_points, hit_points_count);
           }
 
           if (path.depth < CONST_max_photon_depth) {
@@ -139,8 +138,7 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
   const unsigned*           hash_grid      = (const unsigned*) STARPU_VECTOR_GET_PTR(buffers[6]);
   const unsigned*           lengths        = (const unsigned*) STARPU_VECTOR_GET_PTR(buffers[7]);
   const unsigned*           indexes        = (const unsigned*) STARPU_VECTOR_GET_PTR(buffers[8]);
-  const unsigned long long* entry_count    = (const unsigned long long* const)STARPU_VARIABLE_GET_PTR(buffers[9]);
-  const float*              inv_cell_size  = (const float*) STARPU_VARIABLE_GET_PTR(buffers[10]);
+  const float*              inv_cell_size  = (const float*)    STARPU_VARIABLE_GET_PTR(buffers[9]);
 
 
   advance_photon_paths_impl(photon_paths, photon_paths_count,
@@ -156,7 +154,6 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
                             hash_grid,
                             lengths,
                             indexes,
-                            *entry_count,
                             *inv_cell_size);
 
 }

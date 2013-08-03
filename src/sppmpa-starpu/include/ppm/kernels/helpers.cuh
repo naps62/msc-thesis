@@ -64,7 +64,6 @@ __HD__ void add_flux(
     const unsigned*  hash_grid,
     const unsigned*  hash_grid_lengths,
     const unsigned*  hash_grid_indexes,
-    const unsigned   hash_grid_entry_count,
     const float      hash_grid_inv_cell_size,
     const BBox& bbox,
     const PtrFreeScene* const scene,
