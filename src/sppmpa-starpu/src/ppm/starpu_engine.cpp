@@ -37,8 +37,7 @@ void StarpuEngine :: render() {
   starpu_variable_data_register(&sample_buffer_h,  0, (uintptr_t)&sample_buffer,         sizeof(sample_buffer));
   starpu_variable_data_register(&film_h,           0, (uintptr_t)&film,                  sizeof(film));
 
-  vector_handle(&seeds_h,             config.seed_size,        sizeof(Seed));
-  vector_handle(&live_photon_paths_h, config.photons_per_iter, sizeof(PhotonPath));
+  vector_handle(&seeds_h, config.seed_size, sizeof(Seed));
 
   // 1. INIT SEEDS
   starpu_insert_task(&codelets::init_seeds,
@@ -97,6 +96,7 @@ void StarpuEngine :: render() {
 
 
     // 6. GENERATE PHOTON PATHS
+    vector_handle(&live_photon_paths_h, config.photons_per_iter, sizeof(PhotonPath));
     starpu_insert_task( &codelets::generate_photon_paths,
                         STARPU_W,  live_photon_paths_h,
                         STARPU_RW, seeds_h,
@@ -123,6 +123,7 @@ void StarpuEngine :: render() {
     free_handle(hash_grid_lengths_h);
     free_handle(hash_grid_indexes_h);
     free_handle(hash_grid_inv_cell_size_h);
+    free_handle(live_photon_paths_h);
 
 
     // 8. ACCUM FLUX
@@ -168,7 +169,6 @@ void StarpuEngine :: render() {
     }
   }
 
-  free_handle(live_photon_paths_h);
   free_handle(sample_buffer_h);
   free_handle(film_h);
   free_handle(seeds_h);
