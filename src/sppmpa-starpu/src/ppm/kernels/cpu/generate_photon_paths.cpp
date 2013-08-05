@@ -18,7 +18,6 @@ namespace ppm { namespace kernels { namespace cpu {
   void generate_photon_paths_impl(
       PhotonPath* const photon_paths, const unsigned photon_paths_count,
       Seed* const seed_buffer,        // const unsigned seed_buffer_count,
-      const Config* config,
       const PtrFreeScene* scene) {
 
     #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
@@ -72,7 +71,6 @@ namespace ppm { namespace kernels { namespace cpu {
 
     generate_photon_paths_impl(photon_paths, photon_paths_count,
                                seed_buffer,  // seed_buffer_count,
-                               args.cpu_config,
                                args.cpu_scene);
   }
 

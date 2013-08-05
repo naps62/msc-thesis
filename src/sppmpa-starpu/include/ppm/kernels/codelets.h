@@ -11,12 +11,9 @@ namespace ppm { namespace kernels {
 
   namespace codelets {
     struct starpu_args {
-      const Config*          cpu_config;
-      const PtrFreeScene*    cpu_scene;
-      PtrFreeHashGrid* cpu_hash_grid;
-      const CUDA::Config*    gpu_config;
-      const PtrFreeScene*    gpu_scene;
-      PtrFreeHashGrid* gpu_hash_grid;
+      const Config*       config;
+      const PtrFreeScene* cpu_scene;
+      const PtrFreeScene* gpu_scene;
 
       starpu_args() { };
     };
@@ -34,8 +31,7 @@ namespace ppm { namespace kernels {
 
     extern starpu_args    generic_args;
 
-    void init(const Config* cpu_config,       const PtrFreeScene* cpu_scene, PtrFreeHashGrid* cpu_hash_grid,
-              const CUDA::Config* gpu_config, const PtrFreeScene* gpu_scene, PtrFreeHashGrid* gpu_hash_grid);
+    void init(const Config* cpu_config,       const PtrFreeScene* cpu_scene, const PtrFreeScene* gpu_scene);
 
   }
 

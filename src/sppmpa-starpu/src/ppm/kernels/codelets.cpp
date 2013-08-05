@@ -46,14 +46,10 @@ namespace ppm { namespace kernels {
       memset(model, 0, sizeof(starpu_perfmodel));
     }
 
-    void init(const Config* cpu_config,       const PtrFreeScene* cpu_scene, PtrFreeHashGrid* cpu_hash_grid,
-              const CUDA::Config* gpu_config, const PtrFreeScene* gpu_scene, PtrFreeHashGrid* gpu_hash_grid) {
-      generic_args.cpu_config    = cpu_config;
-      generic_args.cpu_scene     = cpu_scene;
-      generic_args.cpu_hash_grid = cpu_hash_grid;
-      generic_args.gpu_config    = gpu_config;
-      generic_args.gpu_scene     = gpu_scene;
-      generic_args.gpu_hash_grid = gpu_hash_grid;
+    void init(const Config* config, const PtrFreeScene* cpu_scene, const PtrFreeScene* gpu_scene) {
+      generic_args.config    = config;
+      generic_args.cpu_scene = cpu_scene;
+      generic_args.gpu_scene = gpu_scene;
 
 
       starpu_perfmodel* pm;
@@ -68,7 +64,7 @@ namespace ppm { namespace kernels {
 
       cl   = &init_seeds;
       starpu_codelet_init(cl);
-      cl->where           = STARPU_CPU | STARPU_CUDA;
+      cl->where           = STARPU_CPU;
       cl->type            = STARPU_FORKJOIN;
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::init_seeds;
@@ -86,11 +82,13 @@ namespace ppm { namespace kernels {
 
       cl   = &generate_eye_paths;
       starpu_codelet_init(cl);
-      cl->where           = STARPU_CPU;
+      cl->where           = STARPU_CPU | STARPU_CUDA;
       cl->type            = STARPU_FORKJOIN;
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::generate_eye_paths;
       cl->cpu_funcs[1]    = NULL;
+      cl->cuda_funcs[0]   = ppm::kernels::cuda::generate_eye_paths;
+      cl->cuda_funcs[1]   = NULL;
       cl->nbuffers        = 2;
       cl->modes[0]        = STARPU_W;  // eye_paths
       cl->modes[1]        = STARPU_RW; // seeds

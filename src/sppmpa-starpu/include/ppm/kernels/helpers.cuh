@@ -4,6 +4,7 @@
 #include "ppm/types.h"
 #include "ppm/ptrfreescene.h"
 #include "ppm/ptrfree_hash_grid.h"
+#include "utils/random.h"
 using namespace ppm;
 
 namespace ppm { namespace kernels {
@@ -77,6 +78,14 @@ __HD__ void add_flux(
     const unsigned hit_points_count);
 
 __HD__ unsigned hash(const int ix, const int iy, const int iz, unsigned size);
+
+
+void __global__ generate_eye_paths_impl(
+    EyePath* const eye_paths,
+    Seed* const seed_buffer,
+    const unsigned width,
+    const unsigned height,
+    const PtrFreeScene* scene);
 
 }
 

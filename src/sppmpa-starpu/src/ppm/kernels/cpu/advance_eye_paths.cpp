@@ -168,7 +168,7 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
                          eye_paths,         eye_paths_count,
                          seed_buffer, //    seed_buffer_count,
                          args.cpu_scene,
-                         args.cpu_config->max_eye_path_depth);
+                         args.config->max_eye_path_depth);
 }
 
 } } }

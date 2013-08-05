@@ -13,12 +13,11 @@ namespace ppm {
 class PtrFreeScene {
 
 public:
+  PtrFreeScene();
   PtrFreeScene(const Config& config);
-  ~PtrFreeScene();
+  //~PtrFreeScene(); // TODO do this
 
   void recompile(const ActionList& actions);
-
-  Ray generate_ray(const float sx, const float sy, const uint width, const uint height, const float u0, const float u1, const float u2) const;
 
   bool intersect(Ray& ray, RayHit& hit) const;
 
@@ -35,7 +34,7 @@ public:
   typedef lux_defined_meshs_pair_t lux_defined_meshs_array_t[];
 
 //private:
-  const Config& config;           // reference to global configs
+  ppm::AcceleratorType accel_type;
   luxrays::Scene* original_scene; // original scene structure
   luxrays::DataSet* data_set;     // original data_set structure
 
@@ -61,7 +60,7 @@ public:
   Triangle* triangles;
   Mesh*     mesh_descs;
 
-  uint* mesh_ids; // size == mesh_count
+  uint* mesh_ids; // size == data_set->totalTriangleCount
 
   uint* mesh_first_triangle_offset;
   BSphere bsphere; // bounding sphere of the scene
@@ -75,7 +74,7 @@ public:
   // lights
   TriangleLight*  area_lights;
   InfiniteLight   infinite_light;
-  const Spectrum* infinite_light_map;
+  Spectrum*       infinite_light_map;
   SunLight        sun_light;
   SkyLight        sky_light;
 
@@ -111,6 +110,15 @@ public:
 public:
 //  static lux_mesh_comparator_t mesh_ptr_compare;
   static bool mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1);
+
+  PtrFreeScene* to_device(int device_id);
+
+private:
+  template<class T>
+  void alloc_copy_to_cuda(T** buff, T* src, const unsigned elems) {
+    cudaMalloc( buff,      sizeof(T) * elems);
+    cudaMemcpy(*buff, src, sizeof(T) * elems, cudaMemcpyHostToDevice);
+  }
 
 };
 

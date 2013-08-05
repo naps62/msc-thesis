@@ -16,7 +16,7 @@ StarpuEngine :: StarpuEngine(const Config& _config)
   spu_conf.sched_policy_name = config.sched_policy.c_str();
 
   starpu_init(&this->spu_conf);
-  kernels::codelets::init(&config, scene, NULL, NULL, NULL, NULL); // TODO GPU versions here
+  kernels::codelets::init(&config, scene, scene->to_device(0)); // TODO GPU versions here
 
   init_starpu_handles();
 }
@@ -38,6 +38,8 @@ void StarpuEngine :: render() {
   starpu_variable_data_register(&film_h,           0, (uintptr_t)&film,                  sizeof(film));
 
   vector_handle(&seeds_h, config.seed_size, sizeof(Seed));
+    vector_handle(&hit_points_h, config.total_hit_points, sizeof(HitPointRadiance));
+
 
   // 1. INIT SEEDS
   starpu_insert_task(&codelets::init_seeds,
@@ -77,13 +79,13 @@ void StarpuEngine :: render() {
                         STARPU_VALUE, &iteration,    sizeof(iteration),
                         STARPU_VALUE, &total_spp,    sizeof(total_spp),
                         STARPU_VALUE, &config.alpha, sizeof(config.alpha), 0);
+
+
+    // 5. REHASH
     vector_handle(&hash_grid_h,         8 * config.total_hit_points, sizeof(unsigned));
     vector_handle(&hash_grid_lengths_h, config.total_hit_points,     sizeof(unsigned));
     vector_handle(&hash_grid_indexes_h, config.total_hit_points,     sizeof(unsigned));
     variable_handle(&hash_grid_inv_cell_size_h, sizeof(float));
-
-
-    // 5. REHASH
     starpu_insert_task( &codelets::rehash,
                         STARPU_R,     hit_points_info_h,
                         STARPU_R,     bbox_h,
@@ -104,7 +106,6 @@ void StarpuEngine :: render() {
 
 
     // 7. ADVANCE PHOTON PATHS
-    vector_handle(&hit_points_h, config.total_hit_points, sizeof(HitPointRadiance));
     starpu_insert_task( &codelets::advance_photon_paths,
                         STARPU_R,  live_photon_paths_h,
                         STARPU_R,  hit_points_info_h,
@@ -142,7 +143,6 @@ void StarpuEngine :: render() {
                         STARPU_R,  hit_points_h,
                         STARPU_RW, sample_buffer_h,
                         STARPU_VALUE, &config.width, sizeof(config.width), 0);
-    free_handle(hit_points_h);
 
 
     // 10. SPLAT TO FILM
@@ -169,6 +169,7 @@ void StarpuEngine :: render() {
     }
   }
 
+    free_handle(hit_points_h);
   free_handle(sample_buffer_h);
   free_handle(film_h);
   free_handle(seeds_h);

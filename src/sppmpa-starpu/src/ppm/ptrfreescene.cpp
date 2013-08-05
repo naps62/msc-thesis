@@ -11,13 +11,17 @@ namespace ppm {
 // constructors
 //
 
+PtrFreeScene :: PtrFreeScene() {
+}
+
 // constructor receiving a config struct
 //*************************
-PtrFreeScene :: PtrFreeScene(const Config& _config)
-: config(_config) {
+PtrFreeScene :: PtrFreeScene(const Config& config)
+: accel_type(config.accel_type) {
 //************************
   // load input scene in luxrays format
   // TODO what is this -1? Is it the accelerator structure?
+  //data_set = original_scene->UpdateDataSet();
   original_scene = new luxrays::Scene(config.scene_file, config.width, config.height, config.accel_type);
   data_set = original_scene->UpdateDataSet();
 
@@ -87,7 +91,7 @@ void PtrFreeScene :: compile_geometry() {
   this->bsphere = data_set->GetPPMBSphere();
 
   // check used accelerator type
-  if (config.accel_type == ppm::ACCEL_QBVH) {
+  if (accel_type == ppm::ACCEL_QBVH) {
     const lux_ext_mesh_list_t meshs = original_scene->objects;
     compile_mesh_first_triangle_offset(meshs);
     translate_geometry_qbvh(meshs);
@@ -358,7 +362,10 @@ void PtrFreeScene :: compile_infinite_light() {
     infinite_light.width  = tex_map->GetWidth();
     infinite_light.height = tex_map->GetHeight();
 
-    infinite_light_map = tex_map->GetPixels();
+    infinite_light_map = new Spectrum[infinite_light.width * infinite_light.height];
+    for(unsigned i = 0; i < infinite_light.width * infinite_light.height; ++i) {
+      infinite_light_map[i] = tex_map->GetPixels()[i];
+    }
   } else {
     infinite_light.exists = false;
   }
@@ -896,6 +903,39 @@ ostream& operator<< (ostream& os, PtrFreeScene& scene) {
   return os;
 }
 
+PtrFreeScene* PtrFreeScene :: to_device(int device_id) {
+  cudaSetDevice(device_id);
 
+  PtrFreeScene scene;
+  memcpy(&scene, this, sizeof(PtrFreeScene));
+  scene.original_scene = NULL;
+  scene.data_set = NULL;
+
+  alloc_copy_to_cuda(&scene.vertexes,   this->vertexes,   vertex_count);
+  alloc_copy_to_cuda(&scene.normals,    this->normals,    normals_count);
+  alloc_copy_to_cuda(&scene.colors,     this->colors,     colors_count);
+  alloc_copy_to_cuda(&scene.uvs,        this->uvs,        uvs_count);
+  alloc_copy_to_cuda(&scene.triangles,  this->triangles,  triangles_count);
+  alloc_copy_to_cuda(&scene.mesh_descs, this->mesh_descs, mesh_descs_count);
+  alloc_copy_to_cuda(&scene.mesh_ids,   this->mesh_ids,   data_set->totalTriangleCount);
+  alloc_copy_to_cuda(&scene.mesh_first_triangle_offset, this->mesh_first_triangle_offset, mesh_count);
+  alloc_copy_to_cuda(&scene.compiled_materials, this->compiled_materials, ppm::MAT_MAX);
+  alloc_copy_to_cuda(&scene.materials,          this->materials,          materials_count);
+  alloc_copy_to_cuda(&scene.mesh_materials,     this->mesh_materials,     mesh_materials_count);
+  alloc_copy_to_cuda(&scene.area_lights,        this->area_lights,        area_lights_count);
+  alloc_copy_to_cuda(&scene.infinite_light_map, this->infinite_light_map, this->infinite_light.width * this->infinite_light.height);
+  alloc_copy_to_cuda(&scene.tex_maps,           this->tex_maps,         tex_maps_count);
+  alloc_copy_to_cuda(&scene.rgb_tex,            this->rgb_tex,          rgb_tex_count);
+  alloc_copy_to_cuda(&scene.alpha_tex,          this->alpha_tex,        alpha_tex_count);
+  alloc_copy_to_cuda(&scene.mesh_texs,          this->mesh_texs,        mesh_materials_count);
+  alloc_copy_to_cuda(&scene.bump_map,           this->bump_map,         mesh_materials_count);
+  alloc_copy_to_cuda(&scene.bump_map_scales,    this->bump_map_scales,  mesh_materials_count);
+  alloc_copy_to_cuda(&scene.normal_map,         this->normal_map,       mesh_materials_count);
+
+  PtrFreeScene* cuda_scene;
+  alloc_copy_to_cuda(&cuda_scene, this, 1);
+
+  return cuda_scene;
+}
 
 }

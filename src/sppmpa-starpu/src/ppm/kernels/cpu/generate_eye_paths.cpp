@@ -19,11 +19,10 @@ namespace ppm { namespace kernels { namespace cpu {
 void generate_eye_paths_impl(
     EyePath* const eye_paths, // const unsigned eye_path_count,
     Seed* const seed_buffer,  // const unsigned seed_buffer_count,
-    const Config* config,
+    const unsigned width,
+    const unsigned height,
     const PtrFreeScene* scene) {
 
-  const unsigned width  = config->width;
-  const unsigned height = config->height;
   //const unsigned spp    = config->spp;
 
   // generate the eye paths
@@ -78,7 +77,8 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
 
   generate_eye_paths_impl(eye_paths,   // eye_path_count,
                           seed_buffer, // seed_buffer_count,
-                          args.cpu_config,
+                          args.config->width,
+                          args.config->height,
                           args.cpu_scene);
 
 

@@ -70,7 +70,7 @@ void accum_flux(void* buffers[], void* args_orig) {
   accum_flux_impl(hit_points_info,
                   hit_points,
                   size,
-                  args.cpu_config->alpha,
+                  args.config->alpha,
                   photons_traced,
                   *photon_radius2);
 }

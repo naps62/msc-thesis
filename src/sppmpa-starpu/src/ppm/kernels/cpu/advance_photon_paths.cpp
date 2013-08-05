@@ -147,7 +147,7 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
                             hit_points_info,
                             hit_points,
                             *bbox,
-                            args.cpu_config->max_photon_depth,
+                            args.config->max_photon_depth,
                             *photon_radius2,
                             hit_points_count,
 
