@@ -47,6 +47,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   seed_size = std::max(total_hit_points, photons_per_iter);
 
   accel_type = ppm::ACCEL_QBVH;
+  cuda_block_size_sqrt = sqrt(cuda_block_size);
 
   scene_file = scene_dir + '/' + scene_file;
   output_file = output_dir + '/' + output_file;

@@ -31,8 +31,9 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
 
   const unsigned width = args.config->width;
   const unsigned height = args.config->height;
-  const unsigned threads_per_block = args.config->cuda_block_size;
-  const unsigned n_blocks          = width * height / threads_per_block;
+  const unsigned block_side = args.config->cuda_block_size_sqrt;
+  const dim3 threads_per_block = dim3(block_side,                block_side);
+  const dim3 n_blocks          = dim3(width/threads_per_block.x, height/threads_per_block.y);
 
   PtrFreeScene* scene = (PtrFreeScene*) malloc(sizeof(PtrFreeScene));
 

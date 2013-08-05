@@ -1146,13 +1146,19 @@ void __global__ generate_eye_paths_impl(
     const unsigned height,
     const PtrFreeScene* scene) {
 
-  const unsigned index = blockIdx.x * blockDim.x + threadIdx.x;
+  //const unsigned index = blockIdx.x * blockDim.x + threadIdx.x;
+  const unsigned x = blockIdx.x * blockDim.x + threadIdx.x;
+  const unsigned y = blockIdx.y * blockDim.y + threadIdx.y;
 
-  const unsigned x = index % width;
-  const unsigned y = index / width;
-
-  if (index >= width * height)
+  //const unsigned x = index % width;
+  //const unsigned y = index / width;
+  if (x >= width || y >= height)
     return;
+
+  const unsigned index = y * width + x;
+
+  //if (index >= width * height)
+  //P  return;
 
   EyePath& eye_path = eye_paths[index];
 
