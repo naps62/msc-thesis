@@ -6,7 +6,44 @@
 namespace CUDA {
 
   struct Config {
+    // scene
+    //string scene_dir;
+    //string scene_file;
+    //string output_dir;
+    //string output_file;
 
+    // window
+    bool no_display;
+    bool use_display;  // derived from (!no_display)
+    uint width;
+    uint height;
+    //string title;
+    uint fps;
+    float min_frame_time; // derived from (1 / max_refresh_rate)
+    bool vsync;
+
+    // render
+    uint engine;
+    //string accel_name;
+    float alpha;
+    uint spp;
+    uint total_hit_points; // derived from (width * height * spp^2)
+    uint photons_first_iter_exp;
+    uint max_threads;
+    uint max_iters;
+    //ppm::AcceleratorType accel_type;
+    uint max_eye_path_depth;
+    uint max_photon_depth;
+
+    // engine
+    unsigned photons_per_iter;
+    unsigned seed_size;
+    unsigned cuda_block_size;
+
+    // starpu
+    //string sched_policy;
+    uint partition_size;
+    uint max_iters_at_once;
   };
 
 }

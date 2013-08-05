@@ -43,6 +43,7 @@ struct Config : public beast::program_options::options {
   // engine
   unsigned photons_per_iter;
   unsigned seed_size;
+  unsigned cuda_block_size;
 
   // starpu
   string sched_policy;

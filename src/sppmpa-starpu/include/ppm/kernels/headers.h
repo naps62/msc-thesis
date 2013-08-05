@@ -18,6 +18,22 @@ namespace ppm { namespace kernels {
     cpu_kernel splat_to_film;
 
   }
+
+  namespace cuda {
+    typedef void cuda_kernel(void* buffers[], void* args);
+
+    cuda_kernel init_seeds;
+    cuda_kernel generate_eye_paths;
+    cuda_kernel advance_eye_paths;
+    cuda_kernel bbox_compute;
+    cuda_kernel rehash;
+    cuda_kernel generate_photon_paths;
+    cuda_kernel advance_photon_paths;
+    cuda_kernel accum_flux;
+    cuda_kernel update_sample_buffer;
+    cuda_kernel splat_to_film;
+  }
+
 }}
 
 #endif // _PPM_KERNELS_CPU_H_

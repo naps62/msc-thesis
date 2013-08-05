@@ -11,6 +11,7 @@ struct Path {
   uint depth;
   bool done;
 
+  __HD__
   Path()
   : flux(1.f, 1.f, 1.f), ray(), depth(0), done(false) { }
 };
@@ -20,6 +21,7 @@ struct EyePath : Path {
   bool splat;
   uint sample_index;
 
+  __HD__
   EyePath()
   : Path(), scr_x(0), scr_y(0), splat(false) { }
 };

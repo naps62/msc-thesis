@@ -1,5 +1,5 @@
 #include "ppm/kernels/codelets.h"
-#include "ppm/kernels/cpu_headers.h"
+#include "ppm/kernels/headers.h"
 
 #include <limits>
 
