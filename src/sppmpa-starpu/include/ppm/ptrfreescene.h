@@ -91,6 +91,12 @@ public:
   // normal maps
   uint* normal_map;
 
+  // cuda qbvh
+  unsigned n_nodes;
+  unsigned n_prims;
+  QBVHNode* nodes;
+  QuadTriangle* prims;
+
 
   void compile_camera();
   void compile_geometry();
@@ -111,13 +117,22 @@ public:
 //  static lux_mesh_comparator_t mesh_ptr_compare;
   static bool mesh_ptr_compare(luxrays::Mesh* m0, luxrays::Mesh* m1);
 
-  PtrFreeScene* to_device(int device_id);
+  PtrFreeScene* to_device(int device_id) const;
 
 private:
   template<class T>
-  void alloc_copy_to_cuda(T** buff, T* src, const unsigned elems) {
-    cudaMalloc( buff,      sizeof(T) * elems);
-    cudaMemcpy(*buff, src, sizeof(T) * elems, cudaMemcpyHostToDevice);
+  cudaError_t alloc_copy_to_cuda(T** buff, T* src, const unsigned elems) const {
+    if (src) {
+      cudaError_t malloc_error = cudaMalloc( buff, sizeof(T) * elems);
+      if (malloc_error != cudaSuccess) {
+        printf("alloc_copy_to_cuda error\n");
+        return malloc_error;
+      }
+      return cudaMemcpy(*buff, src, sizeof(T) * elems, cudaMemcpyHostToDevice);
+    } else {
+      *buff = NULL;
+      return cudaSuccess;
+    }
   }
 
 };

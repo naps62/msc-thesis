@@ -15,10 +15,11 @@ StarpuEngine :: StarpuEngine(const Config& _config)
   starpu_conf_init(&this->spu_conf);
   spu_conf.sched_policy_name = config.sched_policy.c_str();
 
+  PtrFreeScene* device_scene = scene->to_device(0);
   starpu_init(&this->spu_conf);
-  kernels::codelets::init(&config, scene, scene->to_device(0)); // TODO GPU versions here
 
   init_starpu_handles();
+  kernels::codelets::init(&config, scene, device_scene); // TODO GPU versions here
 }
 
 StarpuEngine :: ~StarpuEngine() {

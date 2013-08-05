@@ -3,7 +3,6 @@
 
 #include <starpu.h>
 #include "utils/config.h"
-#include "utils/cuda_config.cuh"
 #include "ppm/ptrfreescene.h"
 #include "ppm/ptrfree_hash_grid.h"
 

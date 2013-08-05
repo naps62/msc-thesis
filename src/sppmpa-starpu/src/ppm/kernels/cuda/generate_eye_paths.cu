@@ -34,6 +34,8 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
   const unsigned threads_per_block = args.config->cuda_block_size;
   const unsigned n_blocks          = width * height / threads_per_block;
 
+  PtrFreeScene* scene = (PtrFreeScene*) malloc(sizeof(PtrFreeScene));
+
   helpers::generate_eye_paths_impl<<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
    (eye_paths,   // eye_path_count,
     seed_buffer, // seed_buffer_count,

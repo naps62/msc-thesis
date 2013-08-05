@@ -12,6 +12,14 @@
 #define __forceinline __inline__ __attribute__((__always_inline__))
 #endif
 
+#define CUDA_SAFE(exp) { \
+  cudaError_t ret = (exp); \
+  if (cudaSuccess != ret) { \
+    printf("Error %d in %s:%d\n", ret, __FILE__, __LINE__); \
+    exit(-1); \
+  } \
+}
+
 namespace ppm {
   template<class T>
   void delete_array(T*& arr) {

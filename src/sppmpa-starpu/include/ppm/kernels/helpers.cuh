@@ -87,6 +87,11 @@ void __global__ generate_eye_paths_impl(
     const unsigned height,
     const PtrFreeScene* scene);
 
+void __global__ generate_photon_paths_impl(
+    PhotonPath* const photon_paths,
+    const unsigned photon_paths_count,
+    Seed* const seed_buffer,
+    const PtrFreeScene* scene);
 }
 
 } }
