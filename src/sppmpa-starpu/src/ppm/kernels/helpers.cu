@@ -1700,6 +1700,146 @@ void __global__ generate_photon_paths_impl(
 }
 
 
+
+void __global__ advance_photon_paths_impl(
+      PhotonPath* const photon_paths,    const unsigned photon_paths_count,
+      Seed* const seed_buffer,        // const unsigned seed_buffer_count,
+      PtrFreeScene* scene,
+
+      HitPointPosition* const hit_points_info,
+      HitPointRadiance* const hit_points,
+      const BBox* bbox,
+      const unsigned CONST_max_photon_depth,
+      const float photon_radius2,
+      const unsigned hit_points_count,
+
+      const unsigned*           hash_grid,
+      const unsigned*           hash_grid_lengths,
+      const unsigned*           hash_grid_indexes,
+      const float               hash_grid_inv_cell_size) {
+
+
+  const unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
+
+  if (i >= photon_paths_count)
+    return;
+
+    PhotonPath& path = photon_paths[i];
+    Ray& ray    = path.ray;
+    RayHit hit;
+    Seed& seed = seed_buffer[i];
+
+    while(!path.done) {
+      hit.SetMiss();
+      Intersect(ray, hit, scene, 1);
+      //scene->intersect(ray, hit);
+
+      if (hit.Miss()) {
+        path.done = true;
+      } else {
+        Point hit_point;
+        Spectrum surface_color;
+        Normal N;
+        Normal shade_N;
+
+        if (helpers::get_hit_point_information(scene, ray, hit, hit_point, surface_color, N, shade_N))
+          continue;
+
+        const unsigned current_triangle_index = hit.index;
+        const unsigned current_mesh_index     = scene->mesh_ids[current_triangle_index];
+        const unsigned material_index         = scene->mesh_materials[current_mesh_index];
+        const Material& hit_point_mat = scene->materials[material_index];
+        unsigned mat_type = hit_point_mat.type;
+
+        if (mat_type == MAT_AREALIGHT) {
+          path.done = true;
+        } else {
+          float f_pdf;
+          Vector wi;
+          Vector wo = -ray.d;
+          Spectrum f;
+          bool specular_bounce = true;
+
+          const float u0 = floatRNG(seed);
+          const float u1 = floatRNG(seed);
+          const float u2 = floatRNG(seed);
+
+          helpers::generic_material_sample_f(hit_point_mat, wo, wi, N, shade_N, u0, u1, u2, f_pdf, f, specular_bounce);
+          f *= surface_color;
+
+          if (!specular_bounce) {
+            helpers::add_flux(hash_grid, hash_grid_lengths, hash_grid_indexes, hash_grid_inv_cell_size, *bbox, scene, hit_point, shade_N, wo, path.flux, photon_radius2, hit_points_info, hit_points, hit_points_count);
+          }
+
+          if (path.depth < CONST_max_photon_depth) {
+            if (f_pdf <= 0.f || f.Black()) {
+              path.done = true;
+            } else {
+              path.depth++;
+              path.flux *= f / f_pdf;
+
+              // russian roulette
+              const float p = 0.75;
+              if (path.depth < 3) {
+                ray = Ray(hit_point, wi);
+              } else if (floatRNG(seed) < p) {
+                path.flux /= p;
+                ray = Ray(hit_point, wi);
+              } else {
+                path.done = true;
+              }
+            }
+          } else {
+            path.done = true;
+          }
+        }
+      }
+    }
+}
+
+
+void __global__ accum_flux_impl(
+    const HitPointPosition* const hit_points_info,
+    HitPointRadiance* const hit_points,
+    const unsigned size,
+    const float alpha,
+    const unsigned photons_traced,
+    const float current_photon_radius2) {
+
+  const unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
+
+  if (i >= size)
+    return;
+
+  const HitPointPosition& hpi = hit_points_info[i];
+  HitPointRadiance& hp = hit_points[i];
+
+  hp.hits_count++;
+  switch (hpi.type) {
+    case CONSTANT_COLOR:
+      hp.accum_radiance = hpi.throughput;
+      break;
+    case SURFACE:
+      if (hp.accum_photon_count > 0) {
+        hp.reflected_flux = hp.accum_reflected_flux;
+        hp.accum_photon_count = 0;
+        hp.accum_reflected_flux = Spectrum();
+      }
+      break;
+    default:
+      assert(false);
+  }
+
+  if (hp.hits_count > 0) {
+    const double k = 1.0 / (M_PI * current_photon_radius2 * photons_traced);
+    hp.radiance = (hp.accum_radiance + hp.reflected_flux * k);
+  }
+  hp.hits_count = 0;
+  hp.accum_radiance = Spectrum();
+  hp.reflected_flux = Spectrum();
+}
+
+
 }
 
 } }

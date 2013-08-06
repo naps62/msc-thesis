@@ -222,6 +222,8 @@ namespace ppm { namespace kernels {
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::accum_flux;
       cl->cpu_funcs[1]    = NULL;
+      cl->cuda_funcs[0]   = ppm::kernels::cuda::accum_flux;
+      cl->cuda_funcs[1]   = NULL;
       cl->nbuffers        = 3;
       cl->modes[0]        = STARPU_R;  // hit_points_info
       cl->modes[1]        = STARPU_RW; // hit_points

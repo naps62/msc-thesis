@@ -103,6 +103,32 @@ void __global__ generate_photon_paths_impl(
     const unsigned photon_paths_count,
     Seed* const seed_buffer,
     const PtrFreeScene* scene);
+
+void __global__ advance_photon_paths_impl(
+      PhotonPath* const photon_paths,    const unsigned photon_paths_count,
+      Seed* const seed_buffer,        // const unsigned seed_buffer_count,
+      PtrFreeScene* scene,
+
+      HitPointPosition* const hit_points_info,
+      HitPointRadiance* const hit_points,
+      const BBox* bbox,
+      const unsigned CONST_max_photon_depth,
+      const float photon_radius2,
+      const unsigned hit_points_count,
+
+      const unsigned*           hash_grid,
+      const unsigned*           hash_grid_lengths,
+      const unsigned*           hash_grid_indexes,
+      const float               hash_grid_inv_cell_size);
+
+void __global__ accum_flux_impl(
+    const HitPointPosition* const hit_points_info,
+    HitPointRadiance* const hit_points,
+    const unsigned size,
+    const float alpha,
+    const unsigned photons_traced,
+    const float current_photon_radius2);
+
 }
 
 } }
