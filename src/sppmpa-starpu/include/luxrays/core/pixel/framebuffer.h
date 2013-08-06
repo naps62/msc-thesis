@@ -58,6 +58,7 @@ public:
     }
   };
 
+  __HD__
   SamplePixel *GetPixels() const { return pixels; }
 
   void AddPixel(const unsigned int x, const unsigned int y, const Spectrum& r, const float w) {

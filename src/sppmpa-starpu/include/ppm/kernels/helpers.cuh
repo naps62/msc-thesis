@@ -90,6 +90,14 @@ void __global__ generate_eye_paths_impl(
     const unsigned height,
     const PtrFreeScene* scene);
 
+void __global__ advance_eye_paths_impl(
+    HitPointPosition* const hit_points,
+    EyePath* const eye_paths,
+    const unsigned eye_paths_count,
+    Seed* const seed_buffer,
+    PtrFreeScene* scene,
+    const unsigned max_eye_path_depth);
+
 void __global__ generate_photon_paths_impl(
     PhotonPath* const photon_paths,
     const unsigned photon_paths_count,

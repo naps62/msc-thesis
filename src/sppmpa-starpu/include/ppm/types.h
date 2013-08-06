@@ -32,6 +32,13 @@ typedef struct {
   int4 children;
 } QBVHNode;
 
+#define _emptyLeafNode 0xffffffff
+
+#define QBVHNode_IsLeaf(index) (index < 0)
+#define QBVHNode_IsEmpty(index) (index == _emptyLeafNode)
+#define QBVHNode_NbQuadPrimitives(index) ((uint)(((index >> 27) & 0xf) + 1))
+#define QBVHNode_FirstQuadIndex(index) (index & 0x07ffffff)
+
 struct Color {
   float r, g, b;
 };

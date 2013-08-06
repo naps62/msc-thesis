@@ -74,6 +74,7 @@ public:
   float b1, b2; // Barycentric coordinates of the hit point
   unsigned int index;
 
+  __HD__
   void SetMiss() { index = 0xffffffffu; };
   __HD__
   bool Miss() const { return (index == 0xffffffffu); };

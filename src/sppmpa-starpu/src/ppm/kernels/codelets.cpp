@@ -46,7 +46,7 @@ namespace ppm { namespace kernels {
       memset(model, 0, sizeof(starpu_perfmodel));
     }
 
-    void init(const Config* config, const PtrFreeScene* cpu_scene, const PtrFreeScene* gpu_scene) {
+    void init(const Config* config, PtrFreeScene* cpu_scene, PtrFreeScene* gpu_scene) {
       generic_args.config    = config;
       generic_args.cpu_scene = cpu_scene;
       generic_args.gpu_scene = gpu_scene;
@@ -110,6 +110,8 @@ namespace ppm { namespace kernels {
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_eye_paths;
       cl->cpu_funcs[1]    = NULL;
+      cl->cuda_funcs[0]   = ppm::kernels::cuda::advance_eye_paths;
+      cl->cuda_funcs[1]   = NULL;
       cl->nbuffers        = 3;
       cl->modes[0]        = STARPU_W;  // hit points
       cl->modes[1]        = STARPU_R;  // eye_paths
