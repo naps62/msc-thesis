@@ -69,6 +69,8 @@ namespace ppm { namespace kernels {
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::init_seeds;
       cl->cpu_funcs[1]    = NULL;
+      cl->cuda_funcs[0]   = ppm::kernels::cuda::init_seeds;
+      cl->cuda_funcs[1]   = NULL;
       cl->nbuffers        = 1;
       cl->modes[0]        = STARPU_W; // seeds
       cl->model           = pm;

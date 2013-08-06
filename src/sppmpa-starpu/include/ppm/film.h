@@ -210,6 +210,7 @@ public:
     return (const float *) GetFrameBuffer()->GetPixels();
   }
 
+  __HD__
   void SplatRadiance(SampleFrameBuffer* sampleFrameBuffer,const Spectrum radiance, const unsigned int x,
       const unsigned int y, const float weight = 1.f) {
 

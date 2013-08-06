@@ -35,8 +35,6 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
   const dim3 threads_per_block = dim3(block_side,                block_side);
   const dim3 n_blocks          = dim3(width/threads_per_block.x, height/threads_per_block.y);
 
-  PtrFreeScene* scene = (PtrFreeScene*) malloc(sizeof(PtrFreeScene));
-
   helpers::generate_eye_paths_impl<<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
    (eye_paths,   // eye_path_count,
     seed_buffer, // seed_buffer_count,

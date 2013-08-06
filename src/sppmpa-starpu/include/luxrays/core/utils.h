@@ -162,14 +162,17 @@ template<class T> inline unsigned int Float2UInt(T val) {
   return val >= 0 ? static_cast<unsigned int> (val) : 0;
 }
 
+__HD__
 inline int Floor2Int(double val) {
   return static_cast<int> (floor(val));
 }
 
+__HD__
 inline int Floor2Int(float val) {
   return static_cast<int> (floorf(val));
 }
 
+__HD__
 inline unsigned int Floor2UInt(double val) {
   return val > 0. ? static_cast<unsigned int> (floor(val)) : 0;
 }
@@ -178,18 +181,22 @@ inline unsigned int Floor2UInt(float val) {
   return val > 0.f ? static_cast<unsigned int> (floorf(val)) : 0;
 }
 
+__HD__
 inline int Ceil2Int(double val) {
   return static_cast<int> (ceil(val));
 }
 
+__HD__
 inline int Ceil2Int(float val) {
   return static_cast<int> (ceilf(val));
 }
 
+__HD__
 inline unsigned int Ceil2UInt(double val) {
   return val > 0. ? static_cast<unsigned int> (ceil(val)) : 0;
 }
 
+__HD__
 inline unsigned int Ceil2UInt(float val) {
   return val > 0.f ? static_cast<unsigned int> (ceilf(val)) : 0;
 }

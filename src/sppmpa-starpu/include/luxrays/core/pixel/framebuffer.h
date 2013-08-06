@@ -212,6 +212,7 @@ public:
       pixels[i].alpha = 0.f;
   };
 
+  __HD__
   AlphaPixel *GetPixels() const { return pixels; }
 
   void AddPixel(const unsigned int x, const unsigned int y, const float a) {

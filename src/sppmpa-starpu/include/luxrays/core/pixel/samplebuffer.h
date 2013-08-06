@@ -59,8 +59,10 @@ public:
     }*/
   }
 
+  __HD__
   SampleBufferElem *GetSampleBuffer() const { return samples; }
 
+  __HD__
   size_t GetSampleCount() const { return currentFreeSample; }
   size_t GetSize() const { return size; }
 

@@ -1139,6 +1139,18 @@ __HD__ unsigned hash(const int ix, const int iy, const int iz, unsigned size) {
  * KERNELS
  */
 
+void __global__ init_seeds_impl(
+    Seed* const seeds, const unsigned size,
+    const unsigned iteration) {
+
+  const unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
+
+  if (i >= size)
+    return;
+
+  seeds[i] = mwc(i+iteration);
+}
+
 void __global__ generate_eye_paths_impl(
     EyePath* const eye_paths,
     Seed* const seed_buffer,

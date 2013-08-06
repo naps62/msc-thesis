@@ -110,9 +110,10 @@ public:
     delete[] lut;
   }
 
-   unsigned int GetWidth() const { return lutWidth; }
-   unsigned int GetHeight() const { return lutHeight; }
+  __HD__ unsigned int GetWidth() const { return lutWidth; }
+  __HD__ unsigned int GetHeight() const { return lutHeight; }
 
+  __HD__
   const float *GetLUT() const {
     return lut;
   }

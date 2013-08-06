@@ -110,7 +110,7 @@ __host__ __device__ __inline__ unsigned int LCG( unsigned int x)  {
   return x * 69069;
 }
 
-__host__ __inline__ Seed mwc( unsigned int seed) {
+__host__ __device__ __inline__ Seed mwc( unsigned int seed) {
   Seed s;
   s.s1 = validSeed(LCG(seed), 1);
   s.s2 = validSeed(LCG(s.s1), 7);

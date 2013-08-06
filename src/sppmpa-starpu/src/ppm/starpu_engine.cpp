@@ -45,8 +45,8 @@ void StarpuEngine :: render() {
   // 1. INIT SEEDS
   starpu_insert_task(&codelets::init_seeds,
     STARPU_W, seeds_h,
-    STARPU_VALUE, &iteration, sizeof(iteration),
-    0);
+    STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+    STARPU_VALUE, &iteration, sizeof(iteration), 0);
 
   // main loop
   while((!display || display->is_on()) && iteration <= config.max_iters) {
