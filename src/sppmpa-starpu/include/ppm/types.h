@@ -1,6 +1,7 @@
 #ifndef _PPM_TYPES_H_
 #define _PPM_TYPES_H_
 
+#include "luxrays/core.h"
 #include "utils/common.h"
 #include "luxrays/core/accelerator.h"
 #include <ostream>

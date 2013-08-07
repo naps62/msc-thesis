@@ -66,6 +66,8 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
     indexes,
     *inv_cell_size);
 
+  cudaStreamSynchronize(starpu_cuda_get_local_stream());
+
 }
 
 } } }

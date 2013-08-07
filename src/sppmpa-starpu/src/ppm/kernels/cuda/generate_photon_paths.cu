@@ -37,6 +37,7 @@ void generate_photon_paths(void* buffers[], void* args_orig) {
     seed_buffer,
     args.gpu_scene);
 
+  cudaStreamSynchronize(starpu_cuda_get_local_stream());
 
 }
 

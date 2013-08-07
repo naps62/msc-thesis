@@ -1140,11 +1140,12 @@ __HD__ unsigned hash(const int ix, const int iy, const int iz, unsigned size) {
 /*
  * QBVH Intersections
  */
- __device__ int4 QBVHNode_BBoxIntersect(const float4 bboxes_minX, const float4 bboxes_maxX,
+__device__ int4 QBVHNode_BBoxIntersect(const float4 bboxes_minX, const float4 bboxes_maxX,
     const float4 bboxes_minY, const float4 bboxes_maxY, const float4 bboxes_minZ,
-    const float4 bboxes_maxZ, const QuadRay *ray4, const float4 invDir0,
+    const float4 bboxes_maxZ, const ppm::QuadRay *ray4, const float4 invDir0,
     const float4 invDir1, const float4 invDir2, const int signs0, const int signs1,
     const int signs2) {
+
   float4 tMin = ray4->mint;
   float4 tMax = ray4->maxt;
 
@@ -1167,7 +1168,7 @@ __HD__ unsigned hash(const int ix, const int iy, const int iz, unsigned size) {
 __device__ void QuadTriangle_Intersect(const float4 origx, const float4 origy, const float4 origz,
     const float4 edge1x, const float4 edge1y, const float4 edge1z, const float4 edge2x,
     const float4 edge2y, const float4 edge2z, const uint4 primitives,
-    QuadRay *ray4, RayHit *rayHit) {
+    ppm::QuadRay *ray4, RayHit *rayHit) {
   //--------------------------------------------------------------------------
   // Calc. b1 coordinate
 
@@ -1243,132 +1244,11 @@ __device__ void QuadTriangle_Intersect(const float4 origx, const float4 origy, c
   rayHit->index = index;
 }
 
-__device__ void Intersect(
-    Ray& ray,
-    RayHit& final_rayHit,
-    PtrFreeScene* scene,
-    const uint rayCount) {
-
-  //  // Select the ray to check
-  //  int len_X = gridDim.x * blockDim.x;
-  //  int pos_x = blockIdx.x * blockDim.x + threadIdx.x;
-  //  int pos_y = blockIdx.y * blockDim.y + threadIdx.y;
-  //
-  //  int gid = pos_y * len_X + pos_x;
-
-  //int gid = blockIdx.x * blockDim.x + threadIdx.x;
-
-    QBVHNode* nodes = scene->nodes;
-    QuadTriangle* quadTris = scene->prims;
-
-    // Prepare the ray for intersection
-    QuadRay ray4;
-    {
-      float4 *basePtr = (float4 *) &ray;
-      float4 data0 = (*basePtr++);
-      float4 data1 = (*basePtr);
-
-      ray4.ox = make_float4(data0.x);
-      ray4.oy = make_float4(data0.y);
-      ray4.oz = make_float4(data0.z);
-
-      ray4.dx = make_float4(data0.w);
-      ray4.dy = make_float4(data1.x);
-      ray4.dz = make_float4(data1.y);
-
-      ray4.mint = make_float4(data1.z);
-      ray4.maxt = make_float4(data1.w);
-    }
-
-    const float4 invDir0 = make_float4(1.f / ray4.dx.x);
-    const float4 invDir1 = make_float4(1.f / ray4.dy.x);
-    const float4 invDir2 = make_float4(1.f / ray4.dz.x);
-
-    const int signs0 = (ray4.dx.x < 0.f);
-    const int signs1 = (ray4.dy.x < 0.f);
-    const int signs2 = (ray4.dz.x < 0.f);
-
-    RayHit rayHit;
-    rayHit.index = 0xffffffffu;
-
-    int nodeStack[QBVH_STACK_SIZE];
-    nodeStack[0] = 0; // first node to handle: root node
-
-    //------------------------------
-    // Main loop
-    int todoNode = 0; // the index in the stack
-    // nodeStack leads to a lot of local memory banks conflicts however it has not real
-    // impact on performances (I guess access latency is hiden by other stuff).
-    // Avoiding conflicts is easy to do but it requires to know the work group
-    // size (not worth doing if there are not performance benefits).
-    //__shared__ int *nodeStack = &nodeStacks[QBVH_STACK_SIZE * threadIdx.x];
-    //nodeStack[0] = 0; // first node to handle: root node
-
-
-    //int maxDepth = 0;
-    while (todoNode >= 0) {
-      const int nodeData = nodeStack[todoNode];
-      --todoNode;
-
-      // Leaves are identified by a negative index
-      if (!QBVHNode_IsLeaf(nodeData)) {
-        QBVHNode *node = &nodes[nodeData];
-        const int4 visit = QBVHNode_BBoxIntersect(node->bboxes[signs0][0],
-            node->bboxes[1 - signs0][0], node->bboxes[signs1][1],
-            node->bboxes[1 - signs1][1], node->bboxes[signs2][2],
-            node->bboxes[1 - signs2][2], &ray4, invDir0, invDir1, invDir2, signs0,
-            signs1, signs2);
-
-        const int4 children = node->children;
-
-        // For some reason doing logic operations with int4 is very slow
-        nodeStack[todoNode + 1] = children.w;
-        todoNode += (visit.w && !QBVHNode_IsEmpty(children.w)) ? 1 : 0;
-        nodeStack[todoNode + 1] = children.z;
-        todoNode += (visit.z && !QBVHNode_IsEmpty(children.z)) ? 1 : 0;
-        nodeStack[todoNode + 1] = children.y;
-        todoNode += (visit.y && !QBVHNode_IsEmpty(children.y)) ? 1 : 0;
-        nodeStack[todoNode + 1] = children.x;
-        todoNode += (visit.x && !QBVHNode_IsEmpty(children.x)) ? 1 : 0;
-
-        //maxDepth = max(maxDepth, todoNode);
-      } else {
-        // Perform intersection
-        const uint nbQuadPrimitives = QBVHNode_NbQuadPrimitives(nodeData);
-        const uint offset = QBVHNode_FirstQuadIndex(nodeData);
-
-        for (uint primNumber = offset; primNumber < (offset + nbQuadPrimitives); ++primNumber) {
-          QuadTriangle *quadTri = &quadTris[primNumber];
-          const float4 origx = quadTri->origx;
-          const float4 origy = quadTri->origy;
-          const float4 origz = quadTri->origz;
-          const float4 edge1x = quadTri->edge1x;
-          const float4 edge1y = quadTri->edge1y;
-          const float4 edge1z = quadTri->edge1z;
-          const float4 edge2x = quadTri->edge2x;
-          const float4 edge2y = quadTri->edge2y;
-          const float4 edge2z = quadTri->edge2z;
-          const uint4 primitives = quadTri->primitives;
-          QuadTriangle_Intersect(origx, origy, origz, edge1x, edge1y, edge1z, edge2x,
-              edge2y, edge2z, primitives, &ray4, &rayHit);
-        }
-      }
-    }
-
-    //printf(\"MaxDepth=%02d\\n\", maxDepth);
-
-    // Write result
-    final_rayHit.t = rayHit.t;
-    final_rayHit.b1 = rayHit.b1;
-    final_rayHit.b2 = rayHit.b2;
-    final_rayHit.index = rayHit.index;
-}
-
-__device__ void subIntersect(Ray& ray, QBVHNode *nodes,
-    QuadTriangle *quadTris, RayHit& rayHit) {
+__device__ void subIntersect(Ray& ray, ppm::QBVHNode *nodes,
+    ppm::QuadTriangle *quadTris, RayHit& rayHit) {
 
   // Prepare the ray for intersection
-  QuadRay ray4;
+  ppm::QuadRay ray4;
   {
     float4 *basePtr = (float4 *) &ray;
     float4 data0 = (*basePtr++);
@@ -1418,7 +1298,7 @@ __device__ void subIntersect(Ray& ray, QBVHNode *nodes,
 
     // Leaves are identified by a negative index
     if (!QBVHNode_IsLeaf(nodeData)) {
-      QBVHNode *node = &nodes[nodeData];
+      ppm::QBVHNode *node = &nodes[nodeData];
       const int4 visit = QBVHNode_BBoxIntersect(node->bboxes[signs0][0],
           node->bboxes[1 - signs0][0], node->bboxes[signs1][1],
           node->bboxes[1 - signs1][1], node->bboxes[signs2][2],
@@ -1444,7 +1324,7 @@ __device__ void subIntersect(Ray& ray, QBVHNode *nodes,
       const uint offset = QBVHNode_FirstQuadIndex(nodeData);
 
       for (uint primNumber = offset; primNumber < (offset + nbQuadPrimitives); ++primNumber) {
-        QuadTriangle *quadTri = &quadTris[primNumber];
+        ppm::QuadTriangle *quadTri = &quadTris[primNumber];
         const float4 origx = quadTri->origx;
         const float4 origy = quadTri->origy;
         const float4 origz = quadTri->origz;
@@ -1543,8 +1423,8 @@ void __global__ advance_eye_paths_impl(
 
   while(!eye_path.done) {
     hit.SetMiss();
-    Intersect(ray, hit, scene, 1);
-    // scene->intersect(ray, hit);
+    subIntersect(ray, scene->nodes, scene->prims, hit);
+    //scene->intersect(ray, hit);
 
     if (eye_path.depth > max_eye_path_depth) {
       // make it done
@@ -1558,6 +1438,7 @@ void __global__ advance_eye_paths_impl(
     } else {
       eye_path.depth++;
     }
+    eye_path.done = true;
 
     if (hit.Miss()) {
       // add a hit point
@@ -1731,7 +1612,7 @@ void __global__ advance_photon_paths_impl(
 
     while(!path.done) {
       hit.SetMiss();
-      Intersect(ray, hit, scene, 1);
+      subIntersect(ray, scene->nodes, scene->prims, hit);
       //scene->intersect(ray, hit);
 
       if (hit.Miss()) {
@@ -1804,12 +1685,14 @@ void __global__ accum_flux_impl(
     const unsigned size,
     const float alpha,
     const unsigned photons_traced,
-    const float current_photon_radius2) {
+    const float* current_photon_radius2) {
 
   const unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
 
   if (i >= size)
     return;
+
+  const float radius2 = *current_photon_radius2;
 
   const HitPointPosition& hpi = hit_points_info[i];
   HitPointRadiance& hp = hit_points[i];
@@ -1831,7 +1714,7 @@ void __global__ accum_flux_impl(
   }
 
   if (hp.hits_count > 0) {
-    const double k = 1.0 / (M_PI * current_photon_radius2 * photons_traced);
+    const double k = 1.0 / (M_PI * radius2 * photons_traced);
     hp.radiance = (hp.accum_radiance + hp.reflected_flux * k);
   }
   hp.hits_count = 0;

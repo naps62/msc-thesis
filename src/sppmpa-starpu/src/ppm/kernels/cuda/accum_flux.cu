@@ -18,6 +18,7 @@ namespace ppm { namespace kernels { namespace cuda {
 
 void accum_flux(void* buffers[], void* args_orig) {
 
+  std::cout << "asd" << std::endl;
   // cl_args
   const starpu_args args;
   unsigned photons_traced;
@@ -31,15 +32,20 @@ void accum_flux(void* buffers[], void* args_orig) {
   const float* const photon_radius2 = (const float*)STARPU_VARIABLE_GET_PTR(buffers[2]);
 
   const unsigned threads_per_block = args.config->cuda_block_size;
-  const unsigned n_blocks          = size / threads_per_block;
+  const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
+
+  std::cout << "starting" << std::endl;
   helpers::accum_flux_impl<<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
    (hit_points_info,
     hit_points,
     size,
     args.config->alpha,
     photons_traced,
-    *photon_radius2);
+    photon_radius2);
+
+  cudaStreamSynchronize(starpu_cuda_get_local_stream());
+  std::cout << "ending" << std::endl;
 }
 
 } } }

@@ -37,6 +37,7 @@ void init_seeds(void* buffers[], void* args_orig) {
    (seeds,
     size,
     iteration);
+  cudaStreamSynchronize(starpu_cuda_get_local_stream());
 }
 
 } } }

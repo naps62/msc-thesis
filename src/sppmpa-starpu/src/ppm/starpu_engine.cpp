@@ -8,6 +8,12 @@ namespace ppm {
 // constructors
 //
 
+void callback(void *arg) {
+  static int x = 0;
+  printf("callback: %d. left: %d, ready: %d\n", (long int)arg, starpu_task_nsubmitted(), starpu_task_nready());
+  fflush(stdout);
+}
+
 StarpuEngine :: StarpuEngine(const Config& _config)
 : Engine(_config) {
 
@@ -33,20 +39,25 @@ StarpuEngine :: ~StarpuEngine() {
 //
 void StarpuEngine :: render() {
   start_time = WallClockTime();
+
+  void *arg_buffer;
+  size_t arg_buffer_size;
+  int ret;
+
   const unsigned total_spp = config.width * config.spp + config.height * config.spp;
 
   starpu_variable_data_register(&sample_buffer_h,  0, (uintptr_t)&sample_buffer,         sizeof(sample_buffer));
   starpu_variable_data_register(&film_h,           0, (uintptr_t)&film,                  sizeof(film));
 
   vector_handle(&seeds_h, config.seed_size, sizeof(Seed));
-    vector_handle(&hit_points_h, config.total_hit_points, sizeof(HitPointRadiance));
 
 
   // 1. INIT SEEDS
   starpu_insert_task(&codelets::init_seeds,
     STARPU_W, seeds_h,
     STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
-    STARPU_VALUE, &iteration, sizeof(iteration), 0);
+    STARPU_VALUE, &iteration, sizeof(iteration),
+    STARPU_CALLBACK_WITH_ARG, callback, (void*)1, 0);
 
   // main loop
   while((!display || display->is_on()) && iteration <= config.max_iters) {
@@ -57,7 +68,8 @@ void StarpuEngine :: render() {
     starpu_insert_task( &codelets::generate_eye_paths,
                         STARPU_W,  eye_paths_h,
                         STARPU_RW, seeds_h,
-                        STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args), 0);
+                        STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+                        STARPU_CALLBACK_WITH_ARG, callback, (void*)2, 0);
 
 
     // 3. ADVANCE EYE PATHS
@@ -66,7 +78,8 @@ void StarpuEngine :: render() {
                         STARPU_W,  hit_points_info_h,
                         STARPU_R,  eye_paths_h,
                         STARPU_RW, seeds_h,
-                        STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args), 0);
+                        STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+                        STARPU_CALLBACK_WITH_ARG, callback, (void*)3, 0);
     free_handle(eye_paths_h);
 
 
@@ -79,7 +92,8 @@ void StarpuEngine :: render() {
                         STARPU_W, current_photon_radius2_h,
                         STARPU_VALUE, &iteration,    sizeof(iteration),
                         STARPU_VALUE, &total_spp,    sizeof(total_spp),
-                        STARPU_VALUE, &config.alpha, sizeof(config.alpha), 0);
+                        STARPU_VALUE, &config.alpha, sizeof(config.alpha),
+                        STARPU_CALLBACK_WITH_ARG, callback, (void*)4, 0);
 
 
     // 5. REHASH
@@ -95,7 +109,8 @@ void StarpuEngine :: render() {
                         STARPU_W,     hash_grid_lengths_h,
                         STARPU_W,     hash_grid_indexes_h,
                         STARPU_W,     hash_grid_inv_cell_size_h,
-                        STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args), 0);
+                        STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+                        STARPU_CALLBACK_WITH_ARG, callback, (void*)5, 0);
 
 
     // 6. GENERATE PHOTON PATHS
@@ -103,10 +118,12 @@ void StarpuEngine :: render() {
     starpu_insert_task( &codelets::generate_photon_paths,
                         STARPU_W,  live_photon_paths_h,
                         STARPU_RW, seeds_h,
-                        STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args), 0);
+                        STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+                        STARPU_CALLBACK_WITH_ARG, callback, (void*)6, 0);
 
 
     // 7. ADVANCE PHOTON PATHS
+    vector_handle(&hit_points_h, config.total_hit_points, sizeof(HitPointRadiance));
     starpu_insert_task( &codelets::advance_photon_paths,
                         STARPU_R,  live_photon_paths_h,
                         STARPU_R,  hit_points_info_h,
@@ -119,7 +136,8 @@ void StarpuEngine :: render() {
                         STARPU_R,  hash_grid_indexes_h,
                         STARPU_R,  hash_grid_inv_cell_size_h,
                         STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
-                        STARPU_VALUE, &config.total_hit_points, sizeof(config.total_hit_points), 0);
+                        STARPU_VALUE, &config.total_hit_points, sizeof(config.total_hit_points),
+                        STARPU_CALLBACK_WITH_ARG, callback, (void*)7, 0);
     free_handle(bbox_h);
     free_handle(hash_grid_h);
     free_handle(hash_grid_lengths_h);
@@ -134,7 +152,8 @@ void StarpuEngine :: render() {
                         STARPU_RW, hit_points_h,
                         STARPU_R,  current_photon_radius2_h,
                         STARPU_VALUE, &codelets::generic_args,  sizeof(codelets::generic_args),
-                        STARPU_VALUE, &config.photons_per_iter, sizeof(config.photons_per_iter), 0);
+                        STARPU_VALUE, &config.photons_per_iter, sizeof(config.photons_per_iter),
+                        STARPU_CALLBACK_WITH_ARG, callback, (void*)8, 0);
     free_handle(hit_points_info_h);
     free_handle(current_photon_radius2_h);
 
@@ -143,7 +162,9 @@ void StarpuEngine :: render() {
     starpu_insert_task( &codelets::update_sample_buffer,
                         STARPU_R,  hit_points_h,
                         STARPU_RW, sample_buffer_h,
-                        STARPU_VALUE, &config.width, sizeof(config.width), 0);
+                        STARPU_VALUE, &config.width, sizeof(config.width),
+                        STARPU_CALLBACK_WITH_ARG, callback, (void*)9, 0);
+    free_handle(hit_points_h);
 
 
     // 10. SPLAT TO FILM
@@ -151,7 +172,8 @@ void StarpuEngine :: render() {
                         STARPU_R,  sample_buffer_h,
                         STARPU_RW, film_h,
                         STARPU_VALUE, &config.width, sizeof(config.width),
-                        STARPU_VALUE, &config.height, sizeof(config.height), 0);
+                        STARPU_VALUE, &config.height, sizeof(config.height),
+                        STARPU_CALLBACK_WITH_ARG, callback, (void*)10, 0);
 
 
 
@@ -170,7 +192,6 @@ void StarpuEngine :: render() {
     }
   }
 
-    free_handle(hit_points_h);
   free_handle(sample_buffer_h);
   free_handle(film_h);
   free_handle(seeds_h);

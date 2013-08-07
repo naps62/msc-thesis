@@ -127,7 +127,7 @@ void __global__ accum_flux_impl(
     const unsigned size,
     const float alpha,
     const unsigned photons_traced,
-    const float current_photon_radius2);
+    const float* current_photon_radius2);
 
 }
 

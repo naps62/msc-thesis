@@ -42,7 +42,7 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
     height,
     args.gpu_scene);
 
-
+  cudaStreamSynchronize(starpu_cuda_get_local_stream());
 }
 
 } } }

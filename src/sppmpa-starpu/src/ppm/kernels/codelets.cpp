@@ -84,7 +84,7 @@ namespace ppm { namespace kernels {
 
       cl   = &generate_eye_paths;
       starpu_codelet_init(cl);
-      cl->where           = STARPU_CUDA;
+      cl->where           = STARPU_CPU;
       cl->type            = STARPU_FORKJOIN;
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::generate_eye_paths;
@@ -169,7 +169,7 @@ namespace ppm { namespace kernels {
 
       cl = &generate_photon_paths;
       starpu_codelet_init(cl);
-      cl->where           = STARPU_CUDA;
+      cl->where           = STARPU_CPU;
       cl->type            = STARPU_FORKJOIN;
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::generate_photon_paths;
