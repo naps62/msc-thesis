@@ -36,10 +36,24 @@ protected:
   starpu_data_filter filter_by_hit_points;
   starpu_data_filter filter_by_photon_paths;
 
-  void init_starpu_handles();
+  unsigned total_spp;
 
-  void render();
   void output();
+
+  void init_seed_buffer();
+  void generate_eye_paths();
+  void advance_eye_paths();
+  void bbox_compute();
+  void rehash();
+  void generate_photon_paths();
+  void advance_photon_paths();
+  void accumulate_flux();
+  void update_sample_buffer();
+  void splat_to_film();
+
+  void wait_for_all();
+  void before();
+  void after();
 
   void vector_handle(starpu_data_handle_t* handle, unsigned total, size_t size);
   void variable_handle(starpu_data_handle_t* handle, size_t size);

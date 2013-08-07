@@ -18,8 +18,8 @@ Display :: Display(const Config& _config, Film& _film)
 void Display :: render() {
   glRasterPos2i(0, 0);
   // draw frame buffer
-  film.UpdateScreenBuffer();
-  glDrawPixels(film.width, film.height, GL_RGB, GL_FLOAT, film.GetScreenBuffer());
+  //film.UpdateScreenBuffer();
+  //glDrawPixels(film.width, film.height, GL_RGB, GL_FLOAT, film.GetScreenBuffer());
 
   // draw caption background
   glEnable(GL_BLEND);

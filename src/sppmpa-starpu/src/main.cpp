@@ -5,6 +5,7 @@
 #include "utils/config.h"
 #include "ppm/starpu_engine.h"
 #include "ppm/cpu_engine.h"
+#include "ppm/cuda_engine.h"
 
 #include "unistd.h"
 #include <iostream>
@@ -20,14 +21,15 @@ int main(int argc, char** argv) {
     case 1:
       engine = new ppm::CPUEngine(config);
       break;
-    //case 2:
-    //  engine = new ppm::CUDAEngine(config);
+    case 2:
+      engine = new ppm::CUDAEngine(config);
+      break;
     case 0:
     default:
       engine = new ppm::StarpuEngine(config);
       break;
   }
-  //  ppm::Engine engine(config, 1);
+
   engine->render();
   engine->output();
 

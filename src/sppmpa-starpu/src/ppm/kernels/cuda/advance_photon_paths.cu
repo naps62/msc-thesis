@@ -50,7 +50,7 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
   const unsigned threads_per_block = args.config->cuda_block_size;
   const unsigned n_blocks          = photon_paths_count / threads_per_block;
 
-  helpers::advance_photon_paths_impl<<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
+  /*helpers::advance_photon_paths_impl<<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
    (photon_paths, photon_paths_count,
     seed_buffer,  // seed_buffer_count,
     args.cpu_scene,
@@ -58,13 +58,13 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
     hit_points,
     bbox,
     args.config->max_photon_depth,
-    *photon_radius2,
+    photon_radius2,
     hit_points_count,
 
     hash_grid,
     lengths,
     indexes,
-    *inv_cell_size);
+    inv_cell_size);*/
 
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
 

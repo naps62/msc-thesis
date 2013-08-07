@@ -1591,13 +1591,13 @@ void __global__ advance_photon_paths_impl(
       HitPointRadiance* const hit_points,
       const BBox* bbox,
       const unsigned CONST_max_photon_depth,
-      const float photon_radius2,
+      const float* photon_radius2,
       const unsigned hit_points_count,
 
       const unsigned*           hash_grid,
       const unsigned*           hash_grid_lengths,
       const unsigned*           hash_grid_indexes,
-      const float               hash_grid_inv_cell_size) {
+      const float*              hash_grid_inv_cell_size) {
 
 
   const unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -1649,7 +1649,7 @@ void __global__ advance_photon_paths_impl(
           f *= surface_color;
 
           if (!specular_bounce) {
-            helpers::add_flux(hash_grid, hash_grid_lengths, hash_grid_indexes, hash_grid_inv_cell_size, *bbox, scene, hit_point, shade_N, wo, path.flux, photon_radius2, hit_points_info, hit_points, hit_points_count);
+            helpers::add_flux(hash_grid, hash_grid_lengths, hash_grid_indexes, *hash_grid_inv_cell_size, *bbox, scene, hit_point, shade_N, wo, path.flux, *photon_radius2, hit_points_info, hit_points, hit_points_count);
           }
 
           if (path.depth < CONST_max_photon_depth) {

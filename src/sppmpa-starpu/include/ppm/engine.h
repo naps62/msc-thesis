@@ -39,9 +39,48 @@ public:
     if (config.use_display) {
       display->join();
     }
+
+    delete sample_buffer;
+    delete film;
+    delete scene;
   }
 
-  virtual void render() = 0;
+  virtual void render() {
+    this->before();
+    start_time = WallClockTime();
+
+    this->init_seed_buffer();
+
+    // main loop
+    while((!display || display->is_on()) && iteration <= config.max_iters) {
+      this->generate_eye_paths();
+      this->advance_eye_paths();
+      this->bbox_compute();
+      this->rehash();
+      this->generate_photon_paths();
+      this->advance_photon_paths();
+      this->accumulate_flux();
+      this->update_sample_buffer();
+      this->splat_to_film();
+
+      total_photons_traced += config.photons_per_iter;
+      iteration++;
+
+      if ((config.max_iters_at_once > 0 && iteration % config.max_iters_at_once == 0)) {
+        wait_for_all();
+      } else if (config.max_iters_at_once == 0 && display) {
+        wait_for_all();
+      }
+
+      if (display) {
+        set_captions();
+        display->request_update(config.min_frame_time);
+      }
+    }
+
+    wait_for_all();
+    this->after();
+  }
 
   void set_captions() {
     const double elapsed_time = WallClockTime() - start_time;
@@ -60,6 +99,22 @@ public:
   void output() {
     film->SaveImpl(config.output_file);
   }
+
+  virtual void init_seed_buffer() = 0;
+  virtual void generate_eye_paths() = 0;
+  virtual void advance_eye_paths() = 0;
+  virtual void bbox_compute() = 0;
+  virtual void rehash() = 0;
+  virtual void generate_photon_paths() = 0;
+  virtual void advance_photon_paths() = 0;
+  virtual void accumulate_flux() = 0;
+  virtual void update_sample_buffer() = 0;
+  virtual void splat_to_film() = 0;
+
+  virtual void wait_for_all() = 0;
+
+  virtual void before() = 0;
+  virtual void after() = 0;
 
 protected:
   unsigned iteration;
