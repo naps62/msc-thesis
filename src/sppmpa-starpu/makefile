@@ -72,10 +72,10 @@ LDFLAGS := $(LDFLAGS) -gencode arch=compute_20,code=sm_20 -gencode arch=compute_
 vpath %.cu $(SRC_DIR)
 CC_DEP := $(CC)
 CXX_DEP := $(CXX)
-CC   := nvcc        $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
-CXX  := nvcc        $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
-NVCC := nvcc -x cu  $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
-LD   := nvcc -link  $(LDFLAGS) -Xcompiler "$(OMP)"
+CC   := nvcc         $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
+CXX  := nvcc         $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
+NVCC := nvcc -x cu   $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
+LD   := nvcc -link   $(LDFLAGS) -Xcompiler "$(OMP)"
 AR   := ar
 else
 NVCC := nvcc $(NVFLAGS) -Xcompiler "$(CFLAGS) $(OMP)"
@@ -97,7 +97,7 @@ $1/%.d: %.c
 
 $1/%.o: %.cu
 	@echo " NVCC   $$<"
-	@$(NVCC) -c $(DEFINES) $(INCLUDES) $$< -o $$@
+	@$(NVCC) -dc $(DEFINES) $(INCLUDES) $$< -o $$@
 
 $1/%.o: %.cpp
 	@echo " CXX    $$<"
@@ -119,6 +119,7 @@ endef
 
 bin/$(BINNAME): $(DEPS) $(OBJ)
 	@echo " LD    $(BINNAME)"
+	nvcc $(NVFLAGS) -dlink $(patsubst src/%.cu,build/%.o,$(SRC_CU)) -o build/link.o
 	@$(LD) $(LD_LIBS_DIR) $(LD_LIBS) $(OBJ) -o $@
 
 lib/$(LIBNAME): $(DEPS) $(OBJ)

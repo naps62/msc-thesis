@@ -15,6 +15,49 @@ using ppm::EyePath;
 
 namespace ppm { namespace kernels { namespace cuda {
 
+void __global__ accum_flux_impl(
+    const HitPointPosition* const hit_points_info,
+    HitPointRadiance* const hit_points,
+    const unsigned size,
+    const float alpha,
+    const unsigned photons_traced,
+    const float* current_photon_radius2) {
+
+  const unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
+
+  if (i >= size)
+    return;
+
+  const float radius2 = *current_photon_radius2;
+
+  const HitPointPosition& hpi = hit_points_info[i];
+  HitPointRadiance& hp = hit_points[i];
+
+  hp.hits_count++;
+  switch (hpi.type) {
+    case CONSTANT_COLOR:
+      hp.accum_radiance = hpi.throughput;
+      break;
+    case SURFACE:
+      if (hp.accum_photon_count > 0) {
+        hp.reflected_flux = hp.accum_reflected_flux;
+        hp.accum_photon_count = 0;
+        hp.accum_reflected_flux = Spectrum();
+      }
+      break;
+    default:
+      assert(false);
+  }
+
+  if (hp.hits_count > 0) {
+    const double k = 1.0 / (M_PI * radius2 * photons_traced);
+    hp.radiance = (hp.accum_radiance + hp.reflected_flux * k);
+  }
+  hp.hits_count = 0;
+  hp.accum_radiance = Spectrum();
+  hp.reflected_flux = Spectrum();
+}
+
 
 void accum_flux(void* buffers[], void* args_orig) {
 
@@ -37,7 +80,7 @@ void accum_flux(void* buffers[], void* args_orig) {
 
 
   std::cout << "starting" << std::endl;
-  helpers::accum_flux_impl<<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
+  accum_flux_impl<<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
    (hit_points_info,
     hit_points,
     size,

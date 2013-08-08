@@ -57,8 +57,9 @@ void accum_flux(void* buffers[], void* args_orig) {
 
   // cl_args
   const starpu_args args;
+  float alpha;
   unsigned photons_traced;
-  starpu_codelet_unpack_args(args_orig, &args, &photons_traced);
+  starpu_codelet_unpack_args(args_orig, &args, &alpha, &photons_traced);
 
   // buffers
   const HitPointPosition* const hit_points_info = reinterpret_cast<const HitPointPosition* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
@@ -70,7 +71,7 @@ void accum_flux(void* buffers[], void* args_orig) {
   accum_flux_impl(hit_points_info,
                   hit_points,
                   size,
-                  args.config->alpha,
+                  alpha,
                   photons_traced,
                   *photon_radius2);
 }

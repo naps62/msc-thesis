@@ -24,8 +24,8 @@ int main(int argc, char** argv) {
     case 2:
       engine = new ppm::CUDAEngine(config);
       break;
-    case 0:
     default:
+    case 0:
       engine = new ppm::StarpuEngine(config);
       break;
   }

@@ -11,132 +11,6 @@ namespace ppm { namespace kernels {
 
 namespace helpers {
 
-__HD__
-void concentric_sample_disk(const float u1, const float u2, float *dx, float *dy) {
-  float r, theta;
-  // Map uniform random numbers to $[-1,1]^2$
-  float sx = 2.f * u1 - 1.f;
-  float sy = 2.f * u2 - 1.f;
-  // Map square to $(r,\theta)$
-  // Handle degeneracy at the origin
-  if (sx == 0.f && sy == 0.f) {
-    *dx = 0.f;
-    *dy = 0.f;
-    return;
-  }
-  if (sx >= -sy) {
-    if (sx > sy) {
-      // Handle first region of disk
-      r = sx;
-      if (sy > 0.f)
-        theta = sy / r;
-      else
-        theta = 8.f + sy / r;
-    } else {
-      // Handle second region of disk
-      r = sy;
-      theta = 2.f - sx / r;
-    }
-  } else {
-    if (sx <= sy) {
-      // Handle third region of disk
-      r = -sx;
-      theta = 4.f - sy / r;
-    } else {
-      // Handle fourth region of disk
-      r = -sy;
-      theta = 6.f + sx / r;
-    }
-  }
-  theta *= M_PI / 4.f;
-  *dx = r * cosf(theta);
-  *dy = r * sinf(theta);
-}
-
-__HD__
-Ray generate_ray(
-    const float sx, const float sy,
-    const uint width, const uint height,
-    const float u0, const float u1, const float u2, const Camera& camera) {
-
-  Point p(sx, height - sy - 1.f, 0);
-  Point orig;
-
-  const float iw = 1.f / (camera.raster_to_camera_matrix[3][0] * p.x
-                        + camera.raster_to_camera_matrix[3][1] * p.y
-                        + camera.raster_to_camera_matrix[3][2] * p.z
-                        + camera.raster_to_camera_matrix[3][3]);
-  orig.x = (camera.raster_to_camera_matrix[0][0] * p.x
-      + camera.raster_to_camera_matrix[0][1] * p.y
-      + camera.raster_to_camera_matrix[0][2] * p.z
-      + camera.raster_to_camera_matrix[0][3]) * iw;
-  orig.y = (camera.raster_to_camera_matrix[1][0] * p.x
-      + camera.raster_to_camera_matrix[1][1] * p.y
-      + camera.raster_to_camera_matrix[1][2] * p.z
-      + camera.raster_to_camera_matrix[1][3]) * iw;
-  orig.z = (camera.raster_to_camera_matrix[2][0] * p.x
-      + camera.raster_to_camera_matrix[2][1] * p.y
-      + camera.raster_to_camera_matrix[2][2] * p.z
-      + camera.raster_to_camera_matrix[2][3]) * iw;
-
-  Vector dir(orig);
-
-  const float hither = camera.hither;
-  if (camera.lens_radius > 0.f) {
-    // sample point on lens
-    float lens_u, lens_v;
-    concentric_sample_disk(u1, u2, &lens_u, &lens_v);
-    const float lens_radius = camera.lens_radius;
-    lens_u *= lens_radius;
-    lens_v *= lens_radius;
-
-    // compute point on plane of focus
-    const float focal_distance = camera.focal_distance;
-    const float dist = focal_distance - hither;
-    const float ft = dist / dir.z;
-    Point p_focus = orig + dir * ft;
-
-    // update ray for effect on lens
-    const float k = dist / focal_distance;
-    orig.x += lens_u * k;
-    orig.y += lens_v * k;
-
-    dir = p_focus - orig;
-  }
-
-  dir = Normalize(dir);
-
-  Point torig;
-  const float iw2 = 1.f / ( camera.camera_to_world_matrix[3][0] * orig.x
-                      + camera.camera_to_world_matrix[3][1] * orig.y
-                      + camera.camera_to_world_matrix[3][2] * orig.z
-                      + camera.camera_to_world_matrix[3][3]);
-  torig.x = (camera.camera_to_world_matrix[0][0] * orig.x
-      +  camera.camera_to_world_matrix[0][1] * orig.y
-      +  camera.camera_to_world_matrix[0][2] * orig.z
-      +  camera.camera_to_world_matrix[0][3]) * iw2;
-  torig.y = (camera.camera_to_world_matrix[1][0] * orig.x
-      +  camera.camera_to_world_matrix[1][1] * orig.y
-      +  camera.camera_to_world_matrix[1][2] * orig.z
-      +  camera.camera_to_world_matrix[1][3]) * iw2;
-  torig.z = (camera.camera_to_world_matrix[2][0] * orig.x
-      +  camera.camera_to_world_matrix[2][1] * orig.y
-      +  camera.camera_to_world_matrix[2][2] * orig.z
-      +  camera.camera_to_world_matrix[2][3]) * iw2;
-
-  Vector tdir;
-  tdir.x = camera.camera_to_world_matrix[0][0] * dir.x
-       + camera.camera_to_world_matrix[0][1] * dir.y
-       + camera.camera_to_world_matrix[0][2] * dir.z;
-  tdir.y = camera.camera_to_world_matrix[1][0] * dir.x
-       + camera.camera_to_world_matrix[1][1] * dir.y
-       + camera.camera_to_world_matrix[1][2] * dir.z;
-  tdir.z = camera.camera_to_world_matrix[2][0] * dir.x
-       + camera.camera_to_world_matrix[2][1] * dir.y
-       + camera.camera_to_world_matrix[2][2] * dir.z;
-
-  return Ray(torig, tdir, RAY_EPSILON, (camera.yon - hither) / dir.z);
-}
 
 __HD__
 void tex_map_get_texel(
@@ -337,100 +211,48 @@ void area_light_le(
   }
 }
 
+
 __HD__
-bool get_hit_point_information(
-    const PtrFreeScene* const scene,
-    Ray& ray,
-    const RayHit& hit,
-    Point& hit_point,
-    Spectrum& surface_color,
-    Normal& N,
-    Normal& shade_N) {
-
-  hit_point = ray(hit.t);
-  const unsigned current_triangle_index = hit.index;
-
-  unsigned current_mesh_index = scene->mesh_ids[current_triangle_index];
-  unsigned triangle_index = current_triangle_index - scene->mesh_first_triangle_offset[current_mesh_index];
-
-  const Mesh& m = scene->mesh_descs[current_mesh_index];
-
-  if (m.has_colors) {
-    // mesh interpolate color
-    mesh_interpolate_color(&scene->colors[m.colors_offset], &scene->triangles[m.tris_offset], triangle_index, hit.b1, hit.b2, surface_color);
-  } else {
-    surface_color = Spectrum(1.f, 1.f, 1.f);
+void concentric_sample_disk(const float u1, const float u2, float *dx, float *dy) {
+  float r, theta;
+  // Map uniform random numbers to $[-1,1]^2$
+  float sx = 2.f * u1 - 1.f;
+  float sy = 2.f * u2 - 1.f;
+  // Map square to $(r,\theta)$
+  // Handle degeneracy at the origin
+  if (sx == 0.f && sy == 0.f) {
+    *dx = 0.f;
+    *dy = 0.f;
+    return;
   }
-
-  // mesh interpolate normal
-  mesh_interpolate_normal(&scene->normals[m.verts_offset], &scene->triangles[m.tris_offset], triangle_index, hit.b1, hit.b2, N);
-
-  if (Dot(ray.d, N) > 0.f)
-    shade_N = -N;
-  else
-    shade_N = N;
-
-  return false;
-
+  if (sx >= -sy) {
+    if (sx > sy) {
+      // Handle first region of disk
+      r = sx;
+      if (sy > 0.f)
+        theta = sy / r;
+      else
+        theta = 8.f + sy / r;
+    } else {
+      // Handle second region of disk
+      r = sy;
+      theta = 2.f - sx / r;
+    }
+  } else {
+    if (sx <= sy) {
+      // Handle third region of disk
+      r = -sx;
+      theta = 4.f - sy / r;
+    } else {
+      // Handle fourth region of disk
+      r = -sy;
+      theta = 6.f + sx / r;
+    }
+  }
+  theta *= M_PI / 4.f;
+  *dx = r * cosf(theta);
+  *dy = r * sinf(theta);
 }
-
-__HD__
-void mesh_interpolate_color(
-    const Spectrum* const colors,
-    const Triangle* const triangles,
-    const unsigned triangle_index,
-    const float b1,
-    const float b2,
-    Spectrum& C) {
-
-  const Triangle& triangle = triangles[triangle_index];
-  const float b0 = 1.f - b1 - b2;
-
-  C.r = b0 * colors[triangle.v[0]].r + b1 * colors[triangle.v[1]].r + b2 * colors[triangle.v[2]].r;
-  C.g = b0 * colors[triangle.v[0]].g + b1 * colors[triangle.v[1]].g + b2 * colors[triangle.v[2]].g;
-  C.b = b0 * colors[triangle.v[0]].b + b1 * colors[triangle.v[1]].b + b2 * colors[triangle.v[2]].b;
-}
-
-__HD__
-void mesh_interpolate_normal(
-    const Normal* const normals,
-    const Triangle* const triangles,
-    const unsigned triangle_index,
-    const float b1,
-    const float b2,
-    Normal& N) {
-
-  const Triangle& triangle = triangles[triangle_index];
-  const float b0 = 1.f - b1 - b2;
-
-  const Normal& v0 = normals[triangle.v[0]];
-  const Normal& v1 = normals[triangle.v[1]];
-  const Normal& v2 = normals[triangle.v[2]];
-
-  N.x = b0 * v0.x + b1 * v1.x + b2 * v2.x;
-  N.y = b0 * v0.y + b1 * v1.y + b2 * v2.y;
-  N.z = b0 * v0.z + b1 * v1.z + b2 * v2.z;
-
-  N = Normalize(N);
-}
-
-__HD__
-void mesh_interpolate_UV(
-    const UV* const uvs,
-    const Triangle* const triangles,
-    const unsigned triangle_index,
-    const float b1,
-    const float b2,
-    UV& uv) {
-
-  const Triangle& triangle = triangles[triangle_index];
-  const float b0 = 1.f - b1 - b2;
-
-  uv.u = b0 * uvs[triangle.v[0]].u + b1 * uvs[triangle.v[1]].u + b2 * uvs[triangle.v[2]].u;
-  uv.v = b0 * uvs[triangle.v[0]].v + b1 * uvs[triangle.v[1]].v + b2 * uvs[triangle.v[2]].v;
-}
-
-
 
 __HD__
 LightType sample_all_lights(
@@ -467,6 +289,7 @@ LightType sample_all_lights(
     return ppm::LIGHT_TRIANGLE;
   }
 }
+
 
 __HD__
 void infinite_light_sample_l(
@@ -624,6 +447,185 @@ void sample_triangle_light(
   p.x = b0 * l.v0.x + b1 * l.v1.x + b2 * l.v2.x;
   p.y = b0 * l.v0.y + b1 * l.v1.y + b2 * l.v2.y;
   p.z = b0 * l.v0.z + b1 * l.v1.z + b2 * l.v2.z;
+}
+
+
+__HD__
+Ray generate_ray(
+    const float sx, const float sy,
+    const uint width, const uint height,
+    const float u0, const float u1, const float u2, const Camera& camera) {
+
+  Point p(sx, height - sy - 1.f, 0);
+  Point orig;
+
+  const float iw = 1.f / (camera.raster_to_camera_matrix[3][0] * p.x
+                        + camera.raster_to_camera_matrix[3][1] * p.y
+                        + camera.raster_to_camera_matrix[3][2] * p.z
+                        + camera.raster_to_camera_matrix[3][3]);
+  orig.x = (camera.raster_to_camera_matrix[0][0] * p.x
+      + camera.raster_to_camera_matrix[0][1] * p.y
+      + camera.raster_to_camera_matrix[0][2] * p.z
+      + camera.raster_to_camera_matrix[0][3]) * iw;
+  orig.y = (camera.raster_to_camera_matrix[1][0] * p.x
+      + camera.raster_to_camera_matrix[1][1] * p.y
+      + camera.raster_to_camera_matrix[1][2] * p.z
+      + camera.raster_to_camera_matrix[1][3]) * iw;
+  orig.z = (camera.raster_to_camera_matrix[2][0] * p.x
+      + camera.raster_to_camera_matrix[2][1] * p.y
+      + camera.raster_to_camera_matrix[2][2] * p.z
+      + camera.raster_to_camera_matrix[2][3]) * iw;
+
+  Vector dir(orig);
+
+  const float hither = camera.hither;
+  if (camera.lens_radius > 0.f) {
+    // sample point on lens
+    float lens_u, lens_v;
+    concentric_sample_disk(u1, u2, &lens_u, &lens_v);
+    const float lens_radius = camera.lens_radius;
+    lens_u *= lens_radius;
+    lens_v *= lens_radius;
+
+    // compute point on plane of focus
+    const float focal_distance = camera.focal_distance;
+    const float dist = focal_distance - hither;
+    const float ft = dist / dir.z;
+    Point p_focus = orig + dir * ft;
+
+    // update ray for effect on lens
+    const float k = dist / focal_distance;
+    orig.x += lens_u * k;
+    orig.y += lens_v * k;
+
+    dir = p_focus - orig;
+  }
+
+  dir = Normalize(dir);
+
+  Point torig;
+  const float iw2 = 1.f / ( camera.camera_to_world_matrix[3][0] * orig.x
+                      + camera.camera_to_world_matrix[3][1] * orig.y
+                      + camera.camera_to_world_matrix[3][2] * orig.z
+                      + camera.camera_to_world_matrix[3][3]);
+  torig.x = (camera.camera_to_world_matrix[0][0] * orig.x
+      +  camera.camera_to_world_matrix[0][1] * orig.y
+      +  camera.camera_to_world_matrix[0][2] * orig.z
+      +  camera.camera_to_world_matrix[0][3]) * iw2;
+  torig.y = (camera.camera_to_world_matrix[1][0] * orig.x
+      +  camera.camera_to_world_matrix[1][1] * orig.y
+      +  camera.camera_to_world_matrix[1][2] * orig.z
+      +  camera.camera_to_world_matrix[1][3]) * iw2;
+  torig.z = (camera.camera_to_world_matrix[2][0] * orig.x
+      +  camera.camera_to_world_matrix[2][1] * orig.y
+      +  camera.camera_to_world_matrix[2][2] * orig.z
+      +  camera.camera_to_world_matrix[2][3]) * iw2;
+
+  Vector tdir;
+  tdir.x = camera.camera_to_world_matrix[0][0] * dir.x
+       + camera.camera_to_world_matrix[0][1] * dir.y
+       + camera.camera_to_world_matrix[0][2] * dir.z;
+  tdir.y = camera.camera_to_world_matrix[1][0] * dir.x
+       + camera.camera_to_world_matrix[1][1] * dir.y
+       + camera.camera_to_world_matrix[1][2] * dir.z;
+  tdir.z = camera.camera_to_world_matrix[2][0] * dir.x
+       + camera.camera_to_world_matrix[2][1] * dir.y
+       + camera.camera_to_world_matrix[2][2] * dir.z;
+
+  return Ray(torig, tdir, RAY_EPSILON, (camera.yon - hither) / dir.z);
+}
+
+__HD__
+bool get_hit_point_information(
+    const PtrFreeScene* const scene,
+    Ray& ray,
+    const RayHit& hit,
+    Point& hit_point,
+    Spectrum& surface_color,
+    Normal& N,
+    Normal& shade_N) {
+
+  hit_point = ray(hit.t);
+  const unsigned current_triangle_index = hit.index;
+
+  unsigned current_mesh_index = scene->mesh_ids[current_triangle_index];
+  unsigned triangle_index = current_triangle_index - scene->mesh_first_triangle_offset[current_mesh_index];
+
+  const Mesh& m = scene->mesh_descs[current_mesh_index];
+
+  if (m.has_colors) {
+    // mesh interpolate color
+    mesh_interpolate_color(&scene->colors[m.colors_offset], &scene->triangles[m.tris_offset], triangle_index, hit.b1, hit.b2, surface_color);
+  } else {
+    surface_color = Spectrum(1.f, 1.f, 1.f);
+  }
+
+  // mesh interpolate normal
+  mesh_interpolate_normal(&scene->normals[m.verts_offset], &scene->triangles[m.tris_offset], triangle_index, hit.b1, hit.b2, N);
+
+  if (Dot(ray.d, N) > 0.f)
+    shade_N = -N;
+  else
+    shade_N = N;
+
+  return false;
+
+}
+
+__HD__
+void mesh_interpolate_color(
+    const Spectrum* const colors,
+    const Triangle* const triangles,
+    const unsigned triangle_index,
+    const float b1,
+    const float b2,
+    Spectrum& C) {
+
+  const Triangle& triangle = triangles[triangle_index];
+  const float b0 = 1.f - b1 - b2;
+
+  C.r = b0 * colors[triangle.v[0]].r + b1 * colors[triangle.v[1]].r + b2 * colors[triangle.v[2]].r;
+  C.g = b0 * colors[triangle.v[0]].g + b1 * colors[triangle.v[1]].g + b2 * colors[triangle.v[2]].g;
+  C.b = b0 * colors[triangle.v[0]].b + b1 * colors[triangle.v[1]].b + b2 * colors[triangle.v[2]].b;
+}
+
+__HD__
+void mesh_interpolate_normal(
+    const Normal* const normals,
+    const Triangle* const triangles,
+    const unsigned triangle_index,
+    const float b1,
+    const float b2,
+    Normal& N) {
+
+  const Triangle& triangle = triangles[triangle_index];
+  const float b0 = 1.f - b1 - b2;
+
+  const Normal& v0 = normals[triangle.v[0]];
+  const Normal& v1 = normals[triangle.v[1]];
+  const Normal& v2 = normals[triangle.v[2]];
+
+  N.x = b0 * v0.x + b1 * v1.x + b2 * v2.x;
+  N.y = b0 * v0.y + b1 * v1.y + b2 * v2.y;
+  N.z = b0 * v0.z + b1 * v1.z + b2 * v2.z;
+
+  N = Normalize(N);
+}
+
+__HD__
+void mesh_interpolate_UV(
+    const UV* const uvs,
+    const Triangle* const triangles,
+    const unsigned triangle_index,
+    const float b1,
+    const float b2,
+    UV& uv) {
+
+  const Triangle& triangle = triangles[triangle_index];
+  const float b0 = 1.f - b1 - b2;
+
+  uv.u = b0 * uvs[triangle.v[0]].u + b1 * uvs[triangle.v[1]].u + b2 * uvs[triangle.v[2]].u;
+  uv.v = b0 * uvs[triangle.v[0]].v + b1 * uvs[triangle.v[1]].v + b2 * uvs[triangle.v[2]].v;
 }
 
 __HD__
@@ -1136,592 +1138,6 @@ __HD__ void add_flux(
 __HD__ unsigned hash(const int ix, const int iy, const int iz, unsigned size) {
   return (unsigned) ((ix * 73856093) ^ (iy * 19349663) ^ (iz * 83492791)) % size;
 }
-
-/*
- * QBVH Intersections
- */
-__device__ int4 QBVHNode_BBoxIntersect(const float4 bboxes_minX, const float4 bboxes_maxX,
-    const float4 bboxes_minY, const float4 bboxes_maxY, const float4 bboxes_minZ,
-    const float4 bboxes_maxZ, const ppm::QuadRay *ray4, const float4 invDir0,
-    const float4 invDir1, const float4 invDir2, const int signs0, const int signs1,
-    const int signs2) {
-
-  float4 tMin = ray4->mint;
-  float4 tMax = ray4->maxt;
-
-  // X coordinate
-  tMin = fmaxf(tMin, (bboxes_minX - ray4->ox) * invDir0);
-  tMax = fminf(tMax, (bboxes_maxX - ray4->ox) * invDir0);
-
-  // Y coordinate
-  tMin = fmaxf(tMin, (bboxes_minY - ray4->oy) * invDir1);
-  tMax = fminf(tMax, (bboxes_maxY - ray4->oy) * invDir1);
-
-  // Z coordinate
-  tMin = fmaxf(tMin, (bboxes_minZ - ray4->oz) * invDir2);
-  tMax = fminf(tMax, (bboxes_maxZ - ray4->oz) * invDir2);
-
-  // Return the visit flags
-  return (tMax >= tMin);
-}
-
-__device__ void QuadTriangle_Intersect(const float4 origx, const float4 origy, const float4 origz,
-    const float4 edge1x, const float4 edge1y, const float4 edge1z, const float4 edge2x,
-    const float4 edge2y, const float4 edge2z, const uint4 primitives,
-    ppm::QuadRay *ray4, RayHit *rayHit) {
-  //--------------------------------------------------------------------------
-  // Calc. b1 coordinate
-
-  const float4 s1x = (ray4->dy * edge2z) - (ray4->dz * edge2y);
-  const float4 s1y = (ray4->dz * edge2x) - (ray4->dx * edge2z);
-  const float4 s1z = (ray4->dx * edge2y) - (ray4->dy * edge2x);
-
-  const float4 divisor = (s1x * edge1x) + (s1y * edge1y) + (s1z * edge1z);
-
-  const float4 dx = ray4->ox - origx;
-  const float4 dy = ray4->oy - origy;
-  const float4 dz = ray4->oz - origz;
-
-  const float4 b1 = ((dx * s1x) + (dy * s1y) + (dz * s1z)) / divisor;
-
-  //--------------------------------------------------------------------------
-  // Calc. b2 coordinate
-
-  const float4 s2x = (dy * edge1z) - (dz * edge1y);
-  const float4 s2y = (dz * edge1x) - (dx * edge1z);
-  const float4 s2z = (dx * edge1y) - (dy * edge1x);
-
-  const float4 b2 = ((ray4->dx * s2x) + (ray4->dy * s2y) + (ray4->dz * s2z)) / divisor;
-
-  //--------------------------------------------------------------------------
-  // Calc. b0 coordinate
-
-  const float4 b0 = (make_float4(1.f)) - b1 - b2;
-
-  //--------------------------------------------------------------------------
-
-  const float4 t = ((edge2x * s2x) + (edge2y * s2y) + (edge2z * s2z)) / divisor;
-
-  float _b1, _b2;
-  float maxt = ray4->maxt.x;
-  uint index;
-
-  int4 cond = (divisor != make_float4(0.f)) & (b0 >= make_float4(0.f)) & (b1 >= make_float4(0.f))
-      & (b2 >= make_float4(0.f)) & (t > ray4->mint);
-
-  const int cond0 = cond.x && (t.x < maxt);
-  maxt = select(maxt, t.x, cond0);
-  _b1 = select(0.f, b1.x, cond0);
-  _b2 = select(0.f, b2.x, cond0);
-  index = select(0xffffffffu, primitives.x, cond0);
-
-  const int cond1 = cond.y && (t.y < maxt);
-  maxt = select(maxt, t.y, cond1);
-  _b1 = select(_b1, b1.y, cond1);
-  _b2 = select(_b2, b2.y, cond1);
-  index = select(index, primitives.y, cond1);
-
-  const int cond2 = cond.z && (t.z < maxt);
-  maxt = select(maxt, t.z, cond2);
-  _b1 = select(_b1, b1.z, cond2);
-  _b2 = select(_b2, b2.z, cond2);
-  index = select(index, primitives.z, cond2);
-
-  const int cond3 = cond.w && (t.w < maxt);
-  maxt = select(maxt, t.w, cond3);
-  _b1 = select(_b1, b1.w, cond3);
-  _b2 = select(_b2, b2.w, cond3);
-  index = select(index, primitives.w, cond3);
-
-  if (index == 0xffffffffu)
-    return;
-
-  ray4->maxt = make_float4(maxt);
-
-  rayHit->t = maxt;
-  rayHit->b1 = _b1;
-  rayHit->b2 = _b2;
-  rayHit->index = index;
-}
-
-__device__ void subIntersect(Ray& ray, ppm::QBVHNode *nodes,
-    ppm::QuadTriangle *quadTris, RayHit& rayHit) {
-
-  // Prepare the ray for intersection
-  ppm::QuadRay ray4;
-  {
-    float4 *basePtr = (float4 *) &ray;
-    float4 data0 = (*basePtr++);
-    float4 data1 = (*basePtr);
-
-    ray4.ox = make_float4(data0.x);
-    ray4.oy = make_float4(data0.y);
-    ray4.oz = make_float4(data0.z);
-
-    ray4.dx = make_float4(data0.w);
-    ray4.dy = make_float4(data1.x);
-    ray4.dz = make_float4(data1.y);
-
-    ray4.mint = make_float4(data1.z);
-    ray4.maxt = make_float4(data1.w);
-  }
-
-  const float4 invDir0 = make_float4(1.f / ray4.dx.x);
-  const float4 invDir1 = make_float4(1.f / ray4.dy.x);
-  const float4 invDir2 = make_float4(1.f / ray4.dz.x);
-
-  const int signs0 = (ray4.dx.x < 0.f);
-  const int signs1 = (ray4.dy.x < 0.f);
-  const int signs2 = (ray4.dz.x < 0.f);
-
-  //RayHit rayHit;
-  rayHit.index = 0xffffffffu;
-
-  int nodeStack[QBVH_STACK_SIZE];
-  nodeStack[0] = 0; // first node to handle: root node
-
-  //------------------------------
-  // Main loop
-  int todoNode = 0; // the index in the stack
-  // nodeStack leads to a lot of local memory banks conflicts however it has not real
-  // impact on performances (I guess access latency is hiden by other stuff).
-  // Avoiding conflicts is easy to do but it requires to know the work group
-  // size (not worth doing if there are not performance benefits).
-  //__shared__ int *nodeStack = &nodeStacks[QBVH_STACK_SIZE * threadIdx.x];
-  //nodeStack[0] = 0; // first node to handle: root node
-
-
-  //int maxDepth = 0;
-  while (todoNode >= 0) {
-    const int nodeData = nodeStack[todoNode];
-    --todoNode;
-
-    // Leaves are identified by a negative index
-    if (!QBVHNode_IsLeaf(nodeData)) {
-      ppm::QBVHNode *node = &nodes[nodeData];
-      const int4 visit = QBVHNode_BBoxIntersect(node->bboxes[signs0][0],
-          node->bboxes[1 - signs0][0], node->bboxes[signs1][1],
-          node->bboxes[1 - signs1][1], node->bboxes[signs2][2],
-          node->bboxes[1 - signs2][2], &ray4, invDir0, invDir1, invDir2, signs0, signs1,
-          signs2);
-
-      const int4 children = node->children;
-
-      // For some reason doing logic operations with int4 is very slow
-      nodeStack[todoNode + 1] = children.w;
-      todoNode += (visit.w && !QBVHNode_IsEmpty(children.w)) ? 1 : 0;
-      nodeStack[todoNode + 1] = children.z;
-      todoNode += (visit.z && !QBVHNode_IsEmpty(children.z)) ? 1 : 0;
-      nodeStack[todoNode + 1] = children.y;
-      todoNode += (visit.y && !QBVHNode_IsEmpty(children.y)) ? 1 : 0;
-      nodeStack[todoNode + 1] = children.x;
-      todoNode += (visit.x && !QBVHNode_IsEmpty(children.x)) ? 1 : 0;
-
-      //maxDepth = max(maxDepth, todoNode);
-    } else {
-      // Perform intersection
-      const uint nbQuadPrimitives = QBVHNode_NbQuadPrimitives(nodeData);
-      const uint offset = QBVHNode_FirstQuadIndex(nodeData);
-
-      for (uint primNumber = offset; primNumber < (offset + nbQuadPrimitives); ++primNumber) {
-        ppm::QuadTriangle *quadTri = &quadTris[primNumber];
-        const float4 origx = quadTri->origx;
-        const float4 origy = quadTri->origy;
-        const float4 origz = quadTri->origz;
-        const float4 edge1x = quadTri->edge1x;
-        const float4 edge1y = quadTri->edge1y;
-        const float4 edge1z = quadTri->edge1z;
-        const float4 edge2x = quadTri->edge2x;
-        const float4 edge2y = quadTri->edge2y;
-        const float4 edge2z = quadTri->edge2z;
-        const uint4 primitives = quadTri->primitives;
-        QuadTriangle_Intersect(origx, origy, origz, edge1x, edge1y, edge1z, edge2x, edge2y,
-            edge2z, primitives, &ray4, &rayHit);
-      }
-    }
-  }
-
-  //printf(\"MaxDepth=%02d\\n\", maxDepth);
-
-  // Write result
-  //    rayHit.t = rayHit.t;
-  //    rayHit.b1 = rayHit.b1;
-  //    rayHit.b2 = rayHit.b2;
-  //    rayHits[gid].index = rayHit.index;
-}
-
-
-/*
- * KERNELS
- */
-
-void __global__ init_seeds_impl(
-    Seed* const seeds, const unsigned size,
-    const unsigned iteration) {
-
-  const unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
-
-  if (i >= size)
-    return;
-
-  seeds[i] = mwc(i+iteration);
-}
-
-void __global__ generate_eye_paths_impl(
-    EyePath* const eye_paths,
-    Seed* const seed_buffer,
-    const unsigned width,
-    const unsigned height,
-    const PtrFreeScene* scene) {
-
-  //const unsigned index = blockIdx.x * blockDim.x + threadIdx.x;
-  const unsigned x = blockIdx.x * blockDim.x + threadIdx.x;
-  const unsigned y = blockIdx.y * blockDim.y + threadIdx.y;
-
-  //const unsigned x = index % width;
-  //const unsigned y = index / width;
-  if (x >= width || y >= height)
-    return;
-
-  const unsigned index = y * width + x;
-
-  //if (index >= width * height)
-  //P  return;
-
-  EyePath& eye_path = eye_paths[index];
-
-  eye_path = EyePath();
-  eye_path.scr_y = y + (floatRNG(seed_buffer[index])) - 0.5f;
-  eye_path.scr_x = x + (floatRNG(seed_buffer[index])) - 0.5f;
-
-  float u0 = floatRNG(seed_buffer[index]);
-  float u1 = floatRNG(seed_buffer[index]);
-  float u2 = floatRNG(seed_buffer[index]);
-
-  eye_path.ray = helpers::generate_ray(eye_path.scr_x, eye_path.scr_y, width, height, u0, u1, u2, scene->camera);
-
-  eye_path.done = false;
-  eye_path.sample_index = index;
-}
-
-
-void __global__ advance_eye_paths_impl(
-    HitPointPosition* const hit_points, //const unsigned hit_points_count
-    EyePath*  const eye_paths,            const unsigned eye_paths_count,
-    Seed*     const seed_buffer,          //const unsigned seed_buffer_count,
-    PtrFreeScene* scene,
-    const unsigned max_eye_path_depth) {
-
-  const unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
-
-  if (i >= eye_paths_count)
-    return;
-
-  EyePath& eye_path = eye_paths[i];
-  Ray&   ray = eye_path.ray; // rays[i];
-  RayHit hit;                // = hits[i];
-
-  while(!eye_path.done) {
-    hit.SetMiss();
-    subIntersect(ray, scene->nodes, scene->prims, hit);
-    //scene->intersect(ray, hit);
-
-    if (eye_path.depth > max_eye_path_depth) {
-      // make it done
-      HitPointPosition& hp = hit_points[eye_path.sample_index];
-      hp.type = CONSTANT_COLOR;
-      hp.scr_x = eye_path.scr_x;
-      hp.scr_y = eye_path.scr_y;
-      hp.throughput = Spectrum();
-
-      eye_path.done = true;
-    } else {
-      eye_path.depth++;
-    }
-    eye_path.done = true;
-
-    if (hit.Miss()) {
-      // add a hit point
-      HitPointPosition& hp = hit_points[eye_path.sample_index];
-      hp.type = CONSTANT_COLOR;
-      hp.scr_x = eye_path.scr_x;
-      hp.scr_y = eye_path.scr_y;
-
-      if (scene->infinite_light.exists || scene->sun_light.exists || scene->sky_light.exists) {
-        if (scene->infinite_light.exists) {
-          // TODO check this
-          helpers::infinite_light_le(hp.throughput, eye_path.ray.d, scene->infinite_light, scene->infinite_light_map);
-        }
-        if (scene->sun_light.exists) {
-          // TODO check this
-          helpers::sun_light_le(hp.throughput, eye_path.ray.d, scene->sun_light);
-        }
-        if (scene->sky_light.exists) {
-          // TODO check this
-          helpers::sky_light_le(hp.throughput, eye_path.ray.d, scene->sky_light);
-        }
-        hp.throughput *= eye_path.flux;
-      } else {
-        hp.throughput = Spectrum();
-      }
-      eye_path.done = true;
-    } else {
-
-      // something was hit
-      Point hit_point;
-      Spectrum surface_color;
-      Normal N, shade_N;
-
-      if (helpers::get_hit_point_information(scene, eye_path.ray, hit, hit_point, surface_color, N, shade_N)) {
-        continue;
-      }
-
-      // get the material
-      const unsigned current_triangle_index = hit.index;
-      const unsigned current_mesh_index = scene->mesh_ids[current_triangle_index];
-      const unsigned material_index = scene->mesh_materials[current_mesh_index];
-      const Material& hit_point_mat = scene->materials[material_index];
-      unsigned mat_type = hit_point_mat.type;
-
-      if (mat_type == MAT_AREALIGHT) {
-        // add a hit point
-        HitPointPosition &hp = hit_points[eye_path.sample_index];
-        hp.type = CONSTANT_COLOR;
-        hp.scr_x = eye_path.scr_x;
-        hp.scr_y = eye_path.scr_y;
-
-        Vector md = - eye_path.ray.d;
-        helpers::area_light_le(hp.throughput, md, N, hit_point_mat.param.area_light);
-        hp.throughput *= eye_path.flux;
-        eye_path.done = true;
-      } else {
-        Vector wo = - eye_path.ray.d;
-        float material_pdf;
-
-        Vector wi;
-        bool specular_material = true;
-        float u0 = floatRNG(seed_buffer[eye_path.sample_index]);
-        float u1 = floatRNG(seed_buffer[eye_path.sample_index]);
-        float u2 = floatRNG(seed_buffer[eye_path.sample_index]);
-        Spectrum f;
-
-
-        helpers::generic_material_sample_f(hit_point_mat, wo, wi, N, shade_N, u0, u1, u2, material_pdf, f, specular_material);
-        f *= surface_color;
-
-        if ((material_pdf <= 0.f) || f.Black()) {
-          // add a hit point
-          HitPointPosition& hp = hit_points[eye_path.sample_index];
-          hp.type = CONSTANT_COLOR;
-          hp.scr_x = eye_path.scr_x;
-          hp.scr_y = eye_path.scr_y;
-          hp.throughput = Spectrum();
-        } else if (specular_material || (!hit_point_mat.diffuse)) {
-          eye_path.flux *= f / material_pdf;
-          eye_path.ray = Ray(hit_point, wi);
-        } else {
-          // add a hit point
-          HitPointPosition& hp = hit_points[eye_path.sample_index];
-          hp.type = SURFACE;
-          hp.scr_x = eye_path.scr_x;
-          hp.scr_y = eye_path.scr_y;
-          hp.material_ss   = material_index;
-          hp.throughput = eye_path.flux * surface_color;
-          hp.position = hit_point;
-          hp.wo = - eye_path.ray.d;
-          hp.normal = shade_N;
-          eye_path.done = true;
-        }
-      }
-    }
-  }
-}
-
-
-void __global__ generate_photon_paths_impl(
-    PhotonPath* const photon_paths,
-    const unsigned photon_paths_count,
-    Seed* const seed_buffer,
-    const PtrFreeScene* scene) {
-
-  const unsigned index = blockIdx.x * blockDim.x + threadIdx.x;
-
-  if (index >= photon_paths_count)
-    return;
-
-  PhotonPath& path = photon_paths[index];
-  Ray& ray = path.ray;
-  float light_pdf;
-  float pdf;
-  Spectrum f;
-
-  const float u0 = floatRNG(seed_buffer[index]);
-  const float u1 = floatRNG(seed_buffer[index]);
-  const float u2 = floatRNG(seed_buffer[index]);
-  const float u3 = floatRNG(seed_buffer[index]);
-  const float u4 = floatRNG(seed_buffer[index]);
-
-  int light_index;
-  ppm::LightType light_type;
-  light_type = helpers::sample_all_lights(u0, scene->area_lights_count, scene->infinite_light, scene->sun_light, scene->sky_light, light_pdf, light_index);
-
-  if (light_type == ppm::LIGHT_IL_IS)
-    helpers::infinite_light_sample_l(u1, u2, u3, u4, scene->infinite_light, scene->infinite_light_map, scene->bsphere, pdf, ray, path.flux);
-  else if (light_type == ppm::LIGHT_SUN)
-    helpers::sun_light_sample_l(u1, u2, u3, u4, scene->sun_light, scene->bsphere, pdf, ray, path.flux);
-  else if (light_type == ppm::LIGHT_IL_SKY)
-    helpers::sky_light_sample_l(u1, u2, u3, u4, scene->sky_light, scene->bsphere, pdf, ray, path.flux);
-  else {
-    helpers::triangle_light_sample_l(u1, u2, u3, u4, scene->area_lights[light_index], scene->mesh_descs, scene->colors, pdf, ray, path.flux);
-  }
-
-  path.flux /= pdf * light_pdf;
-  path.depth = 0;
-  path.done = 0;
-}
-
-
-
-void __global__ advance_photon_paths_impl(
-      PhotonPath* const photon_paths,    const unsigned photon_paths_count,
-      Seed* const seed_buffer,        // const unsigned seed_buffer_count,
-      PtrFreeScene* scene,
-
-      HitPointPosition* const hit_points_info,
-      HitPointRadiance* const hit_points,
-      const BBox* bbox,
-      const unsigned CONST_max_photon_depth,
-      const float* photon_radius2,
-      const unsigned hit_points_count,
-
-      const unsigned*           hash_grid,
-      const unsigned*           hash_grid_lengths,
-      const unsigned*           hash_grid_indexes,
-      const float*              hash_grid_inv_cell_size) {
-
-
-  const unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
-
-  if (i >= photon_paths_count)
-    return;
-
-    PhotonPath& path = photon_paths[i];
-    Ray& ray    = path.ray;
-    RayHit hit;
-    Seed& seed = seed_buffer[i];
-
-    while(!path.done) {
-      hit.SetMiss();
-      subIntersect(ray, scene->nodes, scene->prims, hit);
-      //scene->intersect(ray, hit);
-
-      if (hit.Miss()) {
-        path.done = true;
-      } else {
-        Point hit_point;
-        Spectrum surface_color;
-        Normal N;
-        Normal shade_N;
-
-        if (helpers::get_hit_point_information(scene, ray, hit, hit_point, surface_color, N, shade_N))
-          continue;
-
-        const unsigned current_triangle_index = hit.index;
-        const unsigned current_mesh_index     = scene->mesh_ids[current_triangle_index];
-        const unsigned material_index         = scene->mesh_materials[current_mesh_index];
-        const Material& hit_point_mat = scene->materials[material_index];
-        unsigned mat_type = hit_point_mat.type;
-
-        if (mat_type == MAT_AREALIGHT) {
-          path.done = true;
-        } else {
-          float f_pdf;
-          Vector wi;
-          Vector wo = -ray.d;
-          Spectrum f;
-          bool specular_bounce = true;
-
-          const float u0 = floatRNG(seed);
-          const float u1 = floatRNG(seed);
-          const float u2 = floatRNG(seed);
-
-          helpers::generic_material_sample_f(hit_point_mat, wo, wi, N, shade_N, u0, u1, u2, f_pdf, f, specular_bounce);
-          f *= surface_color;
-
-          if (!specular_bounce) {
-            helpers::add_flux(hash_grid, hash_grid_lengths, hash_grid_indexes, *hash_grid_inv_cell_size, *bbox, scene, hit_point, shade_N, wo, path.flux, *photon_radius2, hit_points_info, hit_points, hit_points_count);
-          }
-
-          if (path.depth < CONST_max_photon_depth) {
-            if (f_pdf <= 0.f || f.Black()) {
-              path.done = true;
-            } else {
-              path.depth++;
-              path.flux *= f / f_pdf;
-
-              // russian roulette
-              const float p = 0.75;
-              if (path.depth < 3) {
-                ray = Ray(hit_point, wi);
-              } else if (floatRNG(seed) < p) {
-                path.flux /= p;
-                ray = Ray(hit_point, wi);
-              } else {
-                path.done = true;
-              }
-            }
-          } else {
-            path.done = true;
-          }
-        }
-      }
-    }
-}
-
-
-void __global__ accum_flux_impl(
-    const HitPointPosition* const hit_points_info,
-    HitPointRadiance* const hit_points,
-    const unsigned size,
-    const float alpha,
-    const unsigned photons_traced,
-    const float* current_photon_radius2) {
-
-  const unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
-
-  if (i >= size)
-    return;
-
-  const float radius2 = *current_photon_radius2;
-
-  const HitPointPosition& hpi = hit_points_info[i];
-  HitPointRadiance& hp = hit_points[i];
-
-  hp.hits_count++;
-  switch (hpi.type) {
-    case CONSTANT_COLOR:
-      hp.accum_radiance = hpi.throughput;
-      break;
-    case SURFACE:
-      if (hp.accum_photon_count > 0) {
-        hp.reflected_flux = hp.accum_reflected_flux;
-        hp.accum_photon_count = 0;
-        hp.accum_reflected_flux = Spectrum();
-      }
-      break;
-    default:
-      assert(false);
-  }
-
-  if (hp.hits_count > 0) {
-    const double k = 1.0 / (M_PI * radius2 * photons_traced);
-    hp.radiance = (hp.accum_radiance + hp.reflected_flux * k);
-  }
-  hp.hits_count = 0;
-  hp.accum_radiance = Spectrum();
-  hp.reflected_flux = Spectrum();
-}
-
 
 }
 

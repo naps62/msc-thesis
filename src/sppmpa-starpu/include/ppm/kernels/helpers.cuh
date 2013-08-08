@@ -79,55 +79,19 @@ __HD__ void add_flux(
 
 __HD__ unsigned hash(const int ix, const int iy, const int iz, unsigned size);
 
-void __global__ init_seeds_impl(
-    Seed* const seeds, const unsigned size,
-    const unsigned iteration);
+__device__ int4 QBVHNode_BBoxIntersect(const float4 bboxes_minX, const float4 bboxes_maxX,
+    const float4 bboxes_minY, const float4 bboxes_maxY, const float4 bboxes_minZ,
+    const float4 bboxes_maxZ, const ppm::QuadRay *ray4, const float4 invDir0,
+    const float4 invDir1, const float4 invDir2, const int signs0, const int signs1,
+    const int signs2);
 
-void __global__ generate_eye_paths_impl(
-    EyePath* const eye_paths,
-    Seed* const seed_buffer,
-    const unsigned width,
-    const unsigned height,
-    const PtrFreeScene* scene);
+__device__ void QuadTriangle_Intersect(const float4 origx, const float4 origy, const float4 origz,
+    const float4 edge1x, const float4 edge1y, const float4 edge1z, const float4 edge2x,
+    const float4 edge2y, const float4 edge2z, const uint4 primitives,
+    ppm::QuadRay *ray4, RayHit *rayHit);
 
-void __global__ advance_eye_paths_impl(
-    HitPointPosition* const hit_points,
-    EyePath* const eye_paths,
-    const unsigned eye_paths_count,
-    Seed* const seed_buffer,
-    PtrFreeScene* scene,
-    const unsigned max_eye_path_depth);
-
-void __global__ generate_photon_paths_impl(
-    PhotonPath* const photon_paths,
-    const unsigned photon_paths_count,
-    Seed* const seed_buffer,
-    const PtrFreeScene* scene);
-
-void __global__ advance_photon_paths_impl(
-      PhotonPath* const photon_paths,    const unsigned photon_paths_count,
-      Seed* const seed_buffer,        // const unsigned seed_buffer_count,
-      PtrFreeScene* scene,
-
-      HitPointPosition* const hit_points_info,
-      HitPointRadiance* const hit_points,
-      const BBox* bbox,
-      const unsigned CONST_max_photon_depth,
-      const float* photon_radius2,
-      const unsigned hit_points_count,
-
-      const unsigned*           hash_grid,
-      const unsigned*           hash_grid_lengths,
-      const unsigned*           hash_grid_indexes,
-      const float*              hash_grid_inv_cell_size);
-
-void __global__ accum_flux_impl(
-    const HitPointPosition* const hit_points_info,
-    HitPointRadiance* const hit_points,
-    const unsigned size,
-    const float alpha,
-    const unsigned photons_traced,
-    const float* current_photon_radius2);
+__device__ void subIntersect(Ray& ray, ppm::QBVHNode *nodes,
+    ppm::QuadTriangle *quadTris, RayHit& rayHit);
 
 }
 

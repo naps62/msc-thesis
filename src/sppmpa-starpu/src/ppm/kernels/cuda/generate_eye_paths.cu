@@ -16,6 +16,47 @@ using ppm::EyePath;
 
 namespace ppm { namespace kernels { namespace cuda {
 
+void __global__ generate_eye_paths_impl(
+    EyePath* const eye_paths,
+    Seed* const seed_buffer,
+    const unsigned width,
+    const unsigned height,
+    const PtrFreeScene* scene) {
+
+  //const unsigned index = blockIdx.x * blockDim.x + threadIdx.x;
+  const unsigned x = blockIdx.x * blockDim.x + threadIdx.x;
+  const unsigned y = blockIdx.y * blockDim.y + threadIdx.y;
+
+  //const unsigned x = index % width;
+  //const unsigned y = index / width;
+  printf("%d %d %d %d\n", x, width, y, height);
+  if (x >= width || y >= height)
+    return;
+
+  const unsigned index = y * width + x;
+
+  //if (index >= width * height)
+  //P  return;
+
+  EyePath& eye_path = eye_paths[index];
+
+  eye_path = EyePath();
+  eye_path.scr_y = y + (floatRNG(seed_buffer[index])) - 0.5f;
+  eye_path.scr_x = x + (floatRNG(seed_buffer[index])) - 0.5f;
+
+  float u0 = floatRNG(seed_buffer[index]);
+  float u1 = floatRNG(seed_buffer[index]);
+  float u2 = floatRNG(seed_buffer[index]);
+
+  printf("%f %f %f\n", u0, u1, u2);
+
+  eye_path.ray = helpers::generate_ray(eye_path.scr_x, eye_path.scr_y, width, height, u0, u1, u2, scene->camera);
+
+  eye_path.done = false;
+  eye_path.sample_index = index;
+}
+
+
 void generate_eye_paths(void* buffers[], void* args_orig) {
   // cl_args
   const starpu_args args;
@@ -35,7 +76,7 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
   const dim3 threads_per_block = dim3(block_side,                block_side);
   const dim3 n_blocks          = dim3(std::ceil(width/(float)threads_per_block.x), std::ceil(height/(float)threads_per_block.y));
 
-  helpers::generate_eye_paths_impl<<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
+  generate_eye_paths_impl<<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
    (eye_paths,   // eye_path_count,
     seed_buffer, // seed_buffer_count,
     width,

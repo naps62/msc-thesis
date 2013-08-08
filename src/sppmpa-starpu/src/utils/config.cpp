@@ -21,7 +21,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   value("alpha,a",   alpha,       float(0.7), "??? still don't know what this is for");
   value("spp",       spp,         uint(1),    "samples per pixel (supersampling)");
   value("accel",     accel_name,  string("QBVH"), "accelerator type [QBVH (default) | BVH | MQBVH)");
-  value("engine",    engine, uint(0), "render engine to use [ppm (default) | ... (others to come)]");
+  value("engine",    engine, uint(99), "render engine to use [ppm (default) | ... (others to come)]");
   value("photons_iter", photons_first_iter_exp, uint(20),  "to compute amount of photons on first iteration");
   value("max_threads", max_threads, uint(8),  "number of cpu threads");
   value("max_iters",   max_iters,   uint(100), "number of iterations");
