@@ -1,4 +1,6 @@
+#include "ppm/cpu_engine.h"
 #include "ppm/cuda_engine.h"
+#include "ppm/kernels/helpers.cuh"
 #include "ppm/kernels/codelets.h"
 using namespace ppm::kernels;
 
@@ -12,6 +14,7 @@ CUDAEngine :: CUDAEngine(const Config& _config)
 : Engine(_config),
   cuda_scene(scene->to_device(0)) {
 
+  cudaStreamCreate(&stream);
 }
 
 CUDAEngine :: ~CUDAEngine() {
@@ -23,86 +26,142 @@ CUDAEngine :: ~CUDAEngine() {
 //
 
 void CUDAEngine :: init_seed_buffer() {
-  //kernels::cpu::init_seeds_impl(&seeds[0], seeds.size(), iteration);
+  const unsigned size = config.seed_size;
+  const unsigned threads_per_block = config.cuda_block_size;
+  const unsigned n_blocks          = size / threads_per_block;
+
+  kernels::helpers::init_seeds_impl
+  <<<n_blocks, threads_per_block, 0, stream>>>
+   (seeds,
+    size,
+    iteration);
 }
 
 void CUDAEngine :: generate_eye_paths() {
-  /*kernels::cpu::generate_eye_paths_impl(&eye_paths[0],
-                                        &seeds[0],
-                                        config.width,
-                                        config.height,
-                                        scene);*/
+  const unsigned width = config.width;
+  const unsigned height = config.height;
+  const unsigned block_side = config.cuda_block_size_sqrt;
+  const dim3 threads_per_block = dim3(block_side,                block_side);
+  const dim3 n_blocks          = dim3(std::ceil(width/(float)threads_per_block.x), std::ceil(height/(float)threads_per_block.y));
+
+  kernels::helpers::generate_eye_paths_impl
+  <<<n_blocks, threads_per_block, 0, stream>>>
+   (eye_paths,
+    seeds,
+    width,
+    height,
+    cuda_scene);
 }
 void CUDAEngine :: advance_eye_paths() {
-  /*kernels::cpu::advance_eye_paths_impl(&hit_points_info[0],
-                                       &eye_paths[0], eye_paths.size(),
-                                       &seeds[0],
-                                       scene,
-                                       config.max_eye_path_depth);*/
+  const unsigned size = config.total_hit_points;
+  const unsigned threads_per_block = config.cuda_block_size;
+  const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
+
+  kernels::helpers::advance_eye_paths_impl
+  <<<n_blocks, threads_per_block, 0, stream>>>
+   (hit_points_info,
+    eye_paths,
+    size,
+    seeds,
+    cuda_scene,
+    config.max_eye_path_depth);
 }
 
 void CUDAEngine :: bbox_compute() {
-  /*const unsigned total_spp = config.width * config.spp + config.height * config.spp;
+  const unsigned total_spp = config.width * config.spp + config.height * config.spp;
 
-  kernels::cpu::bbox_compute_impl(&hit_points_info[0], hit_points_info.size(),
-                                  bbox,
-                                  current_photon_radius2,
+  cudaMemcpyAsync(host_hit_points_info, hit_points_info, sizeof(HitPointPosition)*config.total_hit_points, cudaMemcpyDeviceToHost, stream);
+  cudaStreamSynchronize(stream);
+
+  kernels::cpu::bbox_compute_impl(host_hit_points_info,
+                                  config.total_hit_points,
+                                  *host_bbox,
+                                  *host_current_photon_radius2,
                                   iteration,
                                   total_spp,
-                                  config.alpha);*/
+                                  config.alpha);
+  cudaMemcpyAsync(bbox, host_bbox, sizeof(BBox), cudaMemcpyHostToDevice, stream);
+  cudaMemcpyAsync(current_photon_radius2, host_current_photon_radius2, sizeof(float), cudaMemcpyHostToDevice, stream);
 }
 
 void CUDAEngine :: rehash() {
-  /*kernels::cpu::rehash_impl(&hit_points_info[0],
-                            hit_points_info.size(),
-                            &hash_grid[0],
-                            &hash_grid_lengths[0],
-                            &hash_grid_indexes[0],
-                            &inv_cell_size,
-                            bbox,
-                            current_photon_radius2);*/
+  kernels::cpu::rehash_impl(host_hit_points_info,
+                            config.total_hit_points,
+                            host_hash_grid,
+                            host_hash_grid_lengths,
+                            host_hash_grid_indexes,
+                            inv_cell_size,
+                            *host_bbox,
+                            *host_current_photon_radius2);
 
+  cudaMemcpyAsync(hash_grid,         host_hash_grid,         sizeof(unsigned) * 8 * config.total_hit_points, cudaMemcpyHostToDevice, stream);
+  cudaMemcpyAsync(hash_grid_indexes, host_hash_grid_indexes, sizeof(unsigned) *     config.total_hit_points, cudaMemcpyHostToDevice, stream);
+  cudaMemcpyAsync(hash_grid_lengths, host_hash_grid_lengths, sizeof(unsigned) *     config.total_hit_points, cudaMemcpyHostToDevice, stream);
+  cudaMemcpyAsync(inv_cell_size,     host_inv_cell_size,     sizeof(float),                                  cudaMemcpyHostToDevice, stream);
 }
 
 void CUDAEngine :: generate_photon_paths() {
-  /*kernels::cpu::generate_photon_paths_impl(&live_photon_paths[0], live_photon_paths.size(),
-                                           &seeds[0],  // seed_buffer_count,
-                                           scene);*/
+  const unsigned size = config.photons_per_iter;
+  const unsigned threads_per_block = config.cuda_block_size;
+  const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
+
+  kernels::helpers::generate_photon_paths_impl
+  <<<n_blocks, threads_per_block, 0, stream>>>
+   (live_photon_paths,
+    size,
+    seeds,
+    cuda_scene);
 }
 
 void CUDAEngine :: advance_photon_paths() {
-  /*kernels::cpu::advance_photon_paths_impl(&live_photon_paths[0], live_photon_paths.size(),
-                                          &seeds[0],  // seed_buffer_count,
-                                          scene,
-                                          &hit_points_info[0],
-                                          &hit_points[0],
-                                          bbox,
-                                          config.max_photon_depth,
-                                          current_photon_radius2,
-                                          hit_points_info.size(),
+  const unsigned size = config.photons_per_iter;
+  const unsigned threads_per_block = config.cuda_block_size;
+  const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
-                                          &hash_grid[0],
-                                          &hash_grid_lengths[0],
-                                          &hash_grid_indexes[0],
-                                          inv_cell_size);*/
+  helpers::advance_photon_paths_impl
+  <<<n_blocks, threads_per_block, 0, stream>>>
+   (live_photon_paths,
+    size,
+    seeds,
+    cuda_scene,
+    hit_points_info,
+    hit_points,
+    bbox,
+    config.max_photon_depth,
+    current_photon_radius2,
+    config.total_hit_points,
+
+    hash_grid,
+    hash_grid_lengths,
+    hash_grid_indexes,
+    inv_cell_size);
 }
 
 void CUDAEngine :: accumulate_flux() {
-  /*kernels::cpu::accum_flux_impl(&hit_points_info[0],
-                                &hit_points[0],
-                                hit_points.size(),
-                                config.alpha,
-                                config.photons_per_iter,
-                                current_photon_radius2);*/
+  const unsigned size = config.total_hit_points;
+  const unsigned threads_per_block = config.cuda_block_size;
+  const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
+
+  helpers::accum_flux_impl
+  <<<n_blocks, threads_per_block, 0, stream>>>
+   (hit_points_info,
+    hit_points,
+    size,
+    config.alpha,
+    config.photons_per_iter,
+    current_photon_radius2);
 }
 
 
 void CUDAEngine :: update_sample_buffer() {
-  //kernels::cpu::update_sample_buffer_impl(&hit_points[0], hit_points.size(), config.width, sample_buffer);
+  cudaMemcpyAsync(host_hit_points, hit_points, sizeof(HitPointRadiance)*config.total_hit_points, cudaMemcpyDeviceToHost, stream);
+  cudaStreamSynchronize(stream);
+
+  kernels::cpu::update_sample_buffer_impl(host_hit_points, config.total_hit_points, config.width, sample_buffer);
 }
 
 void CUDAEngine :: splat_to_film() {
-  //kernels::cpu::splat_to_film_impl(sample_buffer, film, config.width, config.height);
+  kernels::cpu::splat_to_film_impl(sample_buffer, film, config.width, config.height);
 }
 
 template<class T>
@@ -111,17 +170,6 @@ void cuda_alloc(T** ptr, unsigned num_elems) {
 }
 
 void CUDAEngine :: before() {
-  cudaFree(seeds);
-  cudaFree(eye_paths);
-  cudaFree(hit_points_info);
-  cudaFree(hit_points);
-  cudaFree(hash_grid);
-  cudaFree(hash_grid_lengths);
-  cudaFree(hash_grid_indexes);
-  cudaFree(live_photon_paths);
-}
-
-void CUDAEngine :: after() {
 
   cuda_alloc(&seeds,            config.seed_size);
   cuda_alloc(&eye_paths,        config.total_hit_points);
@@ -131,6 +179,37 @@ void CUDAEngine :: after() {
   cuda_alloc(&hash_grid_lengths, config.total_hit_points);
   cuda_alloc(&hash_grid_indexes, config.total_hit_points);
   cuda_alloc(&live_photon_paths, config.photons_per_iter);
+  cuda_alloc(&inv_cell_size,          1);
+  cuda_alloc(&current_photon_radius2, 1);
+
+  host_hit_points_info = (HitPointPosition*) malloc(sizeof(HitPointPosition) * config.total_hit_points);
+  host_hit_points = (HitPointRadiance*) malloc(sizeof(HitPointRadiance) * config.total_hit_points);
+  host_hash_grid              = (unsigned*) malloc(sizeof(unsigned) * 8 * config.total_hit_points);
+  host_hash_grid_indexes      = (unsigned*) malloc(sizeof(unsigned) * config.total_hit_points);
+  host_hash_grid_lengths      = (unsigned*) malloc(sizeof(unsigned) * config.total_hit_points);
+  host_inv_cell_size          = (float*)    malloc(sizeof(float));
+  host_current_photon_radius2 = (float*)    malloc(sizeof(float));
+}
+
+void CUDAEngine :: after() {
+  cudaFree(seeds);
+  cudaFree(eye_paths);
+  cudaFree(hit_points_info);
+  cudaFree(hit_points);
+  cudaFree(hash_grid);
+  cudaFree(hash_grid_lengths);
+  cudaFree(hash_grid_indexes);
+  cudaFree(live_photon_paths);
+  cudaFree(inv_cell_size);
+  cudaFree(current_photon_radius2);
+
+  free(host_hit_points_info);
+  free(host_hit_points);
+  free(host_hash_grid);
+  free(host_hash_grid_indexes);
+  free(host_hash_grid_lengths);
+  free(host_inv_cell_size);
+  free(host_current_photon_radius2);
 }
 
 

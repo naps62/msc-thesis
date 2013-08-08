@@ -149,6 +149,7 @@ void StarpuEngine :: accumulate_flux() {
                         STARPU_RW, hit_points_h,
                         STARPU_R,  current_photon_radius2_h,
                         STARPU_VALUE, &codelets::generic_args,  sizeof(codelets::generic_args),
+                        STARPU_VALUE, &config.alpha,  sizeof(config.alpha),
                         STARPU_VALUE, &config.photons_per_iter, sizeof(config.photons_per_iter),
                         STARPU_CALLBACK_WITH_ARG, callback, (void*)8, 0);
 }

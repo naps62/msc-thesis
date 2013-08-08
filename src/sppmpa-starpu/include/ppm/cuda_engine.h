@@ -11,21 +11,31 @@ public:
   ~CUDAEngine();
 
 protected:
-  BBox bbox;
-  float current_photon_radius2;
+  cudaStream_t stream;
 
-  Seed seeds;
+  Seed* seeds;
   EyePath* eye_paths;
   HitPointPosition* hit_points_info;
   HitPointRadiance* hit_points;
   PhotonPath* live_photon_paths;
 
+  BBox* bbox;
   unsigned* hash_grid;
   unsigned* hash_grid_indexes;
   unsigned* hash_grid_lengths;
-  float inv_cell_size;
+  float* inv_cell_size;
+  float* current_photon_radius2;
 
   PtrFreeScene* cuda_scene;
+
+  HitPointPosition* host_hit_points_info;
+  HitPointRadiance* host_hit_points;
+  BBox* host_bbox;
+  unsigned* host_hash_grid;
+  unsigned* host_hash_grid_indexes;
+  unsigned* host_hash_grid_lengths;
+  float* host_inv_cell_size;
+  float* host_current_photon_radius2;
 
   void output();
 

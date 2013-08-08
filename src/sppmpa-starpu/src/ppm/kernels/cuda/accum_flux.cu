@@ -20,9 +20,10 @@ void accum_flux(void* buffers[], void* args_orig) {
 
   std::cout << "asd" << std::endl;
   // cl_args
-  const starpu_args args;
+  starpu_args args;
+  float alpha;
   unsigned photons_traced;
-  starpu_codelet_unpack_args(args_orig, &args, &photons_traced);
+  starpu_codelet_unpack_args(args_orig, &args, &alpha, &photons_traced);
 
   // buffers
   const HitPointPosition* const hit_points_info = (const HitPointPosition*)STARPU_VECTOR_GET_PTR(buffers[0]);
@@ -40,8 +41,8 @@ void accum_flux(void* buffers[], void* args_orig) {
    (hit_points_info,
     hit_points,
     size,
-    args.config->alpha,
-    photons_traced,
+    alpha,
+    photons_traced, // TODO could this be it?
     photon_radius2);
 
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
