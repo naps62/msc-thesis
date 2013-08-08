@@ -23,20 +23,14 @@ void __global__ generate_eye_paths_impl(
     const unsigned height,
     const PtrFreeScene* scene) {
 
-  //const unsigned index = blockIdx.x * blockDim.x + threadIdx.x;
   const unsigned x = blockIdx.x * blockDim.x + threadIdx.x;
   const unsigned y = blockIdx.y * blockDim.y + threadIdx.y;
 
-  //const unsigned x = index % width;
-  //const unsigned y = index / width;
-  printf("%d %d %d %d\n", x, width, y, height);
   if (x >= width || y >= height)
     return;
 
-  const unsigned index = y * width + x;
 
-  //if (index >= width * height)
-  //P  return;
+  const unsigned index = y * width + x;
 
   EyePath& eye_path = eye_paths[index];
 
@@ -47,8 +41,6 @@ void __global__ generate_eye_paths_impl(
   float u0 = floatRNG(seed_buffer[index]);
   float u1 = floatRNG(seed_buffer[index]);
   float u2 = floatRNG(seed_buffer[index]);
-
-  printf("%f %f %f\n", u0, u1, u2);
 
   eye_path.ray = helpers::generate_ray(eye_path.scr_x, eye_path.scr_y, width, height, u0, u1, u2, scene->camera);
 

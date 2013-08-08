@@ -22,9 +22,9 @@ int main(int argc, char** argv) {
       engine = new ppm::CPUEngine(config);
       break;
     case 2:
+    default:
       engine = new ppm::CUDAEngine(config);
       break;
-    default:
     case 0:
       engine = new ppm::StarpuEngine(config);
       break;

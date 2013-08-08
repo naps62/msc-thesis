@@ -81,7 +81,7 @@ __HD__ unsigned hash(const int ix, const int iy, const int iz, unsigned size);
 
 __device__ int4 QBVHNode_BBoxIntersect(const float4 bboxes_minX, const float4 bboxes_maxX,
     const float4 bboxes_minY, const float4 bboxes_maxY, const float4 bboxes_minZ,
-    const float4 bboxes_maxZ, const ppm::QuadRay *ray4, const float4 invDir0,
+    const float4 bboxes_maxZ, const ppm::QuadRay& ray4, const float4 invDir0,
     const float4 invDir1, const float4 invDir2, const int signs0, const int signs1,
     const int signs2);
 

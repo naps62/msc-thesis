@@ -41,17 +41,26 @@ void CPUEngine :: generate_eye_paths() {
                                         config.height,
                                         scene);
 }
+
 void CPUEngine :: advance_eye_paths() {
   kernels::cpu::advance_eye_paths_impl(&hit_points_info[0],
                                        &eye_paths[0], eye_paths.size(),
                                        &seeds[0],
                                        scene,
                                        config.max_eye_path_depth);
+    for(unsigned i = 0; i < 10; ++i)
+    std::cout << i << ": " << hit_points_info[i].position << '\n';
+  fflush(stdout);
+  exit(0);
 }
 
 void CPUEngine :: bbox_compute() {
   const unsigned total_spp = config.width * config.spp + config.height * config.spp;
 
+  for(unsigned i = 0; i < 10; ++i)
+    std::cout << i << ": " << hit_points_info[i].position << '\n';
+  fflush(stdout);
+  exit(0);
   kernels::cpu::bbox_compute_impl(&hit_points_info[0], hit_points_info.size(),
                                   bbox,
                                   current_photon_radius2,

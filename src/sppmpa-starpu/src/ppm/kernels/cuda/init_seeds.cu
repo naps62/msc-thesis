@@ -24,8 +24,6 @@ void __global__ init_seeds_impl(
 
   const unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
 
-  printf("%d\n", i);
-
   if (i >= size)
     return;
 

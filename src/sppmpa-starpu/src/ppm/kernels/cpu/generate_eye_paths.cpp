@@ -23,39 +23,28 @@ void generate_eye_paths_impl(
     const unsigned height,
     const PtrFreeScene* scene) {
 
-  //const unsigned spp    = config->spp;
-
-  // generate the eye paths
-
-  //unsigned index = 0;
-  //const float sample_weight = 1.f / spp;
-
   #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
   for(unsigned y = 0; y < height; ++y) {
     for(unsigned x = 0; x < width; ++x) {
-      //for(unsigned sy = 0; sy < spp; ++sy) {
-      //  for(unsigned sx = 0; sx < spp; ++sx) {
 
-          unsigned index =  x + width * y;
+      unsigned index =  width * y + x;
 
-          EyePath& eye_path = eye_paths[index];
+      EyePath& eye_path = eye_paths[index];
 
-          eye_path = EyePath();
-          eye_path.scr_x = x + (/*sx +*/ floatRNG(seed_buffer[index])) /** sample_weight*/ - 0.5f;
-          eye_path.scr_y = y + (/*sy +*/ floatRNG(seed_buffer[index])) /** sample_weight*/ - 0.5f;
+      eye_path = EyePath();
+      eye_path.scr_x = x + (/*sx +*/ floatRNG(seed_buffer[index])) /** sample_weight*/ - 0.5f;
+      eye_path.scr_y = y + (/*sy +*/ floatRNG(seed_buffer[index])) /** sample_weight*/ - 0.5f;
 
-          float u0 = floatRNG(seed_buffer[index]);
-          float u1 = floatRNG(seed_buffer[index]);
-          float u2 = floatRNG(seed_buffer[index]);
+      float u0 = floatRNG(seed_buffer[index]);
+      float u1 = floatRNG(seed_buffer[index]);
+      float u2 = floatRNG(seed_buffer[index]);
 
 
-          eye_path.ray = helpers::generate_ray(eye_path.scr_x, eye_path.scr_y, width, height, u0, u1, u2, scene->camera);
+      eye_path.ray = helpers::generate_ray(eye_path.scr_x, eye_path.scr_y, width, height, u0, u1, u2, scene->camera);
 
-          eye_path.done = false;
-          eye_path.sample_index = index;
-          ++index;
-      //  }
-      //}
+      eye_path.done = false;
+      eye_path.sample_index = index;
+      ++index;
     }
   }
 }

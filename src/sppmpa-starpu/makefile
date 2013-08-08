@@ -67,8 +67,15 @@ CC_DEP := $(CC)
 CXX_DEP := $(CXX)
 
 ifeq ($(CUDA_SUPPORT),yes)
+
+
+ifeq ($(DEBUG),1)
+NVFLAGS := $(NVFLAGS) -gencode arch=compute_20,code=sm_20
+LDFLAGS := $(LDFLAGS) -gencode arch=compute_20,code=sm_20
+else
 NVFLAGS := $(NVFLAGS) -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=sm_21 -gencode arch=compute_30,code=sm_30
 LDFLAGS := $(LDFLAGS) -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=sm_21 -gencode arch=compute_30,code=sm_30
+endif
 vpath %.cu $(SRC_DIR)
 CC_DEP := $(CC)
 CXX_DEP := $(CXX)
@@ -119,7 +126,7 @@ endef
 
 bin/$(BINNAME): $(DEPS) $(OBJ)
 	@echo " LD    $(BINNAME)"
-	nvcc $(NVFLAGS) -dlink $(patsubst src/%.cu,build/%.o,$(SRC_CU)) -o build/link.o
+	@nvcc $(NVFLAGS) -dlink $(patsubst src/%.cu,build/%.o,$(SRC_CU)) -o build/link.o
 	@$(LD) $(LD_LIBS_DIR) $(LD_LIBS) $(OBJ) -o $@
 
 lib/$(LIBNAME): $(DEPS) $(OBJ)

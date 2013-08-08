@@ -41,7 +41,7 @@ void __global__ advance_photon_paths_impl(
     return;
 
     PhotonPath& path = photon_paths[i];
-    Ray& ray    = path.ray;
+    Ray ray    = path.ray;
     RayHit hit;
     Seed& seed = seed_buffer[i];
 

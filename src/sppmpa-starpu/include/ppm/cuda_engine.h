@@ -37,6 +37,10 @@ protected:
   float* host_inv_cell_size;
   float* host_current_photon_radius2;
 
+  Seed* host_seeds;
+  EyePath* host_eye_paths;
+  PhotonPath* host_photon_paths;
+
   void output();
 
   void init_seed_buffer();
@@ -54,32 +58,6 @@ protected:
   void before();
   void after();
 };
-
-namespace kernels { namespace cpu {
-  void bbox_compute_impl(const HitPointPosition* const points, const unsigned size, BBox& bbox, float& photon_radius2, const float iteration, const float total_spp, const float alpha);
-
-  void rehash_impl(
-    const HitPointPosition* const hit_points_info, unsigned size,
-    unsigned*  hash_grid,
-    unsigned*  hash_grid_lengths,
-    unsigned*  hash_grid_indexes,
-    float* inv_cell_size,
-    const BBox& bbox,
-    const float current_photon_radius2);
-
-  void update_sample_buffer_impl(
-    const HitPointRadiance* const hit_points,
-    const unsigned size,
-    const unsigned width,
-    SampleBuffer* const buffer);
-
-  void splat_to_film_impl(
-    luxrays::SampleBuffer* const buffer,
-    Film* const film,
-    const unsigned width,
-    const unsigned height);
-} }
-
 
 namespace kernels { namespace cuda {
   void __global__ init_seeds_impl(
