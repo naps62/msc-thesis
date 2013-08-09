@@ -18,9 +18,10 @@ void update_sample_buffer_impl(
     const HitPointRadiance* const hit_points,
     const unsigned size,
     const unsigned width,
-    SampleBuffer* const buffer) {
+    SampleBuffer* const buffer,
+    const unsigned num_threads) {
 
-  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+  #pragma omp parallel for num_threads(num_threads)
   for(unsigned i = 0; i < size; ++i) {
     const HitPointRadiance& hp = hit_points[i];
 
@@ -44,7 +45,7 @@ void update_sample_buffer(void* buffers[], void* args_orig) {
 
   SampleBuffer** buffer = (SampleBuffer**) STARPU_VARIABLE_GET_PTR(buffers[1]);
 
-  update_sample_buffer_impl(hit_points, size, width, *buffer);
+  update_sample_buffer_impl(hit_points, size, width, *buffer, starpu_combined_worker_get_size());
 }
 
 } } }

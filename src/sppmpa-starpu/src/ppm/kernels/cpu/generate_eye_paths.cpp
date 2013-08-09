@@ -21,9 +21,10 @@ void generate_eye_paths_impl(
     Seed* const seed_buffer,  // const unsigned seed_buffer_count,
     const unsigned width,
     const unsigned height,
-    const PtrFreeScene* scene) {
+    const PtrFreeScene* scene,
+    const unsigned num_threads) {
 
-  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+  #pragma omp parallel for num_threads(num_threads)
   for(unsigned y = 0; y < height; ++y) {
     for(unsigned x = 0; x < width; ++x) {
 
@@ -68,7 +69,8 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
                           seed_buffer, // seed_buffer_count,
                           args.config->width,
                           args.config->height,
-                          args.cpu_scene);
+                          args.cpu_scene,
+                          starpu_combined_worker_get_size());
 
 
 }

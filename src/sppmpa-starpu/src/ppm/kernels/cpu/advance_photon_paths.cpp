@@ -30,12 +30,10 @@ namespace ppm { namespace kernels { namespace cpu {
       const unsigned*           hash_grid,
       const unsigned*           hash_grid_lengths,
       const unsigned*           hash_grid_indexes,
-      const float               hash_grid_inv_cell_size) {
+      const float               hash_grid_inv_cell_size,
+      const unsigned num_threads) {
 
-
-  //memset(hit_points, 0, sizeof(HitPointRadiance)*hit_points_count);
-
-  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+  #pragma omp parallel for num_threads(num_threads)
   for(unsigned i = 0; i < photon_paths_count; ++i) {
     PhotonPath& path = photon_paths[i];
     Ray& ray    = path.ray;
@@ -154,7 +152,8 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
                             hash_grid,
                             lengths,
                             indexes,
-                            *inv_cell_size);
+                            *inv_cell_size,
+                            starpu_combined_worker_get_size());
 
 }
 

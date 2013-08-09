@@ -19,9 +19,10 @@ void accum_flux_impl(
     const unsigned size,
     const float alpha,
     const unsigned photons_traced,
-    const float current_photon_radius2) {
+    const float current_photon_radius2,
+    const unsigned num_threads) {
 
-  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+  #pragma omp parallel for num_threads(num_threads)
   for(unsigned int i = 0; i < size; ++i) {
     const HitPointPosition& hpi = hit_points_info[i];
     HitPointRadiance& hp = hit_points[i];
@@ -74,7 +75,8 @@ void accum_flux(void* buffers[], void* args_orig) {
                   size,
                   alpha,
                   photons_traced,
-                  *photon_radius2);
+                  *photon_radius2,
+                  starpu_combined_worker_get_size());
 }
 
 } } }

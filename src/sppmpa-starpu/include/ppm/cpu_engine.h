@@ -46,9 +46,9 @@ protected:
 
 
 namespace kernels { namespace cpu {
-  void init_seeds_impl(Seed* const seeds, const unsigned size, const unsigned iteration);
-  void generate_eye_paths_impl(EyePath* const eye_paths, Seed* const seed_buffer, const unsigned width, const unsigned height, const PtrFreeScene* scene);
-  void advance_eye_paths_impl(HitPointPosition* const hit_points, EyePath* const eye_paths, const unsigned eye_paths_count, Seed* const seed_buffer, const PtrFreeScene* const scene, const unsigned max_eye_path_depth);
+  void init_seeds_impl(Seed* const seeds, const unsigned size, const unsigned iteration, const unsigned num_threads);
+  void generate_eye_paths_impl(EyePath* const eye_paths, Seed* const seed_buffer, const unsigned width, const unsigned height, const PtrFreeScene* scene, const unsigned num_threads);
+  void advance_eye_paths_impl(HitPointPosition* const hit_points, EyePath* const eye_paths, const unsigned eye_paths_count, Seed* const seed_buffer, const PtrFreeScene* const scene, const unsigned max_eye_path_depth, const unsigned num_threads);
   void bbox_compute_impl(const HitPointPosition* const points, const unsigned size, BBox& bbox, float& photon_radius2, const float iteration, const float total_spp, const float alpha);
 
   void rehash_impl(
@@ -63,7 +63,8 @@ namespace kernels { namespace cpu {
   void generate_photon_paths_impl(
       PhotonPath* const photon_paths, const unsigned photon_paths_count,
       Seed* const seed_buffer,        // const unsigned seed_buffer_count,
-      const PtrFreeScene* scene);
+      const PtrFreeScene* scene,
+      const unsigned num_threads);
 
   void advance_photon_paths_impl(
       PhotonPath* const photon_paths,    const unsigned photon_paths_count,
@@ -80,7 +81,8 @@ namespace kernels { namespace cpu {
       const unsigned*           hash_grid,
       const unsigned*           hash_grid_lengths,
       const unsigned*           hash_grid_indexes,
-      const float               hash_grid_inv_cell_size);
+      const float               hash_grid_inv_cell_size,
+      const unsigned num_threads);
 
   void accum_flux_impl(
     const HitPointPosition* const hit_points_info,
@@ -88,13 +90,15 @@ namespace kernels { namespace cpu {
     const unsigned size,
     const float alpha,
     const unsigned photons_traced,
-    const float current_photon_radius2);
+    const float current_photon_radius2,
+    const unsigned num_threads);
 
   void update_sample_buffer_impl(
     const HitPointRadiance* const hit_points,
     const unsigned size,
     const unsigned width,
-    SampleBuffer* const buffer);
+    SampleBuffer* const buffer,
+    const unsigned num_threads);
 
   void splat_to_film_impl(
     luxrays::SampleBuffer* const buffer,

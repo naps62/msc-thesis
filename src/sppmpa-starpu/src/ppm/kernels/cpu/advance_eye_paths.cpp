@@ -21,9 +21,10 @@ void advance_eye_paths_impl(
     EyePath*  const eye_paths,            const unsigned eye_paths_count,
     Seed*     const seed_buffer,          //const unsigned seed_buffer_count,
     const PtrFreeScene* const scene,
-    const unsigned max_eye_path_depth) {
+    const unsigned max_eye_path_depth,
+    const unsigned num_threads) {
 
-  #pragma omp parallel for num_threads(starpu_combined_worker_get_size())
+  #pragma omp parallel for num_threads(num_threads)
   for(unsigned i = 0; i < eye_paths_count; ++i) {
     EyePath& eye_path = eye_paths[i];
     Ray&   ray = eye_path.ray; // rays[i];
@@ -169,7 +170,8 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
                          eye_paths,         eye_paths_count,
                          seed_buffer, //    seed_buffer_count,
                          args.cpu_scene,
-                         args.config->max_eye_path_depth);
+                         args.config->max_eye_path_depth,
+                         starpu_combined_worker_get_size());
 }
 
 } } }

@@ -31,7 +31,7 @@ CPUEngine :: ~CPUEngine() {
 //
 
 void CPUEngine :: init_seed_buffer() {
-  kernels::cpu::init_seeds_impl(&seeds[0], seeds.size(), iteration);
+  kernels::cpu::init_seeds_impl(&seeds[0], seeds.size(), iteration, config.max_threads);
 }
 
 void CPUEngine :: generate_eye_paths() {
@@ -39,7 +39,8 @@ void CPUEngine :: generate_eye_paths() {
                                         &seeds[0],
                                         config.width,
                                         config.height,
-                                        scene);
+                                        scene,
+                                        config.max_threads);
 }
 
 void CPUEngine :: advance_eye_paths() {
@@ -47,7 +48,8 @@ void CPUEngine :: advance_eye_paths() {
                                        &eye_paths[0], eye_paths.size(),
                                        &seeds[0],
                                        scene,
-                                       config.max_eye_path_depth);
+                                       config.max_eye_path_depth,
+                                       config.max_threads);
 }
 
 void CPUEngine :: bbox_compute() {
@@ -75,7 +77,8 @@ void CPUEngine :: rehash() {
 void CPUEngine :: generate_photon_paths() {
   kernels::cpu::generate_photon_paths_impl(&live_photon_paths[0], live_photon_paths.size(),
                                            &seeds[0],  // seed_buffer_count,
-                                           scene);
+                                           scene,
+                                           config.max_threads);
 
 }
 
@@ -93,7 +96,8 @@ void CPUEngine :: advance_photon_paths() {
                                           &hash_grid[0],
                                           &hash_grid_lengths[0],
                                           &hash_grid_indexes[0],
-                                          inv_cell_size);
+                                          inv_cell_size,
+                                          config.max_threads);
   /*for(unsigned i = 0; i < config.photons_per_iter; ++i) {
     std::cout << i << ": " << live_photon_paths[i].ray << '\n';
   }
@@ -110,12 +114,13 @@ void CPUEngine :: accumulate_flux() {
                                 hit_points.size(),
                                 config.alpha,
                                 config.photons_per_iter,
-                                current_photon_radius2);
+                                current_photon_radius2,
+                                config.max_threads);
 }
 
 
 void CPUEngine :: update_sample_buffer() {
-  kernels::cpu::update_sample_buffer_impl(&hit_points[0], hit_points.size(), config.width, sample_buffer);
+  kernels::cpu::update_sample_buffer_impl(&hit_points[0], hit_points.size(), config.width, sample_buffer, config.max_threads);
 }
 
 void CPUEngine :: splat_to_film() {
