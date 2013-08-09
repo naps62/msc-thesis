@@ -97,11 +97,11 @@ void CPUEngine :: advance_photon_paths() {
 
 void CPUEngine :: accumulate_flux() {
 
-  for(unsigned i = 0; i < 4; ++i) {
+  /*for(unsigned i = 0; i < 4; ++i) {
     std::cout << i << ": " << hit_points_info[i].type << '\n';
   }
   fflush(stdout);
-  exit(0);
+  exit(0);*/
   kernels::cpu::accum_flux_impl(&hit_points_info[0],
                                 &hit_points[0],
                                 hit_points.size(),
