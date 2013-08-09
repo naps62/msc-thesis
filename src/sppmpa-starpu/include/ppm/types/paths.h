@@ -16,7 +16,7 @@ struct EyePath {
 
   __HD__
   EyePath()
-  : scr_x(0), scr_y(0), ray(), depth(0), done(false), splat(false) { }
+  : scr_x(0), scr_y(0), ray(), depth(0), flux(1.f, 1.f, 1.f), done(false), splat(false) { }
 };
 
 struct PhotonPath {
