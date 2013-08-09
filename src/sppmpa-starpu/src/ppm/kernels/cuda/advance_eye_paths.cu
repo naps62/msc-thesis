@@ -30,10 +30,10 @@ void __global__ advance_eye_paths_impl(
     return;
 
   EyePath& eye_path = eye_paths[i];
+  Ray ray = eye_path.ray; // rays[i];
   RayHit hit;                // = hits[i];
 
   while(!eye_path.done) {
-    Ray ray = eye_path.ray; // rays[i];
     hit.SetMiss();
     helpers::subIntersect(ray, scene->nodes, scene->prims, hit);
 
@@ -60,15 +60,15 @@ void __global__ advance_eye_paths_impl(
       if (scene->infinite_light.exists || scene->sun_light.exists || scene->sky_light.exists) {
         if (scene->infinite_light.exists) {
           // TODO check this
-          helpers::infinite_light_le(hp.throughput, eye_path.ray.d, scene->infinite_light, scene->infinite_light_map);
+          helpers::infinite_light_le(hp.throughput, ray.d, scene->infinite_light, scene->infinite_light_map);
         }
         if (scene->sun_light.exists) {
           // TODO check this
-          helpers::sun_light_le(hp.throughput, eye_path.ray.d, scene->sun_light);
+          helpers::sun_light_le(hp.throughput, ray.d, scene->sun_light);
         }
         if (scene->sky_light.exists) {
           // TODO check this
-          helpers::sky_light_le(hp.throughput, eye_path.ray.d, scene->sky_light);
+          helpers::sky_light_le(hp.throughput, ray.d, scene->sky_light);
         }
         hp.throughput *= eye_path.flux;
       } else {
@@ -82,7 +82,7 @@ void __global__ advance_eye_paths_impl(
       Spectrum surface_color;
       Normal N, shade_N;
 
-      if (helpers::get_hit_point_information(scene, eye_path.ray, hit, hit_point, surface_color, N, shade_N)) {
+      if (helpers::get_hit_point_information(scene, ray, hit, hit_point, surface_color, N, shade_N)) {
         continue;
       }
 
@@ -100,12 +100,12 @@ void __global__ advance_eye_paths_impl(
         hp.scr_x = eye_path.scr_x;
         hp.scr_y = eye_path.scr_y;
 
-        Vector md = - eye_path.ray.d;
+        Vector md = - ray.d;
         helpers::area_light_le(hp.throughput, md, N, hit_point_mat.param.area_light);
         hp.throughput *= eye_path.flux;
         eye_path.done = true;
       } else {
-        Vector wo = - eye_path.ray.d;
+        Vector wo = - ray.d;
         float material_pdf;
 
         Vector wi;
@@ -128,7 +128,7 @@ void __global__ advance_eye_paths_impl(
           hp.throughput = Spectrum();
         } else if (specular_material || (!hit_point_mat.diffuse)) {
           eye_path.flux *= f / material_pdf;
-          eye_path.ray = Ray(hit_point, wi);
+          ray = Ray(hit_point, wi);
         } else {
           // add a hit point
           HitPointPosition& hp = hit_points[eye_path.sample_index];
@@ -138,7 +138,7 @@ void __global__ advance_eye_paths_impl(
           hp.material_ss   = material_index;
           hp.throughput = eye_path.flux * surface_color;
           hp.position = hit_point;
-          hp.wo = - eye_path.ray.d;
+          hp.wo = - ray.d;
           hp.normal = shade_N;
           eye_path.done = true;
         }

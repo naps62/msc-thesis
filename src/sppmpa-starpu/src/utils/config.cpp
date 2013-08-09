@@ -30,7 +30,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
 
   // engine
   value("photons_per_iter", photons_per_iter, unsigned(1024*256), "chunk size for ray and photon buffers (defaults to 1024*256)");
-  value("cuda_block_size", cuda_block_size, unsigned(512), "cuda block size (default 512)");
+  value("cuda_block_size", cuda_block_size, unsigned(256), "cuda block size (default 512)");
 
   // starpu
   value("sched", sched_policy, string("pheft"), "scheduling policy (pheft (default) | pgreedy)");

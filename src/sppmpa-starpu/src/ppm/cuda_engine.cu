@@ -131,6 +131,7 @@ void CUDAEngine :: advance_photon_paths() {
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
 // TODO check this on second iteration
+  printf("advancing\n");
   kernels::cuda::advance_photon_paths_impl
   <<<n_blocks, threads_per_block, 0, stream>>>
    (live_photon_paths,
@@ -152,16 +153,17 @@ void CUDAEngine :: advance_photon_paths() {
   cudaMemcpyAsync(host_hit_points, hit_points, sizeof(HitPointRadiance)*config.total_hit_points, cudaMemcpyDeviceToHost, stream);
   cudaMemcpyAsync(host_seeds, seeds, sizeof(Seed)*config.seed_size, cudaMemcpyDeviceToHost, stream);
   cudaStreamSynchronize(stream);
+  printf("advanced\n");
   CUDA_SAFE(cudaGetLastError());
 
 
-  for(unsigned i = 0; i < config.photons_per_iter; ++i) {
+  /*for(unsigned i = 0; i < config.photons_per_iter; ++i) {
     std::cout << i << ": " << host_photon_paths[i].ray << '\n';
   }
   for(unsigned i = 0; i < config.total_hit_points; ++i) {
     std::cout << i << ": " << host_hit_points[i].accum_reflected_flux << '\n';
   }
-  exit(0);
+  exit(0);*/
 }
 
 void CUDAEngine :: accumulate_flux() {
@@ -183,6 +185,8 @@ void CUDAEngine :: accumulate_flux() {
                                 config.alpha,
                                 config.photons_per_iter,
                                 *host_current_photon_radius2);
+
+    cudaMemcpyAsync(hit_points, host_hit_points, sizeof(HitPointRadiance)*config.total_hit_points, cudaMemcpyHostToDevice, stream);
 }
 
 
