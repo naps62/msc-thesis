@@ -35,8 +35,8 @@ void __global__ generate_eye_paths_impl(
   EyePath& eye_path = eye_paths[index];
 
   eye_path = EyePath();
-  eye_path.scr_y = y + (floatRNG(seed_buffer[index])) - 0.5f;
   eye_path.scr_x = x + (floatRNG(seed_buffer[index])) - 0.5f;
+  eye_path.scr_y = y + (floatRNG(seed_buffer[index])) - 0.5f;
 
   float u0 = floatRNG(seed_buffer[index]);
   float u1 = floatRNG(seed_buffer[index]);

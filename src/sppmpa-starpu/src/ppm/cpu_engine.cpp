@@ -48,19 +48,11 @@ void CPUEngine :: advance_eye_paths() {
                                        &seeds[0],
                                        scene,
                                        config.max_eye_path_depth);
-    for(unsigned i = 0; i < 10; ++i)
-    std::cout << i << ": " << hit_points_info[i].position << '\n';
-  fflush(stdout);
-  exit(0);
 }
 
 void CPUEngine :: bbox_compute() {
   const unsigned total_spp = config.width * config.spp + config.height * config.spp;
 
-  for(unsigned i = 0; i < 10; ++i)
-    std::cout << i << ": " << hit_points_info[i].position << '\n';
-  fflush(stdout);
-  exit(0);
   kernels::cpu::bbox_compute_impl(&hit_points_info[0], hit_points_info.size(),
                                   bbox,
                                   current_photon_radius2,
@@ -78,7 +70,6 @@ void CPUEngine :: rehash() {
                             &inv_cell_size,
                             bbox,
                             current_photon_radius2);
-
 }
 
 void CPUEngine :: generate_photon_paths() {
@@ -105,6 +96,12 @@ void CPUEngine :: advance_photon_paths() {
 }
 
 void CPUEngine :: accumulate_flux() {
+
+  for(unsigned i = 0; i < 4; ++i) {
+    std::cout << i << ": " << hit_points_info[i].type << '\n';
+  }
+  fflush(stdout);
+  exit(0);
   kernels::cpu::accum_flux_impl(&hit_points_info[0],
                                 &hit_points[0],
                                 hit_points.size(),

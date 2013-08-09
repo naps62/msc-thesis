@@ -28,13 +28,15 @@ CUDAEngine :: ~CUDAEngine() {
 void CUDAEngine :: init_seed_buffer() {
   const unsigned size = config.seed_size;
   const unsigned threads_per_block = config.cuda_block_size;
-  const unsigned n_blocks          = size / threads_per_block;
+  const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
   kernels::cuda::init_seeds_impl
   <<<n_blocks, threads_per_block, 0, stream>>>
    (seeds,
     size,
     iteration);
+  cudaStreamSynchronize(stream);
+  CUDA_SAFE(cudaGetLastError());
 }
 
 void CUDAEngine :: generate_eye_paths() {
@@ -51,8 +53,8 @@ void CUDAEngine :: generate_eye_paths() {
     width,
     height,
     cuda_scene);
-
-
+  cudaStreamSynchronize(stream);
+  CUDA_SAFE(cudaGetLastError());
 }
 
 void CUDAEngine :: advance_eye_paths() {
@@ -60,9 +62,6 @@ void CUDAEngine :: advance_eye_paths() {
   const unsigned threads_per_block = config.cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
-#define CUDA 1
-
-#if CUDA
   kernels::cuda::advance_eye_paths_impl
   <<<n_blocks, threads_per_block, 0, stream>>>
    (hit_points_info,
@@ -71,17 +70,8 @@ void CUDAEngine :: advance_eye_paths() {
     seeds,
     cuda_scene,
     config.max_eye_path_depth);
+  cudaStreamSynchronize(stream);
   CUDA_SAFE(cudaGetLastError());
-#else
-      cudaMemcpyAsync(host_eye_paths, eye_paths, config.total_hit_points * sizeof(EyePath), cudaMemcpyDeviceToHost, stream);
-      cudaMemcpyAsync(host_seeds,     seeds,    config.seed_size * sizeof(Seed), cudaMemcpyDeviceToHost, stream);
-      cudaStreamSynchronize(stream);
-      kernels::cpu::advance_eye_paths_impl(host_hit_points_info,
-                                       host_eye_paths, config.total_hit_points,
-                                       host_seeds,
-                                       scene,
-                                       config.max_eye_path_depth);
-#endif
 }
 
 void CUDAEngine :: bbox_compute() {
@@ -89,11 +79,6 @@ void CUDAEngine :: bbox_compute() {
 
   cudaMemcpyAsync(host_hit_points_info, hit_points_info, sizeof(HitPointPosition)*config.total_hit_points, cudaMemcpyDeviceToHost, stream);
   cudaStreamSynchronize(stream);
-
-  for(unsigned i = 0; i < 10; ++i)
-    std::cout << i << ": " << host_hit_points_info[i].position << '\n';
-  fflush(stdout);
-  exit(0);
 
   kernels::cpu::bbox_compute_impl(host_hit_points_info,
                                   config.total_hit_points,
@@ -115,7 +100,6 @@ void CUDAEngine :: rehash() {
                             host_inv_cell_size,
                             *host_bbox,
                             *host_current_photon_radius2);
-
   cudaMemcpyAsync(hash_grid,         host_hash_grid,         sizeof(unsigned) * 8 * config.total_hit_points, cudaMemcpyHostToDevice, stream);
   cudaMemcpyAsync(hash_grid_indexes, host_hash_grid_indexes, sizeof(unsigned) *     config.total_hit_points, cudaMemcpyHostToDevice, stream);
   cudaMemcpyAsync(hash_grid_lengths, host_hash_grid_lengths, sizeof(unsigned) *     config.total_hit_points, cudaMemcpyHostToDevice, stream);
@@ -127,16 +111,30 @@ void CUDAEngine :: generate_photon_paths() {
   const unsigned threads_per_block = config.cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
-  /*kernels::cuda::generate_photon_paths_impl
+#define CUDA 1
+
+#if CUDA
+  kernels::cuda::generate_photon_paths_impl
   <<<n_blocks, threads_per_block, 0, stream>>>
    (live_photon_paths,
     size,
     seeds,
-    cuda_scene);*/
+    cuda_scene);
+  cudaMemcpyAsync(host_photon_paths, live_photon_paths, sizeof(PhotonPath)*config.photons_per_iter, cudaMemcpyDeviceToHost, stream);
+  cudaMemcpyAsync(host_seeds, seeds, sizeof(Seed)*config.seed_size, cudaMemcpyDeviceToHost, stream);
+  cudaStreamSynchronize(stream);
+  CUDA_SAFE(cudaGetLastError());
+#else
 
+  cudaMemcpyAsync(host_seeds, seeds, sizeof(Seed)*config.seed_size, cudaMemcpyDeviceToHost, stream);
+  cudaStreamSynchronize(stream);
      kernels::cpu::generate_photon_paths_impl(host_photon_paths, config.photons_per_iter,
                                            host_seeds,  // seed_buffer_count,
                                            scene);
+#endif
+#undef CUDA
+
+
 }
 
 void CUDAEngine :: advance_photon_paths() {
@@ -144,7 +142,9 @@ void CUDAEngine :: advance_photon_paths() {
   const unsigned threads_per_block = config.cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
-  /*kernels::cuda::advance_photon_paths_impl
+  cudaMemsetAsync(hit_points, 0, sizeof(HitPointRadiance)*config.total_hit_points, stream);
+// TODO check this on second iteration
+  kernels::cuda::advance_photon_paths_impl
   <<<n_blocks, threads_per_block, 0, stream>>>
    (live_photon_paths,
     size,
@@ -160,21 +160,11 @@ void CUDAEngine :: advance_photon_paths() {
     hash_grid,
     hash_grid_lengths,
     hash_grid_indexes,
-    inv_cell_size);*/
-      kernels::cpu::advance_photon_paths_impl(host_photon_paths, config.photons_per_iter,
-                                          host_seeds,  // seed_buffer_count,
-                                          scene,
-                                          host_hit_points_info,
-                                          host_hit_points,
-                                          *host_bbox,
-                                          config.max_photon_depth,
-                                          *host_current_photon_radius2,
-                                          config.total_hit_points,
-
-                                          host_hash_grid,
-                                          host_hash_grid_lengths,
-                                          host_hash_grid_indexes,
-                                          *host_inv_cell_size);
+    inv_cell_size);
+  cudaMemcpyAsync(host_hit_points, hit_points, sizeof(HitPointRadiance)*config.total_hit_points, cudaMemcpyDeviceToHost, stream);
+  cudaMemcpyAsync(host_seeds, seeds, sizeof(Seed)*config.seed_size, cudaMemcpyDeviceToHost, stream);
+  cudaStreamSynchronize(stream);
+  CUDA_SAFE(cudaGetLastError());
 }
 
 void CUDAEngine :: accumulate_flux() {
@@ -182,6 +172,10 @@ void CUDAEngine :: accumulate_flux() {
   const unsigned threads_per_block = config.cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
+  for(unsigned i = 0; i < 4; ++i) {
+    std::cout << i << ": " << host_hit_points_info[i].type << '\n';
+  }
+  exit(0);
   /*kernels::cuda::accum_flux_impl
   <<<n_blocks, threads_per_block, 0, stream>>>
    (hit_points_info,

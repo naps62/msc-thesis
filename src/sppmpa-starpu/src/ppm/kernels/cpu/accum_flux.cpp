@@ -39,6 +39,7 @@ void accum_flux_impl(
         }
         break;
       default:
+        printf("%d %d\n", i, hpi.type);
         assert(false);
     }
 

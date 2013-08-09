@@ -170,7 +170,6 @@ __device__ void subIntersect(Ray& ray, ppm::QBVHNode *nodes,
     // Leaves are identified by a negative index
     if (!QBVHNode_IsLeaf(nodeData)) {
       ppm::QBVHNode *node = &nodes[nodeData];
-      //printf("%x\n", ray4);
       const int4 visit = QBVHNode_BBoxIntersect(node->bboxes[signs0][0],
           node->bboxes[1 - signs0][0], node->bboxes[signs1][1],
           node->bboxes[1 - signs1][1], node->bboxes[signs2][2],

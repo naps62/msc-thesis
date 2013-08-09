@@ -28,18 +28,14 @@ void __global__ advance_eye_paths_impl(
 
   if (i >= eye_paths_count)
     return;
-  //printf("\nand here ");
 
   EyePath& eye_path = eye_paths[i];
-  Ray   ray  = eye_path.ray; // rays[i];
+  Ray    ray  = eye_path.ray; // rays[i];
   RayHit hit;                // = hits[i];
 
   while(!eye_path.done) {
-    //printf("a %d ", hit.index);
     hit.SetMiss();
     helpers::subIntersect(ray, scene->nodes, scene->prims, hit);
-    //printf("b %d ", hit.index);
-    //scene->intersect(ray, hit);
 
     if (eye_path.depth > max_eye_path_depth) {
       // make it done

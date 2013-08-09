@@ -28,7 +28,6 @@ void advance_eye_paths_impl(
     EyePath& eye_path = eye_paths[i];
     Ray&   ray = eye_path.ray; // rays[i];
     RayHit hit;                // = hits[i];
-    printf("%d\n", hit.index);
 
     while(!eye_path.done) {
       hit.SetMiss();
