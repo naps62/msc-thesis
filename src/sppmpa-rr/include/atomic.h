@@ -26,7 +26,7 @@
 #include <boost/version.hpp>
 #include <boost/interprocess/detail/atomic.hpp>
 
-
+/*
 inline void AtomicAdd(float *val, const float delta) {
   union bits {
     float f;
@@ -70,6 +70,7 @@ inline void AtomicAdd(unsigned int *val, const unsigned int delta) {
 
 #endif
 }
+*/
 
 inline void AtomicInc(unsigned int *val) {
 #if (BOOST_VERSION < 104800)
