@@ -30,7 +30,7 @@ void __global__ advance_eye_paths_impl(
     return;
 
   EyePath& eye_path = eye_paths[i];
-  Ray    ray  = eye_path.ray; // rays[i];
+  Ray    ray = eye_path.ray; // rays[i];
   RayHit hit;                // = hits[i];
 
   while(!eye_path.done) {
@@ -49,7 +49,6 @@ void __global__ advance_eye_paths_impl(
     } else {
       eye_path.depth++;
     }
-    eye_path.done = true;
 
     if (hit.Miss()) {
       // add a hit point

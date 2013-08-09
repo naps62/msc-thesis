@@ -92,6 +92,7 @@ void advance_eye_paths_impl(
         if (mat_type == MAT_AREALIGHT) {
           // add a hit point
           HitPointPosition &hp = hit_points[eye_path.sample_index];
+
           hp.type = CONSTANT_COLOR;
           hp.scr_x = eye_path.scr_x;
           hp.scr_y = eye_path.scr_y;

@@ -5,12 +5,15 @@
 #define __HYBRID__ __host__ __device__
 #define __HD__ __HYBRID__
 #define __forceinline __forceinline__
+#define ALIGN(x)  __align__(x)
 
 #else
 #define __HYBRID__
 #define __HD__
 #define __forceinline __inline__ __attribute__((__always_inline__))
+#define ALIGN(x) __attribute__ ((aligned (x)))
 #endif
+
 
 #define CUDA_SAFE(exp) { \
   cudaError_t ret = (exp); \

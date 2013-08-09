@@ -13,24 +13,24 @@ namespace helpers {
 
 __device__ int4 QBVHNode_BBoxIntersect(const float4 bboxes_minX, const float4 bboxes_maxX,
     const float4 bboxes_minY, const float4 bboxes_maxY, const float4 bboxes_minZ,
-    const float4 bboxes_maxZ, const ppm::QuadRay& ray4, const float4 invDir0,
+    const float4 bboxes_maxZ, const ppm::QuadRay* ray4, const float4 invDir0,
     const float4 invDir1, const float4 invDir2, const int signs0, const int signs1,
     const int signs2) {
 
-  float4 tMin = ray4.mint;
-  float4 tMax = ray4.maxt;
+  float4 tMin = ray4->mint;
+  float4 tMax = ray4->maxt;
 
   // X coordinate
-  tMin = fmaxf(tMin, (bboxes_minX - ray4.ox) * invDir0);
-  tMax = fminf(tMax, (bboxes_maxX - ray4.ox) * invDir0);
+  tMin = fmaxf(tMin, (bboxes_minX - ray4->ox) * invDir0);
+  tMax = fminf(tMax, (bboxes_maxX - ray4->ox) * invDir0);
 
   // Y coordinate
-  tMin = fmaxf(tMin, (bboxes_minY - ray4.oy) * invDir1);
-  tMax = fminf(tMax, (bboxes_maxY - ray4.oy) * invDir1);
+  tMin = fmaxf(tMin, (bboxes_minY - ray4->oy) * invDir1);
+  tMax = fminf(tMax, (bboxes_maxY - ray4->oy) * invDir1);
 
   // Z coordinate
-  tMin = fmaxf(tMin, (bboxes_minZ - ray4.oz) * invDir2);
-  tMax = fminf(tMax, (bboxes_maxZ - ray4.oz) * invDir2);
+  tMin = fmaxf(tMin, (bboxes_minZ - ray4->oz) * invDir2);
+  tMax = fminf(tMax, (bboxes_maxZ - ray4->oz) * invDir2);
 
   // Return the visit flags
   return (tMax >= tMin);
@@ -173,9 +173,8 @@ __device__ void subIntersect(Ray& ray, ppm::QBVHNode *nodes,
       const int4 visit = QBVHNode_BBoxIntersect(node->bboxes[signs0][0],
           node->bboxes[1 - signs0][0], node->bboxes[signs1][1],
           node->bboxes[1 - signs1][1], node->bboxes[signs2][2],
-          node->bboxes[1 - signs2][2], ray4, invDir0, invDir1, invDir2, signs0, signs1,
+          node->bboxes[1 - signs2][2], &ray4, invDir0, invDir1, invDir2, signs0, signs1,
           signs2);
-
 
       const int4 children = node->children;
 

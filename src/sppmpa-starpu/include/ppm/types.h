@@ -15,20 +15,20 @@ typedef enum {
   ACCEL_MQBVH = luxrays::ACCEL_MQBVH
 } AcceleratorType;
 
-typedef struct QuadRay {
+typedef struct ALIGN(16) QuadRay {
   float4 ox, oy, oz;
   float4 dx, dy, dz;
   float4 mint, maxt;
 } QuadRay;
 
-typedef struct {
+typedef struct ALIGN(16) {
   float4 origx, origy, origz;
   float4 edge1x, edge1y, edge1z;
   float4 edge2x, edge2y, edge2z;
   uint4 primitives;
 } QuadTriangle;
 
-typedef struct {
+typedef struct ALIGN(16) {
   float4 bboxes[2][3];
   int4 children;
 } QBVHNode;

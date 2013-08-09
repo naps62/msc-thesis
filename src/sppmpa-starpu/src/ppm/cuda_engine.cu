@@ -80,6 +80,10 @@ void CUDAEngine :: bbox_compute() {
   cudaMemcpyAsync(host_hit_points_info, hit_points_info, sizeof(HitPointPosition)*config.total_hit_points, cudaMemcpyDeviceToHost, stream);
   cudaStreamSynchronize(stream);
 
+  for(unsigned i = 0; i < config.total_hit_points; ++i) {
+    std::cout << i << ": " << host_hit_points_info[i].type << '\n';
+  }
+  exit(0);
   kernels::cpu::bbox_compute_impl(host_hit_points_info,
                                   config.total_hit_points,
                                   *host_bbox,
@@ -142,7 +146,6 @@ void CUDAEngine :: advance_photon_paths() {
   const unsigned threads_per_block = config.cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
-  cudaMemsetAsync(hit_points, 0, sizeof(HitPointRadiance)*config.total_hit_points, stream);
 // TODO check this on second iteration
   kernels::cuda::advance_photon_paths_impl
   <<<n_blocks, threads_per_block, 0, stream>>>
@@ -172,10 +175,6 @@ void CUDAEngine :: accumulate_flux() {
   const unsigned threads_per_block = config.cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
-  for(unsigned i = 0; i < 4; ++i) {
-    std::cout << i << ": " << host_hit_points_info[i].type << '\n';
-  }
-  exit(0);
   /*kernels::cuda::accum_flux_impl
   <<<n_blocks, threads_per_block, 0, stream>>>
    (hit_points_info,
@@ -207,6 +206,7 @@ void CUDAEngine :: splat_to_film() {
 template<class T>
 void cuda_alloc(T** ptr, unsigned num_elems) {
   cudaMalloc(ptr, sizeof(T) * num_elems);
+  cudaMemset(*ptr, 0, sizeof(T) * num_elems);
 }
 
 void CUDAEngine :: before() {

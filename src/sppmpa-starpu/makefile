@@ -10,8 +10,8 @@ CUDA_INSTALL_PATH := /usr/local/cuda-5.0
 
 ARCH := $(shell getconf LONG_BIT)
 
-STARPU_CFLAGS := $(shell pkg-config --cflags starpu-1.0)
-STARPU_LIBS   := $(shell pkg-config --libs   starpu-1.0)
+STARPU_CFLAGS := $(shell pkg-config --cflags starpu-1.1)
+STARPU_LIBS   := $(shell pkg-config --libs   starpu-1.1)
 
 BEAST_ROOT := $(HOME)/projects/beast
 FREEIMAGE_ROOT := /share/edu-mei/freeimage/3.15.4
@@ -23,7 +23,7 @@ LDFLAGS := -m$(ARCH) $(STARPU_LIBS)
 
 ifeq ($(DEBUG),1)
 CFLAGS  += -g
-NVFLAGS += -O1 -g
+NVFLAGS += -g -G
 LDFLAGS += -g
 OMP :=
 else
