@@ -30,10 +30,10 @@ void __global__ advance_eye_paths_impl(
     return;
 
   EyePath& eye_path = eye_paths[i];
-  Ray    ray = eye_path.ray; // rays[i];
   RayHit hit;                // = hits[i];
 
   while(!eye_path.done) {
+    Ray ray = eye_path.ray; // rays[i];
     hit.SetMiss();
     helpers::subIntersect(ray, scene->nodes, scene->prims, hit);
 

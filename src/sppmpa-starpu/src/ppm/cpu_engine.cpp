@@ -76,6 +76,7 @@ void CPUEngine :: generate_photon_paths() {
   kernels::cpu::generate_photon_paths_impl(&live_photon_paths[0], live_photon_paths.size(),
                                            &seeds[0],  // seed_buffer_count,
                                            scene);
+
 }
 
 void CPUEngine :: advance_photon_paths() {
@@ -93,15 +94,17 @@ void CPUEngine :: advance_photon_paths() {
                                           &hash_grid_lengths[0],
                                           &hash_grid_indexes[0],
                                           inv_cell_size);
+  /*for(unsigned i = 0; i < config.photons_per_iter; ++i) {
+    std::cout << i << ": " << live_photon_paths[i].ray << '\n';
+  }
+  for(unsigned i = 0; i < config.total_hit_points; ++i) {
+    std::cout << i << ": " << hit_points[i].accum_reflected_flux << '\n';
+  }
+  exit(0);*/
 }
 
 void CPUEngine :: accumulate_flux() {
 
-  for(unsigned i = 0; i < config.total_hit_points; ++i) {
-    std::cout << i << ": " << hit_points_info[i].type << '\n';
-  }
-  fflush(stdout);
-  exit(0);
   kernels::cpu::accum_flux_impl(&hit_points_info[0],
                                 &hit_points[0],
                                 hit_points.size(),
