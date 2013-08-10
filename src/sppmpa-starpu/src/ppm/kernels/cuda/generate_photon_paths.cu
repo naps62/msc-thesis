@@ -66,20 +66,23 @@ void generate_photon_paths(void* buffers[], void* args_orig) {
     // buffers
     // photon paths
     PhotonPath* const photon_paths = (PhotonPath*)STARPU_VECTOR_GET_PTR(buffers[0]);
-    const unsigned photon_paths_count = STARPU_VECTOR_GET_NX(buffers[0]);
+    const unsigned size = STARPU_VECTOR_GET_NX(buffers[0]);
     // seeds
     Seed* const seed_buffer        = (Seed*)STARPU_VECTOR_GET_PTR(buffers[1]);
 
   const unsigned threads_per_block = args.config->cuda_block_size;
-  const unsigned n_blocks          = std::ceil(photon_paths_count / (float)threads_per_block);
+  const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
-  generate_photon_paths_impl<<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
+  generate_photon_paths_impl
+  <<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
    (photon_paths,
-    photon_paths_count,
+    size,
     seed_buffer,
     args.gpu_scene);
 
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
+  CUDA_SAFE(cudaGetLastError());
+  printf("gen photon paths\n");
 
 }
 

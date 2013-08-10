@@ -43,13 +43,16 @@ void init_seeds(void* buffers[], void* args_orig) {
   const unsigned size = STARPU_VECTOR_GET_NX(buffers[0]);
 
   const unsigned threads_per_block = args.config->cuda_block_size;
-  const unsigned n_blocks          = size / threads_per_block;
+  const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
-  init_seeds_impl<<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
+  init_seeds_impl
+  <<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
    (seeds,
     size,
     iteration);
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
+  CUDA_SAFE(cudaGetLastError());
+  printf("init_seeds\n");
 }
 
 } } }

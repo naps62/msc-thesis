@@ -9,8 +9,8 @@ namespace ppm {
 //
 
 void callback(void *arg) {
-  //printf("callback: %ld. left: %d, ready: %d\n", (long int)arg, starpu_task_nsubmitted(), starpu_task_nready());
-  //fflush(stdout);
+  printf("callback: %ld. left: %d, ready: %d\n", (long int)arg, starpu_task_nsubmitted(), starpu_task_nready());
+  fflush(stdout);
 }
 
 StarpuEngine :: StarpuEngine(const Config& _config)

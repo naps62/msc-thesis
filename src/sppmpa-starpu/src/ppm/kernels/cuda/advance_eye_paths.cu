@@ -157,27 +157,27 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
   // buffers
   // hit point static info
   HitPointPosition* const hit_points = (HitPointPosition*)STARPU_VECTOR_GET_PTR(buffers[0]);
-  //const unsigned hit_points_count = STARPU_VECTOR_GET_NX(buffers[0]);
   // eye paths
   EyePath* const eye_paths = (EyePath*)STARPU_VECTOR_GET_PTR(buffers[1]);
-  const unsigned eye_paths_count = STARPU_VECTOR_GET_NX(buffers[1]);
+  const unsigned size = STARPU_VECTOR_GET_NX(buffers[1]);
   // seed buffer
   Seed* const seed_buffer = (Seed*)STARPU_VECTOR_GET_PTR(buffers[2]);
-  //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[2]);
-
 
   const unsigned threads_per_block = args.config->cuda_block_size;
-  const unsigned n_blocks          = std::ceil(eye_paths_count / (float)threads_per_block);
+  const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
-  advance_eye_paths_impl<<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
-   (hit_points, // hit_points_count,
-    eye_paths,         eye_paths_count,
-    seed_buffer, //    seed_buffer_count,
+  advance_eye_paths_impl
+  <<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
+   (hit_points,
+    eye_paths,
+    size,
+    seed_buffer,
     args.gpu_scene,
     args.config->max_eye_path_depth);
+
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
-  std::cout << "here" << std::endl;
-  //exit(0);
+  CUDA_SAFE(cudaGetLastError());
+  printf("adv eye paths\n");
 }
 
 } } }

@@ -16,16 +16,15 @@ int main(int argc, char** argv) {
   Config config("Options", argc, argv);
 
   ppm::Engine* engine;
-  // load render engine
   switch(config.engine) {
     case 1:
       engine = new ppm::CPUEngine(config);
       break;
     case 2:
-    default:
       engine = new ppm::CUDAEngine(config);
       break;
     case 0:
+    default:
       engine = new ppm::StarpuEngine(config);
       break;
   }
