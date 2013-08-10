@@ -1,7 +1,7 @@
 default: bin
 BINNAME := sppmpa-rr
 UNAME   := $(shell uname)
-DEBUG   := 1
+DEBUG   := 0
 
 SRC_DIR           := src
 CUDA_SUPPORT      := yes
@@ -12,8 +12,8 @@ ARCH := $(shell getconf LONG_BIT)
 OMP  := openmp
 OMP := $(addprefix -f,$(OMP))
 
-STARPU_CFLAGS := $(shell pkg-config --cflags starpu-1.0)
-STARPU_LIBS   := $(shell pkg-config --libs   starpu-1.0)
+STARPU_CFLAGS := $(shell pkg-config --cflags starpu-1.1)
+STARPU_LIBS   := $(shell pkg-config --libs   starpu-1.1)
 
 FREEIMAGE_ROOT := /share/edu-mei/freeimage/3.15.4
 STARPU_WRAPPER_ROOT := $(HOME)/projects/msc-thesis/src/starpu_wrapper
