@@ -1,7 +1,7 @@
 default: bin
 BINNAME := sppmpa-starpu
 UNAME   := $(shell uname)
-DEBUG   := 0
+DEBUG   := 1
 
 SRC_DIR           := src
 CUDA_SUPPORT      := yes
@@ -33,7 +33,7 @@ OMP := -fopenmp
 endif
 
 ARFLAGS :=
-LD_LIBS       := glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage beast
+LD_LIBS       := glut GLU GL boost_program_options boost_system boost_thread-mt boost_chrono freeimage
 INCLUDE_DIR   := include include/luxrays /usr/local/include /usr/include/GL $(CUDA_INSTALL_PATH)/include $(BOOST_ROOT)/include $(BEAST_ROOT)/include $(FREEIMAGE_ROOT)/include $(STARPU_WRAPPER_ROOT)/include
 LD_LIBS_DIR   := /usr/lib /usr/local/lib /opt/local/lib $(CUDA_INSTALL_PATH)/lib $(BOOST_ROOT)/lib $(BEAST_ROOT)/lib $(FREEIMAGE_ROOT)/lib/linux $(FREEIMAGE_ROOT)/lib
 CUDA_LIBS_DIR := $(CUDA_INSTALL_PATH)/lib64 $(CUDA_INSTALL_PATH)/lib

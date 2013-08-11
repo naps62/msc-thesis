@@ -64,7 +64,7 @@ namespace ppm { namespace kernels {
 
       cl   = &init_seeds;
       starpu_codelet_init(cl);
-      cl->where           = STARPU_CUDA;
+      cl->where           = STARPU_CPU;
       cl->type            = STARPU_FORKJOIN;
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::init_seeds;
@@ -84,7 +84,7 @@ namespace ppm { namespace kernels {
 
       cl   = &generate_eye_paths;
       starpu_codelet_init(cl);
-      cl->where           = STARPU_CUDA;
+      cl->where           = STARPU_CPU;
       cl->type            = STARPU_FORKJOIN;
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::generate_eye_paths;
@@ -105,7 +105,7 @@ namespace ppm { namespace kernels {
 
       cl = &advance_eye_paths;
       starpu_codelet_init(cl);
-      cl->where           = STARPU_CUDA;
+      cl->where           = STARPU_CPU;
       cl->type            = STARPU_FORKJOIN;
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_eye_paths;
@@ -169,7 +169,7 @@ namespace ppm { namespace kernels {
 
       cl = &generate_photon_paths;
       starpu_codelet_init(cl);
-      cl->where           = STARPU_CUDA;
+      cl->where           = STARPU_CPU;
       cl->type            = STARPU_FORKJOIN;
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::generate_photon_paths;
@@ -190,11 +190,13 @@ namespace ppm { namespace kernels {
 
       cl = &advance_photon_paths;
       starpu_codelet_init(cl);
-      cl->where           = STARPU_CUDA;
+      cl->where           = STARPU_CPU;
       cl->type            = STARPU_FORKJOIN;
       cl->max_parallelism = std::numeric_limits<int>::max();
       cl->cpu_funcs[0]    = ppm::kernels::cpu::advance_photon_paths;
       cl->cpu_funcs[1]    = NULL;
+      cl->cuda_funcs[0]   = ppm::kernels::cuda::advance_photon_paths;
+      cl->cuda_funcs[1]   = NULL;
       cl->nbuffers        = 10;
       cl->modes[0]        = STARPU_R;  // live_photon_paths
       cl->modes[1]        = STARPU_R;  // hit_points_info
