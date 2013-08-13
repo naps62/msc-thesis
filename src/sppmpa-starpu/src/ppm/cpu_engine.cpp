@@ -98,13 +98,6 @@ void CPUEngine :: advance_photon_paths() {
                                           &hash_grid_indexes[0],
                                           inv_cell_size,
                                           config.max_threads);
-  /*for(unsigned i = 0; i < config.photons_per_iter; ++i) {
-    std::cout << i << ": " << live_photon_paths[i].ray << '\n';
-  }
-  for(unsigned i = 0; i < config.total_hit_points; ++i) {
-    std::cout << i << ": " << hit_points[i].accum_reflected_flux << '\n';
-  }
-  exit(0);*/
 }
 
 void CPUEngine :: accumulate_flux() {

@@ -33,29 +33,19 @@ void __global__ accum_flux_impl(
   const HitPointPosition& hpi = hit_points_info[i];
   HitPointRadiance& hp = hit_points[i];
 
-  hp.hits_count++;
   switch (hpi.type) {
     case CONSTANT_COLOR:
-      hp.accum_radiance = hpi.throughput;
+      hp.radiance = hpi.throughput;
       break;
     case SURFACE:
-      if (hp.accum_photon_count > 0) {
-        hp.reflected_flux = hp.accum_reflected_flux;
-        hp.accum_photon_count = 0;
-        hp.accum_reflected_flux = Spectrum();
-      }
       break;
     default:
       assert(false);
   }
 
-  if (hp.hits_count > 0) {
-    const double k = 1.0 / (M_PI * radius2 * photons_traced);
-    hp.radiance = (hp.accum_radiance + hp.reflected_flux * k);
-  }
-  hp.hits_count = 0;
-  hp.accum_radiance = Spectrum();
-  hp.reflected_flux = Spectrum();
+  const double k = 1.0 / (M_PI * radius2 * photons_traced);
+  hp.radiance = hp.radiance + hp.reflected_flux * k;
+
 }
 
 

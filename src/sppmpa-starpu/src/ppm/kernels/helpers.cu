@@ -1103,8 +1103,6 @@ __HD__ void add_flux(
       if (DistanceSquared(ihp.position, hit_point) > photon_radius2 || Dot(ihp.normal, wi) <= 0.0001f)
         continue;
 
-      my_atomic_add(&hp.accum_photon_count, (unsigned)1);
-
       Spectrum f;
 
       Material& hit_point_mat = scene->materials[ihp.material_ss];
@@ -1122,13 +1120,13 @@ __HD__ void add_flux(
       Spectrum flux = photon_flux * AbsDot(shade_N, wi) * ihp.throughput * f;
 
 #ifdef __CUDA_ARCH__
-      my_atomic_add(&hp.accum_reflected_flux.r, flux.r);
-      my_atomic_add(&hp.accum_reflected_flux.g, flux.g);
-      my_atomic_add(&hp.accum_reflected_flux.b, flux.b);
+      my_atomic_add(&hp.reflected_flux.r, flux.r);
+      my_atomic_add(&hp.reflected_flux.g, flux.g);
+      my_atomic_add(&hp.reflected_flux.b, flux.b);
 #else
 #pragma omp critical
       {
-        hp.accum_reflected_flux = hp.accum_reflected_flux + flux;
+        hp.reflected_flux = hp.reflected_flux + flux;
       }
 #endif
     }
