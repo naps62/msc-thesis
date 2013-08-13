@@ -61,7 +61,6 @@ void __global__ accum_flux_impl(
 
 void accum_flux(void* buffers[], void* args_orig) {
 
-  std::cout << "asd" << std::endl;
   // cl_args
   starpu_args args;
   float alpha;

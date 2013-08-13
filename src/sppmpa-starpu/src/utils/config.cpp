@@ -11,8 +11,8 @@ Config :: Config(const char *desc, int _argc, char **_argv)
 
   // window
   flag("no-display", no_display, "Supress realtime display?");
-  value("width,w",   width,  uint(320),          "window width");
-  value("height,h",  height, uint(240),          "window height");
+  value("width,w",   width,  uint(4),          "window width");
+  value("height,h",  height, uint(4),          "window height");
   value("title,t",   title,  string("ppm-starpu"), "window title");
   value("fps",       fps,    uint(60), "maximum FPS");
   flag("vsync",      vsync, "V-Sync. Can cause problems sometimes, so defaults to false");
@@ -24,7 +24,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   value("engine",    engine, uint(99), "render engine to use [ppm (default) | ... (others to come)]");
   value("photons_iter", photons_first_iter_exp, uint(20),  "to compute amount of photons on first iteration");
   value("max_threads", max_threads, uint(8),  "number of cpu threads");
-  value("max_iters",   max_iters,   uint(100), "number of iterations");
+  value("max_iters",   max_iters,   uint(1), "number of iterations");
   value("max_eye_path_depth", max_eye_path_depth, uint(16), "max eye path depth");
   value("max_photon_depth",   max_photon_depth,   uint(8),  "max photon path depth");
 
@@ -33,7 +33,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   value("cuda_block_size", cuda_block_size, unsigned(256), "cuda block size (default 512)");
 
   // starpu
-  value("sched", sched_policy, string("pheft"), "scheduling policy (pheft (default) | pgreedy)");
+  value("sched", sched_policy, string("peager"), "scheduling policy (pheft (default) | pgreedy)");
   value("partition_size", partition_size, uint(1024), "size of each starpu data partition");
   value("max_iters_at_once", max_iters_at_once, uint(0), "maximum amount of iterations running at once");
 
@@ -41,6 +41,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   parse(_argc, _argv);
 
   // derived values
+  no_display=true;
   use_display = ! no_display;
   min_frame_time = 1.f / fps;
   total_hit_points = width * height * spp * spp;

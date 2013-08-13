@@ -117,8 +117,6 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
   unsigned hit_points_count;
   starpu_codelet_unpack_args(args_orig, &args, &hit_points_count);
 
-  printf("cpu got here\n");
-  return;
   // buffers
   PhotonPath* const photon_paths = reinterpret_cast<PhotonPath* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
   const unsigned photon_paths_count = STARPU_VECTOR_GET_NX(buffers[0]);
