@@ -22,7 +22,7 @@ void init_seeds_impl(
 
   #pragma omp parallel for num_threads(num_threads)
   for(unsigned i = 0; i < size; ++i) {
-    seeds[i] = mwc(i+iteration);
+    seeds[i] = mwc(i * (1 << iteration));
   }
 }
 

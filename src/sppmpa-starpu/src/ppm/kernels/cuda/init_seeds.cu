@@ -27,7 +27,7 @@ void __global__ init_seeds_impl(
   if (i >= size)
     return;
 
-  seeds[i] = mwc(i+iteration);
+  seeds[i] = mwc(i * (1 << iteration));
 }
 
 

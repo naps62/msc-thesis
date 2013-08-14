@@ -76,7 +76,13 @@ public:
         set_captions();
         display->request_update(config.min_frame_time);
       }
+
+      if (config.saving_offset > 0 && iteration % config.saving_offset == 0) {
+        wait_for_all();
+        output(to_string<uint>(iteration, std::dec));
+      }
     }
+
 
     wait_for_all();
     end_time = WallClockTime();
@@ -98,8 +104,8 @@ public:
     display->set_captions(header, footer);
   }
 
-  void output() {
-    film->SaveImpl(config.output_file);
+  void output(string prefix = string()) {
+    film->SaveImpl(config.output_dir + '/' + prefix + config.output_file);
   }
 
   virtual void init_seed_buffer() = 0;

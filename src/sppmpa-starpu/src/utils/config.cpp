@@ -28,6 +28,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   value("max_iters",   max_iters,   uint(100), "number of iterations");
   value("max_eye_path_depth", max_eye_path_depth, uint(16), "max eye path depth");
   value("max_photon_depth",   max_photon_depth,   uint(8),  "max photon path depth");
+  value("save_offset", saving_offset, uint(0), "save output every X iterations (default 0)");
 
   // engine
   //value("photons_per_iter", photons_per_iter, unsigned(1024*256), "chunk size for ray and photon buffers (defaults to 1024*256)");
@@ -46,8 +47,8 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   use_display = ! no_display;
   min_frame_time = 1.f / fps;
   total_hit_points = width * height * spp * spp;
+  photons_per_iter = 1 << photons_first_iter_exp;
   seed_size = std::max(total_hit_points, photons_per_iter);
-  photons_per_iter = 1 << photons_iter;
 
   accel_type = ppm::ACCEL_QBVH;
   cuda_block_size_sqrt = sqrt(cuda_block_size);
@@ -55,7 +56,6 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   scene_dir = "scenes/" + scene_name;
   scene_file = scene_name + ".scn";
   scene_file = scene_dir + '/' + scene_file;
-  output_file = output_dir + '/' + output_file;
 }
 
 using std::cerr;

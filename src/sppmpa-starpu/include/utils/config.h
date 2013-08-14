@@ -41,6 +41,7 @@ struct Config : public beast::program_options::options {
   ppm::AcceleratorType accel_type;
   uint max_eye_path_depth;
   uint max_photon_depth;
+  uint saving_offset;
 
   // engine
   unsigned photons_per_iter;
