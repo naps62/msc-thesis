@@ -67,7 +67,6 @@ void accum_flux(void* buffers[], void* args_orig) {
   const unsigned threads_per_block = args.config->cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
-  printf("accum\n");
   accum_flux_impl
   <<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
    (hit_points_info,
@@ -79,7 +78,6 @@ void accum_flux(void* buffers[], void* args_orig) {
 
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
   CUDA_SAFE(cudaGetLastError());
-  printf("accum\n");
 }
 
 } } }

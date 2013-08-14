@@ -79,6 +79,8 @@ public:
     }
 
     wait_for_all();
+    end_time = WallClockTime();
+    fprintf(stderr, "Total Time:\n%f\n", end_time - start_time);
     this->after();
   }
 
@@ -120,6 +122,7 @@ protected:
   unsigned iteration;
   unsigned long long total_photons_traced;
   double start_time;
+  double end_time;
   const Config& config;
   PtrFreeScene* scene;
   Display* display;

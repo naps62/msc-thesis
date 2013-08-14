@@ -52,7 +52,6 @@ void init_seeds(void* buffers[], void* args_orig) {
     iteration);
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
   CUDA_SAFE(cudaGetLastError());
-  printf("init_seeds\n");
 }
 
 } } }

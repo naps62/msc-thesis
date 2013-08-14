@@ -77,7 +77,6 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
 
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
   CUDA_SAFE(cudaGetLastError());
-  printf("gen eye paths\n");
 }
 
 } } }
