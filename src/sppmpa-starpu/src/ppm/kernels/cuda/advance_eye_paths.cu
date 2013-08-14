@@ -166,13 +166,16 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
   const unsigned threads_per_block = args.config->cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
+  int device_id;
+  cudaGetDevice(&device_id);
+
   advance_eye_paths_impl
   <<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
    (hit_points,
     eye_paths,
     size,
     seed_buffer,
-    args.gpu_scene,
+    args.gpu_scene[device_id],
     args.config->max_eye_path_depth);
 
   cudaStreamSynchronize(starpu_cuda_get_local_stream());

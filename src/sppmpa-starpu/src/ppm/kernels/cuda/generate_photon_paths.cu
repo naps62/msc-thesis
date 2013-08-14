@@ -73,12 +73,15 @@ void generate_photon_paths(void* buffers[], void* args_orig) {
   const unsigned threads_per_block = args.config->cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
+  int device_id;
+  cudaGetDevice(&device_id);
+
   generate_photon_paths_impl
   <<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
    (photon_paths,
     size,
     seed_buffer,
-    args.gpu_scene);
+    args.gpu_scene[device_id]);
 
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
   CUDA_SAFE(cudaGetLastError());

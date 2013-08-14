@@ -46,10 +46,11 @@ namespace ppm { namespace kernels {
       memset(model, 0, sizeof(starpu_perfmodel));
     }
 
-    void init(const Config* config, PtrFreeScene* cpu_scene, PtrFreeScene* gpu_scene) {
+    void init(const Config* config, PtrFreeScene* cpu_scene, PtrFreeScene* gpu_scene0, PtrFreeScene* gpu_scene1) {
       generic_args.config    = config;
       generic_args.cpu_scene = cpu_scene;
-      generic_args.gpu_scene = gpu_scene;
+      generic_args.gpu_scene[0] = gpu_scene0;
+      generic_args.gpu_scene[1] = gpu_scene1;
 
 
       starpu_perfmodel* pm;

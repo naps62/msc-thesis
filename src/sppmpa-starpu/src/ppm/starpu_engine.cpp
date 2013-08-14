@@ -20,10 +20,18 @@ StarpuEngine :: StarpuEngine(const Config& _config)
   starpu_conf_init(&this->spu_conf);
   spu_conf.sched_policy_name = config.sched_policy.c_str();
 
-  PtrFreeScene* device_scene = scene->to_device(0);
-  starpu_init(&this->spu_conf);
+  int cuda_device_count;
+  cudaGetDeviceCount(&cuda_device_count);
+  PtrFreeScene* device_scene0 = NULL;
+  PtrFreeScene* device_scene1 = NULL;
 
-  kernels::codelets::init(&config, scene, device_scene); // TODO GPU versions here
+  if (cuda_device_count >= 1)
+    device_scene0 = scene->to_device(0);
+  if (cuda_device_count >= 2)
+    device_scene1 = scene->to_device(1);
+
+  starpu_init(&this->spu_conf);
+  kernels::codelets::init(&config, scene, device_scene0, device_scene1);
 
 }
 

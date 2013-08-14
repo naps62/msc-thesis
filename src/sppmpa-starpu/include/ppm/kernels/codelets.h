@@ -12,7 +12,7 @@ namespace ppm { namespace kernels {
     struct starpu_args {
       const Config*       config;
       PtrFreeScene* cpu_scene;
-      PtrFreeScene* gpu_scene;
+      PtrFreeScene* gpu_scene[2];
 
       starpu_args() { };
     };
@@ -30,7 +30,7 @@ namespace ppm { namespace kernels {
 
     extern starpu_args    generic_args;
 
-    void init(const Config* cpu_config, PtrFreeScene* cpu_scene, PtrFreeScene* gpu_scene);
+    void init(const Config* cpu_config, PtrFreeScene* cpu_scene, PtrFreeScene* gpu_scene0, PtrFreeScene* gpu_scene1);
 
   }
 

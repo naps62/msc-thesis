@@ -144,12 +144,15 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
 
   cudaMemsetAsync(hit_points, 0, sizeof(HitPointRadiance) * args.config->total_hit_points, starpu_cuda_get_local_stream());
 
+  int device_id;
+  cudaGetDevice(&device_id);
+
   advance_photon_paths_impl
   <<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
    (photon_paths,
     size,
     seed_buffer,
-    args.gpu_scene,
+    args.gpu_scene[device_id],
     hit_points_info,
     hit_points,
     bbox,
