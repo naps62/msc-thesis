@@ -155,87 +155,50 @@ void Worker::ProcessIterations(PPM* engine) {
       break;
     }
 
-//    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations");
-
     photonPerIteration = engine->photonsFirstIteration;
 
-    //fprintf(stderr, "\n#######\n Processing iteration %d with %lu photons in device %d...\n",
-     //   iterationCount, photonPerIteration, getDeviceID());
-
-#if defined USE_SPPMPA || defined USE_SPPM
+// #if defined USE_SPPMPA || defined USE_SPPM
     BuildHitPoints(iterationCount);
     UpdateBBox();
 
-#endif
+// #endif
 
-#if defined USE_SPPM || defined USE_PPM
-    if (iterationCount == 1)
+// #if defined USE_SPPM || defined USE_PPM
+//     if (iterationCount == 1)
+//     InitRadius(iterationCount);
+// #else
     InitRadius(iterationCount);
-    //fprintf(stderr, "Iteration radius: %f\n", HPsIterationRadianceFlux[0].accumPhotonRadius2);
-
-#else
-    InitRadius(iterationCount);
-    //fprintf(stderr, "Iteration radius: %f\n", currentPhotonRadius2);
-
-#endif
-//    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Cpy HPs to device");
-
+// #endif
     updateDeviceHitPoints();
-
-//    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Cpy HPs to device");
-
-//    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > ReHash");
-
 #ifndef REBUILD_HASH
     if (iterationCount == 1)
 #endif
       ReHash(currentPhotonRadius2);//argument ignored in non-PA
-
-//    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > ReHash");
-
 #ifndef REBUILD_HASH
     if (iterationCount == 1)
 #endif
       updateDeviceLookupAcc();
 
-//    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Build Photon Map");
-
     photonPerIteration = AdvancePhotonPath(photonPerIteration);
 
-    //fprintf(stderr, "Traced %lu photon\n", photonPerIteration);
+// #if defined USE_PPM
+//     getDeviceHitpoints();
+//     AccumulateFluxPPM(iterationCount, photonPerIteration);
 
-//    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Build Photon Map");
-
-#if defined USE_PPM
-//    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Get HPs");
-    getDeviceHitpoints();
-//    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Get HPs");
-
-//    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Radiance calc");
-    AccumulateFluxPPM(iterationCount, photonPerIteration);
-//    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Radiance calc");
-
-#endif
-#if defined USE_SPPM
-    AccumulateFluxSPPM(iterationCount, photonPerIteration);
-#endif
-#if defined USE_SPPMPA
+// #endif
+// #if defined USE_SPPM
+//     AccumulateFluxSPPM(iterationCount, photonPerIteration);
+// #endif
+// #if defined USE_SPPMPA
     AccumulateFluxSPPMPA(iterationCount, photonPerIteration);
-#endif
-#if defined USE_PPMPA
-//    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Radiance calc");
-    AccumulateFluxPPMPA(iterationCount, photonPerIteration);
-//    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Radiance calc");
+// #endif
+// #if defined USE_PPMPA
+//     AccumulateFluxPPMPA(iterationCount, photonPerIteration);
 
-//    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Get HPs");
-    getDeviceHitpoints();
-//    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Get HPs");
+//     getDeviceHitpoints();
 
-#endif
-//    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Splat radiance");
+// #endif
     UpdateSampleFrameBuffer(photonPerIteration);
-
-//    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations > Splat radiance");
 
     /**
      * iteration lock required in PhotonTracedTotal
@@ -250,12 +213,9 @@ void Worker::ProcessIterations(PPM* engine) {
 
     if (iterationCount % 100 == 0)
       engine->SaveImpl(to_string<uint> (iterationCount, std::dec) + engine->fileName);
-
-//    __BENCH.LOOP_STAGE_STOP("Process Iterations > Iterations");
-
   }
 
-  profiler->printStats(deviceID);
+  //profiler->printStats(deviceID);
 
 }
 

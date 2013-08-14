@@ -69,18 +69,7 @@ int main(int argc, char *argv[]) {
 
   std::string sceneFileName = config->scene_file.c_str(); //"scenes/kitchen/kitchen.scn";
 
-  engine->fileName = config->output_file;//"kitchen.png";
-
-  //  std::string sceneFileName = "scenes/alloy/alloy.scn";
-  //  std::string sceneFileName = "scenes/bigmonkey/bigmonkey.scn";
-  //  std::string sceneFileName = "scenes/psor-cube/psor-cube.scn";
-  //  std::string sceneFileName = "scenes/classroom/classroom.scn";
-  //  std::string sceneFileName = "scenes/luxball/luxball.scn";
-  //  std::string sceneFileName = "scenes/cornell/cornell.scn";
-  //std::string sceneFileName = "scenes/simple/simple.scn";
-  //  std::string sceneFileName = "scenes/simple-mat/simple-mat.scn";
-  //  std::string sceneFileName = "scenes/sky/sky.scn";
-  //  std::string sceneFileName = "scenes/studiotest/studiotest.scn";
+  engine->fileName = config->output_file;
 
   engine->ss = new PointerFreeScene(width, height, sceneFileName);
   engine->startTime = WallClockTime();
@@ -164,9 +153,10 @@ int main(int argc, char *argv[]) {
 
   engine->SaveImpl(config->output_file.c_str());
 
-  /*fprintf(stderr, "Avg. %.3f iteration/sec\n", itsec);
-  fprintf(stderr, "Total photons: %.2fM\n", engine->getPhotonTracedTotal() / 1000000.f);
-  fprintf(stderr, "Total time:\n%f\n", elapsedTime);*/
+  fprintf(stderr, "Avg. %.3f iteration/sec\n", itsec);
+  fprintf(stderr, "Total photons: %lld\n", engine->getPhotonTracedTotal());
+  fprintf(stderr, "Photons / sec: %.2f\n", engine->getPhotonTracedTotal() / (elapsedTime * 1000.f));
+  fprintf(stderr, "Total time:\n%f\n", elapsedTime);
   fflush(stdout);
   fflush(stderr);
 
