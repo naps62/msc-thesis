@@ -59,22 +59,25 @@ void __global__ generate_photon_paths_impl(
 }
 
 void generate_photon_paths(void* buffers[], void* args_orig) {
-
-    const starpu_args args;
-    starpu_codelet_unpack_args(args_orig, &args);
-
-    // buffers
-    // photon paths
-    PhotonPath* const photon_paths = (PhotonPath*)STARPU_VECTOR_GET_PTR(buffers[0]);
-    const unsigned size = STARPU_VECTOR_GET_NX(buffers[0]);
-    // seeds
-    Seed* const seed_buffer        = (Seed*)STARPU_VECTOR_GET_PTR(buffers[1]);
-
-  const unsigned threads_per_block = args.config->cuda_block_size;
-  const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
-
   int device_id;
   cudaGetDevice(&device_id);
+  const double start_time = WallClockTime();
+
+  // cl_args
+  const starpu_args args;
+  unsigned iteration;
+  starpu_codelet_unpack_args(args_orig, &args, &iteration);
+
+  // buffers
+  // photon paths
+  PhotonPath* const photon_paths = (PhotonPath*)STARPU_VECTOR_GET_PTR(buffers[0]);
+  const unsigned size = STARPU_VECTOR_GET_NX(buffers[0]);
+  // seeds
+  Seed* const seed_buffer        = (Seed*)STARPU_VECTOR_GET_PTR(buffers[1]);
+
+  // cuda dims
+  const unsigned threads_per_block = args.config->cuda_block_size;
+  const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
   generate_photon_paths_impl
   <<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
@@ -85,6 +88,9 @@ void generate_photon_paths(void* buffers[], void* args_orig) {
 
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
   CUDA_SAFE(cudaGetLastError());
+
+  const double end_time = WallClockTime();
+  task_info("GPU", device_id, 0, iteration, start_time, end_time, "(6) generate_photon_paths");
 
 }
 

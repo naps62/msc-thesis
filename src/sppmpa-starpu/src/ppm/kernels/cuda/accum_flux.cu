@@ -50,12 +50,16 @@ void __global__ accum_flux_impl(
 
 
 void accum_flux(void* buffers[], void* args_orig) {
+  int device_id;
+  cudaGetDevice(&device_id);
+  const double start_time = WallClockTime();
 
   // cl_args
   starpu_args args;
   float alpha;
   unsigned photons_traced;
-  starpu_codelet_unpack_args(args_orig, &args, &alpha, &photons_traced);
+  unsigned iteration;
+  starpu_codelet_unpack_args(args_orig, &args, &alpha, &photons_traced, &iteration);
 
   // buffers
   const HitPointPosition* const hit_points_info = (const HitPointPosition*)STARPU_VECTOR_GET_PTR(buffers[0]);
@@ -78,6 +82,9 @@ void accum_flux(void* buffers[], void* args_orig) {
 
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
   CUDA_SAFE(cudaGetLastError());
+
+  const double end_time = WallClockTime();
+  task_info("GPU", device_id, 0, iteration, start_time, end_time, "(8) accum_flux");
 }
 
 } } }

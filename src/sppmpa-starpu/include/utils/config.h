@@ -6,12 +6,14 @@
 using std::string;
 
 #include "ppm/types.h"
+#include "luxrays/core/utils.h"
 
 struct Config : public beast::program_options::options {
   const int argc;
   const char** argv;
 
   // scene
+  string scene_name;
   string scene_dir;
   string scene_file;
   string output_dir;
@@ -53,5 +55,16 @@ struct Config : public beast::program_options::options {
 
   Config(const char *desc, int _argc, char **_argv);
 };
+
+
+
+void task_info(
+    const string device,
+    const unsigned id,
+    const unsigned omp_size,
+    const unsigned iteration,
+    const double start_time,
+    const double end_time,
+    const string info);
 
 #endif // _UTILS_CONFIG_H_

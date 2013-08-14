@@ -34,10 +34,12 @@ void update_sample_buffer_impl(
 
 
 void update_sample_buffer(void* buffers[], void* args_orig) {
+  const double start_time = WallClockTime();
 
   // cl_args
   unsigned width;
-  starpu_codelet_unpack_args(args_orig, &width);
+  unsigned iteration;
+  starpu_codelet_unpack_args(args_orig, &width, &iteration);
 
   // buffers
   const HitPointRadiance* const hit_points = (const HitPointRadiance* const)(STARPU_VECTOR_GET_PTR(buffers[0]));
@@ -46,6 +48,9 @@ void update_sample_buffer(void* buffers[], void* args_orig) {
   SampleBuffer** buffer = (SampleBuffer**) STARPU_VARIABLE_GET_PTR(buffers[1]);
 
   update_sample_buffer_impl(hit_points, size, width, *buffer, starpu_combined_worker_get_size());
+
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, starpu_combined_worker_get_size(), iteration, start_time, end_time, "(9) update_sample_buffer");
 }
 
 } } }

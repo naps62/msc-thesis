@@ -115,11 +115,15 @@ void __global__ advance_photon_paths_impl(
 
 
 void advance_photon_paths(void* buffers[], void* args_orig) {
-  // cl_args
+  int device_id;
+  cudaGetDevice(&device_id);
+  const double start_time = WallClockTime();
 
+  // cl_args
   const starpu_args args;
   unsigned hit_points_count;
-  starpu_codelet_unpack_args(args_orig, &args, &hit_points_count);
+  unsigned iteration;
+  starpu_codelet_unpack_args(args_orig, &args, &hit_points_count, &iteration);
 
   // buffers
   PhotonPath* const photon_paths = (PhotonPath*)STARPU_VECTOR_GET_PTR(buffers[0]);
@@ -144,9 +148,6 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
 
   cudaMemsetAsync(hit_points, 0, sizeof(HitPointRadiance) * args.config->total_hit_points, starpu_cuda_get_local_stream());
 
-  int device_id;
-  cudaGetDevice(&device_id);
-
   advance_photon_paths_impl
   <<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
    (photon_paths,
@@ -167,6 +168,9 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
 
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
   CUDA_SAFE(cudaGetLastError());
+
+  const double end_time = WallClockTime();
+  task_info("GPU", device_id, 0, iteration, start_time, end_time, "(7) advance_photon_paths");
 }
 
 } } }

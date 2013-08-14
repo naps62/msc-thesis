@@ -81,8 +81,11 @@ void rehash_impl(
 
 
 void rehash(void* buffers[], void* args_orig) {
+  const double start_time = WallClockTime();
+
   starpu_args args;
-  starpu_codelet_unpack_args(args_orig, &args);
+  unsigned iteration;
+  starpu_codelet_unpack_args(args_orig, &args, &iteration);
 
 
   const HitPointPosition* const hit_points_info = reinterpret_cast<const HitPointPosition* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
@@ -104,6 +107,9 @@ void rehash(void* buffers[], void* args_orig) {
               inv_cell_size,
               *bbox,
               *current_photon_radius2);
+
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, 1, iteration, start_time, end_time, "(5) rehash");
 
 }
 

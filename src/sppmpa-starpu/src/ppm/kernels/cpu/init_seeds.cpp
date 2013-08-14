@@ -28,6 +28,7 @@ void init_seeds_impl(
 
 
 void init_seeds(void* buffers[], void* args_orig) {
+  const double start_time = WallClockTime();
 
   // cl_args
   starpu_args args;
@@ -39,6 +40,9 @@ void init_seeds(void* buffers[], void* args_orig) {
   const unsigned size = STARPU_VECTOR_GET_NX(buffers[0]);
 
   init_seeds_impl(seeds, size, iteration, starpu_combined_worker_get_size());
+
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, 0, starpu_combined_worker_get_size(), start_time, end_time, "(1) init_seeds");
 }
 
 } } }

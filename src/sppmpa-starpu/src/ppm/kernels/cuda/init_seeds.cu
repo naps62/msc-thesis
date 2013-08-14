@@ -32,6 +32,9 @@ void __global__ init_seeds_impl(
 
 
 void init_seeds(void* buffers[], void* args_orig) {
+  int device_id;
+  cudaGetDevice(&device_id);
+  const double start_time = WallClockTime();
 
   // cl_args
   starpu_args args;
@@ -42,6 +45,7 @@ void init_seeds(void* buffers[], void* args_orig) {
   Seed* const seeds = (Seed*) STARPU_VECTOR_GET_PTR(buffers[0]);
   const unsigned size = STARPU_VECTOR_GET_NX(buffers[0]);
 
+  // cuda dims
   const unsigned threads_per_block = args.config->cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
@@ -52,6 +56,9 @@ void init_seeds(void* buffers[], void* args_orig) {
     iteration);
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
   CUDA_SAFE(cudaGetLastError());
+
+  const double end_time = WallClockTime();
+  task_info("GPU", device_id, 0, 0, start_time, end_time, "(1) init_seeds");
 }
 
 } } }

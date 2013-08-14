@@ -31,7 +31,6 @@ namespace ppm { namespace kernels {
     extern starpu_args    generic_args;
 
     void init(const Config* cpu_config, PtrFreeScene* cpu_scene, PtrFreeScene* gpu_scene0, PtrFreeScene* gpu_scene1);
-
   }
 
 

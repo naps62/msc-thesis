@@ -9,8 +9,8 @@ namespace ppm {
 //
 
 void callback(void *arg) {
-  printf("callback: %ld. left: %d, ready: %d\n", (long int)arg, starpu_task_nsubmitted(), starpu_task_nready());
-  fflush(stdout);
+  //printf("callback: %ld. left: %d, ready: %d\n", (long int)arg, starpu_task_nsubmitted(), starpu_task_nready());
+  //fflush(stdout);
 }
 
 StarpuEngine :: StarpuEngine(const Config& _config)
@@ -20,24 +20,30 @@ StarpuEngine :: StarpuEngine(const Config& _config)
   starpu_conf_init(&this->spu_conf);
   spu_conf.sched_policy_name = config.sched_policy.c_str();
 
-  int cuda_device_count;
-  cudaGetDeviceCount(&cuda_device_count);
-  PtrFreeScene* device_scene0 = NULL;
-  PtrFreeScene* device_scene1 = NULL;
+  PtrFreeScene* device_scenes[2] = { NULL, NULL };
 
-  if (cuda_device_count >= 1)
-    device_scene0 = scene->to_device(0);
-  if (cuda_device_count >= 2)
-    device_scene1 = scene->to_device(1);
+  this->init_cuda_devices(device_scenes);
 
   starpu_init(&this->spu_conf);
-  kernels::codelets::init(&config, scene, device_scene0, device_scene1);
+  kernels::codelets::init(&config, scene, device_scenes[0], device_scenes[1]);
 
 }
 
 StarpuEngine :: ~StarpuEngine() {
   starpu_task_wait_for_all();
   starpu_shutdown();
+}
+
+void StarpuEngine :: init_cuda_devices(PtrFreeScene** scenes) {
+  int cuda_device_count;
+  cudaGetDeviceCount(&cuda_device_count);
+
+  for(int i = 0; i < cuda_device_count; ++i) {
+    cudaDeviceProp dev_prop;
+    cudaGetDeviceProperties(&dev_prop, i);
+    cerr << "StarPU Engine: Device " << i << ", " << dev_prop.name << '\n';
+    scenes[i] = scene->to_device(i);
+  }
 }
 
 //
@@ -123,6 +129,7 @@ void StarpuEngine :: generate_eye_paths() {
                       STARPU_W,  eye_paths_h[handle_index],
                       STARPU_RW, seeds_h[handle_index],
                       STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+                      STARPU_VALUE, &iteration, sizeof(iteration),
                       STARPU_CALLBACK_WITH_ARG, callback, (void*)2, 0);
 
 }
@@ -132,6 +139,7 @@ void StarpuEngine :: advance_eye_paths() {
                       STARPU_R,  eye_paths_h[handle_index],
                       STARPU_RW, seeds_h[handle_index],
                       STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+                      STARPU_VALUE, &iteration, sizeof(iteration),
                       STARPU_CALLBACK_WITH_ARG, callback, (void*)3, 0);
 }
 
@@ -156,6 +164,7 @@ void StarpuEngine :: rehash() {
                         STARPU_W,     hash_grid_indexes_h[handle_index],
                         STARPU_W,     hash_grid_inv_cell_size_h[handle_index],
                         STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+                        STARPU_VALUE, &iteration,    sizeof(iteration),
                         STARPU_CALLBACK_WITH_ARG, callback, (void*)5, 0);
 }
 
@@ -164,6 +173,7 @@ void StarpuEngine :: generate_photon_paths() {
                         STARPU_W,  live_photon_paths_h[handle_index],
                         STARPU_RW, seeds_h[handle_index],
                         STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
+                        STARPU_VALUE, &iteration,    sizeof(iteration),
                         STARPU_CALLBACK_WITH_ARG, callback, (void*)6, 0);
 }
 
@@ -181,6 +191,7 @@ void StarpuEngine :: advance_photon_paths() {
                         STARPU_R,  hash_grid_inv_cell_size_h[handle_index],
                         STARPU_VALUE, &codelets::generic_args, sizeof(codelets::generic_args),
                         STARPU_VALUE, &config.total_hit_points, sizeof(config.total_hit_points),
+                        STARPU_VALUE, &iteration,    sizeof(iteration),
                         STARPU_CALLBACK_WITH_ARG, callback, (void*)7, 0);
 }
 
@@ -192,6 +203,7 @@ void StarpuEngine :: accumulate_flux() {
                         STARPU_VALUE, &codelets::generic_args,  sizeof(codelets::generic_args),
                         STARPU_VALUE, &config.alpha,  sizeof(config.alpha),
                         STARPU_VALUE, &config.photons_per_iter, sizeof(config.photons_per_iter),
+                        STARPU_VALUE, &iteration,    sizeof(iteration),
                         STARPU_CALLBACK_WITH_ARG, callback, (void*)8, 0);
 }
 
@@ -201,6 +213,7 @@ void StarpuEngine :: update_sample_buffer() {
                         STARPU_R,  hit_points_h[handle_index],
                         STARPU_RW, sample_buffer_h,
                         STARPU_VALUE, &config.width, sizeof(config.width),
+                        STARPU_VALUE, &iteration,    sizeof(iteration),
                         STARPU_CALLBACK_WITH_ARG, callback, (void*)9, 0);
 
   handle_index++;
@@ -214,6 +227,7 @@ void StarpuEngine :: splat_to_film() {
                         STARPU_RW, film_h,
                         STARPU_VALUE, &config.width, sizeof(config.width),
                         STARPU_VALUE, &config.height, sizeof(config.height),
+                        STARPU_VALUE, &iteration,    sizeof(iteration),
                         STARPU_CALLBACK_WITH_ARG, callback, (void*)10, 0);
 }
 

@@ -26,6 +26,7 @@ CUDAEngine :: ~CUDAEngine() {
 //
 
 void CUDAEngine :: init_seed_buffer() {
+  const double start_time = WallClockTime();
   const unsigned size = config.seed_size;
   const unsigned threads_per_block = config.cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
@@ -38,6 +39,7 @@ void CUDAEngine :: init_seed_buffer() {
 }
 
 void CUDAEngine :: generate_eye_paths() {
+  const double start_time = WallClockTime();
   const unsigned width = config.width;
   const unsigned height = config.height;
   const unsigned block_side = config.cuda_block_size_sqrt;
@@ -54,6 +56,7 @@ void CUDAEngine :: generate_eye_paths() {
 }
 
 void CUDAEngine :: advance_eye_paths() {
+  const double start_time = WallClockTime();
   const unsigned size = config.total_hit_points;
   const unsigned threads_per_block = config.cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
@@ -69,6 +72,7 @@ void CUDAEngine :: advance_eye_paths() {
 }
 
 void CUDAEngine :: bbox_compute() {
+  const double start_time = WallClockTime();
   const unsigned total_spp = config.width * config.spp + config.height * config.spp;
 
   cudaMemcpyAsync(host_hit_points_info, hit_points_info, sizeof(HitPointPosition)*config.total_hit_points, cudaMemcpyDeviceToHost, stream);
@@ -86,6 +90,7 @@ void CUDAEngine :: bbox_compute() {
 }
 
 void CUDAEngine :: rehash() {
+  const double start_time = WallClockTime();
   kernels::cpu::rehash_impl(host_hit_points_info,
                             config.total_hit_points,
                             host_hash_grid,
@@ -101,6 +106,7 @@ void CUDAEngine :: rehash() {
 }
 
 void CUDAEngine :: generate_photon_paths() {
+  const double start_time = WallClockTime();
   const unsigned size = config.photons_per_iter;
   const unsigned threads_per_block = config.cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
@@ -114,6 +120,7 @@ void CUDAEngine :: generate_photon_paths() {
 }
 
 void CUDAEngine :: advance_photon_paths() {
+  const double start_time = WallClockTime();
   const unsigned size = config.photons_per_iter;
   const unsigned threads_per_block = config.cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
@@ -138,6 +145,7 @@ void CUDAEngine :: advance_photon_paths() {
 }
 
 void CUDAEngine :: accumulate_flux() {
+  const double start_time = WallClockTime();
   const unsigned size = config.total_hit_points;
   const unsigned threads_per_block = config.cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
@@ -154,6 +162,7 @@ void CUDAEngine :: accumulate_flux() {
 
 
 void CUDAEngine :: update_sample_buffer() {
+  const double start_time = WallClockTime();
   cudaMemcpyAsync(host_hit_points, hit_points, sizeof(HitPointRadiance)*config.total_hit_points, cudaMemcpyDeviceToHost, stream);
   cudaStreamSynchronize(stream);
 

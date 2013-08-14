@@ -148,21 +148,21 @@ void advance_eye_paths_impl(
 
 
 void advance_eye_paths(void* buffers[], void* args_orig) {
+  const double start_time = WallClockTime();
 
   // cl_args
   const starpu_args args;
-  starpu_codelet_unpack_args(args_orig, &args);
+  unsigned iteration;
+  starpu_codelet_unpack_args(args_orig, &args, &iteration);
 
   // buffers
   // hit point static info
   HitPointPosition* const hit_points = reinterpret_cast<HitPointPosition* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
-  //const unsigned hit_points_count = STARPU_VECTOR_GET_NX(buffers[0]);
   // eye paths
   EyePath* const eye_paths = reinterpret_cast<EyePath* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
   const unsigned eye_paths_count = STARPU_VECTOR_GET_NX(buffers[1]);
   // seed buffer
   Seed* const seed_buffer = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[2]));
-  //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[2]);
 
 
 
@@ -172,6 +172,9 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
                          args.cpu_scene,
                          args.config->max_eye_path_depth,
                          starpu_combined_worker_get_size());
+
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, starpu_combined_worker_get_size(), iteration, start_time, end_time, "(3) advance_eye_paths");
 }
 
 } } }

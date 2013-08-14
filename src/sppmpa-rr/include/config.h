@@ -91,6 +91,7 @@ struct Config : public beast::program_options::options {
   const char** argv;
 
   // scene
+  string scene_name;
   string scene_dir;
   string scene_file;
   string output_dir;
@@ -122,15 +123,16 @@ struct Config : public beast::program_options::options {
   : beast::program_options::options(desc), argc(_argc), argv((const char**)_argv) {
 
     // scene
-    value("scene_dir",  scene_dir,   string("scenes/simple-mat"), "folder where scene files are stored");
-    value("scene_file", scene_file,  string("simple-mat.scn"), "to find <scene_dir>/<scene_file>");
+    value("scene",      scene_name, string("simple-mat"), "scene name (default = simple-mat)");
+    //value("scene_dir",  scene_dir,   string("scenes/simple-mat"), "folder where scene files are stored");
+    //value("scene_file", scene_file,  string("simple-mat.scn"), "to find <scene_dir>/<scene_file>");
     value("output_dir",    output_dir,  string("."), "output image directory");
     value("output_file",   output_file, string("output.png"), "output image file");
 
     // window
     flag("no_display", no_display, "Supress realtime display?");
-    value("width",   width,  uint(4),          "window width");
-    value("height",  height, uint(4),          "window height");
+    value("width",   width,  uint(320),          "window width");
+    value("height",  height, uint(240),          "window height");
     value("title,t",   title,  string("gama-ppm"), "window title");
     value("fps",       fps,    uint(60), "maximum FPS");
     flag("vsync",      vsync, "V-Sync. Can cause problems sometimes, so defaults to false");
@@ -144,7 +146,7 @@ struct Config : public beast::program_options::options {
     value("max_threads", max_threads, uint(1),  "number of cpu threads");
     value("max_iters",   max_iters,   uint(10), "number of iterations");
 
-    value("chunk_size", engine_chunk_size, unsigned(16/*1024*256*/), "chunk size for ray and photon buffers (defaults to 1024*256)");
+    value("chunk_size", engine_chunk_size, unsigned(1024*256), "chunk size for ray and photon buffers (defaults to 1024*256)");
 
     // now parse the arguments
     parse(_argc, _argv);
@@ -154,6 +156,8 @@ struct Config : public beast::program_options::options {
     min_frame_time = 1.f / fps;
     total_hit_points = width * height * spp * spp;
 
+    scene_dir = "scenes/" + scene_name;
+    scene_file = scene_name + ".scn";
     scene_file  = scene_dir  + '/' + scene_file;
     output_file = output_dir + '/' + output_file;
   }

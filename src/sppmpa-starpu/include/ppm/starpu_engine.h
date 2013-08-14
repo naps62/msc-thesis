@@ -37,6 +37,8 @@ protected:
   unsigned total_spp;
   unsigned handle_index;
 
+  void init_cuda_devices(PtrFreeScene** scenes);
+
   void output();
 
   void init_seed_buffer();

@@ -111,11 +111,13 @@ namespace ppm { namespace kernels { namespace cpu {
 
 
 void advance_photon_paths(void* buffers[], void* args_orig) {
-  // cl_args
+  const double start_time = WallClockTime();
 
+  // cl_args
   const starpu_args args;
   unsigned hit_points_count;
-  starpu_codelet_unpack_args(args_orig, &args, &hit_points_count);
+  unsigned iteration;
+  starpu_codelet_unpack_args(args_orig, &args, &hit_points_count, &iteration);
 
   // buffers
   PhotonPath* const photon_paths = reinterpret_cast<PhotonPath* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
@@ -154,6 +156,9 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
                             indexes,
                             *inv_cell_size,
                             starpu_combined_worker_get_size());
+
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, starpu_combined_worker_get_size(), iteration, start_time, end_time, "(7) advance_photon_paths");
 
 }
 

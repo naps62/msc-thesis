@@ -44,12 +44,14 @@ void accum_flux_impl(
 
 
 void accum_flux(void* buffers[], void* args_orig) {
+  const double start_time = WallClockTime();
 
   // cl_args
   const starpu_args args;
   float alpha;
   unsigned photons_traced;
-  starpu_codelet_unpack_args(args_orig, &args, &alpha, &photons_traced);
+  unsigned iteration;
+  starpu_codelet_unpack_args(args_orig, &args, &alpha, &photons_traced, &iteration);
 
   // buffers
   const HitPointPosition* const hit_points_info = reinterpret_cast<const HitPointPosition* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
@@ -65,6 +67,9 @@ void accum_flux(void* buffers[], void* args_orig) {
                   photons_traced,
                   *photon_radius2,
                   starpu_combined_worker_get_size());
+
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, starpu_combined_worker_get_size(), iteration, start_time, end_time, "(8) accum_flux");
 }
 
 } } }

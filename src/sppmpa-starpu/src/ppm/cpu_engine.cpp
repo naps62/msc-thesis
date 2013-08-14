@@ -31,28 +31,39 @@ CPUEngine :: ~CPUEngine() {
 //
 
 void CPUEngine :: init_seed_buffer() {
+  const double start_time = WallClockTime();
   kernels::cpu::init_seeds_impl(&seeds[0], seeds.size(), iteration, config.max_threads);
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, 0, config.max_threads, start_time, end_time, "(1) init_seeds");
 }
 
 void CPUEngine :: generate_eye_paths() {
+  const double start_time = WallClockTime();
   kernels::cpu::generate_eye_paths_impl(&eye_paths[0],
                                         &seeds[0],
                                         config.width,
                                         config.height,
                                         scene,
                                         config.max_threads);
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, config.max_threads, iteration, start_time, end_time, "(2) generate_eye_paths");
 }
 
 void CPUEngine :: advance_eye_paths() {
+  const double start_time = WallClockTime();
   kernels::cpu::advance_eye_paths_impl(&hit_points_info[0],
                                        &eye_paths[0], eye_paths.size(),
                                        &seeds[0],
                                        scene,
                                        config.max_eye_path_depth,
                                        config.max_threads);
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, config.max_threads, iteration, start_time, end_time, "(3) advance_eye_paths");
+
 }
 
 void CPUEngine :: bbox_compute() {
+  const double start_time = WallClockTime();
   const unsigned total_spp = config.width * config.spp + config.height * config.spp;
 
   kernels::cpu::bbox_compute_impl(&hit_points_info[0], hit_points_info.size(),
@@ -61,9 +72,12 @@ void CPUEngine :: bbox_compute() {
                                   iteration,
                                   total_spp,
                                   config.alpha);
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, 1, iteration, start_time, end_time, "(4) bbox_compute");
 }
 
 void CPUEngine :: rehash() {
+  const double start_time = WallClockTime();
   kernels::cpu::rehash_impl(&hit_points_info[0],
                             hit_points_info.size(),
                             &hash_grid[0],
@@ -72,17 +86,24 @@ void CPUEngine :: rehash() {
                             &inv_cell_size,
                             bbox,
                             current_photon_radius2);
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, 1, iteration, start_time, end_time, "(5) rehash");
 }
 
 void CPUEngine :: generate_photon_paths() {
+  const double start_time = WallClockTime();
   kernels::cpu::generate_photon_paths_impl(&live_photon_paths[0], live_photon_paths.size(),
                                            &seeds[0],  // seed_buffer_count,
                                            scene,
                                            config.max_threads);
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, config.max_threads, iteration, start_time, end_time, "(6) generate_photon_paths");
+
 
 }
 
 void CPUEngine :: advance_photon_paths() {
+  const double start_time = WallClockTime();
   kernels::cpu::advance_photon_paths_impl(&live_photon_paths[0], live_photon_paths.size(),
                                           &seeds[0],  // seed_buffer_count,
                                           scene,
@@ -98,9 +119,13 @@ void CPUEngine :: advance_photon_paths() {
                                           &hash_grid_indexes[0],
                                           inv_cell_size,
                                           config.max_threads);
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, config.max_threads, iteration, start_time, end_time, "(7) advance_photon_paths");
+
 }
 
 void CPUEngine :: accumulate_flux() {
+  const double start_time = WallClockTime();
 
   kernels::cpu::accum_flux_impl(&hit_points_info[0],
                                 &hit_points[0],
@@ -109,15 +134,23 @@ void CPUEngine :: accumulate_flux() {
                                 config.photons_per_iter,
                                 current_photon_radius2,
                                 config.max_threads);
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, config.max_threads, iteration, start_time, end_time, "(8) accum_flux");
 }
 
 
 void CPUEngine :: update_sample_buffer() {
+  const double start_time = WallClockTime();
   kernels::cpu::update_sample_buffer_impl(&hit_points[0], hit_points.size(), config.width, sample_buffer, config.max_threads);
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, config.max_threads, iteration, start_time, end_time, "(9) update_sample_buffer");
 }
 
 void CPUEngine :: splat_to_film() {
+  const double start_time = WallClockTime();
   kernels::cpu::splat_to_film_impl(sample_buffer, film, config.width, config.height);
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, 1, iteration, start_time, end_time, "(10) splat_to_film");
 }
 
 void CPUEngine :: before() {

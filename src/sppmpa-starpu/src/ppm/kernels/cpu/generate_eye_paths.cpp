@@ -17,8 +17,8 @@ using ppm::EyePath;
 namespace ppm { namespace kernels { namespace cpu {
 
 void generate_eye_paths_impl(
-    EyePath* const eye_paths, // const unsigned eye_path_count,
-    Seed* const seed_buffer,  // const unsigned seed_buffer_count,
+    EyePath* const eye_paths,
+    Seed* const seed_buffer,
     const unsigned width,
     const unsigned height,
     const PtrFreeScene* scene,
@@ -33,8 +33,8 @@ void generate_eye_paths_impl(
       EyePath& eye_path = eye_paths[index];
 
       eye_path = EyePath();
-      eye_path.scr_x = x + (/*sx +*/ floatRNG(seed_buffer[index])) /** sample_weight*/ - 0.5f;
-      eye_path.scr_y = y + (/*sy +*/ floatRNG(seed_buffer[index])) /** sample_weight*/ - 0.5f;
+      eye_path.scr_x = x + (floatRNG(seed_buffer[index])) - 0.5f;
+      eye_path.scr_y = y + (floatRNG(seed_buffer[index])) - 0.5f;
 
       float u0 = floatRNG(seed_buffer[index]);
       float u1 = floatRNG(seed_buffer[index]);
@@ -52,26 +52,29 @@ void generate_eye_paths_impl(
 
 
 void generate_eye_paths(void* buffers[], void* args_orig) {
+  const double start_time = WallClockTime();
+
   // cl_args
   const starpu_args args;
-  starpu_codelet_unpack_args(args_orig, &args);
+  unsigned iteration;
+  starpu_codelet_unpack_args(args_orig, &args, &iteration);
 
   // buffers
   // eye_paths
-  EyePath* const eye_paths      = reinterpret_cast<EyePath* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
-  //const unsigned eye_path_count = STARPU_VECTOR_GET_NX(buffers[0]);
+  EyePath* const eye_paths = reinterpret_cast<EyePath* const>(STARPU_VECTOR_GET_PTR(buffers[0]));
   // seeds
-  Seed* const seed_buffer          = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
-  //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[1]);
+  Seed* const seed_buffer  = reinterpret_cast<Seed* const>(STARPU_VECTOR_GET_PTR(buffers[1]));
 
 
-  generate_eye_paths_impl(eye_paths,   // eye_path_count,
-                          seed_buffer, // seed_buffer_count,
+  generate_eye_paths_impl(eye_paths,
+                          seed_buffer,
                           args.config->width,
                           args.config->height,
                           args.cpu_scene,
                           starpu_combined_worker_get_size());
 
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, starpu_combined_worker_get_size(), iteration, start_time, end_time, "(2) generate_eye_paths");
 
 }
 

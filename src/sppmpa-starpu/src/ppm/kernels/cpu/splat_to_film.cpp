@@ -30,17 +30,22 @@ void splat_to_film_impl(
 
 
 void splat_to_film(void* buffers[], void* args_orig) {
+  const double start_time = WallClockTime();
 
   // cl_args
   unsigned width;
   unsigned height;
-  starpu_codelet_unpack_args(args_orig, &width, &height);
+  unsigned iteration;
+  starpu_codelet_unpack_args(args_orig, &width, &height, &iteration);
 
   // buffers
   luxrays::SampleBuffer** buffer = (luxrays::SampleBuffer**) STARPU_VARIABLE_GET_PTR(buffers[0]);
   Film** film = (Film**) STARPU_VARIABLE_GET_PTR(buffers[1]);
 
   splat_to_film_impl(*buffer, *film, width, height);
+
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, 1, iteration, start_time, end_time, "(10) splat_to_film");
 }
 
 } } }

@@ -144,14 +144,12 @@ void HashGridLookup::AddFlux(HitPointRadianceFlux *workerHitPoints, PointerFreeS
   std::list<unsigned int>* hps = hashGrid[gridEntry];
   if (hps) {
     std::list<unsigned int>::iterator iter = hps->begin();
-    static int x; x = 0;
     while (iter != hps->end()) {
-      unsigned index = *iter;
       HitPointPositionInfo *hp = engine->GetHitPointInfo(*iter);
 
       HitPointRadianceFlux *ihp = &workerHitPoints[*iter++];
 
-      Vector v = hp->position - hitPoint;
+      //Vector v = hp->position - hitPoint;
 
 #if defined USE_SPPM || defined USE_PPM
       //if ((Dot(hp->normal, shadeN) > 0.5f) && (Dot(v, v) <= ihp->accumPhotonRadius2)) {

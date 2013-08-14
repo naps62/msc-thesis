@@ -149,10 +149,14 @@ void __global__ advance_eye_paths_impl(
 
 
 void advance_eye_paths(void* buffers[], void* args_orig) {
+  int device_id;
+  cudaGetDevice(&device_id);
+  const double start_time = WallClockTime();
 
   // cl_args
   starpu_args args;
-  starpu_codelet_unpack_args(args_orig, &args);
+  unsigned iteration;
+  starpu_codelet_unpack_args(args_orig, &args, &iteration);
 
   // buffers
   // hit point static info
@@ -163,11 +167,9 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
   // seed buffer
   Seed* const seed_buffer = (Seed*)STARPU_VECTOR_GET_PTR(buffers[2]);
 
+  // cuda dims
   const unsigned threads_per_block = args.config->cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
-
-  int device_id;
-  cudaGetDevice(&device_id);
 
   advance_eye_paths_impl
   <<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
@@ -180,6 +182,9 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
 
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
   CUDA_SAFE(cudaGetLastError());
+
+  const double end_time = WallClockTime();
+  task_info("GPU", device_id, 0, iteration, start_time, end_time, "(3) advance_eye_paths");
 }
 
 } } }

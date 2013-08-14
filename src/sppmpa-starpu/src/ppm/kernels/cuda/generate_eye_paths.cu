@@ -50,17 +50,20 @@ void __global__ generate_eye_paths_impl(
 
 
 void generate_eye_paths(void* buffers[], void* args_orig) {
+  int device_id;
+  cudaGetDevice(&device_id);
+  const double start_time = WallClockTime();
+
   // cl_args
   const starpu_args args;
-  starpu_codelet_unpack_args(args_orig, &args);
+  unsigned iteration;
+  starpu_codelet_unpack_args(args_orig, &args, &iteration);
 
   // buffers
   // eye_paths
   EyePath* const eye_paths = (EyePath*)STARPU_VECTOR_GET_PTR(buffers[0]);
-  //const unsigned eye_path_count = STARPU_VECTOR_GET_NX(buffers[0]);
   // seeds
   Seed* const seed_buffer  = (Seed*)STARPU_VECTOR_GET_PTR(buffers[1]);
-  //const unsigned seed_buffer_count = STARPU_VECTOR_GET_NX(buffers[1]);
 
   const unsigned width = args.config->width;
   const unsigned height = args.config->height;
@@ -68,18 +71,18 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
   const dim3 threads_per_block = dim3(block_side,                block_side);
   const dim3 n_blocks          = dim3(std::ceil(width/(float)threads_per_block.x), std::ceil(height/(float)threads_per_block.y));
 
-  int device_id;
-  cudaGetDevice(&device_id);
-
   generate_eye_paths_impl<<<n_blocks, threads_per_block, 0, starpu_cuda_get_local_stream()>>>
-   (eye_paths,   // eye_path_count,
-    seed_buffer, // seed_buffer_count,
+   (eye_paths,
+    seed_buffer,
     width,
     height,
     args.gpu_scene[device_id]);
 
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
   CUDA_SAFE(cudaGetLastError());
+
+  const double end_time = WallClockTime();
+  task_info("GPU", device_id, 0, iteration, start_time, end_time, "(2) generate_eye_paths");
 }
 
 } } }

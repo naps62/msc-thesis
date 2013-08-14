@@ -58,9 +58,11 @@ namespace ppm { namespace kernels { namespace cpu {
 
 
   void generate_photon_paths(void* buffers[], void* args_orig) {
+  const double start_time = WallClockTime();
 
     const starpu_args args;
-    starpu_codelet_unpack_args(args_orig, &args);
+    unsigned iteration;
+    starpu_codelet_unpack_args(args_orig, &args, &iteration);
 
     // buffers
     // photon paths
@@ -74,6 +76,10 @@ namespace ppm { namespace kernels { namespace cpu {
                                seed_buffer,  // seed_buffer_count,
                                args.cpu_scene,
                                starpu_combined_worker_get_size());
+
+  const double end_time = WallClockTime();
+  task_info("CPU", 0, starpu_combined_worker_get_size(), iteration, start_time, end_time, "(6) generate_photon_paths");
+
   }
 
 } } }

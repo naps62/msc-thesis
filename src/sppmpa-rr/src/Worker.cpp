@@ -220,17 +220,7 @@ void Worker::ProcessIterations(PPM* engine) {
     AccumulateFluxSPPM(iterationCount, photonPerIteration);
 #endif
 #if defined USE_SPPMPA
-    for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
-      HitPointRadianceFlux& hpi = *GetHitPoint(i);
-      std::cout << i << " " << hpi.accumReflectedFlux << '\n';
-    }
     AccumulateFluxSPPMPA(iterationCount, photonPerIteration);
-    for(unsigned i = 0; i < engine->hitPointTotal; ++i) {
-      HitPointRadianceFlux& hpi = *GetHitPoint(i);
-      std::cout << i << " " << hpi.radiance << '\n';
-    }
-    std::cout << "\n\n";
-    if (iterationCount == config->max_iters) exit(0);
 #endif
 #if defined USE_PPMPA
 //    __BENCH.LOOP_STAGE_START("Process Iterations > Iterations > Radiance calc");

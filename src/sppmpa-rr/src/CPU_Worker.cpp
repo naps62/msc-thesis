@@ -416,7 +416,7 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
       todoPhotonCount++;
     }
 
-    uint oldc = rayBuffer->GetRayCount();
+    //uint oldc = rayBuffer->GetRayCount();
 
     rayBuffer->Reset();
 
