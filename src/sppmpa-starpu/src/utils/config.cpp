@@ -58,11 +58,19 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   scene_file = scene_dir + '/' + scene_file;
 }
 
-using std::cerr;
+using std::cout;
 using std::stringstream;
 boost::mutex config_mutex;
 
 #include <boost/thread.hpp>
+
+void info_start() {
+  stringstream ss;
+  ss << "<exec>\n";
+
+  boost::lock_guard<boost::mutex> lock(config_mutex);
+  cout << ss.str();
+}
 
 void task_info(
     const string device,
@@ -85,5 +93,17 @@ void task_info(
   ss << "</task>\n";
 
   boost::lock_guard<boost::mutex> lock(config_mutex);
-  cerr << ss.str();
+  cout << ss.str();
+}
+
+void info_end(double start_time, double end_time, unsigned iterations, unsigned long long total_photons) {
+  stringstream ss;
+    ss << "<iterations>" << iterations << "</iterations>\n";
+    ss << "<total_photons>" << total_photons << "</total_photons>\n";
+    ss << "<global_start_time>" << start_time << "</global_start_time>\n";
+    ss << "<global_end_time>" << end_time << "</global_end_time>\n";
+  ss << "</exec>\n";
+
+  boost::lock_guard<boost::mutex> lock(config_mutex);
+  cout << ss.str();
 }

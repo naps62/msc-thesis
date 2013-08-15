@@ -48,6 +48,7 @@ public:
   virtual void render() {
     this->before();
     start_time = WallClockTime();
+    info_start();
 
     this->init_seed_buffer();
 
@@ -86,6 +87,7 @@ public:
 
     wait_for_all();
     end_time = WallClockTime();
+    info_end(start_time, end_time, iteration, total_photons_traced);
     fprintf(stderr, "Total Time:\n%f\n", end_time - start_time);
     this->after();
   }

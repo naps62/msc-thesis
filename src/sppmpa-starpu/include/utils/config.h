@@ -57,7 +57,7 @@ struct Config : public beast::program_options::options {
   Config(const char *desc, int _argc, char **_argv);
 };
 
-
+void info_start();
 
 void task_info(
     const string device,
@@ -67,5 +67,7 @@ void task_info(
     const double start_time,
     const double end_time,
     const string info);
+
+void info_end(double start_time, double end_time, unsigned iterations, unsigned long long total_photons);
 
 #endif // _UTILS_CONFIG_H_
