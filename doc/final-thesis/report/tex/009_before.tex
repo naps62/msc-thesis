@@ -5,7 +5,9 @@
 \pdfbookmark[1]{Contents}{contents}
 \tableofcontents
 
-\newpage \pdfbookmark[1]{Glossary}{glossary}
+\newpage
+
+\pdfbookmark[1]{Glossary}{glossary}
 \section*{Glossary}
 \begin{acronym}
   \acro{AVX}{Advanced Vector Extensions}
@@ -26,6 +28,7 @@
   \acro{OpenCL}{Open Computing Language}
   \acro{OpenMP}{Open Multi-Processing}
   \acro{PCIe}{Peripheral Component Interconnect Express}
+  \acro{StarPU}{\todo{This}}
   \acro{SIMD}{Single Instruction, Multiple Data}
   \acro{SIMT}{Single Instruction, Multiple Threads}
   \acro{SM}{Streaming Multiprocessor}
@@ -33,10 +36,25 @@
   \acro{TBB}{Threading Building Blocks: C++ template library for task parallelism}
 \end{acronym}
 
-%\newpage \pdfbookmark{List of Tables}{tables}
-%\listoftables
-\newpage \pdfbookmark[1]{List of Figures}{figures}
-\listoffigures
 \newpage
+\pdfbookmark[1]{List of Figures}{figures}
+\listoffigures
+
+\newpage
+\pdfbookmark[1]{List of Tables}{tables}
+\listoftables
+
+\newpage
+\pdfbookmark[1]{List of Listings}{listings}
+\lstlistoflistings
+
+\newpage
+\pdfbookmark[1]{List of Algorithms}{algs}
+\listofalgorithms
+
+\newpage
+
+\cleardoublepage
+\pagenumbering{arabic}
 
 \end{document}

@@ -3,15 +3,14 @@ FLAGS=-pvc -quiet
 
 .PHONY: inputs default
 
+default: inputs
+	$(CMD) $(FLAGS) main
+
 inputs:
+	@echo "generating tex/_inputs.tex"
 	@ls tex/ | egrep ^[^_] | sed "s/\([^.]*\)\.tex/\\\\subfile{tex\/\1}/" > tex/_inputs.tex
 
-default: inputs
-	$(CMD) $(FLAGS)
-
 %:
-	echo $@
-	find tex -regex "tex/$@.*\.tex"
 	find tex -regex "tex/$@.*\.tex" | xargs $(CMD) $(FLAGS)
 
 clean:
