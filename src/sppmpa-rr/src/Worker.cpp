@@ -143,17 +143,15 @@ void Worker::ProcessIterations(PPM* engine) {
 
   UpdateBBox();
 
-  uint iter = 0;
-  while (!boost::this_thread::interruption_requested() && iter < config->max_iters) {
-    ++iter;
+  while (!boost::this_thread::interruption_requested()) {
 
     double start = WallClockTime();
 
-    iterationCount = engine->IncIteration();
-
-    if (engine->GetIterationNumber() > MAX_ITERATIONS) {
+    if (engine->GetIterationNumber() > config->max_iters) {
       break;
     }
+
+    iterationCount = engine->IncIteration();
 
     photonPerIteration = engine->photonsFirstIteration;
 
@@ -208,11 +206,12 @@ void Worker::ProcessIterations(PPM* engine) {
     profiler->additeratingTime(WallClockTime() - start);
     profiler->addIteration(1);
 
-    if (profiler->iterationCount % 20 == 0)
-      profiler->printStats(deviceID);
+    //if (profiler->iterationCount % 20 == 0)
+    //  profiler->printStats(deviceID);
 
-    if (iterationCount % 100 == 0)
-      engine->SaveImpl(to_string<uint> (iterationCount, std::dec) + engine->fileName);
+    //if (iterationCount % 100 == 0)
+    //  engine->SaveImpl(to_string<uint> (iterationCount, std::dec) + engine->fileName);
+    printf("iteration %d finished\n", iterationCount);
   }
 
   //profiler->printStats(deviceID);
@@ -289,7 +288,7 @@ void Worker::UpdateSampleFrameBuffer(unsigned long long iterationPhotonCount) {
 #pragma omp parallel for schedule(guided)
 #endif
   for (unsigned int i = 0; i < engine->hitPointTotal; ++i) {
-    HitPointPositionInfo *hp = GetHitPointInfo(i);
+    // HitPointPositionInfo *hp = GetHitPointInfo(i);
     HitPointRadianceFlux *ihp = GetHitPoint(i);
 
 #if defined USE_SPPM || defined USE_SPPMPA
@@ -301,9 +300,9 @@ void Worker::UpdateSampleFrameBuffer(unsigned long long iterationPhotonCount) {
     sampleBuffer->SplatSample(scrX, scrY, ihp->radiance);
 #endif
 
-#if defined USE_PPM || defined USE_PPMPA
-    sampleBuffer->SplatSample(hp->scrX, hp->scrY, ihp->radiance);
-#endif
+// #if defined USE_PPM || defined USE_PPMPA
+//     sampleBuffer->SplatSample(hp->scrX, hp->scrY, ihp->radiance);
+// #endif
 
   }
 
