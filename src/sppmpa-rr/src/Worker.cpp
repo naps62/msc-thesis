@@ -142,7 +142,6 @@ void Worker::ProcessIterations(PPM* engine) {
   resetRayBuffer();
 
   UpdateBBox();
-
   while (!boost::this_thread::interruption_requested()) {
 
     double start = WallClockTime();

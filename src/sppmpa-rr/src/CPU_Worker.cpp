@@ -418,7 +418,7 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
 
     //uint oldc = rayBuffer->GetRayCount();
 
-    rayBuffer->Reset();
+    //rayBuffer->Reset();
 
     /*for (unsigned int i = 0; i < oldc; ++i) {
 
@@ -441,7 +441,6 @@ u_int64_t CPU_Worker::AdvancePhotonPath(u_int64_t photonTarget) {
       }
     }*/
   }
-
 
   rayBuffer->Reset();
 
