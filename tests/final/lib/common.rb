@@ -6,17 +6,18 @@ require 'pry'
 
 HOME      = ENV['HOME']
 NODE      = `hostname`.split.first
+ROOT      = "#{HOME}/projects/msc-thesis"
 BIN_ROOT  = "#{HOME}/projects/msc-thesis/bin"
 TEST_ROOT = "#{HOME}/projects/msc-thesis/tests/final"
 KBEST     = "#{HOME}/projects/msc-thesis/tests/final/lib/kbest.rb"
 
-def run_all(exec, args)
+def run_all(exec, test_name, args, env = "")
   combinations = args.values.first.product(*args.values[1..-1])
 
   combinations.each do |arg|
-    test_name = arg.each_with_index.map { |value, i| "#{args.keys[i]}-#{value}"}.join('__')
-    this_test_root = "#{TEST_ROOT}/#{exec}/#{test_name}"
-    FileUtils.mkdir this_test_root
+    args_name = arg.each_with_index.map { |value, i| "#{args.keys[i]}-#{value}"}.join('__')
+    this_test_root = "#{TEST_ROOT}/#{exec}/#{NODE}/#{test_name}/#{args_name}"
+    FileUtils.mkdir_p this_test_root
 
     kbest_ops   = [
       "--out #{this_test_root}",
@@ -28,12 +29,12 @@ def run_all(exec, args)
 
     args_with_keys = arg.each_with_index.map { |value, i| "--#{args.keys[i]} #{value}"}.join('  ')
     cmd = "#{BIN_ROOT}/#{exec} #{args_with_keys} --output_dir #{this_test_root}"
-    single_run(kbest_ops, cmd)
+    single_run(env, kbest_ops, cmd)
   end
 end
 
-def single_run(ops, cmd)
-  full_cmd = "#{KBEST} #{ops} \"#{cmd}\""
+def single_run(env, ops, cmd)
+  full_cmd = "cd #{ROOT} && #{KBEST} #{ops} \"#{env} #{cmd}\""
   puts   full_cmd
   system full_cmd
 end
