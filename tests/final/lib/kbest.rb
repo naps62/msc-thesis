@@ -21,6 +21,8 @@ class Execution
 
   def initialize(command)
     stdin, out, err, @thread = Open3.popen3(command)
+    exit_status = @thread.value
+    puts "finished"
     @out = out.readlines
     @err = err.readlines
     @value = @err.last.to_f
