@@ -16,7 +16,7 @@ def run_all(exec, test_name, args, env = "")
 
   combinations.each do |arg|
     args_name = arg.each_with_index.map { |value, i| "#{args.keys[i]}-#{value}"}.join('__')
-    this_test_root = "#{TEST_ROOT}/#{exec}/#{NODE}/#{test_name}/#{args_name}"
+    this_test_root = "#{TEST_ROOT}/#{exec}/#{test_name}/#{NODE}/#{args_name}"
     FileUtils.mkdir_p this_test_root
 
     kbest_ops   = [
