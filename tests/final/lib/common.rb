@@ -28,7 +28,7 @@ def run_all(exec, test_name, args, env = "")
     ].join(' ')
 
     args_with_keys = arg.each_with_index.map { |value, i| "--#{args.keys[i]} #{value}"}.join('  ')
-    cmd = "#{BIN_ROOT}/#{exec} #{args_with_keys} --output_dir #{this_test_root}"
+    cmd = "#{BIN_ROOT}/#{exec} #{args_with_keys} --no_display --output_dir #{this_test_root}"
     single_run(env, kbest_ops, cmd)
   end
 end
