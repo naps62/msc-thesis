@@ -1,13 +1,9 @@
-\documentclass[a4paper,abstract=on,twoside,halfparskip-]{scrartcl}
+\documentclass[a4paper,12pt,abstract=on,twoside,openright]{scrbook}
 \setlength\parindent{1.2em}
 
 \usepackage[final=false]{../../common/naps62}
 
 \newcommand{\common}[1]{\input{../../common/#1}}
-
-\newcommand{\subsubsubsection}[1]{\paragraph{#1\hfill}\hfill
-
-}
 
 % include custom mathematical definitions
 \common{equations/defs}
@@ -15,13 +11,14 @@
 \hypersetup{pdfauthor={Miguel Branco Palhas}}
 \hypersetup{pdftitle={Thesis: An Evaluation of the GAMA/StarPU Frameworks for Heterogeneous Platforms: The Progressive Photon Mapping Algorithm}}
 
-\bibliography{../../common/bib/parallel,../../common/bib/gama,../../common/bib/gpu,../../common/bib/verbal,../../common/bib/photon_mapping}
+\addbibresource{../../common/bib/parallel,../../common/bib/gama,../../common/bib/gpu,../../common/bib/verbal,../../common/bib/photon_mapping}
 
 % reduce chapter margins
 \renewcommand{\chapterheadstartvskip}{\vspace*{-1.6\baselineskip}}
 
 \begin{document}
-\pdfbookmark[1]{Cover}{cover}
+
+\pdfbookmark{Cover}{cover}
 \pagenumbering{roman}
 % TODO acrescentar capa depois
 %\includepdf[pages=-]{misc/cover-mei}
@@ -41,16 +38,28 @@
   \fancyfoot[RO,LE]{\thepage}
 }
 
+% frontmatter
+\frontmatter
+\setcounter{page}{3}
+\subfile{frontmatter/01_acknowledgments}
+\subfile{frontmatter/02_abstract}
+\subfile{frontmatter/03_resumo}
+\subfile{frontmatter/04_contents}
+
+\cleardoublepage
+\pagenumbering{arabic}
+
 
 %
 % include all tex/ chapter files
 %
 \input{tex/_inputs}
-%\bibliographystyle{../../common/IEEE}
+
+
 \nocite{*}
-\newpage % force the bookmark to go to the new page
-\pdfbookmark[1]{References}{references}
-\printbibliography[title=References]
+\pdfbookmark{References}{references}
+\printbibliography
+\appendix
 
 \newpage
 \pdfbookmark[1]{Signatures}{signatures}

@@ -2,13 +2,14 @@
 
 \begin{document}
 
-\pdfbookmark[1]{Contents}{contents}
+\cleardoublepage
+\phantomsection
+\pdfbookmark{Contents}{Contents}
 \tableofcontents
 
-\newpage
-
-\pdfbookmark[1]{Glossary}{glossary}
-\section*{Glossary}
+\cleardoublepage
+\phantomsection
+\chapter*{Glossary}
 \begin{acronym}
   \acro{AVX}{Advanced Vector Extensions}
   \acro{BRDF}{Bidirectional Reflectance Distribution Function)}
@@ -36,25 +37,24 @@
   \acro{TBB}{Threading Building Blocks: C++ template library for task parallelism}
 \end{acronym}
 
-\newpage
-\pdfbookmark[1]{List of Figures}{figures}
+\cleardoublepage
+\phantomsection
+\pdfbookmark{List of Figures}{figures}
 \listoffigures
 
-\newpage
-\pdfbookmark[1]{List of Tables}{tables}
+\cleardoublepage
+\phantomsection
+\pdfbookmark{List of Tables}{tables}
 \listoftables
 
-\newpage
-\pdfbookmark[1]{List of Listings}{listings}
+\cleardoublepage
+\phantomsection
+\pdfbookmark{List of Listings}{listings}
 \lstlistoflistings
 
-\newpage
-\pdfbookmark[1]{List of Algorithms}{algs}
-\listofalgorithms
-
-\newpage
-
 \cleardoublepage
-\pagenumbering{arabic}
+\phantomsection
+\pdfbookmark{List of Algorithms}{algs}
+\listofalgorithms
 
 \end{document}

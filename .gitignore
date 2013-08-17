@@ -41,6 +41,8 @@ main-blx.bib
 *.lof
 *.log
 *.lot
+*.loa
+*.lol
 *.nav
 *.nlo
 *.out
