@@ -4,6 +4,13 @@
 \usepackage[final=false]{../../common/naps62}
 
 \newcommand{\common}[1]{\input{../../common/#1}}
+\newcommand{\image}[4][]{%
+  \begin{figure}[!htp]%
+    \centering%
+    \includegraphics[#1]{#2}%
+    \caption{#3 \label{#4}}%
+  \end{figure}
+}
 
 % include custom mathematical definitions
 \common{equations/defs}
@@ -11,7 +18,7 @@
 \hypersetup{pdfauthor={Miguel Branco Palhas}}
 \hypersetup{pdftitle={Thesis: An Evaluation of the GAMA/StarPU Frameworks for Heterogeneous Platforms: The Progressive Photon Mapping Algorithm}}
 
-\addbibresource{../../common/bib/parallel,../../common/bib/gama,../../common/bib/gpu,../../common/bib/verbal,../../common/bib/photon_mapping}
+\addbibresource{../../common/bib/parallel,../../common/bib/gama,../../common/bib/starpu,../../common/bib/gpu,../../common/bib/verbal,../../common/bib/photon_mapping}
 
 % reduce chapter margins
 \renewcommand{\chapterheadstartvskip}{\vspace*{-1.6\baselineskip}}
@@ -50,10 +57,6 @@
 \pagenumbering{arabic}
 
 
-%
-% include all tex/ chapter files
-%
-%\input{tex/_inuts}
 \subfile{tex/100_introduction}
 \subfile{tex/200_background}
 \subfile{tex/300_gama}
@@ -62,17 +65,16 @@
 \subfile{tex/600_implementation}
 \subfile{tex/700_results}
 \subfile{tex/800_conclusions}
+\subfile{tex/900_future}
 \subfile{tex/999_todo}
 
 
-\nocite{*}
+\cleardoublepage
 \pdfbookmark{References}{references}
+\nocite{*}
 \printbibliography
 \appendix
-
-\newpage
-\pdfbookmark[1]{Signatures}{signatures}
-% TODO é preciso parecer?
-%\includepdf[pages=-]{../advisor_declaration/final}
+\subfile{appendix/A_test_env}
+\subfile{appendix/Z_signatures}
 
 \end{document}

@@ -32,11 +32,7 @@ Each \sm can access a total of 64KB of private memory, which can be configured t
 
 Additionally, all \acsp{SM} share a common 768KB L2 cache, and a final level of global memory, external to the chip, that can go up to 6GB of GDDR5, with a bandwidth of 192.6 GB/s in the Tesla C2070 \cite{NVIDIA:fermi}.
 
-\begin{figure}[!htp]
-  \centering
-  \includegraphics[width=0.6\textwidth]{arch_fermi}
-  \caption{Overview of the Fermi architecture \label{fig:fermi}}
-\end{figure}
+\image[width=0.5\textwidth]{arch_fermi}{Overview of the Fermi Architecture}{fig:fermi}
 
 This architecture is backed by a hardware-based thread scheduler, located within each \acs{SM}, that attempt to feed the execution unit with threads grouped in blocks of 32, or \textit{warps}. All threads within a warp are considered to be independent from each other, so there is no need for dependency checking. Any thread that is waiting for memory accesses to be finished will remain unscheduled until the required data is available. Since the scheduling is made directly via hardware, the switch between threads is nearly free, at least when compared with thread scheduling on a \acs{CPU}. As a result, this strategy works better when the total amount of threads competing for resources is much higher than the amount of execution units, allowing for the latency of memory accesses to be hidden away by instantly scheduling a different \textit{warp}, effectively hiding memory latency while still keeping execution units busy. This is very different from \acs{CPU} scheduling policies, where switching between threads requires a context switch, which takes considerably longer, making that approach not as feasible as for a \gpus.
 
@@ -47,20 +43,15 @@ This architecture is backed by a hardware-based thread scheduler, located within
 
 The follow-up generation to Fermi is in many ways similar to its predecessor. One of the most notorious change is the increase in the total amount of available CUDA cores, capable of going up to 2880 in high-end devices, due to the redesign of the \acl{SM}, now called \smx, each one with 192 \cuda Cores, although working at lower frequencies than before, due to the removal of shader frequency, a compromise to make room for the extra \cuda Cores. The entire chip now works based on the core frequency. Overall, individual core efficiency is lowered, but the global system becomes more efficient.
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.6\textwidth]{arch_kepler}
-  \caption{Overview of the Kepler architecture \label{fig:kepler}}
-\end{figure}
+\image[width=0.5\textwidth]{arch_kepler}{Overview of the Kepler Architecture}{fig:kepler}
 
 The memory hierarchy was also upgraded over the previous generations, with the maximum amount of registers per thread going from 63 to 255, the addition of an extra 48KB L1 read-only cache, while still maintaining the original L1 cache (which now also allows a configuration of 32KB shared + 32KB cache), and L2 cache going up to a maximum of 1.5MB with increased bandwidth. Memory reads have been upgraded to allow for 256-bit blocks to be read, as opposed to 128-bit in Fermi \cite{NVIDIA:kepler}.
 
 The programming model has been extended with the addition of dynamic parallelism, allowing \acs{CUDA} thread to spawn new threads, a feature not possible with previous versions. This is an important feature for irregular algorithms, such as photon mapping. It is also possible to invoke multiple kernels for a single \gpu, transparently dividing them between the available \smxs.
 
 
+\section{Intel MIC}
 \itodo{Xeon Phi}
-
-
 
 
 \section{Heterogeneous Platforms}

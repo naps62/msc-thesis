@@ -2,8 +2,43 @@
 
 \begin{document}
 
-\chapter{The StarPU Framework} \label{section:starpu}
+\chapter{The \starpu Framework} \label{section:starpu}
+
 
 \itodo{falar de todo o tipo de coisas aqui}
 
+\starpu \cite{augonnet2011starpu} is a unified runtime system consisting on both software and a runtime API that aims to allow programmers of computational intensive applications to more easily exploit the power of avaiable devices, supporting \cpus, \gpus and Cell \todo{ref aqui para o cell? ou subsection algures a falar dele talvez}.
+
+Much like \gama, this framework frees the programmer of the workload scheduling and data consistency inherent from a \hetplat. Task submissions are handled by the \starpu task scheduler, and data consistency is ensured via a data managemente library.
+
+\section{Task Scheduling}
+\itodo{this}
+
+The framework employs a task based programming model. Computational kernels must be encapsulated within a task. A given kernel can be implemented in multiple ways (i.e. for \cpus or for \cuda), and \starpu will handle the decision of where and when the task should be executed, based on a task scheduling policy.
+
+Data manipulated by a task is automatically transferred between the accelerators and the host device, ensuring memory consistency, freeing the programmer from dealing directly with scheduling issues, and the data transfers and other details associated with it.
+
+
+\section{Dependencies}
+\itodo{this}
+
+\starpu automatically buils a dependency graph of all submitted tasks, and keeps them in a pool of \emph{frozen tasks}, passing them onto the scheduler once all dependencies are met.
+
+Dependencies are implicitly given by the data manipulated by the task. Each task receives a set of buffers, each one corresponding to a piece of data managed by \starpu data management library, and will wait until all the buffers from which it must read are ready.
+
+This includes the possible data transfers that are required to meet dependencies, in case different tasks that depend on the same data are scheduled to run on different computational nodes. \starpu will automatically make sure the required data transfers are made between each task exectution to ensure data consistency.
+
+In addition to implicit data dependencies, other dependencies can be explicitly given by using the \starpu API in order to explicitly force the execution order of a given set of tasks.
+
+\section{Virtual Shared Memory}
+\itodo{this}
+\section{Multithreading}
+\itodo{this}
+\section{High Level Integration}
+\itodo{this}
+
+\subfile{tex/410_low_level}
+
 \end{document}
+
+
