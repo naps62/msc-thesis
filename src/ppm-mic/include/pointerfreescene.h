@@ -115,7 +115,7 @@ public:
 			enable_MAT_MATTEMETAL, enable_MAT_ALLOY, enable_MAT_ARCHGLASS;
 
 	PointerFreeScene( uint width_, uint height_,std::string sceneFileName,
-			const int aType = -1);
+			const int aType = 0);
 	~PointerFreeScene();
 
 	//void UpdateDataSet();

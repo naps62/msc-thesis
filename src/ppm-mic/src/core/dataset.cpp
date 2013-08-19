@@ -89,19 +89,21 @@ void DataSet::Preprocess() {
       const int travCost = 10;
       const float emptyBonus = 0.5f;
 
-      accel = new BVHAccel(context, treeType, costSamples, isectCost, travCost, emptyBonus);
+      accel = new BVHAccel(/*context,*/ treeType, costSamples, isectCost, travCost, emptyBonus);
       break;
     }
     case ACCEL_QBVH: {
-      const int maxPrimsPerLeaf = 4;
-      const int fullSweepThreshold = 4 * maxPrimsPerLeaf;
-      const int skipFactor = 1;
+      assert(false);
+      //const int maxPrimsPerLeaf = 4;
+      //const int fullSweepThreshold = 4 * maxPrimsPerLeaf;
+      //const int skipFactor = 1;
 
-      accel = new QBVHAccel(
-          maxPrimsPerLeaf, fullSweepThreshold, skipFactor);
-      break;
+      //accel = new QBVHAccel(
+      //    maxPrimsPerLeaf, fullSweepThreshold, skipFactor);
+      //break;
     }
     case ACCEL_MQBVH: {
+                        assert(false);
 //      const int fullSweepThreshold = 4;
 //      const int skipFactor = 1;
 //

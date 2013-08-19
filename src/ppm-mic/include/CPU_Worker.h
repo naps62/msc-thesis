@@ -17,7 +17,7 @@
 #include "lookupAcc.h"
 #include <xmmintrin.h>
 #include "Profiler.h"
-#include "luxrays/accelerators/qbvhaccel.h"
+#include "luxrays/accelerators/bvhaccel.h"
 #include "config.h"
 #include "Worker.h"
 

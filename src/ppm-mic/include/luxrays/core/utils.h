@@ -100,15 +100,15 @@ inline double WallClockTime() {
 #endif
 }
 
-template<class T> __HD__ inline T Clamp(T val, T low, T high) {
+template<class T> inline T Clamp(T val, T low, T high) {
   return val > low ? (val < high ? val : high) : low;
 }
 
-template<class T> __HD__ inline T Max(T a, T b) {
+template<class T>  inline T Max(T a, T b) {
   return a > b ? a : b;
 }
 
-template<class T> __HD__ inline T Min(T a, T b) {
+template<class T>  inline T Min(T a, T b) {
   return a < b ? a : b;
 }
 
@@ -118,7 +118,7 @@ template<class T> inline void Swap(T &a, T &b) {
   b = tmp;
 }
 
-template<class T> __HD__ inline T Mod(T a, T b) {
+template<class T>  inline T Mod(T a, T b) {
   if (b == 0)
     b = 1;
 
@@ -128,7 +128,7 @@ template<class T> __HD__ inline T Mod(T a, T b) {
 
   return a;
 }
-__HD__
+
 inline unsigned int Mod(unsigned int a, unsigned int b) {
   if (b == 0)
     b = 1;
@@ -173,7 +173,7 @@ inline int Floor2Int(float val) {
 inline unsigned int Floor2UInt(double val) {
   return val > 0. ? static_cast<unsigned int> (floor(val)) : 0;
 }
-__HD__
+
 inline unsigned int Floor2UInt(float val) {
   return val > 0.f ? static_cast<unsigned int> (floorf(val)) : 0;
 }
@@ -235,34 +235,6 @@ inline void StringTrim(std::string &str) {
   } else str.erase(str.begin(), str.end());
 }
 
-bool SetThreadRRPriority(std::thread *thread, int pri = 0) {
-#if defined (__linux__) || defined (__APPLE__) || defined(__CYGWIN__)
-  {
-    //const pthread_t tid = (pthread_t)thread->native_handle();
-    const pthread_t tid = thread->native_handle();
-
-    int policy = SCHED_FIFO;
-    int sysMinPriority = sched_get_priority_min(policy);
-    struct sched_param param;
-    param.sched_priority = sysMinPriority + pri;
-
-    return pthread_setschedparam(tid, policy, &param);
-  }
-#elif defined (WIN32)
-  {
-    const HANDLE tid = (HANDLE)thread->native_handle();
-    if (!SetPriorityClass(tid, HIGH_PRIORITY_CLASS))
-      return false;
-    else
-      return true;
-
-    /*if (!SetThreadPriority(tid, THREAD_PRIORITY_HIGHEST))
-      return false;
-    else
-      return true;*/
-  }
-#endif
-  }
 
 //------------------------------------------------------------------------------
 // Memory

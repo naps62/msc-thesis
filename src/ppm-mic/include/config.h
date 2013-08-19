@@ -56,9 +56,7 @@
 //#define RENDER_HUGE
 
 
-//#define CPU
-#define GPU0
-//#define GPU2
+#define CPU
 
 
 #define SM 15

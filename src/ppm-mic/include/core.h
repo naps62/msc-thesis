@@ -24,20 +24,20 @@ std::string to_string(T t, std::ios_base & (*f)(std::ios_base&)) {
 	return oss.str();
 }
 
-#if defined(__CUDACC__)
-#define __HD__ 			__device__
-#define __H_D__			__host__ __device__
-#define __noinline 		__noinline__
-#define __forceinline 	__forceinline__
+//#if defined(__CUDACC__)
+//#define __HD__ 			__device__
+//#define __H_D__			__host__ __device__
+//#define __noinline 		__noinline__
+//#define __forceinline 	__forceinline__
 
 
-#else
+//#else
 #define __HD__
 #define __H_D__
 #define __noinline
-#define __forceinline 	__inline__ __attribute__((__always_inline__))
+//#define __forceinline 	__inline__ __attribute__((__always_inline__))
 
-#endif
+//#endif
 
 
 

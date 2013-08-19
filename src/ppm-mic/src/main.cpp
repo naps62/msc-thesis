@@ -12,7 +12,6 @@
 //#include <boost/thread.hpp>
 #include <boost/detail/container_fwd.hpp>
 #include "luxrays/utils/sdl/scene.h"
-#include "CUDA_Worker.h"
 #include "CPU_Worker.h"
 #include "config.h"
 
@@ -55,12 +54,6 @@ int main(int argc, char *argv[]) {
 
 	uint ndvices = 0;
 
-#ifdef GPU0
-	ndvices++;
-#endif
-#ifdef GPU2
-	ndvices++;
-#endif
 #ifdef CPU
 	ndvices++;
 #endif
@@ -90,35 +83,7 @@ int main(int argc, char *argv[]) {
 	uint c;
 	bool build_hit = false;
 
-#ifdef GPU0
-	devID = 0;
-	size_t WORK_BUCKET_SIZE_GPU0 = SM * FACTOR * BLOCKSIZE; // SMs*FACTOR*THEADSBLOCK
-	c = max(hitPointTotal, WORK_BUCKET_SIZE_GPU0);
-	seedBuffer = new Seed[c];
-	for (uint i = 0; i < c; i++)
-		seedBuffer[i] = mwc(i+devID);
-	build_hit = true;
-	CUDA_Worker* gpuWorker0 = new CUDA_Worker(0, engine->ss, WORK_BUCKET_SIZE_GPU0, seedBuffer,
-			build_hit);
-#endif
 
-#ifdef GPU2
-	devID = 2;
-	size_t WORK_BUCKET_SIZE_GPU2 = SM * FACTOR * BLOCKSIZE; // SMs*FACTOR*THEADSBLOCK
-	c = max(hitPointTotal, WORK_BUCKET_SIZE_GPU2);
-	seedBuffer = new Seed[c];
-	for (uint i = 0; i < c; i++)
-		seedBuffer[i] = mwc(i+devID);
-	if (build_hit)
-		build_hit = false;
-	else
-		build_hit = true;
-	CUDA_Worker* gpuWorker2 = new CUDA_Worker(2, engine->ss, WORK_BUCKET_SIZE_GPU2, seedBuffer,
-			build_hit);
-	build_hit = true;
-#endif
-
-#ifdef CPU
 	devID = 100;
 
 	size_t WORK_BUCKET_SIZE_CPU = 1024 * 256;
@@ -135,31 +100,14 @@ int main(int argc, char *argv[]) {
 
 	CPU_Worker* cpuWorker = new CPU_Worker(devID, engine->ss, WORK_BUCKET_SIZE_CPU, seedBuffer,
 			build_hit);
-#endif
-
-	if (config->use_display)
-		engine->draw_thread = new std::thread(&Draw, argc, argv);
 
 
-#ifdef GPU0
-	gpuWorker0->thread->join();
-#endif
-#ifdef GPU2
-	gpuWorker2->thread->join();
-#endif
-#ifdef CPU
 	cpuWorker->thread->join();
 
-#endif
 
 	const double elapsedTime = WallClockTime() - engine->startTime;
 //	float MPhotonsSec = engine->getPhotonTracedTotal() / (elapsedTime * 1000000.f);
 	const float itsec = engine->GetIterationNumber() / elapsedTime;
-
-	if (config->use_display) {
-		cout << "Done. waiting for display" << endl;
-		engine->draw_thread->join();
-	}
 
 	engine->SaveImpl(config->output_file.c_str());
 

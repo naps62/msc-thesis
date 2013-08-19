@@ -22,6 +22,7 @@
 #ifndef _LUXRAYS_BVHACCEL_H
 #define	_LUXRAYS_BVHACCEL_H
 
+
 #include <vector>
 
 #include "core.h"
@@ -45,7 +46,7 @@ struct BVHAccelArrayNode {
 class BVHAccel : public Accelerator {
 public:
 	// BVHAccel Public Methods
-	BVHAccel(const Context *context,
+	BVHAccel(/*const Context *context,*/
 			const unsigned int treetype, const int csamples, const int icost,
 			const int tcost, const float ebonus);
 	~BVHAccel();
@@ -54,10 +55,15 @@ public:
 	void Init(const std::deque<Mesh *> &meshes, const unsigned int totalVertexCount,
 		const unsigned int totalTriangleCount);
 
-	const TriangleMeshID GetMeshID(const unsigned int index) const { return preprocessedMeshIDs[index]; }
-	const TriangleMeshID *GetMeshIDTable() const { return preprocessedMeshIDs; }
-	const TriangleID GetMeshTriangleID(const unsigned int index) const { return preprocessedMeshTriangleIDs[index]; }
-	const TriangleID *GetMeshTriangleIDTable() const { return preprocessedMeshTriangleIDs; }
+	TriangleMeshID GetMeshID(const unsigned int index) const { return preprocessedMeshIDs[index]; }
+	TriangleMeshID *GetMeshIDTable() const { return preprocessedMeshIDs; }
+	TriangleID GetMeshTriangleID(const unsigned int index) const { return preprocessedMeshTriangleIDs[index]; }
+	TriangleID *GetMeshTriangleIDTable() const { return preprocessedMeshTriangleIDs; }
+
+  void* GetNodes() const { return bvhTree; }
+  uint GetNodesCount() const { return nNodes; }
+  void* GetPrims() const { return bvhTree; }
+  uint GetPrimsCount() const { return nNodes; }
 
 	bool Intersect(const Ray *ray, RayHit *hit) const;
 
@@ -78,7 +84,7 @@ private:
 	unsigned int nNodes;
 	BVHAccelArrayNode *bvhTree;
 
-	const Context *ctx;
+	//const Context *ctx;
 	TriangleMesh *preprocessedMesh;
 	TriangleMeshID *preprocessedMeshIDs;
 	TriangleID *preprocessedMeshTriangleIDs;
