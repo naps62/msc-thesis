@@ -17,7 +17,7 @@ In short, the equation defines the surface radiance $\surfaceRadiance$, leaving 
 
 Ray Tracing is the process of generating a two-dimensional image by computing light interactions within a three-dimensional scene, contributing to the pixels on an image plane. A high degree of visual realism can be achieved by these techniques, but also with greater computational costs.
 
-Ray Tracing algorithms are capable of simulating most optical effects, such as reflections, refractions, and scattering, although the actual set of simulated effects, and their overall quality differ between the multiple ray tracing algorithms that have already been developed.
+Ray tracing algorithms are capable of simulating most optical effects, such as reflections, refractions, and scattering, although the actual set of simulated effects, and their overall quality differ between the multiple ray tracing algorithms that have already been developed.
 
 Most ray tracing methods are directed only to static scenarios, as the rendering time is still too high to be feasible to emply a ray tracing algorithm on a realtime or interactive use case.
 Large efforts have been made recently to improve ray tracing techniques \todo{refs aqui}, as well as to speed up their computation, by using parallel architectures such as \gpus, which have always been associated with image processing. \todo{mais refs aqui}.
@@ -28,15 +28,13 @@ The first use of Ray Tracing algorithms was with the introduction of the later c
 
 Later advances, such as \cite{whitted2005improved}, introduced the recursive ray tracing algorithm. In traditional ray casting, each ray would end after the first hit. This was a limiting factor that prevents that approach from dealing with effects such as reflections. Recursive ray tracing solves that, by recursively tracing more rays after each hit. When a ray hits a surface, it can generate new reflection or refraction, depending on the properties of the material hit. Shadow rays can also be cast in the direction of the light sources. If a shadow ray is blocked by an opaque object before reaching the light source, it means that surface is not illuminated by that light source, and thus is shadowed. This technique is illustrated in \cref{fig:ray_tracing}
 
+\itodo{path tracing}
 
 \image[width=0.5\textwidth]{ray_tracing01}{Ray Tracing}{fig:ray_tracing}
 
 \itodo{get a better picture}
 
-
-\subsection{Ray Tracing History}
-
-Prior to photon mapping, typical approaches to approximate the rendering equation would use combinations of more than one method, such a Ray Tracing, Radiosity or Metropolis Light Transport \cite{wallace1987two,veach1997metropolis}. Each method attempts to simulate the travel of light particles across the scene, and model the various interactions with the environment, but with different approaches, advantages and limitations.
+It is also not uncommon to approximate the rendering equation by using combinations of more than one method, such a Ray Tracing, Radiosity or Metropolis Light Transport \cite{wallace1987two,veach1997metropolis}. Each method attempts to simulate the travel of light particles across the scene, and model the various interactions with the environment, but with different approaches, advantages and limitations, so the combination of multiple method can combine the advantages of each one.
 
 Ray Tracing methods work by simulating light particles traveling from the eye into the scene, being reflected and refracted until they reach a light source.
 
