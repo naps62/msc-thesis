@@ -2,16 +2,33 @@
 
 \begin{document}
 
-\chapter{Implementation} \label{section:impl}
+\chapter{Development of the Case Study} \label{section:impl}
+
+The case study was implemented based on an already existing implementation, developed in-house. This implementation implements the initial Progressive Photon Mapping method, described in \cref{section:ppm}, the stochastic extension presented in \cref{section:sppm}, and the probabilistic approach for radius reduction in \cref{section:ppmpa}. Support for both \cpu and \cuda rendering is also included, although \cuda support is actually somewhat limited. It was implemented on top of the LuxRender project, an open source, physically based and unbiased rendering engine. The source code of LuxRender provides an ideal basis of data structures to implement a rendering algorithm such as photon mapping, and this was exploited by the author of this implementation.
+
+The implementation used here was also based on those same data structures, and other code from LuxRender. THe algorithms themselves for the ray tracing and photon mapping steps, radiance estimation, and radius reduction were based not only on the theoretical research work already presented summarily in \cref{chapter:case_study}, but also on the already available implementation
+\todo{esta ref nao ta a funcionar poque?}
+
+This was helpful to speed up development time, by working with already existing code for the same algorithm, but also to serve as a validation tool, in order to assert wether the final solution, and the individual algorithms within it, produced a correct result.
 
 \itodo{based on an existing one}
 \itodo{QBVH}
 \itodo{final work consists of 3 diferent versions: CPU, CUDA (single device), and Starpu (cuda + 2 GPUs)}
 
-\subfile{tex/610_original}
-\subfile{tex/620_cpu}
-\subfile{tex/630_cuda}
-\subfile{tex/640_mic}
-\subfile{tex/650_starpu}
+The final implementation developed for this work was based on the original one provided at the start of the project, although different and improved is some regards. Three main methods were made available, mostly for the sake of comparison of results and profiling. The first two are simple implementations using \cpus with \acs{OpenMP} and \gpus with \acs{CUDA}, respectively. Finally, the third method uses the \starpu framework to handle task management
+
+There were also attempts to port the original implementation to run on the \mic platform, whose details are also described in this section.
+
+\subfile{tex/610_data_structures}
+%\subfile{tex/620_kernels}
+
+\section{Implementation}
+
+\subfile{tex/620_original}
+\subfile{tex/640_cpu}
+\subfile{tex/650_cuda}
+\subfile{tex/660_mic}
+\subfile{tex/670_starpu}
 
 \end{document}
+

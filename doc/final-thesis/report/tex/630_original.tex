@@ -1,0 +1,25 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\subsection{Original} \label{section:impl_original}
+
+Although this implementation provided a few different versions of the algorithm, based on the multiple extensions on photon mapping described in \cref{chapter:case_study}, only two versions were taken in consideration during this work, namely:
+
+\begin{description}
+\item[PPM] (Progressive Photon Mapping) This corresponds to the original proposition for progressive photon mapping, described in \cref{section:ppm}.
+
+\item[SPPMPA] (Stochastic Progressive Photon Mapping with Probabilistic Approach) This extends the initial PPM solution to include both the stochastic version, and the probabilistic approach for radius reduction.
+\end{description}
+
+Work can be done by either a CPUWorker or a CUDAWorker, which implement the ray tracing and photon mapping steps using \acs{OpenMP} and \cuda, respectively. While the initial PPM version, due to implicit dependency limitations (without the probabilistic approach for radius estimation, each photon mapping step is dependent on the previous one), can only run a single worker at a time, the later version can in fact instantiate multiple workers.
+
+In practice, the SPPMPA version provided support for running one CPUWorker and two CUDAWorkers. Since the CPUWorker uses \acs{OpenMP} internally to take advantage of multithreading, this approach effectively takes advantage of the full power of a multicore machine with at most two \acs{CUDA} devices.
+
+When this implementation was first available, however, the \acs{CUDA} implementation was not yet fully finished, with only the implementation of the photon tracing steps being run on a \gpu. This means that the performance when using \cuda is limited by the necessary data transfers required during each iteration. Particularly, when using SPPMPA version, where, following the stochastic progressive photon mapping extension, new hit points are generated after each step, an even greater amount of communication is required, since the \gpu has to wait for the new hit points before starting the computation of a new photon pass.
+
+\itodo{diagrama disto? no SPPMPA, o facto de só existir cuda para os photon paths é ainda pior, pois é necessária mais comunicação, pois é preciso enviar os hit points a cada iteração}
+
+\itodo{talk about original implementation, issues, and approach to the problem}
+
+\end{document}

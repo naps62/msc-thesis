@@ -1,0 +1,33 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\section{Data Structures} \label{section:data_structures}
+
+Most of the structured used throughout all the implementations were based on the ones used in the originally available implementation, which in turn was heavily supported on the source code of LuxRender. This resulted in the usage of several data structures from that same source code, particularly:
+
+\begin{description}
+\item[Basic Geometry] The basi geometric structures, such as vector, normals, 3D points and triangles;
+
+\item[Meshes] A collection of vertices, edges and faces that define the shape of a 3D object in a scene;
+
+\item[Scene] The full description of the 3D scene to render, including all meshes, materials and light descriptions associated with it;
+
+\item[Bounding Volume Hierarchy] A tree structure used to index spatial objects, in this case the objects within the scene, in order to provider ray intersection computations.
+
+\end{description}
+
+In addition to these structures that LuxRender already provided, additional data structures were also required for the implementations described in this section:
+
+\begin{description}
+\item[Pointer-free Scene] The original scene structure available with LuxRender relied heavily on pointer based structures, which was not adequate for \gpu computations. So a custom solution was required in order to store scene information in a compact manner, easily transferable and usable by a \gpu
+
+\item[Hit Points] A data structure was required to store information about hit points position, direction vector, the pixel that it originated from, and about accumulated photon radiance. In practice this was actually split into two different data structures, the first one storing only static information about the hit point, such as position and origin point, and the last one to store incident radiance. This separation allowed a more efficient memory usage, since the two different components are read and written to at different points during the algorithm.
+
+\item[Lookup Table] An acceleration structure used to index the hit points in order to quickly find all relevant hit points to update after a photon trace. This corresponds to all hit points within a given radius of the hit point of each photon, or in other words, all the hit points that photon will contribute to.
+
+\item[Ray Buffer] In the original implementation, the total amount of photons traced every photon path was not directly processed at once. Instead, a ray buffer was used to process a specific, pre-configured number of photons at a time, independently from the total amount of photons to process during that step. This was mostly to increase coherence on the \cpu by processing a smaller batch of consecutive rays at a time.
+
+\end{description}
+
+\end{document}

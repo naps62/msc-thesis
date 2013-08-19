@@ -2,19 +2,18 @@
 
 \begin{document}
 
-\section{Progressive Photon Mapping} \label{section:ppm_initial}
+\section{Progressive Photon Mapping} \label{section:ppm}
 
 The main problem with the original proposal for photon mapping is that the quality of the final result is limited by the size of the photon map, which in turn has its size limited by the amount of memory available.
 
-Since effects such as caustics are simulated by directly using the information from the photon map, it is necessary to use a very large number of photons in order to avoid noise in the rendering. Thus, the overall accuracy is limited by the available memory.
+Since effects such as caustics are simulated by directly using the information from the photon map, it is necessary to use a very large number of photons in order to avoid noise in the rendering. Thus, the overall accuracy is limited by the available memory. In other words, the accuracy of photon mapping is not only computationally bounded, but also memory bounded, while usual unbiased methods are only computationally bounded.
 
-\cite{hachisuka2008progressive} proposes a progressive approach to photon mapping, which makes it possible to simulate global illumination, including the effects provided by traditional photon mapping, with arbitrary accuracy, and without being limited by memory. This is done by using multiple photon tracing steps iteratively ir order to converge to an accurate solution, but without storing photon maps from previous iterations.
+\cite{hachisuka2008progressive} proposes a progressive approach to photon mapping, which makes it possible to simulate global illumination, including the effects provided by traditional photon mapping, with arbitrary accuracy, and without being limited by memory. This is done by using a multi step algorithm instead of a two step one, where the first pass consists of a ray tracing step to capture a collection of hit points in the scene, and later multiple photon tracing steps are processed iteratively, with each new iteration improving the accuracy of the result in order to converge to an accurate solution, but without storing photon maps from previous iterations.
 
 \subsection{First Step: Ray Tracing}
 
-The main concept behind progressive photon mapping is about going from the original two step algorithm, into a multi step algorithm. The first step is a standart ray tracing step, used to find all surfaces visible in the scene. For each ray, all hits with a non-specular component are stored.
+The first step is a standart ray tracing step, used to find all surfaces visible in the scene. Rays are traced through each pixel of the image plane, in order to find all visible surfaces in the scene. For each ray, all hits with a non-specular component in the \acs{BRDF} function are stored. This includes storing the hit location ($x$), the ray direction($\vec{\omega}$)
 
-\itodo{diagram here}
 
 \subsection{Next Steps: Photon Tracing}
 
@@ -65,7 +64,7 @@ The proposed approach in \cite{hachisuka2008progressive} simplifies this by usin
 
 \image[width=0.7\textwidth]{radius_reduction}{Radius Reduction after a Photon Tracing step}{fig:radius_reduction}
 
-The final radius $\hat{R}(x)$ can be computed by combining \cref{eq:density,eq:density_new,eq:photon_count_new}, and is given by \cref{eq:radius_new}.
+The final radius $\hat{R}(x)$ can be computed by combining \cref{eq:density,eq:density_new,eq:photon_count_new}, and as shown by the original work on the subject, can be given, for each single hit point, by \cref{eq:radius_new}.
 
 \begin{figure}[!htp]
   \begin{equation}
@@ -73,5 +72,7 @@ The final radius $\hat{R}(x)$ can be computed by combining \cref{eq:density,eq:d
   \label{eq:radius_new}
   \end{equation}
 \end{figure}
+
+\subsubsection{}
 
 \end{document}
