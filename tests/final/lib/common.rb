@@ -21,10 +21,10 @@ def run_all(exec, dir, test_name, args, env = "")
 
     kbest_ops   = [
       "--out #{this_test_root}",
-      "--k 3",
+      "--k 2",
       "--diff 0.05",
-      "--min 3",
-      "--max 10"
+      "--min 2",
+      "--max 3"
     ].join(' ')
 
     args_with_keys = arg.each_with_index.map { |value, i| "--#{args.keys[i]} #{value}"}.join('  ')
