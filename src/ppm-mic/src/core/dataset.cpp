@@ -26,8 +26,8 @@
 
 #include "luxrays/core/dataset.h"
 #include "luxrays/core/trianglemesh.h"
-//#include "luxrays/accelerators/bvhaccel.h"
-#include "luxrays/accelerators/qbvhaccel.h"
+#include "luxrays/accelerators/bvhaccel.h"
+//#include "luxrays/accelerators/qbvhaccel.h"
 //#include "luxrays/accelerators/mqbvhaccel.h"
 #include "luxrays/core/geometry/bsphere.h"
 
@@ -47,7 +47,7 @@ DataSet::DataSet() {
   totalTriangleCount = 0;
   preprocessed = false;
 
-  accelType = ACCEL_QBVH;
+  accelType = ACCEL_BVH;
   accel = NULL;
 }
 
@@ -83,13 +83,13 @@ void DataSet::Preprocess() {
   // Build the Acceleretor
   switch (accelType) {
     case ACCEL_BVH: {
-//      const int treeType = 4; // Tree type to generate (2 = binary, 4 = quad, 8 = octree)
-//      const int costSamples = 0; // Samples to get for cost minimization
-//      const int isectCost = 80;
-//      const int travCost = 10;
-//      const float emptyBonus = 0.5f;
-//
-//      accel = new BVHAccel(context, treeType, costSamples, isectCost, travCost, emptyBonus);
+      const int treeType = 4; // Tree type to generate (2 = binary, 4 = quad, 8 = octree)
+      const int costSamples = 0; // Samples to get for cost minimization
+      const int isectCost = 80;
+      const int travCost = 10;
+      const float emptyBonus = 0.5f;
+
+      accel = new BVHAccel(context, treeType, costSamples, isectCost, travCost, emptyBonus);
       break;
     }
     case ACCEL_QBVH: {
