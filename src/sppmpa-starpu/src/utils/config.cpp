@@ -43,7 +43,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   parse(_argc, _argv);
 
   // derived values
-  no_display=true;
+  //no_display=true;
   use_display = ! no_display;
   min_frame_time = 1.f / fps;
   total_hit_points = width * height * spp * spp;

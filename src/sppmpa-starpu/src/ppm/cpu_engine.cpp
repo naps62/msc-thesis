@@ -104,6 +104,7 @@ void CPUEngine :: generate_photon_paths() {
 
 void CPUEngine :: advance_photon_paths() {
   const double start_time = WallClockTime();
+  memset(&hit_points[0], 0, sizeof(HitPointRadiance) * config.total_hit_points);
   kernels::cpu::advance_photon_paths_impl(&live_photon_paths[0], live_photon_paths.size(),
                                           &seeds[0],  // seed_buffer_count,
                                           scene,

@@ -118,6 +118,8 @@ void CUDAEngine :: advance_photon_paths() {
   const unsigned threads_per_block = config.cuda_block_size;
   const unsigned n_blocks          = std::ceil(size / (float)threads_per_block);
 
+  cudaMemsetAsync(hit_points, 0, sizeof(HitPointRadiance) * config.total_hit_points, stream);
+
   kernels::cuda::advance_photon_paths_impl
   <<<n_blocks, threads_per_block, 0, stream>>>
    (live_photon_paths,
