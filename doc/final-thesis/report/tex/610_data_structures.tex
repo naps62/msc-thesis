@@ -4,6 +4,8 @@
 
 \section{Data Structures} \label{section:data_structures}
 
+\itodo{QBVH}
+
 Most of the structured used throughout all the implementations were based on the ones used in the originally available implementation, which in turn was heavily supported on the source code of LuxRender. This resulted in the usage of several data structures from that same source code, particularly:
 
 \begin{description}
@@ -11,9 +13,9 @@ Most of the structured used throughout all the implementations were based on the
 
 \item[Meshes] A collection of vertices, edges and faces that define the shape of a 3D object in a scene;
 
-\item[Scene] The full description of the 3D scene to render, including all meshes, materials and light descriptions associated with it;
+\item[Scene] The full description of the 3D scene to render, including all meshes, materials and light descriptions associated with it. This scene is read initially by the LuxRender library, which handles the parsing of all data files associated with the scene (mesh descriptions, materials, light sources, textures, etc)
 
-\item[Bounding Volume Hierarchy] A tree structure used to index spatial objects, in this case the objects within the scene, in order to provider ray intersection computations.
+\item[\acl{BVH}] A tree structure used to index spatial objects, in this case the objects within the scene, in order to provider ray intersection computations. The actual implementation used, a \acf{QBVH}, is an extension of a regular \acs{BVH}, optimized for a low memory footprint, and \acs{SIMD} computations \cite{dammertz2008shallow,Stich2009hpg}. This structure is created at startup by LuxRender, and is used to spatially index all elements in the scene, allowing for faster computations of ray intersections;
 
 \end{description}
 
@@ -31,3 +33,4 @@ In addition to these structures that LuxRender already provided, additional data
 \end{description}
 
 \end{document}
+

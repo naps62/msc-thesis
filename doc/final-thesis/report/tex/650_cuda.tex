@@ -4,4 +4,8 @@
 
 \subsection{CUDA} \label{section:impl_cuda}
 
+
+The drawback of this approach is related to the construction of the table itself. The approach used is not parallelizable, and consequentely, not adequate to massively parallel devices such as \gpus. This means that this task was implemented only in a regular \cpu, and using only sequential code.
+
+This should likely have a very noticeable impact on performance, since it means that a full iteration of the algorithm is not capable of run entirely on a \gpu, and requiring memory transfers in between to transfer the generated hit points from the \gpu to the \cpu, and later copy the generated hash table back to the \gpu
 \end{document}

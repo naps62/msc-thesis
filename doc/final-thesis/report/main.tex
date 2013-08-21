@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt,abstract=on,twoside,openright]{scrbook}
+\documentclass[a4paper,11pt,abstract=on,twoside,openright]{book}
 \setlength\parindent{1.2em}
 
 \usepackage[final=false]{../../common/naps62}
@@ -20,15 +20,15 @@
 
 \addbibresource{../../common/bib/parallel,../../common/bib/gama,../../common/bib/starpu,../../common/bib/gpu,../../common/bib/verbal,../../common/bib/photon_mapping}
 
-% reduce chapter margins
-\renewcommand{\chapterheadstartvskip}{\vspace*{-1.6\baselineskip}}
+% reduce chapter margins, only for scrbook
+%\renewcommand{\chapterheadstartvskip}{\vspace*{-1.6\baselineskip}}
 
 \begin{document}
 
 \pdfbookmark{Cover}{cover}
 \pagenumbering{roman}
 % TODO acrescentar capa depois
-%\includepdf[pages=-]{misc/cover-mei}
+%\includepdf[pages=-]{img/cover}
 
 \pagestyle{fancy}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -45,7 +45,6 @@
   \fancyfoot[RO,LE]{\thepage}
 }
 
-% frontmatter
 \frontmatter
 \setcounter{page}{3}
 \subfile{frontmatter/01_acknowledgments}
@@ -56,7 +55,7 @@
 \cleardoublepage
 \pagenumbering{arabic}
 
-
+\mainmatter
 \subfile{tex/100_introduction}
 \subfile{tex/200_background}
 \subfile{tex/300_gama}
@@ -70,6 +69,7 @@
 
 
 \cleardoublepage
+\backmatter
 \pdfbookmark{References}{references}
 %\nocite{*}
 \printbibliography
