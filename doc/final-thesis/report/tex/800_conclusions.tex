@@ -7,9 +7,14 @@
 
 \section{StarPU}
 \itodo{type safety}
+\itodo{memory management not as powerful as gama's}
+\itodo{granularity must be programmer-defined. gama has dicing}
 
 \subsection{Performance}
 \itodo{this}
+
+\itodo{memory management concerns: A framework such as \starpu can be smart enough to use the information such as the task dependency graph and history based execution to asynchronously prepare all memory where it knows it will be needed further in the execution}
+\itodo{data access modes do not ensure correctness. a task may write to a STARPU\_R buffer. it just happens that, if a data transfer of that buffer is required for a different task, those writes might not be considered, although they will remain in the original node. This leads to memory incosistencies, caused by a mistake by the programmer (STARPU\_R should have been STARPU\_RW). the framework should not allow that mistake to happen}
 
 \subsection{Usability}
 

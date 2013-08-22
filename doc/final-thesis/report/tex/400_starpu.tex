@@ -2,7 +2,7 @@
 
 \begin{document}
 
-\chapter{The \starpu Framework} \label{section:starpu}
+\chapter{The StarPU Framework} \label{section:starpu}
 
 
 \itodo{falar de todo o tipo de coisas aqui}
@@ -16,22 +16,37 @@ Much like \gama, this framework frees the programmer of the workload scheduling 
 
 The framework employs a task based programming model. Computational kernels must be encapsulated within a task. A given kernel can be implemented in multiple ways (i.e. for \cpus or for \cuda), and \starpu will handle the decision of where and when the task should be executed, based on a task scheduling policy.
 
-Data manipulated by a task is automatically transferred between the accelerators and the host device, ensuring memory consistency, freeing the programmer from dealing directly with scheduling issues, and the data transfers and other details associated with it.
-
+Data manipulated by a task is automatically transferred as needed between the various processing devices, ensuring memory consistency and freeing the programmer from dealing directly with scheduling issues, data transfers and other requirements associated with it.
 
 \section{Dependencies}
 \itodo{this}
 
 \starpu automatically buils a dependency graph of all submitted tasks, and keeps them in a pool of \emph{frozen tasks}, passing them onto the scheduler once all dependencies are met.
 
-Dependencies are implicitly given by the data manipulated by the task. Each task receives a set of buffers, each one corresponding to a piece of data managed by \starpu data management library, and will wait until all the buffers from which it must read are ready.
+Dependencies can be implicitly given by the data manipulated by the task. Each task receives a set of buffers, each one corresponding to a piece of data managed by \starpu data management library, and will wait until all the buffers from which it must read are ready.
 
 This includes the possible data transfers that are required to meet dependencies, in case different tasks that depend on the same data are scheduled to run on different computational nodes. \starpu will automatically make sure the required data transfers are made between each task exectution to ensure data consistency.
 
 In addition to implicit data dependencies, other dependencies can be explicitly given by using the \starpu API in order to explicitly force the execution order of a given set of tasks.
 
+\subsection{Data Access Modes}
+
+Each data dependency that is explicitly defined in a task can have a different access mode. Data can be used in read-only, write-only or read-write mode. This access mode does not serve the purpose of ensuring memory correctness. It is used to soften task dependencies by using a \emph{Multiple Readers / Single Writer} model in dependency calculation.
+
+This model describes a type of mutual exclusion pattern where a data block can be concurrently accessed by any amount of reader, but must be exclusively accessed for a writer. \starpu uses this concept to further optimize data dependency calculations. If multiple scheduled tasks depend on the same data handle, but only with reading access, then that dependency should not block the multiple tasks from running concurrently. Temporary copies of the data can be created, possibly on different computational units, and later discarded immediatelly, since a read-only buffer is assumed to remain unchanged at the end of a task.
+
+\itodo{diagrama a exemplificar esta coisa. Tasks A,B,C. tasks A,B have read-only access to x. Task C has write access. If tasks are in the order A,B,C, then A,B can be ran concurrently. If C is between, then the order must be A,C,B each at a time}
+
+
+\subsection{Consistency}
+\itodo{isto}
+
 \section{Virtual Shared Memory}
 \itodo{this}
+
+The approach used by \starpu when it comes to memory management is simpler that the model employed by \gama. The purpose is the same: to automatically manage memory allocations and transfers on all devices. This not only frees the programmer from the work of manually managing memory between tasks, but it also has the potential to lower the cost of such operations.
+\starpu manages memory by forcing the user to declare data handles to their data. This handles are used as arguments for tasks, allowing the scheduler to allocate and transfer all required data buffers to the correct computational unit prior to the task execution.
+
 \section{Multithreading}
 \itodo{this}
 \section{High Level Integration}
