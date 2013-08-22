@@ -18,6 +18,8 @@ tags
 .tags
 .tags_sorted_by_file
 
+*.vsdx
+
 # Latex
 _inputs.tex
 _sections.tex
