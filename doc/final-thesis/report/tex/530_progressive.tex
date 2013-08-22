@@ -10,6 +10,9 @@ Since effects such as caustics are simulated by directly using the information f
 
 \cite{hachisuka2008progressive} proposes a progressive approach to photon mapping, which makes it possible to simulate global illumination, including the effects provided by traditional photon mapping, with arbitrary accuracy, and without being limited by memory. This is done by using a multi step algorithm instead of a two step one, where the first pass consists of a ray tracing step to capture a collection of hit points in the scene, and later multiple photon tracing steps are processed iteratively, with each new iteration improving the accuracy of the result in order to converge to an accurate solution, but without storing photon maps from previous iterations.
 
+\itodo{na imagem, trocar Update Radius para Radius Reduction}
+\image[width=0.6\textwidth]{diagram_ppm}{High Level Fluxogram of Progressive Photon Mapping}{fig:diagram_ppm}
+
 \subsection{First Step: Ray Tracing}
 
 The first step is a standart ray tracing step, used to find all surfaces visible in the scene. Rays are traced through each pixel of the image plane, in order to find all visible surfaces in the scene. For each ray, all hits with a non-specular component in the \acs{BRDF} function are stored. This includes storing the hit location ($x$), the ray direction($\vec{\omega}$)
@@ -22,6 +25,21 @@ After the initial ray tracing step, an iterative process begins. Each iteration,
 Once this contribution is computed, the photon map is no longer needed, and can be discarded, before the next iteration repeats the process.
 
 This provides two key advantages over the original, two-step approach. The total amount of photons traced is not limited by memory, but only by the amount of iterations that are computed. An arbitrary number of iterations can be used, without requiring any additional memory at all, and resulting in a better quality result. Also, after each photon pass an image can be rendered, and the progresssive result can be shown while the image is progressively improved, instead of having to wait for the entire algorithm to finish.
+
+\begin{figure}
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.95\linewidth]{progressive_photon_mapping_step1}
+    \caption{First step: Ray tracing \label{fig:ppm_step1}}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=.95\linewidth]{progressive_photon_mapping_step2}
+    \caption{Next steps: Photon Tracing \label{fig:ppm_step2}}
+  \end{subfigure}
+  \caption{Overview of Progressive Photon Mapping \label{fig:ppm_overview}}
+\end{figure}
 
 
 \subsection{Radiance Estimation}

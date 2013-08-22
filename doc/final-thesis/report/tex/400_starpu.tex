@@ -11,6 +11,26 @@
 
 Much like \gama, this framework frees the programmer of the workload scheduling and data consistency inherent from a \hetplat. Task submissions are handled by the \starpu task scheduler, and data consistency is ensured via a data managemente library.
 
+\subsection{Terminology}
+\itodo{this}
+
+\starpu uses a well defined terminology to describe its libraries and API:
+
+\begin{description}
+  \item[Data Handle] References a memory block. The allocation of the required space, and the possibly required memory transfers to deliver information to each device can be completely handled by \starpu;
+
+  \item[Codelet] Describes a computational kernel that can be implemented in one or more architectures, such as \cpus, \cuda or \acs{OpenCL}. It also stores information about thew amount and type of data buffers it should receive;
+
+  \item[Task] Is defined as the association between a codelet and a set of data handles;
+
+  \item[Partition] The subdivision of a data handle in smaller chunks, according to a partitioning function, which can be user defined;
+
+  \item[Worker] A processing element, such as a \cpu core, managed by StarPU to execute tasks;
+
+  \item[Scheduler] The library in charge of assigning tasks to workers, based on a well defined scheduling policy.
+
+\end{description}
+
 \section{Task Scheduling}
 \itodo{this}
 
@@ -38,21 +58,31 @@ This model describes a type of mutual exclusion pattern where a data block can b
 \itodo{diagrama a exemplificar esta coisa. Tasks A,B,C. tasks A,B have read-only access to x. Task C has write access. If tasks are in the order A,B,C, then A,B can be ran concurrently. If C is between, then the order must be A,C,B each at a time}
 
 
-\subsection{Consistency}
-\itodo{isto}
-
 \section{Virtual Shared Memory}
 \itodo{this}
 
 The approach used by \starpu when it comes to memory management is simpler that the model employed by \gama. The purpose is the same: to automatically manage memory allocations and transfers on all devices. This not only frees the programmer from the work of manually managing memory between tasks, but it also has the potential to lower the cost of such operations.
 \starpu manages memory by forcing the user to declare data handles to their data. This handles are used as arguments for tasks, allowing the scheduler to allocate and transfer all required data buffers to the correct computational unit prior to the task execution.
 
+\itodo{nas conclusões: caveats}
+
 \section{Multithreading}
 \itodo{this}
-\section{High Level Integration}
+
+In order to have an accurate view of the topology of the system, the framework can optionally use the \texttt{hwloc} \cite{broquedis2010hwloc} to detect the structure of the architecture, including all \cpu sockets, \acs{NUMA} nodes and cache hierarchy.
+
+A tree is created representing the complete hierarchy of the system. Latest version of the framework also introduce support for parallel tasks, with the concept of combined workers. These workers exist in cases where the system has multiple computational units in the same node (such as \cpu sockets where multiple cores share a cache hierarchy). In these situations, and if \starpu is using a parallel-task-aware scheduler (currently only \texttt{pheft} and \texttt{peager} exist), it is possible to specify the maximum degree of parallelism for a function. A combined worker can then be assigned to such tasks using, for example, \openmp to take advantage of the multiple available cores.
+
+\section{API}
 \itodo{this}
 
-\subfile{tex/410_low_level}
+Two API versions are made available. The high-level, \textt{pragma}-based\footnote{Directives inserted within the code, to instruct the compiler about how to process input. Can be used to extend the compiler and provide additional features, functionality or optimizations} API. This exposes \starpu's main functionality with a set of directives that can be added to the code in order to embed \starpu within it. It is particularly suited for less experienced developers, or developers who simply need to focus completely in the algorithmic issues with less or no knowledge about the underlying parallel hardware being used underneath.
+
+The directives can be easily disabled, restoring the application to its original, \starpu-free nature, which also makes it ideal to add \starpu into already existing code, or applications that require a large degree of portability.
+
+The low-level version is a more verbose one, which is actually used internally by the high-level one, and provides a greater degree of control over what \starpu does.
+
+This trade-off is not uncommon, with many existing libraries besides \starpu supporting both API levels. High level versions are designed to remove complexity and accelerate development time. They are often a subset of an underlying low level version, delivering only the more common features. More experienced developers should be able to achieve better results with a lower level API, with the cost of additional development time.
 
 \end{document}
 

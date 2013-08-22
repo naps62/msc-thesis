@@ -14,6 +14,8 @@ Unlike other algorithms such as Path Tracing or Metropolis Light Transport, this
 
 The original approach to photon mapping consists simply of a two step algorithm. One step to generate a structure with the illumination information for the scene, called the photon map, and a second step to trace rays from the camera to interact with the scene and the photon map, contributing to the final pixels of the generated image
 
+\image[width=0.5\textwidth]{diagram_pm}{High Level Flowchart of Photon Mapping}{fig:diagram_pm}
+
 \subsubsection{First Step: Photon Map Construction}
 
 In this step, a large number of photons must be traced, starting from the existing light sources in the scene. The tracing of a photon is just like the tracing of a regular ray, interacting with the scene according to \acs{BRDF} function, in a process similar to path tracing. Every hit by a photon is stored in a structure called a photon map.
@@ -22,7 +24,9 @@ The usage of this extra photon map is not, however, required for the implementat
 
 The photon map structure generated serves as an approximation of the light within the entire scene. As another optional extension, shadow photons can also be cast during this step, which will reduce the amount of shadow rays necessary in the second step to correctly reproduce shadows.
 
-\itodo{diagram here}
+\itodo{ref para o diagrama}
+
+\image[width=0.6\textwidth]{photon_mapping_step1}{Overview of the first step of Photon Mapping}{fig:pm_step1}
 
 \subsubsection{Second Step: Rendering}
 
@@ -30,7 +34,9 @@ For the final image render, Monte Carlo ray tracing \cite{jensen2003monte} can b
 
 The photon map proves useful during this step, not only to increase performance, but also to allow the modeling of some light effects that are not present or are inefficient to process without such a structure.
 
-\itodo{diagram here}
+\itodo{ref para o diagrama}
+
+\image[width=0.6\textwidth]{photon_mapping_step2}{Overview of the second step of Photon Mapping}{fig:pm_step2}
 
 
 \subsection{Applications}
