@@ -4,8 +4,6 @@
 
 \section{Data Structures} \label{section:data_structures}
 
-\itodo{QBVH}
-
 Most of the structured used throughout all the implementations were based on the ones used in the originally available implementation, which in turn was heavily supported on the source code of LuxRender. This resulted in the usage of several data structures from that same source code, particularly:
 
 \begin{description}
@@ -26,7 +24,7 @@ In addition to these structures that LuxRender already provided, additional data
 
 \item[Hit Points] A data structure was required to store information about hit points position, direction vector, the pixel that it originated from, and about accumulated photon radiance. In practice this was actually split into two different data structures, the first one storing only static information about the hit point, such as position and origin point, and the last one to store incident radiance. This separation allowed a more efficient memory usage, since the two different components are read and written to at different points during the algorithm.
 
-\item[Lookup Table] An acceleration structure used to index the hit points in order to quickly find all relevant hit points to update after a photon trace. This corresponds to all hit points within a given radius of the hit point of each photon, or in other words, all the hit points that photon will contribute to.
+\item[Lookup Table] An acceleration structure used to index the hit points in order to quickly find all relevant hit points to update after a photon trace. This corresponds to all hit points within a given radius of the hit point of each photon, or in other words, all the hit points that photon will contribute to. The structure is implemented with an hash table that spatially indexes the hit points by dividing the 3D space into a grid, where each cell references all hit points that intersect it, based on the current radius.
 
 \item[Ray Buffer] In the original implementation, the total amount of photons traced every photon path was not directly processed at once. Instead, a ray buffer was used to process a specific, pre-configured number of photons at a time, independently from the total amount of photons to process during that step. This was mostly to increase coherence on the \cpu by processing a smaller batch of consecutive rays at a time.
 

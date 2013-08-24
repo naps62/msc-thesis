@@ -2,7 +2,7 @@
 
 \begin{document}
 
-\chapter{The StarPU Framework} \label{section:starpu}
+\chapter{The StarPU Framework} \label{chapter:starpu}
 
 
 \itodo{falar de todo o tipo de coisas aqui}
@@ -66,14 +66,14 @@ The approach used by \starpu when it comes to memory management is simpler that 
 
 \itodo{nas conclusões: caveats}
 
-\section{Multithreading}
+\section{Multithreading} \label{section:starpu_multithreading}
 \itodo{this}
 
 In order to have an accurate view of the topology of the system, the framework can optionally use the \texttt{hwloc} \cite{broquedis2010hwloc} to detect the structure of the architecture, including all \cpu sockets, \acs{NUMA} nodes and cache hierarchy.
 
 A tree is created representing the complete hierarchy of the system. Latest version of the framework also introduce support for parallel tasks, with the concept of combined workers. These workers exist in cases where the system has multiple computational units in the same node (such as \cpu sockets where multiple cores share a cache hierarchy). In these situations, and if \starpu is using a parallel-task-aware scheduler (currently only \texttt{pheft} and \texttt{peager} exist), it is possible to specify the maximum degree of parallelism for a function. A combined worker can then be assigned to such tasks using, for example, \openmp to take advantage of the multiple available cores.
 
-\section{API}
+\section{API} \label{section:starpu_api}
 \itodo{this}
 
 Two API versions are made available. The high-level, \textt{pragma}-based\footnote{Directives inserted within the code, to instruct the compiler about how to process input. Can be used to extend the compiler and provide additional features, functionality or optimizations} API. This exposes \starpu's main functionality with a set of directives that can be added to the code in order to embed \starpu within it. It is particularly suited for less experienced developers, or developers who simply need to focus completely in the algorithmic issues with less or no knowledge about the underlying parallel hardware being used underneath.
@@ -83,6 +83,8 @@ The directives can be easily disabled, restoring the application to its original
 The low-level version is a more verbose one, which is actually used internally by the high-level one, and provides a greater degree of control over what \starpu does.
 
 This trade-off is not uncommon, with many existing libraries besides \starpu supporting both API levels. High level versions are designed to remove complexity and accelerate development time. They are often a subset of an underlying low level version, delivering only the more common features. More experienced developers should be able to achieve better results with a lower level API, with the cost of additional development time.
+
+\section{Performance Model}
 
 \end{document}
 
