@@ -11,6 +11,8 @@ The solution proposed in \cite{jensenstochastic} presents a new formulation for 
 In practise, the implementation of that formulation consists only in generate a new set of hit points after each photon pass. The local statistics for each new hit point is taken directly from the previous hit point for that same pixel. Original progressive photon mapping generates a set of hit points, and then iteratively uses new photon maps to converge to a correct solution, based on those same hit point.
 This stochastic approach does not reuse the hit points, but only their local statistics. The results in the proposed work show that this solution provides better results for scenes with complex illumination, and including distributed ray tracing effects, such as motion blur, depth-of-fied and glossy interactions.
 
+\image[width=\textwidth]{visio/diagram_sppm}{Fluxogram of Stochastic Progressive Photon Mapping}{fig:diagram_sppm}
+
 \itodo{maybe more stuff here?}
 
 \end{document}

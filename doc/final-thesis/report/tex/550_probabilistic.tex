@@ -10,6 +10,7 @@ Another evolution of photon mapping and progressive photon mapping comes from a 
 
 The new formulation, however, includes a probabilistic approach that does not require local photon statistics to be stored. It is shown in the original work that each different photon mapping step of the progressive photon mapping approach can be performed with complete independence from other steps. The biggest benefit of this is that each step can be computed in parallel, allowing for multiple photon mapping steps can be correnctly computed.
 
+
 \itodo{diagrama de pipeline de ppm vs ppmpa}
 
 The result is a memoryless algorithm that does not require the maintenance of intermediate statistics and allows the possibility of computing multiple iterations, or photon mapping steps, in parallel.u
@@ -22,6 +23,8 @@ Summarily, the probabilistic analysis in the original work shows that for a phot
   \label{eq:radius_prob}
   \end{equation}
 \end{figure}
+
+\image[width=\textwidth]{visio/diagram_ppmpa}{Fluxogram of Progressive Photon Mapping with Probabilistic Radius Calculation}{fig:diagram_ppmpa}
 
 \itodo{maybe more stuff here?}
 
