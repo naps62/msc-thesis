@@ -27,6 +27,7 @@ _appendixes.tex
 bash.out
 main-blx.bib
 *.pdf
+*.pyg
 *.aux
 *.bbl
 *.blg
