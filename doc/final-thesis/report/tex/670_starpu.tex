@@ -18,8 +18,6 @@ An additional decision that was enforced by the existing implementations is rela
 
 The first step for this implementation was to refactor data management, letting \starpu handle all necessary data for the algorithm. One exception was made to this, regarding the input information for the 3D scene. This information is stored in a somewhat complex structure, contrarily to all other dynamic data used throughout the photon mapping algorithm, which consists only on vectors whose size can be static and predetermined.
 
-\itodo{o facto de a cena não estar alocada com o \starpu ?}
-
 A small was necessary in the lookup table build process. This task previously generated a dynamically sized structure, since it is dependent on the amount of photons that intersect the scene within the current radius of each hit point, which cannot be predetermined.
 
 One solution for this would be to only register the lookup table in a \starpu data handle only after it's generation is complete, and the size can be determined. This is not a desirable solution, as it would introduce a barrier on that point of the iteration, and forcing all future tasks to be submitted only once the lookup table build process is complete. This would prevent \starpu from having knowledge on future tasks, and impeding it from asynchronously prepare data buffers to solve dependencies, increasing the latency caused by the imposed barrier.
@@ -30,15 +28,20 @@ Following this constraint, the hash table structure was refactored to be a fixed
 
 \subsubsection{Task Submission}
 
-The only thing left was to wrap tasks around \starpu API calls. All data for each iteration is assigned to an individual data handle. No allocations are ever done manually within the main loop, making all in-loop memory managed by \starpu. While in \cpu and \cuda versions, dependencies where solved by executing each task synchronously, here all tasks are submitted asynchronously, and dependencies are implicitly given by the data handles required by each task. In practice, dependencies within a single iteration of the main loop form a graph as show in \todo{ref para a imagem das dependencias}
+The other main change required is to wrap tasks around \starpu API calls. All data for each iteration is assigned to an individual data handle. No allocations are ever done manually during the main loop, making all memory managed by \starpu. While in the \cpu and \cuda version, only a single iteration is considered at a time, so task invocation is made synchronously, here all tasks are submitted asynchronously, and dependencies are implicitly given by the data handles required by each task. These dependencies represented in \cref{fig:deps}.
 
-\todo{imagem das dependencias}
+\image[width=0.8\textwidth]{deps.png}{Dependency Graph of an iteration of SPPMPA. Red arrows represent dependencies related to the seed buffer, which are not imposed on the algorithm itself, but only a limitation of the implementation}{fig:deps}
 
-However, there is one more dependency to consider, that further limits the concurrency of tasks. The random number generation employed relies on a seed buffer which is updated everytime a new value is requested. Thus, all tasks that require random number generation (\textbf{Generate Eye Paths}, \textbf{Advance Eye Paths}, \textbf{Generate Photon Paths} and \textbf{Advance Photon Paths}) have a read-write dependency on the seed buffer, and will not be able to execute concurrently.
+It can be seen from the graph that some task concurrency is possible, although limited. It is expected that the most time consuming tasks are \textbf{Advance Eye Paths} and \textbf{Advance Photon Paths}, as they are where scene intersections are computed. \textbf{Rebuild Lookup Table} can also be considered, especially when other tasks of the same iteration are run on a \gpu. This will require synchronization memory transactions to solve the dependencies of this task. Prefetching cannot be employed here by \starpu, as these dependencies are not available until the immediately previous tasks are computed. This could provide a large bottleneck for the performance of each individual iteration.
 
-This dependency on the seed buffer actually causes an increased overhead, since the buffer is maintained throughout all iterations, creating a loop dependency that prevents their parallelization. This is a limitation of the implementation, and not the algorithm. One solution would be to change the random number generation method, to one that would not require intermediate seed memory to be passed between each task. However, that was not attempted, as it would require additional effort in changing the algorithm, as well as the previous implementations (in order to keep the coherence between them), and choosing and adequate and efficient new method for random number generation. Actually the final solution came as a consequence of a problem with the way \starpu manages allocations, with both of them being explained in the next section.
+One of the limiting factors of these dependencies is related to the number generation method employed, which relies on a read-write seed buffer, with each new value requested updating the corresponding seed. As can be seen in the graph, only one relevant dependency is actually created by this, between \textbf{Advance Eye Paths} and \textbf{Generate Photon Paths}. These tasks should be considered independent, but share a dependency on the seed buffer, and thus cannot execute concurrently as it would be expected. Other dependencies are created from this limitation (shown in red in the graph), but they do not represent a problem, since their elimination would not introduce any new concurrency possibilities.
+
+A solution for this would be to change the random number generation method, to one that would not require intermediate seed memory to be passed between each task. However, that was not attempted, as it would require additional effort in changing the algorithm, as well as the previous implementations (if coherence between them was to be kept), and choosing an adequate and efficient new method. The final solution actually came as a consequence of enabling concurrency between iterations, explained in the next section
+
 
 \subsubsection{Enabling Concurrent Iterations} \label{section:starpu_concurrent_iters}
+
+Since the high amount of dependencies between tasks does not allow a good degree of concurrency within a single iteration, efforts were focused in allowing the execution of multiple iterations concurrently. This is one of the main reasons SPPMPA was the only one focused on, as other versions withouth the probabilistic radius estimation would introduce dependencies between each iteration, preventing their parallelization.
 
 The initial approach to port the implementation to \starpu relied on data handles being declared at the start of the rendering process, and release at the end.
 
@@ -49,7 +52,7 @@ The initial approach to port the implementation to \starpu relied on data handle
   \label{lst:starpu_initial}
 \end{listing}
 
-As show in \cref{lst:starpu_initial}, data handles are created and kept through the whole program. In practise, this means that each iteration will depend on the same data buffers as the previous one, even though they are to be completely rewritten, and their previous values ignored. This is not desirable, as it prevents concurrency between iterations, just like it happens due to the seed buffer dependency previously explained.
+As shown in \cref{lst:starpu_initial}, data handles are created and kept during the whole rendering process. In practise, this means that each iteration will depend on the same data buffers as the previous one, even though they are to be completely rewritten, and their previous values ignored. This is not desirable, as it prevents concurrency between iterations, just like it happens due to the seed buffer dependency previously explained.
 
 An alternative solution is to declare the handles in-loop, as shown in \cref{lst:starpu_handles_in_loop}
 
@@ -60,14 +63,10 @@ An alternative solution is to declare the handles in-loop, as shown in \cref{lst
   \label{lst:starpu_handles_in_loop}
 \end{listing}
 
-With this method, each iteration declares its own copy of the required data. \starpu provides the \texttt{starpu\_data\_unregister\_submit} API call, which instructs the library that the given data buffer will no longer be needed after all previous tasks using it have been executed. Since data is local to each iteration, this can actually be considered a more intuitive way to approach the problem.
+With this method, each iteration declares its own copy of the required data. \starpu provides the \texttt{starpu\_data\_unregister\_submit} API call, which instructs the library that the given data buffer can be discarded as soon as existing tasks depending on it are finished. Since data is local to each iteration, this can actually be considered a more intuitive way to approach the problem.
 
-However, an additional problem arose from this approach. Due to the asynchronous nature of the tasks, the program actually submits every single iteration to the scheduler at once, meaning that multiple copies of the \texttt{eye\_paths} and \texttt{hit\_points} buffers will be imediatelly requested. For a large enough number of iterations, this can result in too much memory being requested, and the program being aborted. Since \starpu does not provide any method to control this, the limitation had to be imposed manually, by inserting a barrier every few iterations (with the actual amount being a configurable value)
+However, an additional problem arose from this approach. Due to the asynchronous nature of the tasks, the program actually submits every single iteration to the scheduler, meaning that multiple copies of the \texttt{eye\_paths} and \texttt{hit\_points} buffers will be imediatelly requested. For a large enough number of iterations, this resulted in memory problems, and eventually program failures. Since \starpu does not provide any method to control this, the limitation had to be imposed manually, by inserting a barrier every few iterations (with the actual amount being a configurable value).
 
-The fact that the amount of concurrent iterations is now configurable also allowed to tackle the data dependency provided by the seed buffer. Instead of a single buffer being shared by the entire algorithm, the implementation was adapted to instead use as many buffers as there are concurrent iterations.
-
-\itodo{continuar isto?}
-
-\itodo{talk about the X iterations at once}
+The fact that the amount of concurrent iterations is now configurable also allowed to tackle the data dependency provided by the seed buffer. Instead of a single buffer being shared by the entire algorithm, the implementation was adapted to instead use as many buffers as there are concurrent iterations, as shown in \todo{diagrama de iterações concorrentes}.
 
 \end{document}

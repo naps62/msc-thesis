@@ -6,14 +6,11 @@
 
 \itododone{prob approach}
 
-Another evolution of photon mapping and progressive photon mapping comes from a probabilistic approach, first presented in \cite{knaus2011progressive}. The proposed solution, much like original progressive photon mapping, is capable of of computing global illumation without bias, and with no theorical limit in the amount of photons, allowing an arbitrary number of iterations to be computed.
+Another evolution of photon mapping and progressive photon mapping comes from a probabilistic approach for the estimation of photon radius for each iteration, first presented in \cite{knaus2011progressive}. The proposed solution, much like original progressive photon mapping, is capable of of computing global illumation without bias, and with no theorical limit in the amount of photons, allowing an arbitrary number of iterations to be computed.
 
-The new formulation, however, includes a probabilistic approach that does not require local photon statistics to be stored. It is shown in the original work that each different photon mapping step of the progressive photon mapping approach can be performed with complete independence from other steps. The biggest benefit of this is that each step can be computed in parallel, allowing for multiple photon mapping steps can be correnctly computed.
+The new formulation, called PPMPA, includes a probabilistic approach that does not require local photon statistics to be stored. It is shown in the original work that each different photon mapping step of the progressive photon mapping approach can be performed with complete independence from other steps, by using a probabilistic model to compute an estimation of the photon radius for each iteration, instead of gradually reducing it after each photon tracing step (see \fig{diagram_ppmpa}.
 
-
-\itodo{diagrama de pipeline de ppm vs ppmpa}
-
-The result is a memoryless algorithm that does not require the maintenance of intermediate statistics and allows the possibility of computing multiple iterations, or photon mapping steps, in parallel.u
+\image[width=\textwidth]{visio/diagram_ppmpa}{Fluxogram of PPMPA}{fig:diagram_ppmpa}
 
 Summarily, the probabilistic analysis in the original work shows that for a photon mapping step $i$, the radius for for a hit point for that step, $r_{i}$, can be estimated by \cref{eq:radius_prob}
 
@@ -24,8 +21,15 @@ Summarily, the probabilistic analysis in the original work shows that for a phot
   \end{equation}
 \end{figure}
 
-\image[width=\textwidth]{visio/diagram_ppmpa}{Fluxogram of Progressive Photon Mapping with Probabilistic Radius Calculation}{fig:diagram_ppmpa}
+
+The biggest benefit of this is that the radius computation kernel is not dependent on previous iterations, allowing for multiple photon mapping steps to be correnctly computed, as shown in \cref{fig:diagram_ppmpa_parallel}.
+
+\image[width=\textwidth]{visio/diagram_ppmpa_parallel}{Fluxogram of PPMPA with concurrent iterations}{fig:diagram_ppmpa_parallel}
+
+The result is a memoryless algorithm that does not require the maintenance of intermediate statistics and allows the possibility of computing multiple iterations, or photon mapping steps, in parallel.
+
 
 \itodo{maybe more stuff here?}
+
 
 \end{document}
