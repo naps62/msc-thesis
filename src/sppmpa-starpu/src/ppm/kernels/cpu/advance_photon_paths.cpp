@@ -140,6 +140,7 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
   const unsigned*           indexes        = (const unsigned*) STARPU_VECTOR_GET_PTR(buffers[8]);
   const float*              inv_cell_size  = (const float*)    STARPU_VARIABLE_GET_PTR(buffers[9]);
 
+  memset(hit_points, 0, sizeof(HitPointRadiance) * hit_points_count);
 
   advance_photon_paths_impl(photon_paths, photon_paths_count,
                             seed_buffer,  // seed_buffer_count,
