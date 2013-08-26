@@ -11,7 +11,7 @@ Config :: Config(const char *desc, int _argc, char **_argv)
   value("output_file",   output_file, string("output.png"), "output image file");
 
   // window
-  flag("no-display", no_display, "Supress realtime display?");
+  flag("no_display", no_display, "Supress realtime display?");
   value("width,w",   width,  uint(320),          "window width");
   value("height,h",  height, uint(240),          "window height");
   value("title,t",   title,  string("ppm-starpu"), "window title");
@@ -85,7 +85,7 @@ void task_info(
   ss << "<task>";
     ss << "<device>" << device << " " << id << "</device>";
     ss << "<omp_size>" << omp_size << "</omp_size>";
-    ss << "<info>" << info << "</name>";
+    ss << "<name>" << info << "</name>";
     ss << "<iteration>" << iteration << "</iteration>";
     ss << "<start>" << start_time << "</start>";
     ss << "<end>" << end_time << "</end>";
