@@ -2,7 +2,7 @@
 
 \begin{document}
 
-\chapter{Development of the Case Study} \label{section:impl}
+\chapter{Development of the Case Study} \label{chapter:impl}
 
 The case study was implemented based on an already existing implementation, available at the beginning of the project. This implementation provides the initial Progressive Photon Mapping method, described in \cref{section:ppm}, the stochastic extension presented in \cref{section:sppm}, and the probabilistic approach for radius reduction in \cref{section:ppmpa}. Support for both \cpu and \cuda rendering is also included, although \cuda support was actually not fully completed until a later version. It was implemented on top of the LuxRender project, an open source, physically based and unbiased rendering engine. The source code of LuxRender provides an ideal basis of data structures to implement a rendering algorithm such as photon mapping, and this was exploited by the author of this implementation.
 
@@ -15,9 +15,11 @@ The final implementation developed for this work was based on the original one p
 It should be noted that only two of the presented algorithms were taken in consideration during this work, namely:
 
 \begin{description}
-\item[PPM] (Progressive Photon Mapping) This corresponds to the original proposition for progressive photon mapping, described in \cref{section:ppm}.
+\item[PPM (Progressive Photon Mapping)] \hfill \\
+  This corresponds to the original proposition for progressive photon mapping, described in \cref{section:ppm}.
 
-\item[SPPMPA] (Stochastic Progressive Photon Mapping with Probabilistic Approach) This extends the initial PPM solution to include both the stochastic version, and the probabilistic approach for radius reduction.
+\item[SPPMPA] \hfill \\
+  (Stochastic Progressive Photon Mapping with Probabilistic Approach) This extends the initial PPM solution to include both the stochastic version, and the probabilistic approach for radius reduction.
 \end{description}
 
 There was no attempt to implement any of the intermediate versions (SPPM or PPMPA).

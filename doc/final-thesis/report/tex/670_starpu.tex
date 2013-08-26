@@ -60,7 +60,7 @@ An alternative solution is to declare the handles in-loop, as shown in \cref{lst
   \label{lst:starpu_handles_in_loop}
 \end{listing}
 
-With this method, each iteration declares its own copy of the required data. \starpu provides the \texttt{starpu_data_unregister_submit} API call, which instructs the library that the given data buffer will no longer be needed after all previous tasks using it have been executed. Since data is local to each iteration, this can actually be considered a more intuitive way to approach the problem.
+With this method, each iteration declares its own copy of the required data. \starpu provides the \texttt{starpu\_data\_unregister\_submit} API call, which instructs the library that the given data buffer will no longer be needed after all previous tasks using it have been executed. Since data is local to each iteration, this can actually be considered a more intuitive way to approach the problem.
 
 However, an additional problem arose from this approach. Due to the asynchronous nature of the tasks, the program actually submits every single iteration to the scheduler at once, meaning that multiple copies of the \texttt{eye\_paths} and \texttt{hit\_points} buffers will be imediatelly requested. For a large enough number of iterations, this can result in too much memory being requested, and the program being aborted. Since \starpu does not provide any method to control this, the limitation had to be imposed manually, by inserting a barrier every few iterations (with the actual amount being a configurable value)
 

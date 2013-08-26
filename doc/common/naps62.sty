@@ -94,8 +94,10 @@
 % different todos
 %
 \newcommand{\itodo}[2][orange]{\todo[inline,color=#1!40]{#2}}
+\newcommand{\td}[2][orange]{\todo[inline,color=#1!40]{#2}}
 \newcommand{\tododone}[1]{\itodo[green]{#1}}
 \newcommand{\itododone}[1]{\tododone{#1}}
+\newcommand{\tdg}[1]{\tododone{#1}}
 
 
 %
@@ -151,6 +153,7 @@
 \newcommand{\cuda}{\acs{CUDA}\xspace}
 \newcommand{\openmp}{\acs{OpenMP}\xspace}
 \newcommand{\openacc}{\acs{OpenACC}\xspace}
+\newcommand{\opencl}{\acs{OpenCL}\xspace}
 \newcommand{\mpi}{\acs{MPI}\xspace}
 \newcommand{\gama}{\acs{GAMA}\xspace}
 \newcommand{\starpu}{\acs{StarPU}\xspace}

@@ -7,26 +7,34 @@
 Most of the structured used throughout all the implementations were based on the ones used in the originally available implementation, which in turn was heavily supported on the source code of LuxRender. This resulted in the usage of several data structures from that same source code, particularly:
 
 \begin{description}
-\item[Basic Geometry] The basi geometric structures, such as vector, normals, 3D points and triangles;
+\item[Basic Geometry] \hfill \\
+  The basi geometric structures, such as vector, normals, 3D points and triangles;
 
-\item[Meshes] A collection of vertices, edges and faces that define the shape of a 3D object in a scene;
+\item[Meshes] \hfill \\
+  A collection of vertices, edges and faces that define the shape of a 3D object in a scene;
 
-\item[Scene] The full description of the 3D scene to render, including all meshes, materials and light descriptions associated with it. This scene is read initially by the LuxRender library, which handles the parsing of all data files associated with the scene (mesh descriptions, materials, light sources, textures, etc)
+\item[Scene] \hfill \\
+  The full description of the 3D scene to render, including all meshes, materials and light descriptions associated with it. This scene is read initially by the LuxRender library, which handles the parsing of all data files associated with the scene (mesh descriptions, materials, light sources, textures, etc)
 
-\item[\acl{BVH}] A tree structure used to index spatial objects, in this case the objects within the scene, in order to provider ray intersection computations. The actual implementation used, a \acf{QBVH}, is an extension of a regular \acs{BVH}, optimized for a low memory footprint, and \acs{SIMD} computations \cite{dammertz2008shallow,Stich2009hpg}. This structure is created at startup by LuxRender, and is used to spatially index all elements in the scene, allowing for faster computations of ray intersections;
+\item[\acl{BVH}] \hfill \\
+  A tree structure used to index spatial objects, in this case the objects within the scene, in order to provider ray intersection computations. The actual implementation used, a \acf{QBVH}, is an extension of a regular \acs{BVH}, optimized for a low memory footprint, and \acs{SIMD} computations \cite{dammertz2008shallow,Stich2009hpg}. This structure is created at startup by LuxRender, and is used to spatially index all elements in the scene, allowing for faster computations of ray intersections;
 
 \end{description}
 
 In addition to these structures that LuxRender already provided, additional data structures were also required for the implementations described in this section:
 
 \begin{description}
-\item[Pointer-free Scene] The original scene structure available with LuxRender relied heavily on pointer based structures, which was not adequate for \gpu computations. So a custom solution was required in order to store scene information in a compact manner, easily transferable and usable by a \gpu
+\item[Pointer-free Scene] \hfill \\
+  The original scene structure available with LuxRender relied heavily on pointer based structures, which was not adequate for \gpu computations. So a custom solution was required in order to store scene information in a compact manner, easily transferable and usable by a \gpu
 
-\item[Hit Points] A data structure was required to store information about hit points position, direction vector, the pixel that it originated from, and about accumulated photon radiance. In practice this was actually split into two different data structures, the first one storing only static information about the hit point, such as position and origin point, and the last one to store incident radiance. This separation allowed a more efficient memory usage, since the two different components are read and written to at different points during the algorithm.
+\item[Hit Points] \hfill \\
+  A data structure was required to store information about hit points position, direction vector, the pixel that it originated from, and about accumulated photon radiance. In practice this was actually split into two different data structures, the first one storing only static information about the hit point, such as position and origin point, and the last one to store incident radiance. This separation allowed a more efficient memory usage, since the two different components are read and written to at different points during the algorithm.
 
-\item[Lookup Table] An acceleration structure used to index the hit points in order to quickly find all relevant hit points to update after a photon trace. This corresponds to all hit points within a given radius of the hit point of each photon, or in other words, all the hit points that photon will contribute to. The structure is implemented with an hash table that spatially indexes the hit points by dividing the 3D space into a grid, where each cell references all hit points that intersect it, based on the current radius.
+\item[Lookup Table] \hfill \\
+  An acceleration structure used to index the hit points in order to quickly find all relevant hit points to update after a photon trace. This corresponds to all hit points within a given radius of the hit point of each photon, or in other words, all the hit points that photon will contribute to. The structure is implemented with an hash table that spatially indexes the hit points by dividing the 3D space into a grid, where each cell references all hit points that intersect it, based on the current radius.
 
-\item[Ray Buffer] In the original implementation, the total amount of photons traced every photon path was not directly processed at once. Instead, a ray buffer was used to process a specific, pre-configured number of photons at a time, independently from the total amount of photons to process during that step. This was mostly to increase coherence on the \cpu by processing a smaller batch of consecutive rays at a time.
+\item[Ray Buffer] \hfill \\
+  In the original implementation, the total amount of photons traced every photon path was not directly processed at once. Instead, a ray buffer was used to process a specific, pre-configured number of photons at a time, independently from the total amount of photons to process during that step. This was mostly to increase coherence on the \cpu by processing a smaller batch of consecutive rays at a time.
 
 \end{description}
 

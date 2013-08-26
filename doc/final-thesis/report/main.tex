@@ -1,7 +1,7 @@
 \documentclass[a4paper,11pt,abstract=on,twoside,openright]{book}
 \setlength\parindent{1.2em}
 
-\usepackage[final=false]{../../common/naps62}
+\usepackage[final=true]{../../common/naps62}
 
 \newcommand{\common}[1]{\input{../../common/#1}}
 \newcommand{\image}[4][]{%
@@ -55,6 +55,7 @@
 \cleardoublepage
 \pagenumbering{arabic}
 
+\setlength{\parskip}{1em}
 \mainmatter
 \subfile{tex/100_introduction}
 \subfile{tex/200_background}
@@ -62,10 +63,9 @@
 \subfile{tex/400_starpu}
 \subfile{tex/500_ppm}
 \subfile{tex/600_implementation}
-\subfile{tex/700_results}
+%\subfile{tex/700_results}
 \subfile{tex/800_conclusions}
-\subfile{tex/900_future}
-\subfile{tex/999_todo}
+%\subfile{tex/999_todo}
 
 
 \cleardoublepage

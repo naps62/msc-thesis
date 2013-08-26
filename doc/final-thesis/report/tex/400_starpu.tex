@@ -4,42 +4,44 @@
 
 \chapter{The StarPU Framework} \label{chapter:starpu}
 
-
-\itodo{falar de todo o tipo de coisas aqui}
-
-\starpu \cite{augonnet2011starpu} is a unified runtime system consisting on both software and a runtime API that aims to allow programmers of computational intensive applications to more easily exploit the power of avaiable devices, supporting \cpus, \gpus and Cell \todo{ref aqui para o cell? ou subsection algures a falar dele talvez}.
+\starpu \cite{augonnet2011starpu} is a unified runtime system consisting on both software and a runtime API that aims to allow programmers of computational intensive applications to more easily exploit the power of avaiable devices, supporting \cpus and \gpus.
 
 Much like \gama, this framework frees the programmer of the workload scheduling and data consistency inherent from a \hetplat. Task submissions are handled by the \starpu task scheduler, and data consistency is ensured via a data managemente library.
 
 \subsection{Terminology}
-\itodo{this}
 
 \starpu uses a well defined terminology to describe its libraries and API:
 
 \begin{description}
-  \item[Data Handle] References a memory block. The allocation of the required space, and the possibly required memory transfers to deliver information to each device can be completely handled by \starpu;
+  \item[Data Handle] \hfill \\
+    References a memory block. The allocation of the required space, and the possibly required memory transfers to deliver information to each device can be completely handled by \starpu;
 
-  \item[Codelet] Describes a computational kernel that can be implemented in one or more architectures, such as \cpus, \cuda or \acs{OpenCL}. It also stores information about thew amount and type of data buffers it should receive;
+  \item[Codelet] \hfill \\
+    Describes a computational kernel that can be implemented in one or more architectures, such as \cpus, \cuda or \acs{OpenCL}. It also stores information about thew amount and type of data buffers it should receive;
 
-  \item[Task] Is defined as the association between a codelet and a set of data handles;
+  \item[Task] \hfill \\
+    Is defined as the association between a codelet and a set of data handles;
 
-  \item[Partition] The subdivision of a data handle in smaller chunks, according to a partitioning function, which can be user defined;
+  \item[Partition] \hfill \\
+    The subdivision of a data handle in smaller chunks, according to a partitioning function, which can be user defined;
 
-  \item[Worker] A processing element, such as a \cpu core, managed by StarPU to execute tasks;
+  \item[Worker] \hfill \\
+    A processing element, such as a \cpu core, managed by StarPU to execute tasks;
 
-  \item[Scheduler] The library in charge of assigning tasks to workers, based on a well defined scheduling policy.
+  \item[Scheduler] \hfill \\
+    The library in charge of assigning tasks to workers, based on a well defined scheduling policy.
 
 \end{description}
 
 \section{Task Scheduling}
-\itodo{this}
 
 The framework employs a task based programming model. Computational kernels must be encapsulated within a task. A given kernel can be implemented in multiple ways (i.e. for \cpus or for \cuda), and \starpu will handle the decision of where and when the task should be executed, based on a task scheduling policy.
 
 Data manipulated by a task is automatically transferred as needed between the various processing devices, ensuring memory consistency and freeing the programmer from dealing directly with scheduling issues, data transfers and other requirements associated with it.
 
+Previous work by the \starpu development team indicates that one of the most important issues with scheduling is about obtaining an accurate performance model for the execution time of a task \cite{augonnet2010data,augonnet2010automatic}. This is increasingly difficult when data transfers, which the team regards as a key issue, are taken into account, as shown in the latter paper. In it, a data-prefetching implementation for \gpus is present, and asynchronous data request capability is introduced as part of the \starpu library, with the goal of preventing computational units from being stalled waiting for data.
+
 \section{Dependencies}
-\itodo{this}
 
 \starpu automatically buils a dependency graph of all submitted tasks, and keeps them in a pool of \emph{frozen tasks}, passing them onto the scheduler once all dependencies are met.
 
@@ -47,7 +49,7 @@ Dependencies can be implicitly given by the data manipulated by the task. Each t
 
 This includes the possible data transfers that are required to meet dependencies, in case different tasks that depend on the same data are scheduled to run on different computational nodes. \starpu will automatically make sure the required data transfers are made between each task exectution to ensure data consistency.
 
-In addition to implicit data dependencies, other dependencies can be explicitly given by using the \starpu API in order to explicitly force the execution order of a given set of tasks.
+In addition to implicit data dependencies, other dependencies can be explicitly given in order to explicitly force the execution order of a given set of tasks.
 
 \subsection{Data Access Modes}
 
@@ -85,6 +87,34 @@ The low-level version is a more verbose one, which is actually used internally b
 This trade-off is not uncommon, with many existing libraries besides \starpu supporting both API levels. High level versions are designed to remove complexity and accelerate development time. They are often a subset of an underlying low level version, delivering only the more common features. More experienced developers should be able to achieve better results with a lower level API, with the cost of additional development time.
 
 \section{Performance Model}
+
+Most schedulers available with \starpu are history based. This relies on the programmer to configure a performance model for each defined codelet, in order to allow the framework to identify it, and use on-line calibration. Calibration results will be stored in a centralized directory, and inform \starpu about how each codelet behaves on each different device, with a certain input size.
+
+Once a good calibration has been obtained (with a minimum number of executions of a task), \starpu can schedule tasks more efficiently, according to the policy defined by the scheduler. The list of the available scheduling policies is the folowing:
+
+\begin{description}
+
+\item[eager] The default scheduler, using a single task queue, from which workers draw tasks. This method does not allow to take advantage of asynchronous data prefetching, since the assignment of a task is only done when a given worker requires so;
+
+\item[prio] Similar to eager, but tasks can be sorted by a priority number;
+
+\item[random] Tasks are distributed randomly, according to the estimated performance of each worker. Although extremelly naive, this has the advantage of allowing data prefetching, and minimizing scheduler decision times;
+
+\item[ws (Work Stealing)] Once a worker becomes idle, it steals a task from the most loaded worker
+
+\item[dm (Deque Model)] Performs a HEFT-like strategy \itodo{citar aqui a tese do artur, e outros artigos sobre o heft}. Each task is assigned to where the scheduler thinks its termination time will be minimized;
+
+\item[dmda (Deque Model Data Aware)] Similar to \textbf{dm}, but also taking into account data transfer times;
+
+\item[dmdar (Deque Model Data Aware Ready)] Similar to \textbf{dmda}, but tasks are sorted per-worker, based on the amount of already available data buffers for that worker. Devices where most or all data buffers a task depends on are more likely to receive that task, in order to attempt minimization of data transfers;
+
+\item[pheft (parallel HEFT)] similar to \textbf{heft} (which is deprecated in \starpu, with \textbf{dmda} working in a very similar way), with support for parallel tasks
+
+\item[peager] similar to \textbf{eager}, with support for parallel tasks
+
+\end{description}
+
+Additionally, schedulers are build as a pluggable system, allowing developers to write their own scheduling policies if desired, and easily use them within \starpu.
 
 \end{document}
 
