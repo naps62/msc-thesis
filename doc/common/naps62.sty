@@ -1,4 +1,4 @@
-\ProvidesPackage{naps62}
+\ProvidesPackage{../../common/naps62}
 
 \usepackage{kvoptions}
 
@@ -58,7 +58,7 @@
 \usepackage[noabbrev,capitalise]{cleveref}
 %\usepackage[hyperpageref]{backref}
 \usepackage{csquotes} % biblatex asks for this
-\usepackage[hyperref=true,url=true,sorting=none]{biblatex}    % better references
+\usepackage[hyperref=true,url=true,sorting=none,backend=biber]{biblatex}    % better references
 
 %
 % pseudocode environments
@@ -156,7 +156,7 @@
 \newcommand{\opencl}{\acs{OpenCL}\xspace}
 \newcommand{\mpi}{\acs{MPI}\xspace}
 \newcommand{\gama}{\acs{GAMA}\xspace}
-\newcommand{\starpu}{\acs{StarPU}\xspace}
+\newcommand{\starpu}{StarPU\xspace}
 \newcommand{\cpu}{\acs{CPU}\xspace}
 \newcommand{\cpus}{\acsp{CPU}\xspace}
 \newcommand{\gpu}{\ac{GPU}\xspace}

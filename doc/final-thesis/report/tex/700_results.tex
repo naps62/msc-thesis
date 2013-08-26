@@ -4,8 +4,16 @@
 
 \chapter{Profiling Results} \label{chapter:results}
 
-\itodo{mostrar aqui os resultados e discussões}
-\itodo{pheft crasha}
+Prior to the beginning the work on the implementations previously described, an analysis was made on the already existing version, mostly to understand its scalability across different computational systems. Since this was an external product, its usage was limited to serving as a validation tool for future implementations, as well as settings expectations on how the algorithm should perform.
+
+Later stages involved the profiling using only the versions actually produced during this dissertation, where code is shared whenever possible between the different versions, producing more comparable profiling results
+
+
+\section{Scalability of Original Implementation}
+
+Since the code being used here was not subject to any intervention in terms of optimization, any performance issues with this version should not be directly associated with algorithm or hardware limitations, as code quality is not guaranteed.
+
+It should also be noted that the SPPMPA version of this code was not fully finished at this time, so profiling of this original implementation was limited to the more basic PPM version. Regardless, the actual implementation of each task remained unchanged, and a good overview of the algorithm's scalability is still possible. The major drawback is that it becomes impossible to assess performance with concurrent iterations, which are not supported by PPM.
 
 \image[width=\textwidth]{excel/rr_cpu_time_511}{Original Implementation @ 511 (\cpu Only)}{fig:rr_cpu_time_511}
 \image[width=\textwidth]{excel/rr_cpu_speedup_511}{Original Implementation @ 511 (\cpu Only)}{fig:rr_cpu_speedup_511}
