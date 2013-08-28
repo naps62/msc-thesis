@@ -24,15 +24,18 @@ With the increasing demand for highly data-parallel algorithms, and the growing 
 
 A similar and more flexible model is the usage of a single instruction across multiple threads running concurrently, called \ac{SIMT}. This is the programming model behind \gpus, which gradually started to gain more attention for their general purpose computing capabilities. Although the hardware of a \gpu is still tightly coupled with graphics processing and rendering, there have also been several advances in their usage as \gpgpus. \todo{ref aqui}
 
+\todo{LPS: Estes 2 parágrafos como introdução para uma subsecção sobre GPUs não me parecem muito bem.
+primeiro porque fala na vectorização e no numero de operandos ( porque não referir a MULTIPLY-ADD?) sem fazer a ponte para os GPUs; depois porque refere vagamente o SIMT mas sem dar qualquer pista sobre o que isto é.}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Fermi Architecture}
 
-The Fermi architecture was an important milestone of \gpus technology, as it was one of the first generations target directly towards \gpgpu and high performance computing, rather than purely graphics rendering. The first Fermi devices were released in 2010, and were the first NVidia products to include support for double precision floating point number, which was an important feature many fields that require increased precision. Fermi devices also included a GDDR5 memory controller with support for \ac{DMA} through the \acs{PCIe} bus, and up to 16 \acf{SM}, for a total of up to 512 \acs{CUDA} Cores.
+The Fermi architecture was an important milestone of \gpus technology, as it was one of the first generations targeted directly towards \gpgpu and high performance computing, rather than purely graphics rendering. The first Fermi devices were released in 2010, and were the first NVidia products to include support for double precision floating point number, which was an important feature many fields that require increased precision. Fermi devices also included a GDDR5 memory controller with support for \ac{DMA} through the \acs{PCIe} bus, and up to 16 \acf{SM}, for a total of up to 512 \acs{CUDA} Cores.
 
 \image[width=0.4\textwidth]{arch_fermi}{Overview of the Fermi Architecture}{fig:fermi}
 
-This architecture is backed by a hardware-based thread scheduler, located within each \acs{SM}, that attempt to feed the execution unit with threads grouped in blocks of 32, or \textit{warps}. Since the scheduling is made directly via hardware, the switch between threads is nearly free, at least when compared with software scheduling on a \acs{CPU}. As a result, this strategy works better when the total amount of threads competing for resources is much higher than the amount of execution units, allowing for the latency of memory accesses to be hidden away by instantly scheduling a different \textit{warp}, effectively hiding memory latency while still keeping execution units busy. This is very different from \acs{CPU} scheduling policies, where switching between threads requires a context switch, which takes considerably longer, making that approach not as feasible.
+This architecture is backed by a hardware-based thread scheduler, located within each \acs{SM}, that attempt to feed the execution unit with threads grouped in blocks of 32, or \textit{warps}. Since the scheduling is made directly via hardware, the switch between threads is nearly free, at least when compared with software scheduling on a \acs{CPU}. As a result, this strategy works better when the total amount of threads competing for resources is much higher than the amount of execution units, allowing for the latency of memory accesses to be hidden away by instantly scheduling a different \textit{warp}, effectively hiding memory latency while still keeping execution units busy. This is very different from \acs{CPU} scheduling policies, where switching between threads requires a context switch, which takes considerably longer, making that approach not as feasible as for a \gpu.
 
 
 
@@ -49,6 +52,7 @@ This shows a clear evolution over the previous generation, and a response to the
 
 
 \section{Intel MIC}
+  todo{LPS. isto justificar-se-á? nao sao usados e o doc já vai longo}
 \itodo{Xeon Phi}
 
 

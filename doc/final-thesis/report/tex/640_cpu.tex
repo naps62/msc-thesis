@@ -18,7 +18,7 @@ In this implementation, some of the original code from LuxRender was also employ
 This intersection code is implemented using SSE intrinsic functions, meaning that SSE code was harcoded, instead of being compiler generated. This makes sure that the accelerating structure takes advantage of the optimizations for original \acs{BVH} structures presented in \cite{dammertz2008shallow}.
 
 
-Initially only the PPM version of the algorithm was developed. However, that decision was only to allow a gradual evolution, later adapting the code to implement SPPMPA instead. The reason for this is that evolving from basic PPM to one of it's extensions is relatively straighforward. The tasks themselves remain almost identical, and most of the changes are related to when and how those tasks are actually called. Thus, the PPM version was not intended to be a finished application, but just a first step towards the final SPPMPA version.
+Initially only the PPM version of the algorithm was developed. However, that decision was only to allow a gradual evolution, later adapting the code to implement SPPMPA instead. The reason for this is that evolving from basic PPM to one of its extensions is relatively straighforward. The tasks themselves remain almost identical, and most of the changes are related to when and how those tasks are actually called. Thus, the PPM version was not intended to be a finished application, but just a first step towards the final SPPMPA version.
 
 Finally, even though the later algorithm theoretically allows multiple iterations to be run in parallel, this is not supported in the \cpu-only implementation. This mimics the behaviour of the original implementation from \cref{section:impl_original}, which was the intended result.
 

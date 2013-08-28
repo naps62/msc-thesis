@@ -1,0 +1,65 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\section{\gama} \label{chapter:gama}
+
+\itodo{falar do possivel aqui}
+
+\itodo{imagem da apresentação da pre tese. ou criar uma secção genérica sobre frameworks, já que a imagem secalhar tambem se pode aplicar ao starpu}
+
+
+The \acf{GAMA} is a framework to aid computational scientists in the development or porting of data-parallel applications to heterogeneous computing platforms. Currently \hetplat support includes only systems composed of traditional \cpus cores and one or several CUDA-capable \gpu devices.
+
+\gama provides an abstraction of the hardware platform, attempting to free the programmer from the workload scheduling and data movement issues across the different resources. In \gama, an application is composed of a collection of jobs, each defined as a set of tasks applied to a different input data set. Every job shares a global address space, instead of directly using the private memory of each device.
+
+
+\subsection{Memory Model}
+
+\gama uses an unified programming model that assumes a hierarchy composed of multiple devices (both \cpus and \gpus), where each device has access to a private address space (shared by all computational units, or cores, within that device), and a distributed memory system between devices. The framework assumes that multiple computational units of an individual device can cooperate and communicate through a shared memory space, and that the underlying programming and execution model of that device provides synchronization mechanisms (barriers, atomics and memory fences).
+To abstract the distributed memory model that is used between devices, \gama introduces a global address space. \Cref{fig:gama_memory_model} illustrates how \gama understands the memory hierarchy of a \hetplat.
+
+
+\subsubsection{Memory Consistency}
+
+Communication between memory spaces of different devices is expensive due to the need of synchronization and communication between the host \cpu and the devices. Due to this, a relaxed consistency model is used, which enables the system to optimize data movements between devices, offering the developer a single synchronization primitive to enforce memory consistency.
+\todo{LPS: relaxed, but what are the consistency guarantees. There must be some since there are many different models that relax over sequential consistency}
+
+\subsubsection{Software Cache}
+
+Some applications require safe exclusive access to specific partitions of a data set. To address this issue, a software cache among devices was implemented. This ensures that the required data is as close to the device as possible, taking advantage of the local memory of each device. It also provides a safeguard mechanism in combination with the global memory system, to ensure each device has a copy of a specific partition, when requested by the developer. Additionally, the cache local copies on the device shared memory space use semantically correct synchronization primitives within the device.
+
+\image[width=0.5\textwidth]{gama_model}{\gama Memory Model}{fig:gama_memory_model}
+
+
+\subsection{Programming and Execution Model}
+
+To better understand the programming and execution model employed in \gama, some key concepts are introduced in this subsection:
+
+\begin{description}
+  \item[\acf{CU}] \hfill \\
+    In \gama, a \acl{CU} is an individual execution unit, capable of executing a general-purpose application. In the context of a \cpu, a \acl{CU} represents a single core, while on a \gpu, in the current implementation represents a single \acf{SM}. Thus the terms \ac{CU} and core may be used with the same meaning.
+
+  \item[Device or Worker] \hfill \\
+    Represents a collection of \aclp{CU} that share some level of memory (e.g.\ the CPU cores on the same machine, or the \sms  of a single \gpu).
+
+  \item[Host] \hfill \\
+    The group of all devices within a single computational node. Currently \gama supports only a single-host, providing of taking advantage of multiple computational nodes. As such, the host represents the top-most hierarcky layer in \gama's execution model
+
+  \item[Domain] \hfill \\
+    A global view of a particular data structure that enables developers to access any memory location using the global address space, and hiding the complexity of the underlying memory system. At the application level, the user is able to define filters of partial views of a single domain, allowing the system to identify the required communication primitives and enforce the global address space, the memory consistency model, and cache and synchronization mechanisms.
+
+  \item[Job] \hfill \\
+    A tuple associating data domains with the corresponding computations related to it (the computational kernel), and a specialized dicing function that defines the best strategy for job granularity, recursively splitting the job into smaller tasks across the data domains. This dicing function is somewhat analogous to the ability of defining task granularity with tools such as \acs{OpenMP}, but it can employ more flexible solutions, to account for the irregularity of the algorithms.
+
+  \item[Kernel] \hfill \\
+    The computation associated with a job. In a best-case scenario, a computational kernel can be mapped directly to a given device simply with the help of the toolkit supporting that device. In most cases however, the kernel needs to be tailored to a specific device's programming model. This is achievable by extending the job description with the addition of the specialized kernel for a specific device. This feature also enhances the programming model by enabling developers to tailor specific computational kernels for each platform, taking advantage of architecture-specific features.
+
+
+\end{description}
+
+The organization of the execution model between Computational Units, Devices and Hosts ensures that a consistent model can be assumed implicitly, where \acsp{CU} within the same device share a common address space, allowing the usage of device-specific synchronization mechanisms to manage the coordination of concurrent executions within that device.
+
+An application in GAMA is a collection of jobs submitted to a run-time system for scheduling among the available computational resources. Dependencies among jobs can be specified with explicit synchronization barriers. The main goal of the runtime scheduler is to reduce the overall execution time of any given application. The scheduler uses information provided by each job in order to determine the best scheduling policy, based on current runtime states, as well as execution history. If the granularity of a job is too coarse to enable a balanced scheduling policy, \gama will recursively employ the dicing function of a job to adjust it to the capabilities of the device.
+
+\end{document}

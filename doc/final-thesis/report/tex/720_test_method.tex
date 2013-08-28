@@ -1,0 +1,15 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\section{Testing Methodology} \label{sec:results:method}
+
+For each measurement, only the time spent in the main rendering function was considered, discarding any input and output time spent by the program. A minimum of 10 executions were made for each measurement, for which the 3 best executions within at most $5\%$ of each other were considered.
+
+Whenever \cuda was employed, the Cuda Occupancy Calculator\footnote{A spreadsheet by \nvidia that helps estimating the ideal block size for a given kernel}, as well as manual tuning, were used to find the correct block size used for each computational kernel.
+
+\subsection{Input Scene}
+
+For simplicity, input reading was left to the LuxRender library, relying on the existing structures and parser to read all the information regarding a scene to render. This limits all testing to the available scenes shipped with LuxRender as samples. From these scenes, only three scenes were selected (namely, \textbf{kitchen}, \textbf{cornell} and \textbf{luxball}, to analyze any potential differences the input data might have in the algorithm's efficiency. However, the limited amount of scenes to choose from may also be a limiting factor of that same analyzis.
+
+\end{document}

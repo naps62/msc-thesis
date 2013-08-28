@@ -1,0 +1,18 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\section{Scalability of Original Implementation} \label{sec:results:original}
+
+Since the code being used here was not subject to any intervention in terms of optimization, any performance issues with this version should not be directly associated with algorithm or hardware limitations, as code quality is not guaranteed.
+
+It should also be noted that the SPPMPA version of this code was not fully finished at this time, so profiling of this original implementation was limited to the more basic PPM version. Regardless, the actual implementation of each task remained unchanged, and a good overview of the algorithm's scalability is still possible. The major drawback is that it becomes impossible to assess performance with concurrent iterations, which are not supported by PPM.
+
+For these tests, three different computational systems were used, particular the 511, 611 and 711 nodes described in \cref{sec:results:env}
+
+Testing focused on the scalability of the algorithm on each of these nodes
+
+\image[width=\textwidth]{excel/rr_cpu_time_511}{Original Implementation @ 511 (\cpu Only)}{fig:rr_cpu_time_511}
+\image[width=\textwidth]{excel/rr_cpu_speedup_511}{Original Implementation @ 511 (\cpu Only)}{fig:rr_cpu_speedup_511}
+
+\end{document}

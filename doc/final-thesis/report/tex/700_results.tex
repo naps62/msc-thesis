@@ -8,29 +8,26 @@ Prior to the beginning the work on the implementations previously described, an 
 
 Later stages involved the profiling using only the versions actually produced during this dissertation, where code is shared whenever possible between the different versions, producing more comparable profiling results
 
+\subfile{tex/710_test_env}
+\subfile{tex/720_test_method}
+\subfile{tex/730_original}
+\subfile{tex/740_cpu_cuda}
+\subfile{tex/750_starpu}
 
-\section{Scalability of Original Implementation}
+%\image[width=\textwidth]{excel/rr_cpu_time_611}{Original Implementation @ 611 (\cpu Only)}{fig:rr_cpu_time_611}
+%\image[width=\textwidth]{excel/rr_cpu_speedup_611}{Original Implementation @ 611 (\cpu Only)}{fig:rr_cpu_speedup_611}
 
-Since the code being used here was not subject to any intervention in terms of optimization, any performance issues with this version should not be directly associated with algorithm or hardware limitations, as code quality is not guaranteed.
-
-It should also be noted that the SPPMPA version of this code was not fully finished at this time, so profiling of this original implementation was limited to the more basic PPM version. Regardless, the actual implementation of each task remained unchanged, and a good overview of the algorithm's scalability is still possible. The major drawback is that it becomes impossible to assess performance with concurrent iterations, which are not supported by PPM.
-
-\image[width=\textwidth]{excel/rr_cpu_time_511}{Original Implementation @ 511 (\cpu Only)}{fig:rr_cpu_time_511}
-\image[width=\textwidth]{excel/rr_cpu_speedup_511}{Original Implementation @ 511 (\cpu Only)}{fig:rr_cpu_speedup_511}
-
-\image[width=\textwidth]{excel/rr_cpu_time_611}{Original Implementation @ 611 (\cpu Only)}{fig:rr_cpu_time_611}
-\image[width=\textwidth]{excel/rr_cpu_speedup_611}{Original Implementation @ 611 (\cpu Only)}{fig:rr_cpu_speedup_611}
-
-\image[width=\textwidth]{excel/rr_cpu_time_711}{Original Implementation @ 711 (\cpu Only)}{fig:rr_cpu_time_711}
-\image[width=\textwidth]{excel/rr_cpu_speedup_711}{Original Implementation @ 711 (\cpu Only)}{fig:rr_cpu_speedup_811}
+%\image[width=\textwidth]{excel/rr_cpu_time_711}{Original Implementation @ 711 (\cpu Only)}{fig:rr_cpu_time_711}
+%\image[width=\textwidth]{excel/rr_cpu_speedup_711}{Original Implementation @ 711 (\cpu Only)}{fig:rr_cpu_speedup_811}
 
 
-\image[width=\textwidth]{excel/rr_cpu_gpu_time_611}{Original Implementation @ 611)}{fig:rr_cpu_gpu_time_611}
-\image[width=\textwidth]{excel/rr_cpu_gpu_speedup_611}{Original Implementation @ 611)}{fig:rr_cpu_gpu_speedup_611}
-\image[width=\textwidth]{excel/rr_cpu_gpu_time_711}{Original Implementation @ 711)}{fig:rr_cpu_gpu_time_711}
-\image[width=\textwidth]{excel/rr_cpu_gpu_speedup_711}{Original Implementation @ 711)}{fig:rr_cpu_gpu_speedup_711}
+%\image[width=\textwidth]{excel/rr_cpu_gpu_time_611}{Original Implementation @ 611)}{fig:rr_cpu_gpu_time_611}
+%\image[width=\textwidth]{excel/rr_cpu_gpu_speedup_611}{Original Implementation @ 611)}{fig:rr_cpu_gpu_speedup_611}
+%\image[width=\textwidth]{excel/rr_cpu_gpu_time_711}{Original Implementation @ 711)}{fig:rr_cpu_gpu_time_711}
+%\image[width=\textwidth]{excel/rr_cpu_gpu_speedup_711}{Original Implementation @ 711)}{fig:rr_cpu_gpu_speedup_711}
 
 
-\image[width=\textwidth]{excel/naps_time_without_starpu}{Without \starpu)}{fig:time_without_starpu}
-\image[width=\textwidth]{excel/naps_time_with_starpu}{With \starpu)}{fig:time_with_starpu}
+%\image[width=\textwidth]{excel/naps_time_without_starpu}{Without \starpu)}{fig:time_without_starpu}
+%\image[width=\textwidth]{excel/naps_time_with_starpu}{With \starpu)}{fig:time_with_starpu}
+
 \end{document}

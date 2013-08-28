@@ -2,7 +2,10 @@
 
 \begin{document}
 
-\chapter{The StarPU Framework} \label{chapter:starpu}
+\section{\starpu} \label{chapter:starpu}
+
+\todo{LPS: tanto quanto sei uma das características diferenciadoras do GAMA relativamente a propostas anteriores é o facto de tratar explicitamente cargas irregulares.
+No entanto, nao encontrei nenhuma referencia a este facto neste capitulo ou no anterior.}
 
 \starpu \cite{augonnet2011starpu} is a unified runtime system consisting on both software and a runtime API that aims to allow programmers of computational intensive applications to more easily exploit the power of avaiable devices, supporting \cpus and \gpus.
 
@@ -33,7 +36,7 @@ Much like \gama, this framework frees the programmer of the workload scheduling 
 
 \end{description}
 
-\section{Task Scheduling}
+\subsection{Task Scheduling}
 
 The framework employs a task based programming model. Computational kernels must be encapsulated within a task. A given kernel can be implemented in multiple ways (i.e. for \cpus or for \cuda), and \starpu will handle the decision of where and when the task should be executed, based on a task scheduling policy.
 
@@ -41,7 +44,7 @@ Data manipulated by a task is automatically transferred as needed between the va
 
 Previous work by the \starpu development team indicates that one of the most important issues with scheduling is about obtaining an accurate performance model for the execution time of a task \cite{augonnet2010data,augonnet2010automatic}. This is increasingly difficult when data transfers, which the team regards as a key issue, are taken into account, as shown in the latter paper. In it, a data-prefetching implementation for \gpus is present, and asynchronous data request capability is introduced as part of the \starpu library, with the goal of preventing computational units from being stalled waiting for data.
 
-\section{Dependencies}
+\subsection{Dependencies}
 
 \starpu automatically buils a dependency graph of all submitted tasks, and keeps them in a pool of \emph{frozen tasks}, passing them onto the scheduler once all dependencies are met.
 
@@ -51,31 +54,31 @@ This includes the possible data transfers that are required to meet dependencies
 
 In addition to implicit data dependencies, other dependencies can be explicitly given in order to explicitly force the execution order of a given set of tasks.
 
-\subsection{Data Access Modes}
+\subsubsection{Data Access Modes}
 
 Each data dependency that is explicitly defined in a task can have a different access mode. Data can be used in read-only, write-only or read-write mode. This access mode does not serve the purpose of ensuring memory correctness. It is used to soften task dependencies by using a \emph{Multiple Readers / Single Writer} model in dependency calculation.
 
-This model describes a type of mutual exclusion pattern where a data block can be concurrently accessed by any amount of reader, but must be exclusively accessed for a writer. \starpu uses this concept to further optimize data dependency calculations. If multiple scheduled tasks depend on the same data handle, but only with reading access, then that dependency should not block the multiple tasks from running concurrently. Temporary copies of the data can be created, possibly on different computational units, and later discarded immediatelly, since a read-only buffer is assumed to remain unchanged at the end of a task.
+This model describes a type of mutual exclusion pattern where a data block can be concurrently accessed by any number of reader, but must be exclusively accessed by a writer. \starpu uses this concept to further optimize data dependency calculations. If multiple scheduled tasks depend on the same data handle, but only with reading access, then that dependency should not block the multiple tasks from running concurrently. Temporary copies of the data can be created, possibly on different computational units, and later discarded immediatelly, since a read-only buffer is assumed to remain unchanged at the end of a task.
 
 \itodo{diagrama a exemplificar esta coisa. Tasks A,B,C. tasks A,B have read-only access to x. Task C has write access. If tasks are in the order A,B,C, then A,B can be ran concurrently. If C is between, then the order must be A,C,B each at a time}
 
 
-\section{Virtual Shared Memory}
+\subsection{Virtual Shared Memory}
 \itodo{this}
 
-The approach used by \starpu when it comes to memory management is simpler that the model employed by \gama. The purpose is the same: to automatically manage memory allocations and transfers on all devices. This not only frees the programmer from the work of manually managing memory between tasks, but it also has the potential to lower the cost of such operations.
-\starpu manages memory by forcing the user to declare data handles to their data. This handles are used as arguments for tasks, allowing the scheduler to allocate and transfer all required data buffers to the correct computational unit prior to the task execution.
+The approach used by \starpu when it comes to memory management is simpler than the model employed by \gama. The purpose is the same: to automatically manage memory allocations and transfers on all devices. This not only frees the programmer from the work of manually managing memory between tasks, but it also has the potential to lower the cost of such operations.
+\starpu manages memory by forcing the user to declare data handles to their data. These handles are used as arguments for tasks, allowing the scheduler to allocate and transfer all required data buffers to the correct computational unit prior to the task execution.
 
 \itodo{nas conclusões: caveats}
 
-\section{Multithreading} \label{section:starpu_multithreading}
+\subsection{Multithreading} \label{section:starpu_multithreading}
 \itodo{this}
 
-In order to have an accurate view of the topology of the system, the framework can optionally use the \texttt{hwloc} \cite{broquedis2010hwloc} to detect the structure of the architecture, including all \cpu sockets, \acs{NUMA} nodes and cache hierarchy.
+In order to have an accurate view of the topology of the system, the framework can optionally use the \texttt{hwloc} library\footnote{\texttt{hwloc}, or Portable Hardware Locality, is a package that provides access to an abstract topology of modern computational architectures.} \cite{broquedis2010hwloc} to detect the structure of the architecture, including all \cpu sockets, \acs{NUMA} nodes and cache hierarchy.
 
 A tree is created representing the complete hierarchy of the system. Latest version of the framework also introduce support for parallel tasks, with the concept of combined workers. These workers exist in cases where the system has multiple computational units in the same node (such as \cpu sockets where multiple cores share a cache hierarchy). In these situations, and if \starpu is using a parallel-task-aware scheduler (currently only \texttt{pheft} and \texttt{peager} exist), it is possible to specify the maximum degree of parallelism for a function. A combined worker can then be assigned to such tasks using, for example, \openmp to take advantage of the multiple available cores.
 
-\section{API} \label{section:starpu_api}
+\subsection{API} \label{section:starpu_api}
 \itodo{this}
 
 Two API versions are made available. The high-level, \texttt{pragma}-based\footnote{Directives inserted within the code, to instruct the compiler about how to process input. Can be used to extend the compiler and provide additional features, functionality or optimizations} API. This exposes \starpu's main functionality with a set of directives that can be added to the code in order to embed \starpu within it. It is particularly suited for less experienced developers, or developers who simply need to focus completely in the algorithmic issues with less or no knowledge about the underlying parallel hardware being used underneath.
@@ -86,7 +89,7 @@ The low-level version is a more verbose one, which is actually used internally b
 
 This trade-off is not uncommon, with many existing libraries besides \starpu supporting both API levels. High level versions are designed to remove complexity and accelerate development time. They are often a subset of an underlying low level version, delivering only the more common features. More experienced developers should be able to achieve better results with a lower level API, with the cost of additional development time.
 
-\section{Performance Model}
+\subsection{Performance Model}
 
 Most schedulers available with \starpu are history based. This relies on the programmer to configure a performance model for each defined codelet, in order to allow the framework to identify it, and use on-line calibration. Calibration results will be stored in a centralized directory, and inform \starpu about how each codelet behaves on each different device, with a certain input size.
 
@@ -102,7 +105,7 @@ Once a good calibration has been obtained (with a minimum number of executions o
 
 \item[ws (Work Stealing)] Once a worker becomes idle, it steals a task from the most loaded worker
 
-\item[dm (Deque Model)] Performs a HEFT-like strategy \itodo{citar aqui a tese do artur, e outros artigos sobre o heft}. Each task is assigned to where the scheduler thinks its termination time will be minimized;
+\item[dm (Deque Model)] Performs a HEFT-like strategy \itodo{citar aqui a tese do artur, e outros artigos sobre o heft}. Each task is assigned to where the scheduler thinks its termination time will be minimized; \todo{LPS: explicar o heft, com referencias}
 
 \item[dmda (Deque Model Data Aware)] Similar to \textbf{dm}, but also taking into account data transfer times;
 
@@ -114,7 +117,7 @@ Once a good calibration has been obtained (with a minimum number of executions o
 
 \end{description}
 
-Additionally, schedulers are build as a pluggable system, allowing developers to write their own scheduling policies if desired, and easily use them within \starpu.
+Additionally, schedulers are built as a pluggable system, allowing developers to write their own scheduling policies if desired, and easily use them within \starpu.
 
 \todo{talk about data partitions?}
 

@@ -1,0 +1,80 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\section{Testing Environment} \label{section:results:env}
+
+All tests were performed within the \search\footnote{\url{http://search.di.uminho.pt}} cluster. Initial tests used up to 3 different nodes, particularly the 511, 611 and 711 generations, in order to search for significant differences between different architectures. This node are further detailed in \cref{tab:nodes}. This only refers to the initial profiling done on the original implementation, and whose results are detailed in \cref{sec:results_orig}
+
+\begin{table}[!htb]
+    \begin{subtable}{.5\textwidth}
+      \centering
+      \begin{tabular}{|ll|}
+        \hline
+        CPU model: & \intel\xeon X5650\\
+        \# CPUs: & 2  \\
+        \# Cores p/CPU: & 6  \\
+        \# Threads p/Core: & 2 \\
+        Clock frequency: & 2.66 GHz \\
+        \hline
+        L1 cache: & 32 KB + 32 KB  \\
+        L2 cache: & 256 KB \\
+        L3 cache(shared): & 12 MB  \\
+        RAM:      & 48 GB  \\
+        \hline
+        CUDA Device: & Tesla C2090 \\
+        \hline
+      \end{tabular}
+      \caption{\search node 511}
+    \end{subtable}%
+    \begin{subtable}{.5\textwidth}
+      \centering
+      \begin{tabular}{|ll|}
+        \hline
+        CPU model: & \intel\xeon X5650\\
+        \# CPUs: & 2  \\
+        \# Cores p/CPU: & 6  \\
+        \# Threads p/Core: & 2 \\
+        Clock frequency: & 2.66 GHz \\
+        \hline
+        L1 cache: & 32 KB + 32 KB  \\
+        L2 cache: & 256 KB \\
+        L3 cache(shared): & 12 MB  \\
+        RAM:      & 48 GB  \\
+        \hline
+        CUDA Device: & Tesla C2090 \\
+        \hline
+      \end{tabular}
+      \caption{\search node 611}
+    \end{subtable}%
+
+    \vspace{10pt}
+    \begin{subtable}{\linewidth}
+      \centering
+      \begin{tabular}{|ll|}
+        \hline
+        CPU model: & \intel\xeon E5-2670 \\
+        \# CPUs: & 2  \\
+        \# Cores p/CPU: & 8  \\
+        \# Threads p/Core: & 2 \\
+        Clock frequency: & 2.66 GHz \\
+        \hline
+        L1 cache: & 32 KB + 32 KB  \\
+        L2 cache: & 256 KB \\
+        L3 cache(shared): & 20 MB  \\
+        RAM: & 64 GB  \\
+        \hline
+        CUDA Device 0: & Kepler K20m \\
+        Cuda Device 1: & Tesla C20909 \footnote{unavailable in this node during profiling of the original implementation} \\
+        \hline
+      \end{tabular}
+      \caption{\search node 711}
+    \end{subtable}
+    \caption{Hardware description of the \search computational nodes used \label{tab:nodes}}
+\end{table}
+
+Later on, and partially due to availability issues, only the 711 was used for the final tests using the new implementation, both with and without \starpu.
+
+All tests were compiled with GCC 4.6.2 (latest major version with full \cuda support), the boost library 1.49.0, and version 5.0 of the offical \cuda compiler. Regarding \starpu, the latest version available, 1.1.0rc2, was used, as well as the hwloc 1.7 library for hardware topology, which \starpu internally uses.
+
+\end{document}

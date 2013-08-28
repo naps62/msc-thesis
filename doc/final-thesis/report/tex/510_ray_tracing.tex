@@ -15,12 +15,14 @@ In short, the equation defines the surface radiance $\surfaceRadiance$, leaving 
 
 \section{Ray Tracing} \label{section:ray_tracing}
 
-Ray Tracing is the process of generating a two-dimensional image by computing light interactions within a three-dimensional scene, contributing to the pixels on an image plane. A high degree of visual realism can be achieved by these techniques, but also with greater computational costs.
+Ray Tracing is the designation of a family of algorithms that simulate ray interactions with an environment in order to determine the visibility of two points in space.
+Generally, this techinique is used to compute light interactions within a three-dimensional scene, and obtain a two-dimensional image with a rendering of that scene. A high degree of visual realism can be achieved by these techniques, but also with greater computational costs.
 
 Ray tracing algorithms are capable of simulating most optical effects, such as reflections, refractions, and scattering, although the actual set of simulated effects, and their overall quality differ between the multiple ray tracing algorithms that have already been developed.
 
 Most ray tracing methods are directed only to static scenarios, as the rendering time is still too high to be feasible to emply a ray tracing algorithm on a realtime or interactive use case.
 Large efforts have been made recently to improve ray tracing techniques \todo{refs aqui}, as well as to speed up their computation, by using parallel architectures such as \gpus, which have always been associated with image processing.
+\todo{LPS: isto já não é bem assim. ver por exemplo o optiX da NVidia}
 
 \subsection{Overview}
 
@@ -36,7 +38,9 @@ Later advances, such as \cite{whitted2005improved}, introduced the recursive ray
 
 It is also not uncommon to approximate the rendering equation by using combinations of more than one method, such a Ray Tracing, Radiosity or Metropolis Light Transport \cite{wallace1987two,veach1997metropolis}. Each method attempts to simulate the travel of light particles across the scene, and model the various interactions with the environment, but with different approaches, advantages and limitations, so the combination of multiple method can combine the advantages of each one.
 
-Ray Tracing methods work by simulating light particles traveling from the eye into the scene, being reflected and refracted until they reach a light source.
+\todo{LPS: note that these rendering algorithms also use ray casting as the visibility evaluation algorithm (although radiosity often resorts to hemicube projection if run on the GPU)}
+
+Traditional ray tracing methods work by simulating light particles traveling from the eye into the scene, being reflected and refracted until they reach a light source. Nowadays, most ray tracing rendering algorithms are in fact bidirectional, having photons shot from the light sources and their interactions computed in addition to regular eye paths.
 
 Radiosity follows an opposite approach, and simulates the path light takes from the light source, until it reaches the eye. It only deals with diffuse interactions, however, and is commonly used in combination with other techniques.
 
