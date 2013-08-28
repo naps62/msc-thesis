@@ -5,22 +5,19 @@
 
 \section{Contextualization}
 
-\itodo{evolution of parallel systems}
-
-\itodo{Contextualization - refs refs refs}
 Heterogeneous platforms are increasingly popular for high performance computing, with an increasing number of supercomputers taking advantage of accelerating devices in addition to the already powerful tradicional \cpus, to provide higher performance at lower costs. These accelerators are not as general-purpose as a \cpu, but have characteristics that make them more suitable to specific, usually highly parallel tasks, and as such are useful as co-processors that complement the work of conventional systems.
 
 Moore's law \cite{moore1965cramming,moore1975progress} predicted in 19755 that the performance of microprocessors would double every two year. That expectation has driven development of microprocessors until very recently. The number of transistors, and high clock frequencies of today's microprocessors is near the limit of power density, introducing problems such as heat dissipation and power consumption. Facing this limitations, research focus was driven towards multicore solutions.
 
 This marked the beginning of the multi-core era. While multicore systems were already a reality, it was not until this point that they reached mainstream production, and parallel paradigms began to emerge as more general-purpose solutions.
 
-In addition to regular \cpus, other types of devices also emerged as good computational alternatives. In particular, the first \gpus supporting general purpose computing were introduced by \nvidia around the year 2000 \cite{luebke2006gpgpu} \itodo{verificar esta ref}.
+In addition to regular \cpus, other types of devices also emerged as good computational alternatives. In particular, the first \gpus supporting general purpose computing were introduced by \nvidia around the year 2000.
 
 These devices graduall evolved from specific hardware dedicated to graphics rendering, to fully featured general programming devices, capable of massive data parallelism and performance, at lower power consumptions.
 They enable the acceleration of highly parallel tasks, being more efficient than \cpus in various scientific fields, but also more specialized. The usage of \gpus for general computing has been named \ac{GPGPU}, and has since become an industry standard.
 As of 2013, over 50 of the \footnote{A list of the most powerful supercomputers in the world, updated twice a year (\url{http://www.top500.org/})}{TOP500's} list were powered by \gpus, which indicates an exponential growth in usage when compared to previous years. This increased usage is motivated by the effectiveness of these devices for general-purpose computing.
 
-Other types of accelerators recently emerged, like the recent Intel \mic architecture, and while all of them differ from the traditional \cpu architecture, they also differ between themselves, providing different hardware specifications, along with different memory and programming models. \todo{falar mais do mic aqui}
+Other types of accelerators recently emerged, like the recent Intel \mic architecture, and while all of them differ from the traditional \cpu architecture, they also differ between themselves, providing different hardware specifications, along with different memory and programming models.
 
 Development of applications targeting these devices tends to be harder, or at least different from conventional programming. One has to take into account the differences of the underlying architecture, as well as the programming model being used, in order to produce code that is not only correct, but also efficient. And efficiency for one device might have a different set of requirements or rules that are inadequate to a different device. As a result, developers code have to take into account the characteristics of each different device they are using within their applications, if they want to fully take advantage of them. Usually, the task of producing the most efficient code for a single platform is a time consuming task, and requires a deep knowledge of the architecture itself, In addition, the parallel nature of these accelerators introduces yet another difficulty layer for developers.
 
@@ -28,9 +25,9 @@ Each accelerator can also be programmed in a variety of ways, ranging from low l
 
 The complexity increases even further when it is considered that multiple accelerators might be used simultaneously. This agravates the already existing problems concerning workload, scheduling, and communication.
 
-\todo{falar aqui de que talvez os aceleradores nao sejam `a cena`?}
+Recent studies \cite{lee2010debunking,bordawekar2010believe} also show that overall speedups when using accelerators should not be expected to be as high as initially suggested. These studies show that, while the measured speedups of multiple applications ported to \gpus were real, the actual cause was not the better overall performance of the device, but actually the badly optimized original \cpu code. Actually, when code is better designed, similar speedups can be obtained in traditional \cpus. This indicates that accelerators should not be regarded as the only source of high computational power, but rather as an additional resource, and the whole system should be used appropriatelly for better efficiency.
 
-Today, these different types of devices are most commonly used (in the context of general-computing) as accelerators, in a system where at least one \cpu manages the main execution flow, and delegates specific tasks to the remaining computing resources. A system that uses different computational units is commonly referred to as a heterogeneous platform, here referred to as a \hetplat. These types of systems are becoming particularly noticeable, as can be seen byt the TOP500 ranking, where an increasing number of top-rated systems are heterogeneous.
+Today, accelerating devices are most commonly used (in the context of general-computing) as accelerators, in a system where at least one \cpu manages the main execution flow, and delegates specific tasks to the remaining computing resources. A system that uses different computational units is commonly referred to as a heterogeneous platform, here referred to as a \hetplat. These types of systems are becoming particularly noticeable, as can be seen byt the TOP500 ranking, where an increasing number of top-rated systems are heterogeneous.
 
 Much like the phenomenom seem at the start of the multi-core era, a new paradigm shift must happen in order to correctly use a \hetplat. An even greater level of complexity is introduced, because one has to consider not only the multiple different architectures and programming models being used, but also the distribution of both work and data. A \hetplat is by definition a distributed system, since each device usually has its own memory hierarchy. As much as a given task may be fast on a given device, the data transfers required to offload such task may add an undesirable latency to the process, and can actually be one the performance bottlenecks of this strategy.
 
@@ -40,7 +37,7 @@ Code efficiency is also becoming extremely volatile, as each new system that eme
 
 Several frameworks have been developed since around 2008 to target these issues, and allow developers to abstract themselves from the underlying system. These frameworks usually manage the multiple resources of the system, treating both \cpus and co-processors as generic computational devices, able to execute tasks, and employ a scheduler to efficiently distribute workload. Memory management is also a key factor, with memory transfers playing a huge role in today's co-processor efficienty.
 
-Some of these frameworks include \gama \todo{ref}, \starpu \todo{ref}, Qilin \todo{ref}, and the more recent MDR \todo{ref}.
+Some of these frameworks include \gama \cite{joao2012gama}, \starpu \cite{augonnet2011starpu}, MDR \cite{linderman2008merge}, Qilin \cite{luk2009qilin}, and a few others. These research focuses mostly on \starpu, although an overview and limited comparison with \gama is also provided
 
 These frameworks tend to encapsulate work by providing the concept of task, which is usually not present in the underlying programming models of the programming languages used, and data dependencies, and employ a task scheduler to assign the existing workload to the available resources.
 The scheduler is considered one of the key features of these frameworks. It may takes into account multiple different factors in order to decide when and where to run the submitted tasks. These factors can range from the architectural details of the detected resources, to the measured performance of each task on each device, which can be done by building a history based on previous executions.

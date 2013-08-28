@@ -4,12 +4,11 @@
 
 \section{\starpu} \label{chapter:starpu}
 
-\todo{LPS: tanto quanto sei uma das características diferenciadoras do GAMA relativamente a propostas anteriores é o facto de tratar explicitamente cargas irregulares.
-No entanto, nao encontrei nenhuma referencia a este facto neste capitulo ou no anterior.}
-
 \starpu \cite{augonnet2011starpu} is a unified runtime system consisting on both software and a runtime API that aims to allow programmers of computational intensive applications to more easily exploit the power of avaiable devices, supporting \cpus and \gpus.
 
 Much like \gama, this framework frees the programmer of the workload scheduling and data consistency inherent from a \hetplat. Task submissions are handled by the \starpu task scheduler, and data consistency is ensured via a data managemente library.
+
+However, one of the main differences comes from the fact that \starpu attempts to increase performance by carefully considering and attempting to reduce memory transfer costs. This is one by using history information for each task and, accordingly to the scheduler's decision of where a task shall be executed, asynchronously prepare data dependencies, while the system is busy computing other tasks. The task scheduler itself can take this into account, and determine where a task should be executed by taking into account not only execution hitory, but also the estimation of data transfers latency.
 
 \subsection{Terminology}
 

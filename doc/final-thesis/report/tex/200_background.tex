@@ -20,13 +20,11 @@ This is not helped by the fact that current development environments are still m
 
 \section{The \gpu as a Computing Accelerator}
 
-With the increasing demand for highly data-parallel algorithms, and the growing amount of data to process, hardware development started shifting towards the goal of solving that problem. Initially, that started with the increased support for vector instructions in common \acsp{CPU}, and the \acs{SIMD} model. This allowed a single instruction to operate on a set of elements at once, effectively achieving a kind of parallelism which is extremely useful with highly data-parallel applications. Modern Intel processors, starting with the Sandy Bridge family, already support \ac{AVX}, an extension to the \textit{x86} instruction set allowing \acs{SIMD} instructions capable of handling 256 bits registers. This extension also introduces three-operand \acs{SIMD} instructions that allow more general $c = a + b$ operations to be handled with a single instruction, in addition to the previous instructions which only allowed two operands ($a = a + b$).
+With the increasing demand for highly data-parallel algorithms, and the growing amount of data to process, hardware development started shifting towards the goal of solving that problem. Initially, that started with the increased support for vector instructions in common \cpus, and the \acs{SIMD} model. This allowed a single instruction to operate on a set of elements at once, effectively achieving a kind of parallelism which is extremely useful with highly data-parallel applications.
 
-A similar and more flexible model is the usage of a single instruction across multiple threads running concurrently, called \ac{SIMT}. This is the programming model behind \gpus, which gradually started to gain more attention for their general purpose computing capabilities. Although the hardware of a \gpu is still tightly coupled with graphics processing and rendering, there have also been several advances in their usage as \gpgpus. \todo{ref aqui}
+This data-parallel model is also behind the architecture of \gpus, but at a much higher degree. While the concept is the same (applying the same instruction to a set of values, instead of a single value at a time), the architecture of a \gpu, particularly a \cuda device, relies on the usage of several simple cores, grouped in multiple \aclp{SM}, to achieve higher degrees of parallelism, and process massive amounts of data. This makes \gpus more suitable for tasks with a high degree of data-paralelism, and not the ideal candidate for more irregular problems, where its more difficult to find parallelization points in order to take advantage of the \acs{SIMD} model.
 
-\todo{LPS: Estes 2 parágrafos como introdução para uma subsecção sobre GPUs não me parecem muito bem.
-primeiro porque fala na vectorização e no numero de operandos ( porque não referir a MULTIPLY-ADD?) sem fazer a ponte para os GPUs; depois porque refere vagamente o SIMT mas sem dar qualquer pista sobre o que isto é.}
-
+Although the hardware of a \gpu is still tightly coupled with graphics processing and rendering, there have also been several advances in its usage as a general computing device (\acs{GPGPU}). \todo{ref aqui}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Fermi Architecture}
@@ -52,7 +50,7 @@ This shows a clear evolution over the previous generation, and a response to the
 
 
 \section{Intel MIC}
-  todo{LPS. isto justificar-se-á? nao sao usados e o doc já vai longo}
+\itodo{LPS. isto justificar-se-á? nao sao usados e o doc já vai longo}
 \itodo{Xeon Phi}
 
 

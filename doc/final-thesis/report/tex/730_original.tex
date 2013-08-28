@@ -8,11 +8,58 @@ Since the code being used here was not subject to any intervention in terms of o
 
 It should also be noted that the SPPMPA version of this code was not fully finished at this time, so profiling of this original implementation was limited to the more basic PPM version. Regardless, the actual implementation of each task remained unchanged, and a good overview of the algorithm's scalability is still possible. The major drawback is that it becomes impossible to assess performance with concurrent iterations, which are not supported by PPM.
 
-For these tests, three different computational systems were used, particular the 511, 611 and 711 nodes described in \cref{sec:results:env}
+For these tests, three different computational systems were used, particular the 511, 611 and 711 nodes described in \cref{section:results:env}
 
-Testing focused on the scalability of the algorithm on each of these nodes
+Testing focused on the scalability of the algorithm on each of these nodes, by running 10 photon mapping iterations on each different scene.
 
-\image[width=\textwidth]{excel/rr_cpu_time_511}{Original Implementation @ 511 (\cpu Only)}{fig:rr_cpu_time_511}
-\image[width=\textwidth]{excel/rr_cpu_speedup_511}{Original Implementation @ 511 (\cpu Only)}{fig:rr_cpu_speedup_511}
+\begin{figure}[!htp]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{excel/rr_cpu_time_511}
+    \caption{node 511 \label{fig:rr_cpu_time_511}}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{excel/rr_cpu_time_611}
+    \caption{node 611 \label{fig:rr_cpu_time_611}}
+  \end{subfigure}
+  \caption{Original Implementation (\CPU only): Render time for 10 photon mapping iterations \label{fig:rr_cpu_time}}
+\end{figure}
+
+\itodo{por as legendas em baixo ou em cima. increase font size A LOT. Uniformizar as escalas (o 611 e 711 estão diferente). remover as bordas}
+
+With these results, it can be noticed that render time is best achieved for
+
+\begin{figure}[!htp]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{excel/rr_cpu_speedup_511}
+    \caption{node 511 \label{fig:rr_cpu_speedup_511}}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{excel/rr_cpu_speedup_611}
+    \caption{node 611 \label{fig:rr_cpu_speedup_611}}
+  \end{subfigure}
+  \caption{Original Implementation (\CPU only): Speedup for 10 photon mapping iterations \label{fig:rr_cpu_speedup}}
+\end{figure}
+
+%\image[width=0.5\textwidth]{excel/rr_cpu_time_511}{Original Implementation @ 511 (\cpu Only)}{fig:rr_cpu_time_511}
+
+%\image[width=0.5\textwidth]{excel/rr_cpu_time_611}{Original Implementation @ 611 (\cpu Only)}{fig:rr_cpu_time_611}
+
+
+%\image[width=0.5\textwidth]{excel/rr_cpu_time_711}{Original Implementation @ 711 (\cpu Only)}{fig:rr_cpu_time_711}
+
+%\image[width=0.6\textwidth]{excel/rr_cpu_speedup_511}{Original Implementation @ 511 (\cpu Only)}{fig:rr_cpu_time_511}
+%\image[width=0.6\textwidth]{excel/rr_cpu_speedup_611}{Original Implementation @ 611 (\cpu Only)}{fig:rr_cpu_time_611}
+
+
+
+%\image[width=0.6\textwidth]{excel/rr_cpu_speedup_711}{Original Implementation @ 711 (\cpu Only)}{fig:rr_cpu_time_711}
+
+%\image[width=\textwidth]{excel/rr_cpu_speedup_511}{Original Implementation @ 511 (\cpu Only)}{fig:rr_cpu_speedup_511}
 
 \end{document}

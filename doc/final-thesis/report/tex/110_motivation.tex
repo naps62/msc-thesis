@@ -5,12 +5,9 @@
 
 \hetplats, and consequentely frameworks targeting them, can still be seen as a recent computing environment, especially when considering the volatility and constant evolution of computing systems. As such, there is still much to develop when it comes to the efficient usage of a \hetplat.
 
-%Future technological advances will eventually come, either developing new methodologies and paradigms for working with today's platforms, or even introducing new platforms altogether, along with their associated advantages and disadvantages.
-
-
 \gama is a recent framework that aims to provide the tools for developers to create dynamic applications, capable of efficiently running on these high performance computing platforms \cite{joao2012gama}
-This framework is currently still in development, and supports only x86-64 \cpus and \cuda-capable \gpus. Although it has been deeply tested for a wide variety of kernels to validate the correctness and efficiency of its memory and execution model, it currently lacks a more intensive assessment, with a more robust and realistic application.
-Small kernels have a wide range of applications, are deeply studied and optimized, and are a good source for an initial analysis on the performance results of the execution model. However, when considering a real and more resource intensive application, where possibly multiple tasks must share the available resources, other problems may arise. Therefore, a more realistic evaluation of the framework requires a more robust test case, as opposed to the previously used synthetic benchmarks, is needed to understand its effectiveness \todo{LPS: esta frase tem que ser reescrita. rever e ver se ainda faz sentido para o starpu}.
+This framework is currently still in development, and supports only x86-64 \cpus and \cuda-capable \gpus. It is somewhat inspired in a similar framework, \starpu, but with an emphasis on the scheduling of irregular algorithms, a class which presents extra problems when dealing with workload scheduling. Although \gama has been deeply tested for a wide variety of kernels to validate the correctness and efficiency of its memory and execution model, it currently lacks a more intensive assessment, with a more robust and realistic application.
+Small kernels have a wide range of applications, are deeply studied and optimized, and are a good source for an initial analysis on the performance results of the execution model. However, when considering a real and more resource intensive application, where possibly multiple tasks must share the available resources, other problems may arise. Therefore, a more realistic evaluation of the framework requires a more robust test case, as opposed to the currently used, more synthetic benchmarks.
 
 The initial goal of this dissertation was to perform a quantitative and qualitative analysis of the \gama framework, applied to a large scale algorithm, in order to validate its effectiveness, and identify possible soft-spots, especially when compared to other similar frameworks. This would be done through the implementation of a case study, particularly the Progressive Photon Mapping Algorithm.
 
@@ -22,6 +19,6 @@ However, \gama presents itself as an unfinished product, still remaining in acti
 
 Overall, the work presented here consists on a high level analysis and comparison of \gama and \starpu, with the later being used for the implementation of an algorithm as a case study. Framework-less implementations were also developed to establish the baseline for any profiling analysis.
 
-% As an extra effort, an attempt to port the implementation to another co-processor device, particularly a \mic, is also attempted. While neither of the frameworks currently supports these devices, this is expected to change in the future,
+\todo{ As an extra effort, an attempt to port the implementation to another co-processor device, particularly a \mic, is also attempted. While neither of the frameworks currently supports these devices, this is expected to change in the future}
 
 \end{document}
