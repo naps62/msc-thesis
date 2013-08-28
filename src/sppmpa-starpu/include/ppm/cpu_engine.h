@@ -8,7 +8,7 @@ namespace ppm {
 class CPUEngine : public Engine {
 public:
   CPUEngine(const Config& _config);
-  ~CPUEngine();
+  virtual ~CPUEngine();
 
 protected:
   BBox bbox;

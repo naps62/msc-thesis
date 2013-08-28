@@ -25,6 +25,26 @@ PtrFreeScene :: PtrFreeScene(const Config& config)
   original_scene = new luxrays::Scene(config.scene_file, config.width, config.height, config.accel_type);
   data_set = original_scene->UpdateDataSet();
 
+  vertexes = NULL;
+  normals = NULL;
+  colors = NULL;
+  uvs = NULL;
+  triangles = NULL;
+  mesh_descs = NULL;
+  mesh_ids = NULL;
+  mesh_first_triangle_offset = NULL;
+  compiled_materials = NULL;
+  materials = NULL;
+  mesh_materials = NULL;
+  area_lights = NULL;
+  tex_maps = NULL;
+  rgb_tex = NULL;
+  alpha_tex = NULL;
+  mesh_texs = NULL;
+  bump_map = NULL;
+  bump_map_scales = NULL;
+  normal_map = NULL;
+
   // recompile the entire scene
   ActionList actions;
   actions.add_all();
@@ -34,6 +54,11 @@ PtrFreeScene :: PtrFreeScene(const Config& config)
   n_prims = data_set->GetAccelerator()->GetPrimsCount();
   nodes = NULL;
   prims = NULL;
+}
+
+PtrFreeScene :: ~PtrFreeScene() {
+  delete original_scene;
+  delete data_set;
 }
 
 void PtrFreeScene :: recompile(const ActionList& actions) {
@@ -444,13 +469,6 @@ void PtrFreeScene :: compile_texture_maps() {
   delete_array(bump_map_scales);
   delete_array(normal_map);
   this->tex_maps_count = 0;
-  //tex_maps.resize(0);
-  //rgb_tex.resize(0);
-  //alpha_tex.resize(0);
-  //mesh_texs.resize(0);
-  //bump_map.resize(0);
-  //bump_map_scales.resize(0);
-  //normal_map.resize(0);
 
   // translate mesh texture maps
   std::vector<luxrays::TextureMap*> tms;

@@ -8,6 +8,7 @@ using std::string;
 #include "ppm/types.h"
 #include "luxrays/core/utils.h"
 
+
 struct Config : public beast::program_options::options {
   const int argc;
   const char** argv;

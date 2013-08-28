@@ -77,6 +77,11 @@ void rehash_impl(
       hash_grid_lengths[i] = 0;
     }
   }
+
+  for(unsigned i = 0; i < size; ++i) {
+    if (hash_grid_deque[i] != NULL)
+      delete hash_grid_deque[i];
+  }
 }
 
 

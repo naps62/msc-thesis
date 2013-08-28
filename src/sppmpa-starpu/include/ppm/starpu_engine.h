@@ -9,7 +9,7 @@ namespace ppm {
 class StarpuEngine : public Engine {
 public:
   StarpuEngine(const Config& _config);
-  ~StarpuEngine();
+  virtual ~StarpuEngine();
 
 protected:
   unsigned worker_count;

@@ -23,6 +23,8 @@
   } \
 }
 
+#include <stdio.h>
+
 namespace ppm {
   template<class T>
   void delete_array(T*& arr) {
@@ -34,7 +36,8 @@ namespace ppm {
 
   template<class T>
   void reset_array(T*& arr, unsigned new_size) {
-    delete_array(arr);
+    //delete_array(arr);
+    delete[] arr;
     arr = new T[new_size];
   }
 }

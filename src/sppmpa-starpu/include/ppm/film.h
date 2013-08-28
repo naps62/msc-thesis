@@ -138,6 +138,9 @@ public:
   Film( const unsigned int w, const unsigned int h);
 
   virtual ~Film() {
+    delete toneMapParams;
+    delete frameBuffer;
+    delete[] imageBuffer;
   }
 
   virtual void Init(const unsigned int w, const unsigned int h) {

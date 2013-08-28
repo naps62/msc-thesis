@@ -8,7 +8,7 @@ namespace ppm {
 class CUDAEngine : public Engine {
 public:
   CUDAEngine(const Config& _config);
-  ~CUDAEngine();
+  virtual ~CUDAEngine();
 
 protected:
   cudaStream_t stream;

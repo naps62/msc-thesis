@@ -15,7 +15,7 @@ class PtrFreeScene {
 public:
   PtrFreeScene();
   PtrFreeScene(const Config& config);
-  //~PtrFreeScene(); // TODO do this
+  ~PtrFreeScene();
 
   void recompile(const ActionList& actions);
 

@@ -47,6 +47,8 @@ public:
   }
   ~SampleFrameBuffer() {
     delete[] pixels;
+    delete filter;
+    delete filterLUTs;
   }
 
   void Clear() {
