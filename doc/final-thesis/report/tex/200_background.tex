@@ -5,7 +5,7 @@
 \chapter{Technological Background} \label{chapter:back}
 
 
-\section{Parallel Computing}
+\section{Parallel Computing Background}
 
 Traditional computer programs are written in a sequential manner. It is natural to think of an algorithm as a sequence of steps that can be serially performed to achieve a final result. This has actually been the most common programming paradigm since the early days of computing, and it synergizes well with single processor machines. Optimizations related to instruction-level parallelism, such as out-of-order execution, pipelining, branch prediction or superscalarity, were mostly handled by the compiler or the hardware itself, and transparent to the programmer. Vector processing was also a key performance factor, allowing the same instruction to be applied to a vector of data simultaneously, rather than one at a time (commonly referred to as \ac{SIMD}).
 
@@ -53,5 +53,33 @@ This shows a clear evolution over the previous generation, and a response to the
 \itodo{LPS. isto justificar-se-á? nao sao usados e o doc já vai longo}
 \itodo{Xeon Phi}
 
+
+\section{Heterogeneous Platforms}
+
+By combining multiple devices such as \cpus and \gpus, the obtained platform can obtain a much higher theoretical power. Its peak performance can be defined as the sum of its parts. But in practical terms, it becomes much harder, if not impossible at all, to achieve performances near this peak value.
+
+On a homogeneous machine, the actual peak performance is limited by additional factors such as pipeline bubbles\footnote{a delay in the instruction pipeline, required to solve data, structure or control hazards, and limiting \ac{ILP} }, or memory access times, which is aggravated in memory bound algorithms \cite{williams2009roofline}.
+
+When dealing with multiple devices, an additional layer of complexity is introduced, as these different devices need a mean of communication between each other. Usually, a \hetplat, such as the one represented in \cref{fig:hetplat} can be seen as a distributed memory system, since each device has its own memory hierarchy. Communication is thus needed for synchronization between tasks, and any required data transfers.
+
+\image[width=0.3\textwidth]{visio/hetplats}{Example diagram of a \hetplat}{fig:hetplat}
+
+In the case of \gpus, communication is done via a \acs{PCIe} bus. Although this technology has evolved greatly over the last recent years, this still proves to be one a potential bottleneck for acceleraring applications with a \gpu.
+
+Even disregarding \acs{PCIe} devices, a single computational node can also be composed of multiple \cpu sockets, connected to each other via a bus such as \ac{QPI}. This bus connects not only the multiple sockets but also the memory banks possibly associated with each one, as these types of machines are generally associated with a \acs{NUMA} memory hierarchy, where each \cpu is directly connected to a different memory bank. While access to all banks is shared between all \cpus, access costs are not uniform. They depend on the speed of the bus used, and also on the actual path a request has to make from the socket it originated from until it reaches the desired memory bank.
+
+While this is a completely transparent process to the programmer, it can be another source of poor performance, if most or all data might ends up pinned to a single memory bank, requiring all other sockets to share access to it. This is commonly disregarded by programmers, who end up treating these systems as if their main memory is unified. It is possible to control the affinity of both data and task in a \acs{NUMA} system. For instance, the \texttt{hwloc}\cite{broquedis2010hwloc} library provides access to the topology of the system, as well as an API to control their bindings, effectivelly allowing control over each individual \cpu and data bank.
+
+However, libraries such as \texttt{hwloc} are very low-level ones, thus difficult to learn and use properly. For complex problems, worrying about low-level optimizations such as memory and core affinity can lead to over-optimization, making the application much more complex, and harder to debug or change.
+Instead, these libraries should be used as a control layer for other libraries or frameworks to work on top of, and allowing a more developer-friendly access to the desired features.
+
+\section{Heterogeneity and the Future}
+
+As stated before, current \hetplats are usually composed with \cpus and \gpus communicating through a \acs{PCIe} slot. Newer technologies such as the \intel \mic also use this bus. Both of these accelerators employ their own memory hierarchy, different from the main one, and the latter one is actually \textit{x86}-based, making it architecturaly more similar to ordinary \cpus. However, as history has shown, this cannot be assumed as the global model for heterogeneous computation.
+
+As an example, power efficiency has recently become a more prominent factor in technological evolution. Jugding from that, it should be expected that short term evolution will yield more power efficient devices, rather that just providing a higher peak performance or increasing the number of cores. Power efficiency migh can also be regarded as a relevant factor by a scheduling framework, by making decisions no only based on overall execution time of the application, but also based on its costs in terms of energy consumption.
+Other metrics can be though of, and their importance increased or decreased, depending on techonological trends at each time.
+
+All these factors emphasize the fact that optimizations based solely on architectural details (for example, software pre-fetching, core affinity and memory affinity) are not desirable to be coupled with an application if is desirable for it to perform well in the future, instead of becoming less performant. Such optimizations create tight dependencies between a program's performance, and the actual architecture(s) being used during development. So it becomes desirable that such issues be handled by a more generic tool, built in a modular way so that components can be plugged/unplugged or updated, and applications easily portable.
 
 \end{document}

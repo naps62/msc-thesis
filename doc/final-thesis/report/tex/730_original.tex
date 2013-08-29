@@ -24,12 +24,12 @@ Testing focused on the scalability of the algorithm on each of these nodes, by r
     \includegraphics[width=\linewidth]{excel/rr_cpu_time_611}
     \caption{node 611 \label{fig:rr_cpu_time_611}}
   \end{subfigure}
-  \caption{Original Implementation (\CPU only): Render time for 10 photon mapping iterations \label{fig:rr_cpu_time}}
+  \caption{Original Implementation (\cpu only): Render time for 10 photon mapping iterations \label{fig:rr_cpu_time}}
 \end{figure}
 
 \itodo{por as legendas em baixo ou em cima. increase font size A LOT. Uniformizar as escalas (o 611 e 711 estão diferente). remover as bordas}
 
-With these results, it can be noticed that render time is best achieved for
+With these results, it can be noticed that peak performance is achieved when using around 12 \openmp threads for both the 511 and the 611 machines, although the performance is nearly identical when using more than 24 threads. This means that once the 511 machine uses up all of its cores, performance starts to drop, while for the 611 machine this only happens when both sockets (which possess only 6 cores each) are filled. This is more noticeable in \cref{fig:rr_cpu_speedup} which shows speedup versus sequential time, rather than global execution time.
 
 \begin{figure}[!htp]
   \centering
@@ -43,7 +43,7 @@ With these results, it can be noticed that render time is best achieved for
     \includegraphics[width=\linewidth]{excel/rr_cpu_speedup_611}
     \caption{node 611 \label{fig:rr_cpu_speedup_611}}
   \end{subfigure}
-  \caption{Original Implementation (\CPU only): Speedup for 10 photon mapping iterations \label{fig:rr_cpu_speedup}}
+  \caption{Original Implementation (\cpu only): Speedup for 10 photon mapping iterations \label{fig:rr_cpu_speedup}}
 \end{figure}
 
 %\image[width=0.5\textwidth]{excel/rr_cpu_time_511}{Original Implementation @ 511 (\cpu Only)}{fig:rr_cpu_time_511}

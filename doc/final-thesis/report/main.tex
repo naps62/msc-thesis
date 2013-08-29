@@ -1,8 +1,19 @@
-\documentclass[a4paper,11pt,twoside,openright]{book}
+\documentclass[a4paper,12pt,twoside,openright]{book}
 \setlength\parindent{1.2em}
 \setlength{\headheight}{25.3pt}
 
 \usepackage[final=false]{../../common/naps62}
+
+\setlength\columnsep{.5cm}
+\setlength\parindent{1.5em}
+
+% set footnote font size to 8pt (scriptsize for class 12pt)
+\let\oldfootnotesize\footnotesize
+\renewcommand*{\footnotesize}{\oldfootnotesize\scriptsize}
+
+% set line spacing to 1.5
+\usepackage{setspace}
+\onehalfspacing
 
 \newcommand{\common}[1]{\input{../../common/#1}}
 \newcommand{\image}[4][]{%
