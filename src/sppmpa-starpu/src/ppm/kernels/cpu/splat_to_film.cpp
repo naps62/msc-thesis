@@ -30,7 +30,7 @@ void splat_to_film_impl(
 
 
 void splat_to_film(void* buffers[], void* args_orig) {
-  const double start_time = WallClockTime();
+  const timeval start_time = my_WallClockTime();
 
   // cl_args
   unsigned width;
@@ -44,7 +44,7 @@ void splat_to_film(void* buffers[], void* args_orig) {
 
   splat_to_film_impl(*buffer, *film, width, height);
 
-  const double end_time = WallClockTime();
+  const timeval end_time = my_WallClockTime();
   task_info("CPU", 0, 1, iteration, start_time, end_time, "(10) splat_to_film");
 }
 

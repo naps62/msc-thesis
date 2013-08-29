@@ -65,10 +65,10 @@ void task_info(
     const unsigned id,
     const unsigned omp_size,
     const unsigned iteration,
-    const double start_time,
-    const double end_time,
+    const timeval start_time,
+    const timeval end_time,
     const string info);
 
-void info_end(double start_time, double end_time, unsigned iterations, unsigned long long total_photons);
+void info_end(timeval start_time, timeval end_time, unsigned iterations, unsigned long long total_photons);
 
 #endif // _UTILS_CONFIG_H_

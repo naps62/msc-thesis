@@ -28,7 +28,7 @@ void init_seeds_impl(
 
 
 void init_seeds(void* buffers[], void* args_orig) {
-  const double start_time = WallClockTime();
+  const timeval start_time = my_WallClockTime();
 
   // cl_args
   starpu_args args;
@@ -41,7 +41,7 @@ void init_seeds(void* buffers[], void* args_orig) {
 
   init_seeds_impl(seeds, size, iteration, starpu_combined_worker_get_size());
 
-  const double end_time = WallClockTime();
+  const timeval end_time = my_WallClockTime();
   task_info("CPU", 0, 0, starpu_combined_worker_get_size(), start_time, end_time, "(1) init_seeds");
 }
 

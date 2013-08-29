@@ -52,7 +52,7 @@ void generate_eye_paths_impl(
 
 
 void generate_eye_paths(void* buffers[], void* args_orig) {
-  const double start_time = WallClockTime();
+  const timeval start_time = my_WallClockTime();
 
   // cl_args
   const starpu_args args;
@@ -73,7 +73,7 @@ void generate_eye_paths(void* buffers[], void* args_orig) {
                           args.cpu_scene,
                           starpu_combined_worker_get_size());
 
-  const double end_time = WallClockTime();
+  const timeval end_time = my_WallClockTime();
   task_info("CPU", 0, starpu_combined_worker_get_size(), iteration, start_time, end_time, "(2) generate_eye_paths");
 
 }

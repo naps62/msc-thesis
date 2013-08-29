@@ -86,7 +86,7 @@ void rehash_impl(
 
 
 void rehash(void* buffers[], void* args_orig) {
-  const double start_time = WallClockTime();
+  const timeval start_time = my_WallClockTime();
 
   starpu_args args;
   unsigned iteration;
@@ -113,7 +113,7 @@ void rehash(void* buffers[], void* args_orig) {
               *bbox,
               *current_photon_radius2);
 
-  const double end_time = WallClockTime();
+  const timeval end_time = my_WallClockTime();
   task_info("CPU", 0, 1, iteration, start_time, end_time, "(5) rehash");
 
 }

@@ -148,7 +148,7 @@ void advance_eye_paths_impl(
 
 
 void advance_eye_paths(void* buffers[], void* args_orig) {
-  const double start_time = WallClockTime();
+  const timeval start_time = my_WallClockTime();
 
   // cl_args
   const starpu_args args;
@@ -173,7 +173,7 @@ void advance_eye_paths(void* buffers[], void* args_orig) {
                          args.config->max_eye_path_depth,
                          starpu_combined_worker_get_size());
 
-  const double end_time = WallClockTime();
+  const timeval end_time = my_WallClockTime();
   task_info("CPU", 0, starpu_combined_worker_get_size(), iteration, start_time, end_time, "(3) advance_eye_paths");
 }
 

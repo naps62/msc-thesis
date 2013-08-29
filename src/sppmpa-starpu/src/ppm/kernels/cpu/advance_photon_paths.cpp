@@ -111,7 +111,7 @@ namespace ppm { namespace kernels { namespace cpu {
 
 
 void advance_photon_paths(void* buffers[], void* args_orig) {
-  const double start_time = WallClockTime();
+  const timeval start_time = my_WallClockTime();
 
   // cl_args
   const starpu_args args;
@@ -158,7 +158,7 @@ void advance_photon_paths(void* buffers[], void* args_orig) {
                             *inv_cell_size,
                             starpu_combined_worker_get_size());
 
-  const double end_time = WallClockTime();
+  const timeval end_time = my_WallClockTime();
   task_info("CPU", 0, starpu_combined_worker_get_size(), iteration, start_time, end_time, "(7) advance_photon_paths");
 
 }

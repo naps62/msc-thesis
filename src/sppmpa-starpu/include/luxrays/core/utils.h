@@ -86,6 +86,19 @@ using std::isinf;
 #endif
 
 
+inline timeval my_WallClockTime() {
+#if defined(__linux__) || defined(__APPLE__) || defined(__CYGWIN__)
+  struct timeval t;
+  gettimeofday(&t, NULL);
+  return t;
+  //return t.tv_sec * 1000000 + t.tv_usec;
+#elif defined (WIN32)
+  return GetTickCount() / 1000.0;
+#else
+#error "Unsupported Platform !!!"
+#endif
+}
+
 inline double WallClockTime() {
 #if defined(__linux__) || defined(__APPLE__) || defined(__CYGWIN__)
   struct timeval t;

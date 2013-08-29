@@ -52,7 +52,7 @@ void __global__ accum_flux_impl(
 void accum_flux(void* buffers[], void* args_orig) {
   int device_id;
   cudaGetDevice(&device_id);
-  const double start_time = WallClockTime();
+  const timeval start_time = my_WallClockTime();
 
   // cl_args
   starpu_args args;
@@ -83,7 +83,7 @@ void accum_flux(void* buffers[], void* args_orig) {
   cudaStreamSynchronize(starpu_cuda_get_local_stream());
   CUDA_SAFE(cudaGetLastError());
 
-  const double end_time = WallClockTime();
+  const timeval end_time = my_WallClockTime();
   task_info("GPU", device_id, 0, iteration, start_time, end_time, "(8) accum_flux");
 }
 

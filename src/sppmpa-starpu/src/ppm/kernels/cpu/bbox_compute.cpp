@@ -45,7 +45,7 @@ void bbox_compute_impl(
 
 
 void bbox_compute(void* buffers[], void* args_orig) {
-  const double start_time = WallClockTime();
+  const timeval start_time = my_WallClockTime();
 
   unsigned iteration;
   unsigned total_spp;
@@ -65,7 +65,7 @@ void bbox_compute(void* buffers[], void* args_orig) {
                     total_spp,
                     alpha);
 
-  const double end_time = WallClockTime();
+  const timeval end_time = my_WallClockTime();
   task_info("CPU", 0, 1, iteration, start_time, end_time, "(4) bbox_compute");
 
 }

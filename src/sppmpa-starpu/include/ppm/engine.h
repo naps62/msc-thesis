@@ -47,7 +47,7 @@ public:
 
   virtual void render() {
     this->before();
-    start_time = WallClockTime();
+    start_time = my_WallClockTime();
     info_start();
 
     this->init_seed_buffer();
@@ -86,14 +86,16 @@ public:
 
 
     wait_for_all();
-    end_time = WallClockTime();
+    end_time = my_WallClockTime();
     info_end(start_time, end_time, iteration, total_photons_traced);
-    fprintf(stderr, "Total Time:\n%f\n", end_time - start_time);
+    const double us_start = start_time.tv_sec + start_time.tv_usec /  1000000.0;
+    const double us_end   = end_time.tv_sec   + end_time.tv_usec / 1000000.0;
+    fprintf(stderr, "Total Time:\n%f\n", us_end - us_start);
     this->after();
   }
 
   void set_captions() {
-    const double elapsed_time = WallClockTime() - start_time;
+    const double elapsed_time = WallClockTime() - (start_time.tv_sec + start_time.tv_usec / 1000000.0);
     const unsigned long long total_photons_M = float(total_photons_traced / 1000000.f);
     const unsigned long long photons_per_sec = total_photons_traced / (elapsed_time * 1000.f);
 
@@ -129,8 +131,8 @@ public:
 protected:
   unsigned iteration;
   unsigned long long total_photons_traced;
-  double start_time;
-  double end_time;
+  timeval start_time;
+  timeval end_time;
   const Config& config;
   PtrFreeScene* scene;
   Display* display;

@@ -58,7 +58,7 @@ namespace ppm { namespace kernels { namespace cpu {
 
 
   void generate_photon_paths(void* buffers[], void* args_orig) {
-  const double start_time = WallClockTime();
+  const timeval start_time = my_WallClockTime();
 
     const starpu_args args;
     unsigned iteration;
@@ -77,7 +77,7 @@ namespace ppm { namespace kernels { namespace cpu {
                                args.cpu_scene,
                                starpu_combined_worker_get_size());
 
-  const double end_time = WallClockTime();
+  const timeval end_time = my_WallClockTime();
   task_info("CPU", 0, starpu_combined_worker_get_size(), iteration, start_time, end_time, "(6) generate_photon_paths");
 
   }

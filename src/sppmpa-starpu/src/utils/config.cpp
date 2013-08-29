@@ -77,9 +77,12 @@ void task_info(
     const unsigned id,
     const unsigned omp_size,
     const unsigned iteration,
-    const double start_time,
-    const double end_time,
+    const timeval start_time,
+    const timeval end_time,
     const string info) {
+
+  const long long us_start = start_time.tv_sec * 1000000 + start_time.tv_usec;
+  const long long us_end   = end_time.tv_sec   * 1000000 + end_time.tv_usec;
 
   stringstream ss;
   ss << "<task>";
@@ -87,21 +90,24 @@ void task_info(
     ss << "<omp_size>" << omp_size << "</omp_size>";
     ss << "<name>" << info << "</name>";
     ss << "<iteration>" << iteration << "</iteration>";
-    ss << "<start>" << start_time << "</start>";
-    ss << "<end>" << end_time << "</end>";
-    ss << "<duration>" << end_time - start_time << "</duration>";
+    ss << "<start>" << us_start << "</start>";
+    ss << "<end>" << us_end << "</end>";
+    ss << "<duration>" << us_end - us_start << "</duration>";
   ss << "</task>\n";
 
   boost::lock_guard<boost::mutex> lock(config_mutex);
   cout << ss.str();
 }
 
-void info_end(double start_time, double end_time, unsigned iterations, unsigned long long total_photons) {
+void info_end(timeval start_time, timeval end_time, unsigned iterations, unsigned long long total_photons) {
+
+  const long long us_start = start_time.tv_sec * 1000000 + start_time.tv_usec;
+  const long long us_end   = end_time.tv_sec   * 1000000 + end_time.tv_usec;
   stringstream ss;
     ss << "<iterations>" << iterations << "</iterations>\n";
     ss << "<total_photons>" << total_photons << "</total_photons>\n";
-    ss << "<global_start_time>" << start_time << "</global_start_time>\n";
-    ss << "<global_end_time>" << end_time << "</global_end_time>\n";
+    ss << "<global_start_time>" << us_start << "</global_start_time>\n";
+    ss << "<global_end_time>" << us_end << "</global_end_time>\n";
   ss << "</exec>\n";
 
   boost::lock_guard<boost::mutex> lock(config_mutex);
