@@ -57,6 +57,12 @@ To better understand the programming and execution model employed in \gama, some
 
 The organization of the execution model between Computational Units, Devices and Hosts ensures that a consistent model can be assumed implicitly, where \acsp{CU} within the same device share a common address space, allowing the usage of device-specific synchronization mechanisms to manage the coordination of concurrent executions within that device.
 
-An application in GAMA is a collection of jobs submitted to a run-time system for scheduling among the available computational resources. Dependencies among jobs can be specified with explicit synchronization barriers. The main goal of the runtime scheduler is to reduce the overall execution time of any given application. The scheduler uses information provided by each job in order to determine the best scheduling policy, based on current runtime states, as well as execution history. If the granularity of a job is too coarse to enable a balanced scheduling policy, \gama will recursively employ the dicing function of a job to adjust it to the capabilities of the device.
+An application in GAMA is a collection of jobs submitted to a run-time system for scheduling among the available computational resources. Dependencies among jobs can be specified with explicit synchronization barriers. The main goal of the runtime scheduler is to reduce the overall execution time of any given application.
+
+\subsubsection{Scheduling} \label{sec:gama_sched}
+
+The scheduler uses information provided by each job in order to determine the best scheduling policy, based on current runtime states, as well as execution history. If the granularity of a job is too coarse to enable a balanced scheduling policy, \gama will recursively employ the dicing function of a job to adjust it to the capabilities of the devices.
+
+Internally, \gama uses a variant of the \ac{HEFT} scheduling algorithm \cite{topcuoglu2002performance}, which uses the computation and communication costs of each task, in order to assign every task to a device in such a way that minimizes the estimated finish time of the overall task pool. This variant of \acs{HEFT} instead attempts, every time it is applied to the task pool, to make a decision so that tasks on the multiple devices take the closest possible to execute \cite{thesisMariano12}.
 
 \end{document}

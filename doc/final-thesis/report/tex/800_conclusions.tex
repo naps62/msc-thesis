@@ -5,18 +5,9 @@
 \chapter{Conclusions} \label{chapter:conclusions}
 \itodo{this}
 
-\section{StarPU}
-\itodo{type safety}
-\itodo{memory management not as powerful as gama's}
-\itodo{granularity must be programmer-defined. gama has dicing}
-
-\subsection{Performance}
+\section{Performance}
 \itodo{this}
 
-\itodo{memory management concerns: A framework such as \starpu can be smart enough to use the information such as the task dependency graph and history based execution to asynchronously prepare all memory where it knows it will be needed further in the execution}
-\itodo{accessing data that was assigned to a handle, when outside of a task, can lead to incoherent memory}
-\itodo{data access modes do not ensure correctness. a task may write to a STARPU\_R buffer. it just happens that, if a data transfer of that buffer is required for a different task, those writes might not be considered, although they will remain in the original node. This leads to memory incosistencies, caused by a mistake by the programmer (STARPU\_R should have been STARPU\_RW). the framework should not allow that mistake to happen}
-\itodo{memoria de tamanho variavel ou estrutura irregular. While it is unsure whether \starpu actually allows such a thing...}
 
 \subsection{Usability}
 
@@ -27,6 +18,48 @@
 \itodo{compare to GAMA}
 
 \itodo{starpu impossible to have device-specific structures that are not translatable between each other. If a \gpu works better with a structure X, and a \cpu with a structure Y, and it is impossible to directly translating X to Y, then \starpu cant be allowed to generate X on a \gpu, only to later process it on a cpu in a subsequent task}
+
+\section{Memory Management}
+
+\itodo{memory management not as powerful as gama's}
+\itodo{granularity must be programmer-defined. gama has dicing}
+
+\section{\starpu Caveats}
+
+During the usage of \starpu, some particular issues were found, which although not directly related to its efficiency, had an impact on development time, and thus should be addressed
+
+\subsection{Type Safety}
+
+\itodo{type safety}
+Perhaps one of the most important limitations of \starpu's API is the fact that its task submission methods are not type-safe\footnote{the extent to which a language discourages or prevents type errors}. By definition, the C language (in which \starpu is implemented and exposed to the programmer) is by only type safe to a certain extent, since workarounds are often used in the language to achieve results similar to polymorphism or runtime casting.
+
+This is the case with \starpu, resulting in an API that can be mistakenly used by the programmer. Each codelet defined in a program specifies how many data buffers its tasks will depend on, and their access modes. However, since data buffers are used only through their data hanldes, which are completely generic, no explicit type cheking is made to ensure that the correct types of data handles is passed, and that they are received properly within the task. For example, a task may be expecting to receive buffers X and Y of completely different sizes and types. But on task submission, their order might be reversed, resulting in runtime errors which might be extremely difficult to trace.
+
+The main result of this is a weak task submission API, since it can easily lead to runtime errors. More experienced developers might have enough understanding to easily identify these problems. But technical issues such as type safety should not have to be addressed by the developer, as they can pose serious problems to development time, but could be easily identified by a compiler.
+
+\subsection{Data Access Modes}
+
+Another caveat of the usage of data handles is that it can lead to incoherent results, again due to possible and easily made developer mistakes. \starpu relies on the estimation of data transfer times to decide where to schedule a task to. An important factor of this comes from the access modes required for each data buffer in a task, as explained in \cref{sec:starpu:data_access}.
+
+If a data buffer is declared as read-only within a task, it is assumed to be unchanged by that same task, this other tasks dependending on it have that dependency already met.
+The caveat here is that a read-only buffer is only so for the framework, but not actually read-only for the programmer, or for the C compiler itself, and data can actually be overwritten for a read-only buffer. Although that is probably related to a development mistake, it can easily happen nontheless
+
+Adding to this is the fact that \starpu might create additional copies of data buffers to solve dependencies faster accross multiple devices. \cref{fig:deps_problem} exemplifies this problem. Tasks A and B have read-only access to the data buffer $x$, although as explained, both of them can write to it at will. If both tasks are scheduled to the same device (\cref{fig:deps_problem:a}, they will be executed in order, and \starpu will reuse the initially existing memory, without the need to create temporary copies of the buffer. In this case, if task A writes to $x$, task B will later see these changes, since memory is shared.
+
+\itodo{diagrama disto?}
+
+In \cref{fig:deps_problem:b}, the two tasks are scheduled to different devices. Since \starpu assumes $x$ to be read-only, a copy of it, $x'$ can immediatelly be created in the additional device. In this case, both tasks will run concurrently, with their own local copy of $x$. Task A will still write changes to this buffer, but task B will not see them.
+
+
+
+
+\itodo{memory management concerns: A framework such as \starpu can be smart enough to use the information such as the task dependency graph and history based execution to asynchronously prepare all memory where it knows it will be needed further in the execution}
+\itodo{accessing data that was assigned to a handle, when outside of a task, can lead to incoherent memory}
+\itodo{data access modes do not ensure correctness. a task may write to a STARPU\_R buffer. it just happens that, if a data transfer of that buffer is required for a different task, those writes might not be considered, although they will remain in the original node. This leads to memory incosistencies, caused by a mistake by the programmer (STARPU\_R should have been STARPU\_RW). the framework should not allow that mistake to happen}
+\itodo{memoria de tamanho variavel ou estrutura irregular. While it is unsure whether \starpu actually allows such a thing...}
+
+\section{Future Work Suggestions}
+
 
 
 \end{document}
