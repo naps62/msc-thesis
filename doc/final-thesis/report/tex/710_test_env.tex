@@ -6,6 +6,7 @@
 
 All tests were performed within the \search\footnote{\url{http://search.di.uminho.pt}} cluster. Initial tests used up to 3 different nodes, particularly the 511, 611 and 711 generations, in order to search for significant differences between different architectures. This node are further detailed in \cref{tab:nodes}. This only refers to the initial profiling done on the original implementation, and whose results are detailed in \cref{sec:results:original}
 
+\todo{dados dos 511 e 611}
 \begin{table}[!htb]
     \begin{subtable}{.5\textwidth}
       \centering
@@ -22,12 +23,12 @@ All tests were performed within the \search\footnote{\url{http://search.di.uminh
         L3 cache(shared): & 12 MB  \\
         RAM:      & 48 GB  \\
         \hline
-        CUDA Device: & Tesla C2090 \\
+        \cuda Device: & \todo{this} \\
         \hline
       \end{tabular}
       \caption{\search node 511}
     \end{subtable}%
-    \begin{subtable}{.5\textwidth}
+    \begin{subtable}{.6\textwidth}
       \centering
       \begin{tabular}{|ll|}
         \hline
@@ -42,7 +43,7 @@ All tests were performed within the \search\footnote{\url{http://search.di.uminh
         L3 cache(shared): & 12 MB  \\
         RAM:      & 48 GB  \\
         \hline
-        CUDA Device: & Tesla C2090 \\
+        \cuda Device: & Tesla C2090 \\
         \hline
       \end{tabular}
       \caption{\search node 611}
@@ -64,8 +65,8 @@ All tests were performed within the \search\footnote{\url{http://search.di.uminh
         L3 cache(shared): & 20 MB  \\
         RAM: & 64 GB  \\
         \hline
-        CUDA Device 0: & Kepler K20m \\
-        Cuda Device 1: & Tesla C20909 \footnote{unavailable in this node during profiling of the original implementation} \\
+        \cuda Device 0: & Kepler K20m \\
+        \cuda Device 1: & Tesla C20909 \footnote{unavailable in this node during profiling of the original implementation} \\
         \hline
       \end{tabular}
       \caption{\search node 711}
