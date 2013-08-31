@@ -37,6 +37,13 @@ This is the case with \starpu, resulting in an API that can be mistakenly used b
 
 The main result of this is a weak task submission API, since it can easily lead to runtime errors. More experienced developers might have enough understanding to easily identify these problems. But technical issues such as type safety should not have to be addressed by the developer, as they can pose serious problems to development time, but could be easily identified by a compiler.
 
+\subsection{Memory Consistency}
+
+\starpu ensures consistency of all data assigned to it via data handles, but only within managed managed by its scheduler. The issue here is that, while the API allows the creation of a data handle associated with an already alocated data structure (usually pinned to main system memory), it is not ensured that tasks will write to that actual memory, and not a \starpu-managed copy. This has the side effect of consistency not being ensured outside of the context of a task. Writing to a buffer via conventional methods can thus be considered dangerous.
+
+On this subject, \gama provides a more powerful solution. All data that is to be managed by \gama's unified memory system must be encapsulated in a wrapper that processes all accesses to it. While it is not documented how \gama actually behaves when data is accessed outside of a job, this model should provide a more transparent solution for consistent memory access.
+
+
 \subsection{Data Access Modes}
 
 Another caveat of the usage of data handles is that it can lead to incoherent results, again due to possible and easily made developer mistakes. \starpu relies on the estimation of data transfer times to decide where to schedule a task to. An important factor of this comes from the access modes required for each data buffer in a task, as explained in \cref{sec:starpu:data_access}.
@@ -53,13 +60,17 @@ In \cref{fig:deps_problem:b}, the two tasks are scheduled to different devices. 
 
 
 
-\itodo{memory management concerns: A framework such as \starpu can be smart enough to use the information such as the task dependency graph and history based execution to asynchronously prepare all memory where it knows it will be needed further in the execution}
 \itodo{accessing data that was assigned to a handle, when outside of a task, can lead to incoherent memory}
 \itodo{data access modes do not ensure correctness. a task may write to a STARPU\_R buffer. it just happens that, if a data transfer of that buffer is required for a different task, those writes might not be considered, although they will remain in the original node. This leads to memory incosistencies, caused by a mistake by the programmer (STARPU\_R should have been STARPU\_RW). the framework should not allow that mistake to happen}
 \itodo{memoria de tamanho variavel ou estrutura irregular. While it is unsure whether \starpu actually allows such a thing...}
 
+
 \section{Future Work Suggestions}
 
+While this dissertation focused mostly on the implemetation of a case study in \starpu, a similar effort should be made to produce a similar implementation with \gama, to actually compare the two in terms of performance. Without such implementation, only a more shallow comparison could be made, regarding mostly the features, usability, and a few problems with each solution
 
+Other possible points of improvement on top of this work are more related to the produced implementation. The first point is related to the random number generation, which could be further improved by using a different random number generator, that would not require an intermidiate buffer, thus eliminating one dependency between tasks.
+
+In addition, a new approach to task parallelization could be attempted, which did not depend on \openmp, and as such would allow an efficient usage of other \starpu schedulers without support for combined workers, which are still under development by the framework's team.
 
 \end{document}

@@ -20,9 +20,7 @@ Generally, this techinique is used to compute light interactions within a three-
 
 Ray tracing algorithms are capable of simulating most optical effects, such as reflections, refractions, and scattering, although the actual set of simulated effects, and their overall quality differ between the multiple ray tracing algorithms that have already been developed.
 
-Most ray tracing methods are directed only to static scenarios, as the rendering time is still too high to be feasible to emply a ray tracing algorithm on a realtime or interactive use case.
-Large efforts have been made recently to improve ray tracing techniques \todo{refs aqui}, as well as to speed up their computation, by using parallel architectures such as \gpus, which have always been associated with image processing.
-\todo{LPS: isto já não é bem assim. ver por exemplo o optiX da NVidia}
+Large efforts have been made recently to improve ray tracing technique, with several of them being performance-related, by using parallel architectures such as \gpus, which have always been associated with image processing. Some effors are already showing advances in the area of real time ray tracing, which was unfeasable until very recently \cite{parker2010optix,huss2004real}
 
 \subsection{Overview}
 
@@ -34,11 +32,7 @@ Later advances, such as \cite{whitted2005improved}, introduced the recursive ray
 
 \image[width=0.5\textwidth]{ray_tracing01}{Ray Tracing}{fig:ray_tracing}
 
-\itodo{get a better picture}
-
 It is also not uncommon to approximate the rendering equation by using combinations of more than one method, such a Ray Tracing, Radiosity or Metropolis Light Transport \cite{wallace1987two,veach1997metropolis}. Each method attempts to simulate the travel of light particles across the scene, and model the various interactions with the environment, but with different approaches, advantages and limitations, so the combination of multiple method can combine the advantages of each one.
-
-\todo{LPS: note that these rendering algorithms also use ray casting as the visibility evaluation algorithm (although radiosity often resorts to hemicube projection if run on the GPU)}
 
 Traditional ray tracing methods work by simulating light particles traveling from the eye into the scene, being reflected and refracted until they reach a light source. Nowadays, most ray tracing rendering algorithms are in fact bidirectional, having photons shot from the light sources and their interactions computed in addition to regular eye paths.
 
