@@ -6,6 +6,12 @@
 \pdfbookmark{Abstract}{abstract}
 \chapter*{\abstractname}
 
-Abstract
+High performance computing has suffered several changes in recent years, with the increasingly prominent evolution and usage of heterogeneous platforms: multiple devices with different architectures, characteristics, and programming models share application workload targetting an increased performance.
+
+Several frameworks have been under development, to aid the programmer to efficiently explore these platforms, by dynamically scheduling the workload across the available resources and dealing with the inherent difficulties that come associated with the increased complexity of the system.
+
+These frameworks include \gama and \starpu. The first is being designed to deal with irregular applications and addressing task scheduling and resources management. \gama aims to unify the multiple execution and memory models of each device into a single, hardware agnostic model. It handles the workload distribution across multiple computational resources, and attempts to balance them based on a scheduling policy as well as runtime information. \starpu has similar goals, but places a much greater emphasis in memory transfer latencies as the root cause of bottlenecks when offloading tasks to accelerators.
+
+The subject of this dissertation is to provide a more in-depth evaluation of \starpu, using the progressive photon mapping irregular algorithm as a case study. The goal is to assert its effectiveness with a robust irregular application, and ultimately make a high-level comparison with the still under development \gama, to understand where each of them has its weaknesses, and how \gama's development could be further improved.
 
 \end{document}

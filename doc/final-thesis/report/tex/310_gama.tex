@@ -20,7 +20,6 @@ To abstract the distributed memory model that is used between devices, \gama int
 \subsubsection{Memory Consistency}
 
 Communication between memory spaces of different devices is expensive due to the need of synchronization and communication between the host \cpu and the devices. Due to this, a relaxed consistency model is used, which enables the system to optimize data movements between devices, offering the developer a single synchronization primitive to enforce memory consistency.
-\todo{LPS: relaxed, but what are the consistency guarantees. There must be some since there are many different models that relax over sequential consistency}
 
 \subsubsection{Software Cache}
 
@@ -66,12 +65,11 @@ The scheduler uses information provided by each job in order to determine the be
 Internally, \gama uses a variant of the \ac{HEFT} scheduling algorithm \cite{topcuoglu2002performance}, which uses the computation and communication costs of each task, in order to assign every task to a device in such a way that minimizes the estimated finish time of the overall task pool. This variant of \acs{HEFT} instead attempts, every time it is applied to the task pool, to make a decision so that tasks on the multiple devices take the closest possible to execute \cite{thesisMariano12}.
 
 
-
 \subsection{The Polu Case-Study}
 
 While studying the details of the framework, some tests were done with \gama. Initially some of the source code of the included samples, such as the SAXPY and Barnes-Hut algorithms were studied.
 
-Later, an implementation of a small, first order finite volume method was implemented using \gama, using the previously implemented versions of that same algorithm as basis of comparison. This versions included a sequential implementation, and two parallelized implementations, one with \openmp, and another with \cuda. The details of the algorithm are described in more detail in \cref{sec:polu}.
+Later, an implementation of a small, first order finite volume method was implemented using \gama, using the previously implemented versions of that same algorithm as basis of comparison. This versions included a sequential implementation, and two parallelized implementations, one with \openmp, and another with \cuda. The details of the algorithm are described in more detail in \cref{sec:polu:alg}.
 
 This was no more than a small hands-on study in order gain a better understanding of the usage of the framework, but not its performance, as the finite volume method employed is just as simple as the already implemented test samples, meaning that an interesting performance analyzis would not be possible.
 
@@ -80,7 +78,7 @@ The application, here called \texttt{polu}, was already the subject of a paralle
 
 The \texttt{polu} application, computes the spread of a material (e.g.\ a pollutant) in a bi-dimensional surface through the course of time. This surface is discretely represented as a mesh, composed mainly of edges and cells. The input data set contains information about the mesh description, the velocity vector for each cell and an initial pollution distribution.
 
-\subsubsection{The Algorithm}
+\subsubsection{The Algorithm} \label{sec:polu:alg}
 
 The algorithm used by this application is a first order finite volume method. This means that each mesh element only communicates directly with its first level neighbours in the mesh, which makes this a typical case of a stencil computation. Despite this, the algorithm is still very irregular in terms of memory access patterns, because the mesh input generator \texttt{gmsh}, suffers from deep locality issues, turning memory accesses ordered by cells or edges close to random.
 

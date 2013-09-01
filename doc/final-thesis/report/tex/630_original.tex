@@ -12,8 +12,6 @@ In practice, the SPPMPA version provided support for running one CPUWorker and t
 
 When this implementation was first available, however, the \acs{CUDA} implementation was not yet fully finished, with only the implementation of the photon tracing steps being run on a \gpu. This means that the performance when using \cuda is limited by the necessary data transfers required during each iteration. Particularly, when using SPPMPA version, where, following the stochastic progressive photon mapping extension, new hit points are generated after each step, an even greater amount of communication is required, since the \gpu has to wait for the new hit points before starting the computation of a new photon pass.
 
-\todo{LPS: but is this the version being evaluated?}
-
-\itodo{diagrama disto? no SPPMPA, o facto de só existir cuda para os photon paths é ainda pior, pois é necessária mais comunicação, pois é preciso enviar os hit points a cada iteração}
+This versions was used only for validation of the later implementations, and an in-depth study of its performance was not considered interesting, as similar versions were to be produced, but with the advantage of being further structured and optimized, and not relying on a third-party codebase.
 
 \end{document}

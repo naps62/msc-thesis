@@ -31,8 +31,6 @@ There were also attempts to port the original implementation to run on the \mic 
 
 \section{Implementation}
 
-All presented implementations follow a similar workflow, presented in \itodo{diagrama do programa global. input para o luxrender -> marshling para ptrfree -> init worker -> render -> output final image}.
-
 This section presents an overview of the differences and challenges between the multiple versions used.
 
 While \starpu is the actual object of study in this project, initial development was focused on building a \cpu only, implementation, similarly to the original version. Following that, an similar approach was done to build a \cuda version, while still avoiding the usage of \starpu or any \hetplat managing system.
@@ -44,7 +42,7 @@ During development, a large effort was put into trying to keep all computational
 \subfile{tex/630_original}
 \subfile{tex/640_cpu}
 \subfile{tex/650_cuda}
-\subfile{tex/660_mic}
+%\subfile{tex/660_mic}
 \subfile{tex/670_starpu}
 
 \end{document}

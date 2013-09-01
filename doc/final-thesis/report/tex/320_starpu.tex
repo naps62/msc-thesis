@@ -57,19 +57,27 @@ In addition to implicit data dependencies, other dependencies can be explicitly 
 
 Each data dependency that is explicitly defined in a task can have a different access mode. Data can be used in read-only, write-only or read-write mode. This access mode does not serve the purpose of ensuring memory correctness. It is used to soften task dependencies by using a \emph{Multiple Readers / Single Writer} model in dependency calculation.
 
-This model describes a type of mutual exclusion pattern where a data block can be concurrently accessed by any number of reader, but must be exclusively accessed by a writer. \starpu uses this concept to further optimize data dependency calculations. If multiple scheduled tasks depend on the same data handle, but only with reading access, then that dependency should not block the multiple tasks from running concurrently. Temporary copies of the data can be created, possibly on different computational units, and later discarded immediatelly, since a read-only buffer is assumed to remain unchanged at the end of a task.
+This model describes a type of mutual exclusion pattern where a data block can be concurrently accessed by any number of reader, but must be exclusively accessed by a writer. \starpu uses this concept to further optimize data dependency calculations. If multiple scheduled tasks depend on the same data handle, but only with reading access, then that dependency should not block the multiple tasks from running concurrently (see \cref{fig:starpu_dep}. Temporary copies of the data can be created, possibly on different computational units, and later discarded immediatelly, since a read-only buffer is assumed to remain unchanged at the end of a task.
 
-\itodo{diagrama a exemplificar esta coisa. Tasks A,B,C. tasks A,B have read-only access to x. Task C has write access. If tasks are in the order A,B,C, then A,B can be ran concurrently. If C is between, then the order must be A,C,B each at a time}
-
-%\cref{fig:starpu_deps} shows some of the possibilities of this model. Tasks $A$ and $B$ have read-only access to the data buffer $x$, while task C has write-only access.
-
+\begin{figure}[!htp]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=0.2\linewidth]{visio/starpu_dep_rw}
+    \caption{Since A writes to $x$, B must wait for it to finish to solve the dependency \label{fig:starpu_dep_rw}}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=0.6\linewidth]{visio/starpu_dep_r}
+    \caption{Neither B nor C write to $x$, so they can be ran concurrently \label{fig:starpu_dep_r}}
+  \end{subfigure}
+  \caption{Access mode ilustration. Task A requires read/write access to $x$, while tasks B and C require read-only access \label{fig:starpu_dep}}
+\end{figure}
 
 \subsection{Virtual Shared Memory}
 
 The approach used by \starpu when it comes to memory management is simpler than the model employed by \gama. The purpose is the same: to automatically manage memory allocations and transfers on all devices. This not only frees the programmer from the work of manually managing memory between tasks, but it also has the potential to lower the cost of such operations.
 \starpu manages memory by forcing the user to declare data handles to their data. These handles are used as arguments for tasks, allowing the scheduler to allocate and transfer all required data buffers to the correct computational unit prior to the task execution.
-
-\itodo{nas conclusões: caveats}
 
 \subsection{Multithreading} \label{section:starpu_multithreading}
 

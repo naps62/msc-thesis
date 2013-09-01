@@ -12,7 +12,7 @@ An early decision for this implementation was to consider only the low-level API
 
 Additionally, the actual documentation for the framework is almost entirely focused on the low-level functions, making it easier getting up to speed and understand its usage.
 
-An additional decision that was enforced by the existing implementations is related to the task scheduling pocily used. Since the \cpu implementation of all parallellizable tasks was based on \openmp, it was intuitive to approach the problem by using the capabilities of parallel tasks and combined workers of \starpu (see \cref{section:starpu_multithreading}). The only drawback that comes from this is that only the parallel-aware task schedulers (\texttt{pheft} and \texttt{peager}) are compatible
+An additional decision that was enforced by the existing implementations is related to the task scheduling pocily used. Since the \cpu implementation of all parallellizable tasks was based on \openmp, it was intuitive to approach the problem by using the capabilities of parallel tasks and combined workers of \starpu (see \cref{section:starpu_multithreading}). The only drawback that comes from this is that only the parallel-aware task schedulers (\texttt{pheft} and \texttt{peager}) are capable of parallelizing \cpu tasks. This means that when using a non-parallel-aware scheduler, \cpu tasks such as \textbf{Advance Photon Paths} will increase in cost.
 
 \subsubsection{Data Management}
 

@@ -4,7 +4,7 @@
 
 \section{Testing Methodology} \label{sec:results:method}
 
-For each measurement, only the time spent in the main rendering function was considered, discarding any input and output time spent by the program. A minimum of 10 executions were made for each measurement, for which the 3 best executions within at most $5\%$ of each other were considered.
+For each measurement, only the time spent in the main rendering function was considered, discarding any input and output time spent by the program. A minimum of 10 executions were made for each measurement, for which the 3 best executions within at most $5\%$ of each other were considered. When comparing results, the average time for each iteration of the main loop of SPPMPA was the base value to use (with each test runnning at least 20 iterations).
 
 Whenever \cuda was employed, the \cuda Occupancy Calculator\footnote{A spreadsheet by \nvidia that helps estimating the ideal block size for a given kernel}, as well as manual tuning, were used to find the correct block size used for each computational kernel.
 

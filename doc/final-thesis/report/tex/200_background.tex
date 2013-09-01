@@ -24,7 +24,7 @@ With the increasing demand for highly data-parallel algorithms, and the growing 
 
 This data-parallel model is also behind the architecture of \gpus, but at a much higher degree. While the concept is the same (applying the same instruction to a set of values, instead of a single value at a time), the architecture of a \gpu, particularly a \cuda device, relies on the usage of several simple cores, grouped in multiple \aclp{SM}, to achieve higher degrees of parallelism, and process massive amounts of data. This makes \gpus more suitable for tasks with a high degree of data-paralelism, and not the ideal candidate for more irregular problems, where its more difficult to find parallelization points in order to take advantage of the \acs{SIMD} model.
 
-Although the hardware of a \gpu is still tightly coupled with graphics processing and rendering, there have also been several advances in its usage as a general computing device (\acs{GPGPU}). \todo{ref aqui}
+Although the hardware of a \gpu is still tightly coupled with graphics processing and rendering, there have also been several advances in its usage as a general computing device (\acs{GPGPU}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Fermi Architecture}
@@ -49,9 +49,9 @@ The programming model has been extended with the addition of dynamic parallelism
 This shows a clear evolution over the previous generation, and a response to the increasing demand for highly parallel computational provided by \gpus.
 
 
-\section{Intel MIC}
-\itodo{LPS. isto justificar-se-á? nao sao usados e o doc já vai longo}
-\itodo{Xeon Phi}
+%\section{Intel MIC}
+%\itodo{LPS. isto justificar-se-á? nao sao usados e o doc já vai longo}
+%\itodo{Xeon Phi}
 
 
 \section{Heterogeneous Platforms}
