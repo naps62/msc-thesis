@@ -12,13 +12,13 @@ The first implementation to be developed was one consisting only on the implemen
   \item Update Film
 \end{itemize}
 
-All other tasks (which in practise represent all the actual code for both the ray tracing and photon tracing steps) were fully parallelizable, as each ray can be independently intersected. The only exception to this is with the \textbf{Advance Photon Paths} task. Since a hit point might be simultaneously hit by multiple photons, a small critical section was required for every hit point update. That critical section, however, represents an extremelly small portion of the entire task.
+All other tasks (which in practice represent all the actual code for both the ray tracing and photon tracing steps) were fully parallelizable, as each ray can be independently intersected. The only exception to this is with the \textbf{Advance Photon Paths} task. Since a hit point might be simultaneously hit by multiple photons, a small critical section was required for every hit point update. That critical section, however, represents an extremely small portion of the entire task.
 
 In this implementation, some of the original code from LuxRender was also employed. Particularly, the intersection code for a ray, which traverses the accelerating structure indexing the scene, a \acf{QBVH}, searching for the next ray hit.
-This intersection code is implemented using SSE intrinsic functions, meaning that SSE code was harcoded, instead of being compiler generated. This makes sure that the accelerating structure takes advantage of the optimizations for original \acs{BVH} structures presented in \cite{dammertz2008shallow}.
+This intersection code is implemented using SSE intrinsic functions, meaning that SSE code was hard coded, instead of being compiler generated. This makes sure that the accelerating structure takes advantage of the optimizations for original \acs{BVH} structures presented in \cite{dammertz2008shallow}.
 
 
-Initially only the PPM version of the algorithm was developed. However, that decision was only to allow a gradual evolution, later adapting the code to implement SPPMPA instead. The reason for this is that evolving from basic PPM to one of its extensions is relatively straighforward. The tasks themselves remain almost identical, and most of the changes are related to when and how those tasks are actually called. Thus, the PPM version was not intended to be a finished application, but just a first step towards the final SPPMPA version.
+Initially only the PPM version of the algorithm was developed. However, that decision was only to allow a gradual evolution, later adapting the code to implement SPPMPA instead. The reason for this is that evolving from basic PPM to one of its extensions is relatively straightforward. The tasks themselves remain almost identical, and most of the changes are related to when and how those tasks are actually called. Thus, the PPM version was not intended to be a finished application, but just a first step towards the final SPPMPA version.
 
 Finally, even though the later algorithm theoretically allows multiple iterations to be run in parallel, this is not supported in the \cpu-only implementation. This mimics the behaviour of the original implementation from \cref{section:impl_original}, which was the intended result.
 

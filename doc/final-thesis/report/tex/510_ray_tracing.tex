@@ -4,31 +4,29 @@
 
 \section{The Rendering Equation}
 
-The realistic simulation of illumination of an environment is a complex problem. In theory, a simulation is truly realistic when it completely simluates, or closely approximates, the rendering equation.
+The realistic simulation of illumination of an environment is a complex problem. In theory, a simulation is truly realistic when it completely simulates, or closely approximates, the rendering equation.
 
 This equation, first proposed in 1986 \cite{kajiya1986rendering}, is based on the laws of conservation of energy, and describes the total amount of emitted light from any given point, based on incoming light and reflection distribution. The equation is presented in \cref{eq:render}
 
 \common{equations/rendering}
 
-In short, the equation defines the surface radiance $\surfaceRadiance$, leaving the point $x$ in the direction $\radianceDir$. THis is given by $\emittedLight$, which represents light self-emitted by a surface, and $\incidentLight$, which is the radiance along a given incidence direction. $\brdf$ is the \acf{BRDF} and $\Omega$ represents the semi-sphere of incoming directions centered in $x$.
+In short, the equation defines the surface radiance $\surfaceRadiance$, leaving the point $x$ in the direction $\radianceDir$. This is given by $\emittedLight$, which represents light self-emitted by a surface, and $\incidentLight$, which is the radiance along a given incidence direction. $\brdf$ is the \acf{BRDF} and $\Omega$ represents the semi-sphere of incoming directions centered in $x$.
 
 
 \section{Ray Tracing} \label{section:ray_tracing}
 
 Ray Tracing is the designation of a family of algorithms that simulate ray interactions with an environment in order to determine the visibility of two points in space.
-Generally, this techinique is used to compute light interactions within a three-dimensional scene, and obtain a two-dimensional image with a rendering of that scene. A high degree of visual realism can be achieved by these techniques, but also with greater computational costs.
+Generally, this technique is used to compute light interactions within a three-dimensional scene, and obtain a two-dimensional image with a rendering of that scene. A high degree of visual realism can be achieved by these techniques, but also with greater computational costs.
 
 Ray tracing algorithms are capable of simulating most optical effects, such as reflections, refractions, and scattering, although the actual set of simulated effects, and their overall quality differ between the multiple ray tracing algorithms that have already been developed.
 
-Large efforts have been made recently to improve ray tracing technique, with several of them being performance-related, by using parallel architectures such as \gpus, which have always been associated with image processing. Some effors are already showing advances in the area of real time ray tracing, which was unfeasable until very recently \cite{parker2010optix,huss2004real}
+Large efforts have been made recently to improve ray tracing technique, with several of them being performance-related, by using parallel architectures such as \gpus, which have always been associated with image processing. Some efforts are already showing advances in the area of real time ray tracing, which was unfeasible until very recently \cite{parker2010optix,huss2004real}
 
 \subsection{Overview}
 
 The first use of Ray Tracing algorithms was with the introduction of the later called Ray Casting technique by Arthur Appel in \cite{appel1968some}. The idea consisted of casting one ray from an origin point (usually called the eye, or camera) through each pixel of the image, and find the closest object in the scene that blocks the path of the ray. The material properties and light effects in the scene would then determine the final color of the pixel.
 
 Later advances, such as \cite{whitted2005improved}, introduced the recursive ray tracing algorithm. In traditional ray casting, each ray would end after the first hit. This was a limiting factor that prevents that approach from dealing with effects such as reflections. Recursive ray tracing solves that, by recursively tracing more rays after each hit. When a ray hits a surface, it can generate new reflection or refraction, depending on the properties of the material hit. Shadow rays can also be cast in the direction of the light sources. If a shadow ray is blocked by an opaque object before reaching the light source, it means that surface is not illuminated by that light source, and thus is shadowed. This technique is illustrated in \cref{fig:ray_tracing}
-
-\itodo{path tracing}
 
 \image[width=0.5\textwidth]{ray_tracing01}{Ray Tracing}{fig:ray_tracing}
 

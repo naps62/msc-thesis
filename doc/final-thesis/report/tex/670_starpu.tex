@@ -4,7 +4,7 @@
 
 \subsection{StarPU} \label{section:impl_starpu}
 
-For the final implementation, using the \starpu framework, most of the remaining work consisted on reusing the existing code for each computational tasks, and submit them as tasks to be scheduled by \starpu. The development process of the previous implementations (\cpu and \cuda) resulted in a very modular solution, with very little coupling\footnote{the degree of dependency between the multiple modules of a system. Tight coupling tends to difficult refactoring of one module without requiring subsequent changes to dependant modules, difficulting the reusability of code} between tasks implementation and the algorithm and scheduling code being used.
+For the final implementation, using the \starpu framework, most of the remaining work consisted on reusing the existing code for each computational tasks, and submit them as tasks to be scheduled by \starpu. The development process of the previous implementations (\cpu and \cuda) resulted in a very modular solution, with very little coupling\footnote{the degree of dependency between the multiple modules of a system. Tight coupling tends to difficult refactoring of one module without requiring subsequent changes to dependant modules, difficulting the re-usability of code} between tasks implementation and the algorithm and scheduling code being used.
 
 \subsubsection{Early Decisions}
 
@@ -12,7 +12,7 @@ An early decision for this implementation was to consider only the low-level API
 
 Additionally, the actual documentation for the framework is almost entirely focused on the low-level functions, making it easier getting up to speed and understand its usage.
 
-An additional decision that was enforced by the existing implementations is related to the task scheduling pocily used. Since the \cpu implementation of all parallellizable tasks was based on \openmp, it was intuitive to approach the problem by using the capabilities of parallel tasks and combined workers of \starpu (see \cref{section:starpu_multithreading}). The only drawback that comes from this is that only the parallel-aware task schedulers (\texttt{pheft} and \texttt{peager}) are capable of parallelizing \cpu tasks. This means that when using a non-parallel-aware scheduler, \cpu tasks such as \textbf{Advance Photon Paths} will increase in cost.
+An additional decision that was enforced by the existing implementations is related to the task scheduling policy used. Since the \cpu implementation of all parallelizable tasks was based on \openmp, it was intuitive to approach the problem by using the capabilities of parallel tasks and combined workers of \starpu (see \cref{section:starpu_multi-threading}). The only drawback that comes from this is that only the parallel-aware task schedulers (\texttt{pheft} and \texttt{peager}) are capable of parallelizing \cpu tasks. This means that when using a non-parallel-aware scheduler, \cpu tasks such as \textbf{Advance Photon Paths} will increase in cost.
 
 \subsubsection{Data Management}
 
@@ -41,31 +41,31 @@ A solution for this would be to change the random number generation method, to o
 
 \subsubsection{Enabling Concurrent Iterations} \label{section:starpu_concurrent_iters}
 
-Since the high amount of dependencies between tasks does not allow a good degree of concurrency within a single iteration, efforts were focused in allowing the execution of multiple iterations concurrently. This is one of the main reasons SPPMPA was the only one focused on, as other versions withouth the probabilistic radius estimation would introduce dependencies between each iteration, preventing their parallelization.
+Since the high amount of dependencies between tasks does not allow a good degree of concurrency within a single iteration, efforts were focused in allowing the execution of multiple iterations concurrently. This is one of the main reasons SPPMPA was the only one focused on, as other versions without the probabilistic radius estimation would introduce dependencies between each iteration, preventing their parallelization.
 
 The initial approach to port the implementation to \starpu relied on data handles being declared at the start of the rendering process, and release at the end.
 
 \begin{listing}[htp]
   \inputminted[linenos,tabsize=4]{c++}{code/starpu_initial.cpp}
 
-  \caption{The begining of the main rendering loop, with global data handles}
+  \caption{The beginning of the main rendering loop, with global data handles}
   \label{lst:starpu_initial}
 \end{listing}
 
-As shown in \cref{lst:starpu_initial}, data handles are created and kept during the whole rendering process. In practise, this means that each iteration will depend on the same data buffers as the previous one, even though they are to be completely rewritten, and their previous values ignored. This is not desirable, as it prevents concurrency between iterations, just like it happens due to the seed buffer dependency previously explained.
+As shown in \cref{lst:starpu_initial}, data handles are created and kept during the whole rendering process. In practice, this means that each iteration will depend on the same data buffers as the previous one, even though they are to be completely rewritten, and their previous values ignored. This is not desirable, as it prevents concurrency between iterations, just like it happens due to the seed buffer dependency previously explained.
 
 An alternative solution is to declare the handles in-loop, as shown in \cref{lst:starpu_handles_in_loop}
 
 \begin{listing}[htp]
   \inputminted[linenos,tabsize=4]{c++}{code/starpu_handles_in_loop.cpp}
 
-  \caption{The begining of the main rendering loop, now with in-loop data handles}
+  \caption{The beginning of the main rendering loop, now with in-loop data handles}
   \label{lst:starpu_handles_in_loop}
 \end{listing}
 
 With this method, each iteration declares its own copy of the required data. \starpu provides the \texttt{starpu\_data\_unregister\_submit} API call, which instructs the library that the given data buffer can be discarded as soon as existing tasks depending on it are finished. Since data is local to each iteration, this can actually be considered a more intuitive way to approach the problem.
 
-However, an additional problem arose from this approach. Due to the asynchronous nature of the tasks, the program actually submits every single iteration to the scheduler, meaning that multiple copies of the \texttt{eye\_paths} and \texttt{hit\_points} buffers will be imediatelly requested. For a large enough number of iterations, this resulted in memory problems, and eventually program failures. Since \starpu does not provide any method to control this, the limitation had to be imposed manually, by inserting a barrier every few iterations (with the actual number being a configurable value).
+However, an additional problem arose from this approach. Due to the asynchronous nature of the tasks, the program actually submits every single iteration to the scheduler, meaning that multiple copies of the \texttt{eye\_paths} and \texttt{hit\_points} buffers will be immediately requested. For a large enough number of iterations, this resulted in memory problems, and eventually program failures. Since \starpu does not provide any method to control this, the limitation had to be imposed manually, by inserting a barrier every few iterations (with the actual number being a configurable value).
 
 The fact that the number of concurrent iterations is now configurable also allowed to tackle the data dependency provided by the seed buffer. Instead of a single buffer being shared by the entire algorithm, the implementation was adapted to instead use as many buffers as there are concurrent iterations, as shown in \todo{diagrama de iterações concorrentes}.
 

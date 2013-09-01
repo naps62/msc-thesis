@@ -40,7 +40,7 @@ To better understand the programming and execution model employed in \gama, some
     Represents a collection of \aclp{CU} that share some level of memory (e.g.\ the CPU cores on the same machine, or the \sms  of a single \gpu).
 
   \item[Host] \hfill \\
-    The group of all devices within a single computational node. Currently \gama supports only a single-host, providing of taking advantage of multiple computational nodes. As such, the host represents the top-most hierarcky layer in \gama's execution model
+    The group of all devices within a single computational node. Currently \gama supports only a single-host, providing of taking advantage of multiple computational nodes. As such, the host represents the top-most hierarchy layer in \gama's execution model
 
   \item[Domain] \hfill \\
     A global view of a particular data structure that enables developers to access any memory location using the global address space, and hiding the complexity of the underlying memory system. At the application level, the user is able to define filters of partial views of a single domain, allowing the system to identify the required communication primitives and enforce the global address space, the memory consistency model, and cache and synchronization mechanisms.
@@ -71,7 +71,7 @@ While studying the details of the framework, some tests were done with \gama. In
 
 Later, an implementation of a small, first order finite volume method was implemented using \gama, using the previously implemented versions of that same algorithm as basis of comparison. This versions included a sequential implementation, and two parallelized implementations, one with \openmp, and another with \cuda. The details of the algorithm are described in more detail in \cref{sec:polu:alg}.
 
-This was no more than a small hands-on study in order gain a better understanding of the usage of the framework, but not its performance, as the finite volume method employed is just as simple as the already implemented test samples, meaning that an interesting performance analyzis would not be possible.
+This was no more than a small hands-on study in order gain a better understanding of the usage of the framework, but not its performance, as the finite volume method employed is just as simple as the already implemented test samples, meaning that an interesting performance analysis would not be possible.
 
 
 The application, here called \texttt{polu}, was already the subject of a parallelization study in \cite{naps2012}, which described the incremental work where the application was improved from a sequential implementation, first through a process of analysis and sequential optimization, and then subject to parallelization using two techniques, a shared memory \cpu implementation with \openmp, and a \gpu implementation with \cuda.
@@ -85,7 +85,7 @@ The algorithm used by this application is a first order finite volume method. Th
 The execution of the algorithm consists of looping through two main kernels, advancing in time until an input-defined limit is reached. These two kernels are:
 \begin{description}
 \item[\texttt{compute\_flux}] \hfill \\
-  In this step, a flux is calculated for each edge, based on the current pollution concentration of each of the adjacent cells. A constanct known as \text{Dirichlet} condition is used for the boundary edges of the mesh, replacing the value of the missing cell. This flux value represents the amount of pollution that travels across that edge in that time step.
+  In this step, a flux is calculated for each edge, based on the current pollution concentration of each of the adjacent cells. A constant known as \text{Dirichlet} condition is used for the boundary edges of the mesh, replacing the value of the missing cell. This flux value represents the amount of pollution that travels across that edge in that time step.
 
 \item[\texttt{update}] \hfill \\
   With the previously calculated fluxes, all cell values are updated, with each cell receiving contributions from all the adjacent edges. After this, one time step has passed.

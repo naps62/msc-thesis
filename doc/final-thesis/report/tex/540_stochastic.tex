@@ -4,15 +4,13 @@
 
 \section{Stochastic Progressive Photon Mapping} \label{section:sppm}
 
-Progressive photon mapping still does not address the problem of computing the average radiance of an unkown region.  While progressive photon mapping allows the computation of the estimated radiance on a given point $x$ stored as a hit point, it does not allow the estimation of a different unknown point. This is a problem when trying to simulate distributed ray tracing effects, such as motion blur or depth-of-field, which. \todo{acabar isto}
+Progressive photon mapping still does not address the problem of computing the average radiance of an unknown region.  While progressive photon mapping allows the computation of the estimated radiance on a given point $x$ stored as a hit point, it does not allow the estimation of a different unknown point. This is a problem when trying to simulate distributed ray tracing effects, such as motion blur or depth-of-field.
 
 The solution proposed in \cite{jensenstochastic} presents a new formulation for the progressive radiance estimation, allowing the computation of the correct average radiance over a region.
 
-In practise, the implementation of that formulation consists only in generate a new set of hit points after each photon pass. The local statistics for each new hit point is taken directly from the previous hit point for that same pixel. Original progressive photon mapping generates a set of hit points, and then iteratively uses new photon maps to converge to a correct solution, based on those same hit point.
-This stochastic approach does not reuse the hit points, but only their local statistics. The results in the proposed work show that this solution provides better results for scenes with complex illumination, and including distributed ray tracing effects, such as motion blur, depth-of-fied and glossy interactions.
+In practice, the implementation of that formulation consists only in generate a new set of hit points after each photon pass (see \cref{fig:diagram_sppm}). The local statistics for each new hit point is taken directly from the previous hit point for that same pixel. Original progressive photon mapping generates a set of hit points, and then iteratively uses new photon maps to converge to a correct solution, based on those same hit point.
+This stochastic approach does not reuse the hit points, but only their local statistics. The results in the proposed work show that this solution provides better results for scenes with complex illumination, and including distributed ray tracing effects, such as motion blur, depth-of-field and glossy interactions.
 
 \image[width=\textwidth]{visio/diagram_sppm}{Fluxogram of Stochastic Progressive Photon Mapping}{fig:diagram_sppm}
-
-\itodo{maybe more stuff here?}
 
 \end{document}

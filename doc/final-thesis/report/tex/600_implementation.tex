@@ -8,7 +8,7 @@ The case study was implemented based on an already existing implementation, avai
 
 The implementation used here was also based on those same data structures, and other code from LuxRender. The algorithms themselves for the ray tracing and photon mapping steps, radiance estimation, and radius reduction were based not only on the theoretical research work already presented summarily in \cref{chapter:case_study}, but also on the already available implementation
 
-This was helpful to speed up development time, by working with already existing code for the same algorithm, but also to serve as a validation tool, in order to assert wether the final solution, and the individual algorithms within it, produced a correct result.
+This was helpful to speed up development time, by working with already existing code for the same algorithm, but also to serve as a validation tool, in order to assert whether the final solution, and the individual algorithms within it, produced a correct result.
 
 The final implementation developed for this work was based on the original one provided at the start of the project, although different and improved is some regards. Three main methods were made available, mostly for the sake of comparison of results and profiling. The first two are simple implementations using \cpus with \acs{OpenMP} and \gpus with \acs{CUDA}, respectively. Finally, the third method uses the \starpu framework to handle task management
 

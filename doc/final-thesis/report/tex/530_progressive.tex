@@ -15,9 +15,7 @@ Since effects such as caustics are simulated by directly using the information f
 
 \subsection{First Step: Ray Tracing}
 
-The first step is a standart ray tracing step, used to find all surfaces visible in the scene. Rays are traced through each pixel of the image plane, in order to find all visible surfaces in the scene. For each ray, all hits with a non-specular component in the \acs{BRDF} function are stored. This includes storing the hit location ($x$), the ray direction($\vec{\omega}$)
-
-\todo{LPS: acabar isto}
+The first step is a standard ray tracing step, used to find all surfaces visible in the scene. Rays are traced through each pixel of the image plane, in order to find all visible surfaces in the scene. For each ray, all hits with a non-specular component in the \acs{BRDF} function are stored. This includes storing the hit location ($x$), the ray direction($\vec{\omega}$) and the pixel it originated from. Additionally, data for the progressive estimation is also included, such as a radius, intercepted flux, and number of photons within the defined radius.
 
 
 \subsection{Next Steps: Photon Tracing}
@@ -26,7 +24,7 @@ After the initial ray tracing step, an iterative process begins. Each iteration,
 
 Once this contribution is computed, the photon map is no longer needed, and can be discarded, before the next iteration repeats the process.
 
-This provides two key advantages over the original, two-step approach. The total amount of photons traced is not limited by memory, but only by the amount of iterations that are computed. An arbitrary number of iterations can be used, without requiring any additional memory at all, and resulting in a better quality result. Also, after each photon pass an image can be rendered, and the progresssive result can be shown while the image is progressively improved, instead of having to wait for the entire algorithm to finish.
+This provides two key advantages over the original, two-step approach. The total amount of photons traced is not limited by memory, but only by the amount of iterations that are computed. An arbitrary number of iterations can be used, without requiring any additional memory at all, and resulting in a better quality result. Also, after each photon pass an image can be rendered, and the progressive result can be shown while the image is progressively improved, instead of having to wait for the entire algorithm to finish.
 
 \begin{figure}
   \centering
@@ -46,7 +44,7 @@ This provides two key advantages over the original, two-step approach. The total
 
 \subsection{Radiance Estimation}
 
-Traditional photon mapping estimates radiance by using the density of photons, given by \cref{eq:density}. This is based on locating the nearest $N$ photons within a sphere of radius $R(x)$. The surface are is assumed to be flat, and the surface area is approximated to $\pi R(x)^{2}$. In progressive photon mapping, using this estimation may result in diferent iterations having different estimations for the same hit point.
+Traditional photon mapping estimates radiance by using the density of photons, given by \cref{eq:density}. This is based on locating the nearest $N$ photons within a sphere of radius $R(x)$. The surface are is assumed to be flat, and the surface area is approximated to $\pi R(x)^{2}$. In progressive photon mapping, using this estimation may result in different iterations having different estimations for the same hit point.
 
 \begin{figure}[!htp]
   \begin{equation}
@@ -55,7 +53,7 @@ Traditional photon mapping estimates radiance by using the density of photons, g
   \end{equation}
 \end{figure}
 
-To solve this, the estimations from each iteration can be averaged to obtain a more accurate estimate. However, the final result will not be more detailed than the result of each individual photon map, which is not desirable. Also, as the radius $R(x)$ is constant throughout the iterations, small details within that radius cannot be correctly solved, making the overall accuraccy limited by the size of each individual photon map.
+To solve this, the estimations from each iteration can be averaged to obtain a more accurate estimate. However, the final result will not be more detailed than the result of each individual photon map, which is not desirable. Also, as the radius $R(x)$ is constant throughout the iterations, small details within that radius cannot be correctly solved, making the overall accuracy limited by the size of each individual photon map.
 
 The solution to this, also proposed in \cite{hachisuka2008progressive} consists of combining the estimate from each photon map in such a way that the final estimation will converge to a correct solution. The key technique is to reduce the radius $r$ at each hit point, for every new photon map computed.
 

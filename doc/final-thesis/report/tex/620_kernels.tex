@@ -4,14 +4,14 @@
 
 \section{Computational Tasks} \label{section:kernels}
 
-Throughout all implementations, computations were divided accross several kernels with more or less the same responsibilities. This was a concern from the start in order to ensure that all versions remained similar to each other, facilitating the comparison between them.
+Throughout all implementations, computations were divided across several kernels with more or less the same responsibilities. This was a concern from the start in order to ensure that all versions remained similar to each other, facilitating the comparison between them.
 
 The approach used during development was mostly inspired by the original provided implementation. This section presents a list of all the computational kernels that were already present in the original implementation, and that were reimplemented and reworked during the development of the case study:
 
 \begin{description}
 
 \item[1. Initialize Seeds] \hfill \\
-  This was not part of the algorithm itself, but was necessary to initialize a seed buffer used for the random number generation process required by the following tasks. The random generation is done using a Tausworthe Generator \cite{tausworthe1965random}. Throughout the algorithm, it was required to keep a buffer were each seed was stored. When a random number generation with a given index was required, the respective seed was rewritten to provide the next number in the random sequence. For this process, an initializion of this buffer was necessary, using each index in the buffer as the initial seed.
+  This was not part of the algorithm itself, but was necessary to initialize a seed buffer used for the random number generation process required by the following tasks. The random generation is done using a Tausworthe Generator \cite{tausworthe1965random}. Throughout the algorithm, it was required to keep a buffer were each seed was stored. When a random number generation with a given index was required, the respective seed was rewritten to provide the next number in the random sequence. For this process, an initialization of this buffer was necessary, using each index in the buffer as the initial seed.
 
 \item[2. Generate Eye Paths] \hfill \\
   In this step, eye paths were initialized, based on camera position
