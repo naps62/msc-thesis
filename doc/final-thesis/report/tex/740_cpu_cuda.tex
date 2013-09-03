@@ -18,7 +18,7 @@ Instead, a scalability analysis was made on the actually implemented \cpu versio
   \begin{subfigure}{.5\textwidth}
     \centering
     \includegraphics[width=\linewidth]{profiling/cpu_speedup}
-    \caption{Speedup vs sequential version \label{fig:prof:cpu_speedup}}
+    \caption{Speedup \textit{vs} sequential version \label{fig:prof:cpu_speedup}}
   \end{subfigure}
   \caption{\cpu implementation \label{fig:prof:cpu}}
 \end{figure}
@@ -32,7 +32,7 @@ Memory affinity tools such as \texttt{hwloc} could prove useful here, for exampl
 
 \subsubsection{\cuda}
 
-When analyzing the \gpu implementation, tests were made on both available \gpus, and compared against the base sequential \cpu implementation. The best execution time on \cpu was also included for comparison.
+When analysing the \gpu implementation, tests were made on both available \gpus, and compared against the base sequential \cpu implementation. The best execution time on \cpu was also included for comparison.
 
 It should be taken into account that, as explained before, this is not a full-\gpu implementation, requiring in-loop memory transfers, and some \cpu computation to generate the lookup table. Since this was not implemented on \gpu, it should add a considerable overhead to the execution. Still, \cref{fig:prof:cuda} shows the implementation is able to outperform the \cpu in two of the three cases, achieving a speedup of around 3 when compared to the sequential approach.
 

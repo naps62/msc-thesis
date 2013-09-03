@@ -6,7 +6,7 @@
 
 %Prior to the beginning the work on the implementations previously described, an analysis was made on the already existing version, mostly to understand its scalability across different computational systems. Since this was an external product, its usage was limited to serving as a validation tool for future implementations, as well as settings expectations on how the algorithm should perform.
 
-Initial analysis was focused on studying the scalability of both \cpu and \cuda versions, when not employing \starpu. This provided a baseline to determine the overhead of using the framework. Different schedulers were attempted, particularly \textbf{peager} and \textbf{pheft} due to their awareness of combined workers, which allows \openmp parallelization within \cpu tasks. \textbf{dm} and \textbf{dmda} were also attempted, to analyze the impact of the consideration of memory transfers in the performance model of a scheduler.
+Initial analysis was focused on studying the scalability of both \cpu and \cuda versions, when not employing \starpu. This provided a baseline to determine the overhead of using the framework. Different schedulers were attempted, particularly \textbf{peager} and \textbf{pheft} due to their awareness of combined workers, which allows \openmp parallelization within \cpu tasks. \textbf{dm} and \textbf{dmda} were also attempted, to analyse the impact of the consideration of memory transfers in the performance model of a scheduler.
 
 \itodo{falar aqui de concurrent iterations, caso se mostre resultados delas}
 

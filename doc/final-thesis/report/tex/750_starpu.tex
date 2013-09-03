@@ -9,7 +9,7 @@ In order to accurately profile the performance obtained by using the framework
 
 \cref{fig:prof:starpu_cpu} shows the overhead of using the framework for task scheduling instead of directly invoking tasks. This was simulated by using each different scheduler, with only \cpu tasks, and comparing against the best \cpu times obtained without the framework. No major speedups are expected here, since the framework should itself create a small overhead (although the scheduler is actually one of the fastest ones available in terms of decision-making time), but it should be interesting to see if delegating the task of choosing \openmp thread pool size to \starpu, rather than manually tuning it, directly impacts performance.
 
-This was mostly a concern due to the scalability problems observed in \cref{sec:prof:cpu}. If \starpu, using one of the less smart schedulers, would opt to eagerly use all available \cpus, performance would degrade as seen in \cref{fig:prof:cpu}. This was indeed the observed result with the \textbf{peager} scheduler. \textbf{dm} and \textbf{dmda} also degrade performance down to around 4x (which corresponds c«roughly to worst-case scenarios observed on \cpu implementation), but that is to be expected since these schedulers do not support parallel tasks. Since no accelerators are being used here, this results in all tasks being ran sequentially.
+This was mostly a concern due to the scalability problems observed in \cref{sec:prof:cpu}. If \starpu, using one of the less smart schedulers, would opt to eagerly use all available \cpus, performance would degrade as seen in \cref{fig:prof:cpu}. This was indeed the observed result with the \textbf{peager} scheduler. \textbf{dm} and \textbf{dmda} also degrade performance down to around 4x (which roughly corresponds to worst-case scenarios observed on \cpu implementation), but that is to be expected since these schedulers do not support parallel tasks. Since no accelerators are being used here, this results in all tasks being ran sequentially.
 
 \image[width=0.6\textwidth]{profiling/starpu_cpu_scheds}{\starpu implementation, \cpu only}{fig:prof:starpu_cpu}
 
@@ -49,7 +49,7 @@ Unfortunately, when using \textbf{pheft} with the Fermi device, memory errors wo
   \caption{Speedup of the different schedulers by successfully adding new devices \label{fig:prof:starpu_scheds}}
 \end{figure}
 
-One of the most important aspects to analyze was how the chosen scheduler impacts performance.
+One of the most important aspects to analyse was how the chosen scheduler impacts performance.
 
 \subsection{Overall Performance Comparison}
 

@@ -8,8 +8,8 @@ Frameworks targeting \hetplats are still an emerging solution for parallel compu
 
 These should pose an even greater challenge considering that the scientific community, composed not only of actual developers, but also of scientists who are not as well learned in programming practices, places great interest in tools such as \starpu, to speed up their high scale computational applications. Using \starpu still requires some amount of knowledge regarding parallel computing. Questions such as ``Is it worth the effort to implement a given task using an accelerator?'' or ``What scheduling policy best suits a given algorithm?'' must be answered during implementation. From that comes that developers or scientists without a great understanding of such issues won't be able to take the best of the framework.
 
-In terms of performance gains, it is promising that they can be obtained with little amount of work, starting from an already existing implementation and moving to a \starpu one, requiring only to wrap task invocations within \starpu API calls. However, a few caveats can come from this, and existing code can sometimes prove difficul to port.
-The proposed implementation of Progressive Photon Mapping, here used as a case study for \starpu, provided some iteresting conclusions to be made regarding the framework, although the measured performance gains were not as good as initially expected. Here, a few implementation problems might be the root cause, as well as an initially not so correct understanding of the framework.
+In terms of performance gains, it is promising that they can be obtained with little amount of work, starting from an already existing implementation and moving to a \starpu one, requiring only to wrap task invocations within \starpu API calls. However, a few caveats can come from this, and existing code can sometimes prove difficult to port.
+The proposed implementation of Progressive Photon Mapping, here used as a case study for \starpu, provided some interesting conclusions to be made regarding the framework, although the measured performance gains were not as good as initially expected. Here, a few implementation problems might be the root cause, as well as an initially not so correct understanding of the framework.
 
 
 \gama is still an unfinished product, without a clear and consistent API or documentation. However, it does provide an interesting set of ideas that could be useful to at least attempt to tackle these issues. The fact that it is implemented in $C++$ rather than in $C$ as \starpu is a large benefit, since the language provides capabilities that solve the problems mentioned about \starpu's API in \cref{sec:comparison}.
@@ -18,7 +18,7 @@ Results prove that scheduler choice is a very important factor in the performanc
 
 
 
-\chapter{Future Work Suggestions} \label{chapter:future}
+\section{Future Work} \label{chapter:future}
 
 While this dissertation focused mostly on the implementation of a case study in \starpu, a similar effort should be made to produce a similar implementation with \gama, to actually compare the two in terms of performance. Without such implementation, only a more shallow comparison could be made, regarding mostly the features, usability, and a few problems with each solution.
 It would also be interesting to test the usability of the \texttt{pragma}-based API of \starpu

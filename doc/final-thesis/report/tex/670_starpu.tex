@@ -4,7 +4,7 @@
 
 \subsection{StarPU} \label{section:impl_starpu}
 
-For the final implementation, using the \starpu framework, most of the remaining work consisted on reusing the existing code for each computational tasks, and submit them as tasks to be scheduled by \starpu. The development process of the previous implementations (\cpu and \cuda) resulted in a very modular solution, with very little coupling\footnote{the degree of dependency between the multiple modules of a system. Tight coupling tends to difficult refactoring of one module without requiring subsequent changes to dependant modules, difficulting the re-usability of code} between tasks implementation and the algorithm and scheduling code being used.
+For the final implementation, using the \starpu framework, most of the remaining work consisted on reusing the existing code for each computational tasks, and submit them as tasks to be scheduled by \starpu. The development process of the previous implementations (\cpu and \cuda) resulted in a very modular solution, with very little coupling\footnote{the degree of dependency between the multiple modules of a system. Tight coupling tends to difficult refactoring of one module without requiring subsequent changes to dependant modules, hindering code re-usability} between tasks implementation and the algorithm and scheduling code being used.
 
 \subsubsection{Early Decisions}
 

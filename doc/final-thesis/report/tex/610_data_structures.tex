@@ -14,7 +14,7 @@ Most of the structured used throughout all the implementations were based on the
   A collection of vertices, edges and faces that define the shape of a 3D object in a scene;
 
 \item[Scene] \hfill \\
-  The full description of the 3D scene to render, including all meshes, materials and light descriptions associated with it. This scene is read initially by the LuxRender library, which handles the parsing of all data files associated with the scene (mesh descriptions, materials, light sources, textures, etc)
+  The full description of the 3D scene to render, including all meshes, materials and light descriptions associated with it. This scene is read initially by the LuxRender library, which handles the parsing of all data files associated with the scene (mesh descriptions, materials, light sources, textures, etc.)
 
 \item[\acl{BVH}] \hfill \\
   A tree structure used to index spatial objects, in this case the objects within the scene, in order to reduce the number of required ray intersection operations. The actual implementation used, a \acf{QBVH}, is an extension of a regular \acs{BVH}, optimized for a low memory footprint, and \acs{SIMD} computations \cite{dammertz2008shallow,Stich2009hpg}. This structure is created at startup by LuxRender, and is used to spatially index all elements in the scene, allowing for faster computations of ray intersections;

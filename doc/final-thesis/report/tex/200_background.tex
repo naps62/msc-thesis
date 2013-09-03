@@ -49,9 +49,8 @@ The programming model has been extended with the addition of dynamic parallelism
 This shows a clear evolution over the previous generation, and a response to the increasing demand for highly parallel computational provided by \gpus.
 
 
-%\section{Intel MIC}
-%\itodo{LPS. isto justificar-se-á? nao sao usados e o doc já vai longo}
-%\itodo{Xeon Phi}
+\section{Intel MIC}
+\itodo{Xeon Phi}
 
 
 \section{Heterogeneous Platforms}
@@ -80,6 +79,6 @@ As stated before, current \hetplats are usually composed with \cpus and \gpus co
 As an example, power efficiency has recently become a more prominent factor in technological evolution. Judging from that, it should be expected that short term evolution will yield more power efficient devices, rather that just providing a higher peak performance or increasing the number of cores. Power efficiency can also be regarded as a relevant factor by a scheduling framework, by making decisions no only based on overall execution time of the application, but also based on its costs in terms of energy consumption.
 Other metrics can be though of, and their importance increased or decreased, depending on technological trends at each time.
 
-All these factors emphasize the fact that optimizations based solely on architectural details (for example, software pre-fetching, core affinity and memory affinity) are not desirable to be coupled with an application if is desirable for it to perform well in the future, instead of becoming less performant. Such optimizations create tight dependencies between a program's performance, and the actual architecture(s) being used during development. So it becomes desirable that such issues be handled by a more generic tool, built in a modular way so that components can be plugged/unplugged or updated, and applications easily portable.
+All these factors emphasize the fact that optimizations based solely on architectural details (for example, software pre-fetching, core affinity and memory affinity) are not desirable to be coupled with an application if is desirable for it to perform well in the future, instead of becoming less performant. Such optimizations create tight dependencies between a program's performance, and the actual architecture(s) being used during development. So it becomes desirable that such issues be handled by a more generic tool, built in a modular way so that components can be plugged, unplugged or updated, and applications easily portable.
 
 \end{document}
