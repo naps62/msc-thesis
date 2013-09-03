@@ -6,8 +6,6 @@
 
 Given that \hetplats can suffer major changes in the future, due to the constant technological evolution, a highly important feature of an application or framework is its modularity, so that individual features can be updated to meet the requirements of the constantly evolving computing platforms. \starpu seems to use this philosophy to some extent, with modules such as the scheduler itself being completely unpluggable and rewritable by a developer. It also provides the ability to assign user defined functions to make decisions within the framework, such as how to partition data.
 
-Inversely, \gama still does not provide a stable and organized API
-
 \subsection{Usability}
 
 From a developer's point of view, \starpu, being written in $C$ provides an a clear but somewhat outdated API, in some aspects resembling \texttt{UNIX}-like libraries. More modern languages such as $C++$, in which \gama is written provide less verbose and more structured code. The choice for the $C$ language is possibly related to better compatibility and portability, but seems to somewhat limit the language, and even expose some unexpected behaviours of the framework (see \cref{sec:comparison:type_safety,sec:comparison:consistency}).
