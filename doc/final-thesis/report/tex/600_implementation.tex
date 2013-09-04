@@ -10,7 +10,8 @@ The implementation used here was also based on those same data structures, and o
 
 This was helpful to speed up development time, by working with already existing code for the same algorithm, but also to serve as a validation tool, in order to assert whether the final solution, and the individual algorithms within it, produced a correct result.
 
-The final implementation developed for this work was based on the original one provided at the start of the project, although different and improved is some regards. Three main methods were made available, mostly for the sake of comparison of results and profiling. The first two are simple implementations using \cpus with \acs{OpenMP} and \gpus with \acs{CUDA}, respectively. Finally, the third method uses the \starpu framework to handle task management
+The final implementation developed for this work was based on the original one provided at the start of the project, although different and improved is some regards. Three main methods were made available, mostly for the sake of comparison of results and profiling. The first two are simple implementations using \cpus with \acs{OpenMP} and \gpus with \acs{CUDA}, respectively. Finally, the third method uses the \starpu framework to handle task management.
+A native \acs{MIC} implementation was also attempted, although it proved unsuccessfully due to limitations of the platform regarding existing code.
 
 It should be noted that only two of the presented algorithms were taken in consideration during this work, namely:
 
@@ -42,7 +43,7 @@ During development, a large effort was put into trying to keep all computational
 \subfile{tex/630_original}
 \subfile{tex/640_cpu}
 \subfile{tex/650_cuda}
-%\subfile{tex/660_mic}
+\subfile{tex/660_mic}
 \subfile{tex/670_starpu}
 
 \end{document}
