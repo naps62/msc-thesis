@@ -53,7 +53,7 @@ This shows a clear evolution over the previous generation, and a response to the
 \itodo{Xeon Phi}
 
 \acf{MIC} \cite{Intel:MIC:QuickStartGuide} is an architecture proposed by \intel as a competitor to \gpus for general purpose high performance computing. This alterative device employs 61 cores with a micro-architecture similar to \textit{x86}, with a 1GHz frequency, and up to 16GB of GDDR5 memory, as well as two levels of cache. The last level is interconnected via a bidirectional ring among all cores, effectively sharing memory creating a last level cache with over 30MB.
-While the \acs{MIC} architecture is based on the \texit{x86} that is used in common \cpus. Extensions to the micro architecture provide support for 64-bit addressing, and SIMD instructions are possible using 512-bit registers. However, instruction sets such as \acf{SSE} or \acf{AVX} are not compatible.
+While the \acs{MIC} architecture is based on the \textit{x86} that is used in common \cpus. Extensions to the micro architecture provide support for 64-bit addressing, and SIMD instructions are possible using 512-bit registers. However, instruction sets such as \acf{SSE} or \acf{AVX} are not compatible.
 
 a \acs{MIC} device internally uses a Linux-based micro operating system, thus being able to run independently from the rest of the system, as opposed to other accelerating devices. This allows the device to operate in one of three possible modes:
 \begin{description}
@@ -62,7 +62,7 @@ a \acs{MIC} device internally uses a Linux-based micro operating system, thus be
 \item[Message Passing] By using \acs{MPI}, the device can be used simply as another node in the network.
 \end{description}
 
-Initial claims suggest that this architecture has the ability of providing performance improvements to existing applications, with little to no effort from the programmer. The compatibility (to some degree) with \texit{x86} makes this somewhat possible, although some reports have questioned this claim, particularly when attempting to running native \textit{x86} application originally target at \xeon \cpus\cite{MIC:Nvidia}.
+Initial claims suggest that this architecture has the ability of providing performance improvements to existing applications, with little to no effort from the programmer. The compatibility (to some degree) with \textit{x86} makes this somewhat possible, although some reports have questioned this claim, particularly when attempting to running native \textit{x86} application originally target at \xeon \cpus\cite{MIC:Nvidia}.
 
 
 \section{Heterogeneous Platforms}

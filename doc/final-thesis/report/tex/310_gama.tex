@@ -13,7 +13,7 @@ One of the main focuses of \gama is to optimize irregular applications, which ar
 
 \subsection{Memory Model}
 
-\gama uses an unified programming model that assumes a hierarchy composed of multiple devices (both \cpus and \gpus), where each device has access to a private address space (shared by all computational units, or cores, within that device), and a distributed memory system between devices. The framework assumes that multiple computational units of an individual device can cooperate and communicate through a shared memory space, and that the underlying programming and execution model of that device provides synchronization mechanisms (barriers, atomics and memory fences).
+\gama uses an unified programming model that assumes a hierarchy composed of multiple devices (both \cpus and \gpus), where each device has access to a private address space (shared by all computing units, or cores, within that device), and a distributed memory system between devices. The framework assumes that multiple computing units of an individual device can cooperate and communicate through a shared memory space, and that the underlying programming and execution model of that device provides synchronization mechanisms (barriers, atomics and memory fences).
 To abstract the distributed memory model that is used between devices, \gama introduces a global address space. \Cref{fig:gama_memory_model} illustrates how \gama understands the memory hierarchy of a \hetplat.
 
 
@@ -54,7 +54,7 @@ To better understand the programming and execution model employed in \gama, some
 
 \end{description}
 
-The organization of the execution model between Computational Units, Devices and Hosts ensures that a consistent model can be assumed implicitly, where \acsp{CU} within the same device share a common address space, allowing the usage of device-specific synchronization mechanisms to manage the coordination of concurrent executions within that device.
+The organization of the execution model between computing units, Devices and Hosts ensures that a consistent model can be assumed implicitly, where \acsp{CU} within the same device share a common address space, allowing the usage of device-specific synchronization mechanisms to manage the coordination of concurrent executions within that device.
 
 An application in GAMA is a collection of jobs submitted to a run-time system for scheduling among the available computational resources. Dependencies among jobs can be specified with explicit synchronization barriers. The main goal of the runtime scheduler is to reduce the overall execution time of any given application.
 

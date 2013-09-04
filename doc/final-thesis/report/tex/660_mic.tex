@@ -5,7 +5,7 @@
 \subsection{MIC} \label{section:impl_mic}
 
 The initial message transmitted by \intel regarding the new \acs{MIC} Architecture explains that the device is intended to provide performance to applications much like any other accelerator, without the need to learn a new programming model. It is also explained that existing code bases should have little problem compiling and running natively on it, providing additional performance for already existing \cpu code.
-If proved right, this would be a huge step forward in co-processor technologies, as the usage of different programming models (such as \cuda) is currently one of the blocking factors of their usage, due to learning difficulties, and incompatibilities with existing code.
+If proved right, this would be a huge step forward in coprocessor technologies, as the usage of different programming models (such as \cuda) is currently one of the blocking factors of their usage, due to learning difficulties, and incompatibilities with existing code.
 
 Thus, some efforts were put into attempting to port the original implementation to compile and run natively on a \ac{MIC} device. Other execution modes (offload or message passing) would require a rewrite of the program, and as such, would not provide the ease of usage claimed by \intel.
 

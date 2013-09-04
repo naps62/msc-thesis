@@ -41,7 +41,7 @@ The framework employs a task based programming model. Computational kernels must
 
 Data manipulated by a task is automatically transferred as needed between the various processing devices, ensuring memory consistency and freeing the programmer from dealing directly with scheduling issues, data transfers and other requirements associated with it.
 
-Previous work by the \starpu development team indicates that one of the most important issues with scheduling is about obtaining an accurate performance model for the execution time of a task \cite{augonnet2010data,augonnet2010automatic}. This is increasingly difficult when data transfers, which the team regards as a key issue, are taken into account, as shown in the latter paper. In it, a data-prefetching implementation for \gpus is present, and asynchronous data request capability is introduced as part of the \starpu library, with the goal of preventing computational units from being stalled waiting for data.
+Previous work by the \starpu development team indicates that one of the most important issues with scheduling is about obtaining an accurate performance model for the execution time of a task \cite{augonnet2010data,augonnet2010automatic}. This is increasingly difficult when data transfers, which the team regards as a key issue, are taken into account, as shown in the latter paper. In it, a data-prefetching implementation for \gpus is present, and asynchronous data request capability is introduced as part of the \starpu library, with the goal of preventing computing units from being stalled waiting for data.
 
 \subsection{Dependencies}
 
@@ -57,7 +57,7 @@ In addition to implicit data dependencies, other dependencies can be explicitly 
 
 Each data dependency that is explicitly defined in a task can have a different access mode. Data can be used in read-only, write-only or read-write mode. This access mode does not serve the purpose of ensuring memory correctness. It is used to soften task dependencies by using a \emph{Multiple Readers / Single Writer} model in dependency calculation.
 
-This model describes a type of mutual exclusion pattern where a data block can be concurrently accessed by any number of reader, but must be exclusively accessed by a writer. \starpu uses this concept to further optimize data dependency calculations. If multiple scheduled tasks depend on the same data handle, but only with reading access, then that dependency should not block the multiple tasks from running concurrently (see \cref{fig:starpu_dep}. Temporary copies of the data can be created, possibly on different computational units, and later discarded immediately, since a read-only buffer is assumed to remain unchanged at the end of a task.
+This model describes a type of mutual exclusion pattern where a data block can be concurrently accessed by any number of reader, but must be exclusively accessed by a writer. \starpu uses this concept to further optimize data dependency calculations. If multiple scheduled tasks depend on the same data handle, but only with reading access, then that dependency should not block the multiple tasks from running concurrently (see \cref{fig:starpu_dep}. Temporary copies of the data can be created, possibly on different computing units, and later discarded immediately, since a read-only buffer is assumed to remain unchanged at the end of a task.
 
 \begin{figure}[!htp]
   \centering
@@ -77,13 +77,13 @@ This model describes a type of mutual exclusion pattern where a data block can b
 \subsection{Virtual Shared Memory}
 
 The approach used by \starpu when it comes to memory management is simpler than the model employed by \gama. The purpose is the same: to automatically manage memory allocations and transfers on all devices. This not only frees the programmer from the work of manually managing memory between tasks, but it also has the potential to lower the cost of such operations.
-\starpu manages memory by forcing the user to declare data handles to their data. These handles are used as arguments for tasks, allowing the scheduler to allocate and transfer all required data buffers to the correct computational unit prior to the task execution.
+\starpu manages memory by forcing the user to declare data handles to their data. These handles are used as arguments for tasks, allowing the scheduler to allocate and transfer all required data buffers to the correct computing unit prior to the task execution.
 
 \subsection{Multi-threading} \label{section:starpu_multithreading}
 
 In order to have an accurate view of the topology of the system, the framework can optionally use the \texttt{hwloc} library\footnote{\texttt{hwloc}, or Portable Hardware Locality, is a package that provides access to an abstract topology of modern computational architectures.} \cite{broquedis2010hwloc} to detect the structure of the architecture, including all \cpu sockets, \acs{NUMA} nodes and cache hierarchy.
 
-A tree is created representing the complete hierarchy of the system. Latest version of the framework also introduce support for parallel tasks, with the concept of combined workers. These workers exist in cases where the system has multiple computational units in the same node (such as \cpu sockets where multiple cores share a cache hierarchy). In these situations, and if \starpu is using a parallel-task-aware scheduler (currently only \texttt{pheft} and \texttt{peager} exist), it is possible to specify the maximum degree of parallelism for a function. A combined worker can then be assigned to such tasks using, for example, \openmp to take advantage of the multiple available cores.
+A tree is created representing the complete hierarchy of the system. Latest version of the framework also introduce support for parallel tasks, with the concept of combined workers. These workers exist in cases where the system has multiple computing units in the same node (such as \cpu sockets where multiple cores share a cache hierarchy). In these situations, and if \starpu is using a parallel-task-aware scheduler (currently only \texttt{pheft} and \texttt{peager} exist), it is possible to specify the maximum degree of parallelism for a function. A combined worker can then be assigned to such tasks using, for example, \openmp to take advantage of the multiple available cores.
 
 \subsection{API} \label{section:starpu_api}
 
