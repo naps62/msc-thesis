@@ -3,14 +3,10 @@
 
 \chapter{Frameworks for Heterogeneous Platforms} \label{chapter:frameworks}
 
-The challenge of efficiently scheduling the workload of an application and its associated data across an entire heterogeneous system is an ambitious one. Among the several frameworks that have been proposed to target this goal are \gama and \starpu, which are here presented in more detail.
-While both of them have common points in their design goals (\gama is to some degree inspired by \starpu), they followed slightly different approaches to manage \hetplats.
+The challenge of efficiently scheduling the workload of an application and its associated data across an entire heterogeneous system is an ambitious one. Usually scheduling involves history based sampling, and memory management. Some degree of complexity is added when trying to have the framework manage data and workload, which makes it sometimes difficult to use with existing code, and keep compatibility with external libraries
 
-\itodo{usually scheduling this involves history based sampling, and memory management. this adds some degree of complexity in trying to have the framework manage data, which makes it sometimes difficult to use existing code, and keep compatibility with existing libraries}
-
-\itodo{na comparison, dizer que o starpu permite o uso de bibliotecas externas, já que os kernels sao implementados de raiz. no gama, isso é mais complicado}
-
-\itodo{dizer que aqui vai ser apresentado o gama com o seu pequeno caso de estudo, mas que o caso real usado na framework escolhida é apresentado depois nos capitulos seguintes}
+Among the several frameworks that have been proposed to target this goal are \gama and \starpu, which are here presented in more detail.
+While both of them have common points in their design goals (\gama is to some degree inspired by \starpu), they followed slightly different approaches to manage \hetplats. In the case of \gama, a case study is also presented in this chapter. For \starpu, which was the chosen framework fore a more deep analysis, the case study used was the progressive photon mapping algorithm, which is presented later in \cref{chapter:case_study,chapter:impl}
 
 \subfile{tex/310_gama}
 \subfile{tex/320_starpu}

@@ -12,6 +12,9 @@ From a developer's point of view, \starpu, being written in $C$ provides an a cl
 
 Even though \gama does not yet provide a solid API to work from, but a less clear architecture model, it can still be considered harder to work on, although there is plenty of room for improvement, and once development advances and reaches a more stable position, it can have the conditions to be a much more usable framework than the low-level one provided by \starpu.
 
+An important aspect to consider is that \gama makes the usage of external libraries much more difficult, due to the encapsulation of every data within the wrappers for its global memory system. As a result, libraries that implement their own data structures may have incompatibilities. Kernel calls can also be a problem, since an external library that attempts to invoke a \cuda kernel will not do so through \gama's facilities, thus not taking advantage of its scheduling, and possibly also creating incompatibilities, since \gama expects to manage all data and workload.
+\starpu is not as restrict as \gama in this subject, at least for the low-level API. Since it consists of a more low-level usage of the framework, the developer gains more control, and can more freely operate with the underlying data, and manually invoke kernels (leaving to \starpu only the job of deciding in which device to execute them), making the usage of external code a more viable possibility, although not without its limitations.
+
 \subsection{Scheduling}
 
 Both \starpu and \gama employ a variant of the \acs{HEFT} algorithm for scheduling on heterogeneous systems, although \starpu gives much more emphasis to the latency caused by memory transactions, and can also support additional scheduling policies to be used.
