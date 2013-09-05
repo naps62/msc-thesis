@@ -4,28 +4,28 @@
 
 \chapter{Implementation Approaches of the Algorithm} \label{chapter:impl}
 
-The case study was implemented based on an already existing implementation, available at the beginning of the project. This implementation provides the initial Progressive Photon Mapping method, described in \cref{section:ppm}, the stochastic extension presented in \cref{section:sppm}, and the probabilistic approach for radius reduction in \cref{section:ppmpa}. Support for both \cpu and \cuda rendering is also included, although \cuda support was actually not fully completed until a later version. It was implemented on top of the LuxRender project, an open source, physically based and unbiased rendering engine. The source code of LuxRender provides an ideal basis of data structures to implement a rendering algorithm such as photon mapping, and this was exploited by the author of this implementation.
+The case study was built based on an already existing implementation, available at the beginning of the project. This implementation provides the initial Progressive Photon Mapping method, described in \cref{section:ppm}, the stochastic extension presented in \cref{section:sppm}, and the probabilistic approach for radius reduction in \cref{section:ppmpa}. Support for both \cpu and \cuda rendering is also included, although \cuda support was actually not fully completed until a later version. It was implemented on top of the LuxRender project, an open source, physically based and unbiased rendering engine. The source code of LuxRender provides an ideal basis of data structures to implement a rendering algorithm such as photon mapping, and this was exploited by the author of this implementation.
 
-The implementation used here was also based on those same data structures, and other code from LuxRender. The algorithms themselves for the ray tracing and photon mapping steps, radiance estimation, and radius reduction were based not only on the theoretical research work already presented summarily in \cref{chapter:case_study}, but also on the already available implementation
+The implementation used here was also based on those same data structures, and other code from LuxRender. The algorithms themselves for the ray tracing and photon mapping steps, radiance estimation, and radius reduction were based not only on the theoretical research work already presented in \cref{chapter:case_study}, but also on the already available implementation
 
-This was helpful to speed up development time, by working with already existing code for the same algorithm, but also to serve as a validation tool, in order to assert whether the final solution, and the individual algorithms within it, produced a correct result.
+This was helpful to speed up development time, by working with already existing code for the same algorithm, but also to serve as a validation tool, to assert whether the final solution, and the individual algorithms within it, produced a correct result.
 
-The final implementation developed for this work was based on the original one provided at the start of the project, although different and improved is some regards. Three main methods were made available, mostly for the sake of comparison of results and profiling. The first two are simple implementations using \cpus with \acs{OpenMP} and \gpus with \acs{CUDA}, respectively. Finally, the third method uses the \starpu framework to handle task management.
+The final implementation developed for this work was an adaptation and an improved version of the original one provided at the start of the project. Several approaches were made available. The first two use \cpus with \acs{OpenMP} and \gpus with \acs{CUDA}, respectively, and are used mostly for the sake of comparison of results and profiling. Later approaches consist of using the \starpu framework to handle task management.
 A native \acs{MIC} implementation was also attempted, although it proved unsuccessfully due to limitations of the platform regarding existing code.
 
 It should be noted that only two of the presented algorithms were taken in consideration during this work, namely:
 
 \begin{description}
 \item[PPM (Progressive Photon Mapping)] \hfill \\
-  This corresponds to the original proposition for progressive photon mapping, described in \cref{section:ppm}.
+  Corresponds to the original proposition for progressive photon mapping, described in \cref{section:ppm}.
 
-\item[SPPMPA] \hfill \\
-  (Stochastic Progressive Photon Mapping with Probabilistic Approach) This extends the initial PPM solution to include both the stochastic version, and the probabilistic approach for radius reduction.
+\item[SPPMPA (Stochastic Progressive Photon Mapping with Probabilistic Approach)] \hfill \\
+  Extends the initial PPM solution to include both the stochastic version and the probabilistic approach for radius reduction.
 \end{description}
 
 There was no attempt to implement any of the intermediate versions (SPPM or PPMPA).
 
-There were also attempts to port the original implementation to run on the \mic platform, whose details are also described in this section.
+There were also attempts to port the original implementation to run on the \mic platform, whose details are also described in this chapter.
 
 \subfile{tex/610_data_structures}
 \subfile{tex/620_kernels}
@@ -34,11 +34,13 @@ There were also attempts to port the original implementation to run on the \mic 
 
 This section presents an overview of the differences and challenges between the multiple versions used.
 
-While \starpu is the actual object of study in this project, initial development was focused on building a \cpu only, implementation, similarly to the original version. Following that, an similar approach was done to build a \cuda version, while still avoiding the usage of \starpu or any \hetplat managing system.
+While \starpu is the actual object of study in this project, initial development was focused on building a \cpu-only, implementation, similarly to the original version. Following that, an similar approach was followed to build a \cuda version, while still avoiding to use \starpu or any \hetplat management system.
 
-The goal of this approach was to have a functional basis of comparison that shared as much of the functionality as possible with a future implementation that took advantage of \hetplats by using \starpu as the task manager.
+The goal of this approach was to have a functional reference for comparison that shared as much of the functionality as possible with a future implementation that takes advantage of \hetplats by using \starpu as the task manager.
 
-During development, a large effort was put into trying to keep all computational code encapsulated in such a way that it would be reusable by future implementations. Not only does that help speeding up the development time of future versions, it also allows for more fair comparisons to be made between versions.
+All computational code was kept encapsulated to be reusable by future implementations.This helps to speed up the development time of future versions, and contributes to fairer comparisons between versions.
+
+\itodo{proença: tem de ficar aqui claro, talvez uma tabela, como vai ser a aplicação dos 3 métodos aos 10 kernels, e quais destes sãos equenciais ou paralelos. Rectifico: esta info deveria estar no inicio do 6.2}
 
 \subfile{tex/630_original}
 \subfile{tex/640_cpu}

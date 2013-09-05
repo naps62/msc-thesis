@@ -10,7 +10,7 @@ Unlike other algorithms such as Path Tracing or Metropolis Light Transport, this
 
 \subsection{Algorithm}
 
-The original approach to photon mapping consists simply on a two step algorithm. One step to generate a structure with the illumination information for the scene, called the photon map, and a second step to trace rays from the camera to interact with the scene and the photon map, contributing to the final pixels of the generated image
+The original approach to photon mapping consists simply on a two step algorithm. One step to generate a structure with the illumination information for the scene, called the photon map, and a second step to trace rays from the camera to interact with the scene and the photon map, contributing to the final pixels of the generated image.
 
 \image[width=\textwidth]{visio/diagram_pm}{High Level Flowchart of Photon Mapping}{fig:diagram_pm}
 
@@ -39,7 +39,7 @@ One particular case where photon mapping provides advantages over other methods 
 
 \image{sds-path}{Illustration of a Specular to Diffuse to Specular path (SDS)}{fig:sdspath}
 
-Another example of a typically hard to simulate effect is Subsurface Scattering, which is observed when light enters the surface of a translucent object, is scattered when interacting with the material, and finally exits the surface at a different point. Generally, light will be reflected several times within the surface before backing out an angle different from the one it would have take had it been reflected by the surface. This is visible in materials such as marble, or skin, and can be seen in \cref{fig:subscat}
+Another example of a typically hard to simulate effect is Subsurface Scattering, which is observed when light enters the surface of a translucent object, is scattered when interacting with the material, and finally exits the surface at a different point. Generally, light will be reflected several times within the surface before backing out an angle different from the one it would have take had it been reflected by the surface. This is visible in materials such as marble, or skin, and can be seen in \cref{fig:subscat}.
 
 \image[width=0.3\textwidth]{subsurface-scattering}{Example of a scene displaying Subsurface Scattering}{fig:subscat}
 

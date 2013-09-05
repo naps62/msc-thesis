@@ -2,12 +2,16 @@
 
 \begin{document}
 
-\subsection{CUDA} \label{section:impl_cuda}
+\subsection{GPU} \label{section:impl_cuda}
 
 Following the \cpu implementation, it was also desirable to produce a \cuda based implementation. Like the previous one, this served the purpose of producing an implementation similar to the original, but having task code shared with the future \starpu version, and minimize any details that would be different about the implementation.
 
-The goal of this version is to port as much as possible of the \cpu task code to \cuda. However, as explained previously (in \cref{section:kernels,section:impl_cpu}), some of the tasks are not parallelizable, and consequently, not adequate to massively parallel devices. This means that these tasks were kept running on the \cpu. The obvious consequence of this is that a full iteration of the algorithm is not capable of running entirely on a \gpu, requiring memory transfers in between to solve data dependencies.
+The goal of this version is to port as much as possible of the \cpu task code to \cuda. However, as explained before (in \cref{section:kernels,section:impl_cpu}), some of the tasks are not parallelizable, and consequently, not adequate to massively parallel devices. This means that these tasks were kept running on the \cpu. The obvious consequence of this is that a full iteration of the algorithm is not capable of running entirely on a \gpu, requiring memory transfers in between to solve data dependencies.
 
 The most problematic drawback of this decision is about the \textbf{Rebuild Lookup Table} task. Running this task on \cpu will likely have a very noticeable impact on performance, since it requires to transfer the generated hit points from the \gpu to the \cpu, and later copy the generated hash table back to the \gpu.
+
+\itodo{proença: sobre estes dois ultimos paragrafos: o custo da trasferencia de info não é superior ao custo de correr esse código sequencial no GPU?}
+
+\itodo{proença: referir que é gpu-only, com algumas excepções}
 
 \end{document}
