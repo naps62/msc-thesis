@@ -2,10 +2,10 @@
 
 \begin{document}
 
-\chapter{Technological Background} \label{chapter:back}
+\chapter{Computing Background} \label{chapter:back}
 
 
-\section{Parallel Computing Background}
+\section{Parallel Computing}
 
 Traditional computer programs are written in a sequential manner. It is natural to think of an algorithm as a sequence of steps that can be serially performed to achieve a final result. This has actually been the most common programming paradigm since the early days of computing, and it synergizes well with single processor machines. Optimizations related to instruction-level parallelism, such as out-of-order execution, pipelining, branch prediction or superscalarity, were mostly handled by the compiler or the hardware itself, and transparent to the programmer. Vector processing was also a key performance factor, allowing the same instruction to be simultaneously applied to a data vector, rather than one at a time (commonly referred to as \ac{SIMD}).
 
@@ -78,7 +78,11 @@ On a homogeneous machine, the actual peak performance is limited by additional f
 
 When dealing with multiple devices with disjoint memory address spaces, an additional layer of complexity is introduced, as these different devices need a mean of communication between each other. Usually, a \hetplat, such as the one represented in \cref{fig:hetplat} can be seen as a distributed memory system, since each device has its own memory hierarchy. Communication is thus needed for synchronization between tasks, and for all required data transfers.
 
-\image[width=0.3\textwidth]{visio/hetplats}{Example diagram of a \hetplat}{fig:hetplat}
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=0.3\textwidth]{visio/hetplats}
+  \caption{Example diagram of a \hetplat \label{fig:hetplat}}
+\end{figure}
 
 In the case of \gpus, communication is done via a \acs{PCIe} bus. Although this technology has greatly evolved over the last recent years, this still proves to be a potential bottleneck for accelerating applications with a \gpu.
 

@@ -30,7 +30,11 @@ Following this constraint, the hash table structure was refactored to be a fixed
 
 The other main change required is to wrap tasks around \starpu API calls. All data for each iteration is assigned to an individual data handle. No allocations are ever done manually during the main loop, making all memory managed by \starpu. While in the \cpu and \cuda version, only a single iteration is considered at a time, so task invocation is made synchronously, here all tasks are submitted asynchronously, and dependencies are implicitly given by the data handles required by each task. These dependencies are represented in \cref{fig:deps}.
 
-\image[width=0.8\textwidth]{deps.png}{Dependency graph of an iteration of SPPMPA. Red arrows represent dependencies related to the seed buffer, which are not imposed on the algorithm itself, but only a limitation of the implementation}{fig:deps}
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{deps.png}
+  \caption[Dependency graph of an iteration of SPPMPA]{Dependency graph of an iteration of SPPMPA. Red arrows represent dependencies related to the seed buffer, which are not imposed on the algorithm itself, but only a limitation of the implementation \label{fig:deps}}
+\end{figure}
 
 It can be seen from the graph that some task concurrency is possible, although limited. It is expected that the most time consuming tasks are \textbf{Advance Eye Paths} and \textbf{Advance Photon Paths}, as they compute scene intersections. \textbf{Rebuild Lookup Table} can also be considered, especially when other tasks of the same iteration are run on a \gpu. This will require synchronization memory transactions to solve the dependencies of this task. Prefetching cannot be employed here by \starpu, as these dependencies are not available until the immediately previous tasks are computed. This could provide a large bottleneck for the performance of each individual iteration.
 

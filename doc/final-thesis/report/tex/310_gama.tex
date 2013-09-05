@@ -25,8 +25,11 @@ Communication between memory spaces of different devices is expensive due to the
 
 Some applications require safe exclusive access to specific partitions of a data set. To address this issue, a software cache shared between devices was implemented. This ensures that the required data is as close to the device as possible, taking advantage of the local memory of each device. It also provides a safeguard mechanism in combination with the global memory system, to ensure that each device has a copy of a specific partition, when requested by the application. Additionally, the cache local copies on the device shared memory space use semantically correct synchronization primitives within the device.
 
-\image[width=0.6\textwidth]{visio/gama}{\gama memory model, an extension to the one shown in \cref{fig:hetplat}}{fig:gama_memory_model}
-
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=0.6\textwidth]{visio/gama}
+  \caption[\gama memory model]{\gama memory model, an extension to the one shown in \cref{fig:hetplat} \label{fig:gama_memory_model}}
+\end{figure}
 
 \subsection{Programming and Execution Model}
 
