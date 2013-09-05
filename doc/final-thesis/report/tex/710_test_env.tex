@@ -4,7 +4,9 @@
 
 \section{Testing Environment} \label{section:results:env}
 
-All tests were performed within the \search\footnote{\url{http://search.di.uminho.pt}} cluster, particularly using the most recent generation of hardware, in the node 711, which is fully described in \cref{tab:node}.
+All tests were performed within the \search\footnote{\url{http://search.di.uminho.pt}} cluster, particularly using the most recent generation of hardware, in the node 711 (fully described in \cref{tab:node}).
+
+\itodo{dar mais detalhes do fermi e kepler (\#SM/SMX, \#cuda-cores, \#caches/RAM, clock)}
 
 \begin{table}[!htb]
     \centering
@@ -30,6 +32,6 @@ All tests were performed within the \search\footnote{\url{http://search.di.uminh
 
 %Later on, and partially due to availability issues, only the 711 was used for the final tests using the new implementation, both with and without \starpu.
 
-All tests were compiled with GCC 4.6.2 (latest major version with full \cuda support), the boost library 1.49.0, and version 5.0 of the official \cuda compiler. Regarding \starpu, the latest version available, 1.1.0rc2, was used, as well as the hwloc 1.7 library for hardware topology, which \starpu internally uses.
+All tests were compiled with GCC 4.6.2 (latest major version with full \cuda support), the boost library 1.49.0, and version 5.0 of the official \cuda compiler. The latest available version of \starpu was used, 1.1.0rc2, as well as the hwloc 1.7 library for hardware topology, which \starpu internally uses.
 
 \end{document}
