@@ -8,8 +8,6 @@
 
 Initial analysis was focused on studying the scalability of both \cpu and \cuda versions without the help of any framework. This provided a reference to evaluate the overhead of using the framework. When using the \starpu framework, different schedulers were tested, particularly \textbf{peager} and \textbf{pheft} due to their awareness of combined workers, which allows \openmp parallelization within \cpu tasks. \textbf{dm} and \textbf{dmda} were also tested, to analyse the impact of memory transfers in the performance model of a scheduler.
 
-\itodo{falar aqui de concurrent iterations, caso se mostre resultados delas}
-
 \subfile{tex/710_test_env}
 \subfile{tex/720_test_method}
 %\subfile{tex/730_original}

@@ -19,11 +19,11 @@ An important aspect to consider is that \gama makes the usage of external librar
 
 Both \starpu and \gama employ a variant of the \acs{HEFT} algorithm for scheduling on heterogeneous systems, although \starpu gives much more emphasis to the latency caused by memory transactions, and can also support additional scheduling policies to be used.
 
-\subsection{Memory Management}
-
 \gama has the ability to recursively change the granularity of a task to adapt it to the characteristics of a device. This is presented as an important step by \gama to automate decisions by the scheduler. Without this, granularity has to be manually defined, by subdividing the domain in arbitrarily sized chunks and process each one as an individual task. This is not only a cumbersome task for the developer, but also a possible weakness, as the ideal task granularity is not equal from system to system, or algorithm to algorithm, and may not be easy to determine without intensive testing and manual tuning.
 
-This seems an extremely important feature in \gama, at least from the usability point of view, as the task of finding the ideal granularity is thus automated by the framework.
+This seems an extremely important feature in \gama, at least from the development point of view, as the task of finding the ideal granularity is thus automated by the framework. The fact that \starpu does not provides a similar feature can be a limitation for the developer, which has to manually divide the data set (i.e. using partition functions) and invoke each sub task as an individual one.
+
+\subsection{Memory Management}
 
 \subsubsection{Type Safety} \label{sec:comparison:type_safety}
 

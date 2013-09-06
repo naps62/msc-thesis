@@ -37,7 +37,8 @@ However, one of the main differences comes from the fact that \starpu attempts t
 
 \subsection{Task Scheduling}
 
-The framework employs a task based programming model. Computational kernels must be encapsulated within a task. A given kernel can be implemented in multiple ways (i.e. for \cpus or for \cuda), and \starpu will handle the decision of where and when the task should be executed, based on a task scheduling policy.
+The framework employs a task based programming model. Computational kernels must be encapsulated within a task. \starpu will handle the decision of where and when the task should be executed, based on a task scheduling policy, and the available implementations for each task. A task can be implemented in multiple ways, such as \cpu or \cuda. Multiple implementations for the same device type can also be used. This allows \starpu to automatically select the appropriate implementation even between different \cpu micro architectures (i.e. some \cpus might perform better with an implementation that uses \acs{SIMD} extensions).
+When submitting a task, \starpu will use the selected scheduler to select which of the available implementations will be used. The decision varies from scheduler to scheduler, but can take into account information such as the current availability of each resource, the performance model already obtained for that task, and estimations regarding the required data transfers to solve dependencies.
 
 Data handled by a task is automatically transferred as needed between the various processing devices, ensuring memory consistency and freeing the programmer from dealing directly with scheduling issues, data transfers and other requirements associated with it.
 

@@ -10,7 +10,6 @@ Since effects such as caustics are simulated by directly using the information f
 
 \cite{hachisuka2008progressive} proposes a progressive approach to photon mapping, which makes it possible to simulate global illumination, including the effects provided by traditional photon mapping, with arbitrary accuracy, and without being limited by memory. This is done by using a multi step algorithm instead of a two step one, where the first pass consists of a ray tracing step to capture a collection of hit points in the scene, and later multiple photon tracing steps are processed iteratively, with each new iteration improving the accuracy of the result in order to converge to an accurate solution, but without storing photon maps from previous iterations.
 
-\itodo{na imagem, trocar Update Radius para Radius Reduction}
 \image[width=\textwidth]{visio/diagram_ppm}{High Level Fluxogram of Progressive Photon Mapping}{fig:diagram_ppm}
 
 \subsection{First Step: Ray Tracing}

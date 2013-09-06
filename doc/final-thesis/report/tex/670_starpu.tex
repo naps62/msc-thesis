@@ -71,6 +71,4 @@ With this method, each iteration declares its own copy of the required data. \st
 
 However, an additional problem arose from this approach. Due to the asynchronous nature of the tasks, the program actually submits every single iteration to the scheduler, meaning that multiple copies of the \texttt{eye\_paths} and \texttt{hit\_points} buffers will be immediately requested. For a large enough number of iterations, this resulted in memory problems, and eventually program failures. Since \starpu does not provide any method to control this, the limitation had to be imposed manually, by inserting a barrier every few iterations (with the actual number being a configurable value).
 
-The fact that the number of concurrent iterations is now configurable also allowed to tackle the data dependency provided by the seed buffer. Instead of a single buffer being shared by the entire algorithm, the implementation was adapted to use as many buffers as there are concurrent iterations, as shown in \todo{diagrama de iterações concorrentes}.
-
 \end{document}

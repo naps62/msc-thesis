@@ -12,11 +12,11 @@ In order to accurately profile the performance obtained by using the framework
 
 This was mostly a concern due to the scalability problems observed in \cref{sec:prof:cpu}. If \starpu, using one of the less smart schedulers, would opt to eagerly use all available \cpus, performance would degrade as seen in \cref{fig:prof:cpu}. This was indeed the observed result with the \textbf{peager} scheduler. \textbf{dm} and \textbf{dmda} also degrade performance down to around 4x (which roughly corresponds to worst-case scenarios observed on \cpu implementation), but that is to be expected since these schedulers do not support parallel tasks. Since no accelerators are being used here, this results in all tasks being ran sequentially.
 
-\itodo{proenca: fazer a comparacao do dm e dmda com a versao cpu\_1?}
-
-\itodo{neste grafico, mudar a escala para 0..1,2 com step 0.2}
-
 \image[width=0.6\textwidth]{profiling/starpu_cpu_scheds}{\starpu implementation, \cpu-only}{fig:prof:starpu_cpu}
+
+\itodo{texto sobre o grafico cpu1/dm/dmda}
+
+\image[width=0.6\textwidth]{profiling/starpu_cpu_dm_dmda}{\starpu implementation, \cpu sequential vs sequential schedulers}{fig:prof:starpu_cpu}
 
 \subsection{Performance with accelerators}
 

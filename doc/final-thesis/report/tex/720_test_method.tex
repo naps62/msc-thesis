@@ -4,7 +4,10 @@
 
 \section{Testing Methodology} \label{sec:results:method}
 
-\itodo{proença: o cap 4 descreveu o alg até ao SPPMPA. Convinha agora indicar que tempos foram medidos no conjunto de todas as tasks que foram identificadas atrás, e quando se usa GPU que tempos foram contabilizados (por ex. o tempo de transferencias de dados) que se pretendem de facto medir p/ se fazer uma avaliação da framework}
+Measurements were done only in the algorithmic section of the program, disregarding any input/ouput operations as well as initial setup of \starpu and other libraries. In the main rendering loop, the time for each full iteration of the SPPMPA algorithm was measured (see \cref{fig:diagram_cpu}, which explains how iterations are organized). This was done by obtaining the timestamp at the beginning of each iteration, and at the end of the last task of the same iteration, which also works well when using concurrent iterations. The full iteration time includes the required data transfer times, but more granular values were obtained, by measuring the time for each invoked task of each iteration, which does not account for data transfers. Presented results show only the average time of each iteration for the execution (with at least 100 iterations each).
+Since evaluating the framework includes analyse how data transfers affect performance in the different approaches, average iteration time, which includes these values, was the chosen unit for comparisons. Task execution time was used for an estimation of workload distribution.
+
+Since the entire main loop consists solely on task invocations, it was assumed that the difference between total iteration time and the sum of each task within the iteration corresponds to idle periods when the framework is waiting for resources or dependencies, or performing data transfers.
 
 For each measurement, only the time spent in the main rendering function was considered, discarding any input and output time spent by the program. A minimum of 10 executions were made for each measurement, for which the 3 best executions within at most $5\%$ of each other were considered. When comparing results, the average time for each iteration of the main loop of SPPMPA was the base value to use (with each test running at least 20 iterations).
 

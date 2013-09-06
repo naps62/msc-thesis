@@ -42,8 +42,14 @@ The approach used during development was mostly inspired by the original impleme
 
 \end{description}
 
-\itodo{proença: estão aqui 10 kernels. são todos usados no PPM e SPPMPA?}
-These tasks map almost directly into the theoretical algorithms for progressive photon mapping. Tasks \textbf{2} and \textbf{3} represent a ray tracing step, where the hit points are computed. This is the first step in the multi pass progressive photon mapping algorithm presented in \cref{section:ppm}, and also the first step of each iteration in the stochastic approach \cref{section:sppm}. Tasks \textbf{4}, \textbf{6}, \textbf{7} and \textbf{8} are the equivalent of a photon tracing step, which corresponds to a full iteration in the original progressive approach.
+These tasks map almost directly into the theoretical SPPMPA algorithm. Tasks \textbf{2} and \textbf{3} represent a ray tracing step, where the hit points are computed. This is the first step in the multi pass progressive photon mapping algorithm presented in \cref{section:ppm}, and also the first step of each iteration in the stochastic approach \cref{section:sppm}. Tasks \textbf{4}, \textbf{6}, \textbf{7} and \textbf{8} are the equivalent of a photon tracing step, which corresponds to a full iteration in the original progressive approach. \cref{fig:diagram_cpu} gives an overview of the entire algorithm (except input and output tasks), along with the dependencies between tasks that prevent them from running concurrently.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{visio/diagram_cpu}
+  \caption[Diagram of SPPMPA computational tasks and execution order]{Diagram of the SPPMPA computational tasks and execution order. Tasks \textbf{2}, \textbf{3}, \textbf{6}, \textbf{7}, \textbf{8} can be parallelized. All other are sequential. The SPPMPA algorithm actually allows independent iterations, which is not represented in this diagram.}
+  \label{fig:diagram_cpu}
+\end{figure}
 
 The remaining tasks are not specified by the photon mapping techniques, but are required for computational purposes. Task \textbf{5} represents an important step to make sure that access to each hit point is done efficiently when tracing the photons. By using a lookup table to index hit points, the average complexity in accessing a single hit point is lowered to $O(1)$.
 

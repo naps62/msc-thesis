@@ -34,7 +34,7 @@ Memory affinity tools such as \texttt{hwloc} could prove useful here, for exampl
 
 When analysing the \gpu implementation, tests were made on both available \gpus, and compared against the base sequential \cpu implementation. The best execution time on \cpu was also included for comparison.
 
-It should be taken into account that, as explained before, this is not a full-\gpu implementation, requiring in-loop memory transfers, and some \cpu computation to generate the lookup table. Since this was not implemented on \gpu, it should add a considerable overhead to the execution. Still, \cref{fig:prof:cuda} shows the implementation is able to outperform the \cpu in two of the three cases, achieving a speedup of around 3 when compared to the sequential approach.
+It should be taken into account that, as explained in \cref{section:impl_cuda}, this is not a \gpu-only implementation, and requires in-loop memory transfers, and some \cpu computation to generate the lookup table. Since this was not implemented on \gpu, it should add an overhead to the execution. Still, \cref{fig:prof:cuda} shows the implementation is able to outperform the \cpu in two of the three cases, achieving a speedup of around 3 when compared to the sequential approach.
 
 \itodo{proença, sobre o paragrafo acima: convinha relembrar aqui a seq de passos na execução do código, de modo a ficar claro as diversas interacções entre CPU e GPU. Evitar adjectivos}
 
