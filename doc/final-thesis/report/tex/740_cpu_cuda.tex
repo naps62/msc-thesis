@@ -20,7 +20,7 @@ Instead, a scalability analysis was made on the actually implemented \cpu versio
     \includegraphics[width=\linewidth]{profiling/cpu_speedup}
     \caption{Speedup \textit{vs} sequential version \label{fig:prof:cpu_speedup}}
   \end{subfigure}
-  \caption{\cpu implementation \label{fig:prof:cpu}}
+  \caption{\cpu implementation measurements \label{fig:prof:cpu}}
 \end{figure}
 
 It can be seen that the code scales fairly up to 6 threads, which is close to the point at which a single \cpu socket is filled, at which point performance starts to degrade.
@@ -36,21 +36,19 @@ When analysing the \gpu implementation, tests were made on both available \gpus,
 
 It should be taken into account that, as explained in \cref{section:impl_cuda}, this is not a \gpu-only implementation, and requires in-loop memory transfers, and some \cpu computation to generate the lookup table. Since this was not implemented on \gpu, it should add an overhead to the execution. Still, \cref{fig:prof:cuda} shows the implementation is able to outperform the \cpu in two of the three cases, achieving a speedup of around 3 when compared to the sequential approach.
 
-\itodo{proença, sobre o paragrafo acima: convinha relembrar aqui a seq de passos na execução do código, de modo a ficar claro as diversas interacções entre CPU e GPU. Evitar adjectivos}
-
 \begin{figure}[!htp]
   \centering
   \begin{subfigure}{.5\textwidth}
     \centering
     \includegraphics[width=\linewidth]{profiling/gpu_time}
-    \caption{Avg iteration time \label{fig:prof:cuda_time}}
+    \caption{Avg iteration time} \label{fig:prof:cuda_time}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
     \includegraphics[width=\linewidth]{profiling/gpu_speedup}
-    \caption{Speedup vs sequential version \label{fig:prof:cuda_speedup}}
+    \caption{Speedup vs sequential version} \label{fig:prof:cuda_speedup}
   \end{subfigure}
-  \caption{\cuda implementation \label{fig:prof:cuda}}
+  \caption{\cuda implementation measurements} \label{fig:prof:cuda}
 \end{figure}
 
 \end{document}

@@ -98,9 +98,9 @@ This trade-off is not uncommon, with many existing libraries besides \starpu sup
 
 \subsection{Performance Model}
 
-Most schedulers available with \starpu are history based. This relies on the programmer to configure a performance model for each defined codelet, in order to allow the framework to identify it, and use on-line calibration. Calibration results will be stored in a centralized directory, and inform \starpu about how each codelet behaves on each different device, with a certain input size.
+Most schedulers available with \starpu are history based. This relies on the programmer to configure a performance model for each defined codelet, in order to allow the framework to identify it, and use on-line calibration. Calibration works automatically for every task that is not yet calibrated for a given device. \starpu will ensure that a minimum of 10 executions of that task will be processed before using the performance model. Calibration results will be stored in a centralized directory, and inform \starpu about how each codelet behaves on each different device, with a certain input size.
 
-Once a good calibration has been obtained (with a minimum number of executions of a task), \starpu can schedule tasks more efficiently, according to the policy defined by the scheduler. The list of the available scheduling policies is the following:
+Once a good calibration has been obtained, \starpu can schedule tasks more efficiently, depending also on the chosen scheduling policy. The list of the available policies is the following:
 
 \begin{description}
 
