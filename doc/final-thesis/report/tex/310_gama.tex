@@ -73,9 +73,9 @@ Preliminary tests of the \gama capabilities were performed in the early training
 
 Later, an implementation of a small, first order finite volume method was implemented using \gama, using the previously implemented versions of that same algorithm for comparison references. These versions included a sequential implementation, and two parallel ones, one with \openmp, and another with \cuda. The details of the algorithm are described in more detail below.
 
-The application, \texttt{polu}, has already been the subject of a parallelization study in \cite{naps2012}, which described the incremental work where the application was improved from a sequential implementation, first through a process of analysis and sequential optimization, and then subject to parallelization using two techniques, a shared memory \cpu implementation with \openmp, and a \gpu implementation with \cuda.
-
 The \texttt{polu} application, computes the spread of a material (e.g.\ a pollutant) in a bi-dimensional surface through the course of time. This surface is discretely represented as a mesh, composed mainly of edges and cells. The input data set contains data on the mesh description, the velocity vector for each cell and an initial pollution distribution.
+
+\texttt{Polu} has already been the subject of a parallelization study in \cite{naps2012}, which described the incremental work where the application was improved from a sequential implementation, first through a process of analysis and sequential optimization, and then subject to parallelization using two techniques, a shared memory \cpu implementation with \openmp, and a \gpu implementation with \cuda.
 
 \subsubsection{The Algorithm} \label{sec:polu:alg}
 

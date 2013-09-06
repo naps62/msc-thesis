@@ -32,7 +32,12 @@ Although the hardware of a \gpu is still tightly coupled with graphics processin
 
 The Fermi architecture was an important milestone of \gpus technology, as it was one of the first generations targeted directly towards \gpgpu and high performance computing, rather than purely graphics rendering. The first Fermi devices were released in 2010, and include more efficient support for double precision floating point number when compared to earlier generations. Fermi devices also included a GDDR5 memory controller with support for \ac{DMA} through the \acs{PCIe} bus, and up to 16 \acf{SM}, for a total of up to 512 \acs{CUDA} cores.
 
-\image[width=0.6\textwidth]{arch_fermi}{Overview of the Fermi Architecture}{fig:fermi}
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=0.6\textwidth]{arch_fermi}
+  \caption[Overview of the Fermi Architecture]{Overview of the Fermi Architecture (from \nvidia documentation)}
+  \label{fig:fermi}
+\end{figure}
 
 This architecture is backed by a hardware-based thread scheduler, within each \acs{SM}, that attempts to feed the execution unit with threads grouped in blocks of 32, or \textit{warps}. Since the scheduling is made directly via hardware, the switch between threads is nearly free, at least when compared with software scheduling on a \acs{CPU}. As a result, this strategy works better when the total amount of threads competing for resources is much higher than the amount of execution units, allowing for the latency of memory accesses to be hidden away by instantly scheduling a different \textit{warp}, effectively hiding memory latency while still keeping execution units busy. This is very different from \acs{CPU} scheduling policies, where switching between threads requires a context switch, which takes considerably longer, making that approach not as feasible as for a \gpu.
 
@@ -42,7 +47,12 @@ This architecture is backed by a hardware-based thread scheduler, within each \a
 
 Kepler, the follow-up generation to Fermi, is in many ways similar to its predecessor. One of the most notorious change is the increase in the total amount of available CUDA cores, going up to 2880 in high-end devices due to the redesign of the \acl{SM}, now called \smx, each one with 192 \cuda cores. Kepler works at lower frequencies than Fermi, due to the removal of shader frequency, a compromise to make room for the extra \cuda cores. The entire chip now works based on the same core frequency. Overall, individual core efficiency is lowered, but the global system becomes more efficient.
 
-\image[width=0.8\textwidth]{arch_kepler}{Overview of the Kepler Architecture}{fig:kepler}
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{arch_kepler}
+  \caption[Overview of the Kepler Architecture]{Overview of the Kepler Architecture (from \nvidia documentation)}
+  \label{fig:kepler}
+\end{figure}
 
 The programming model has been extended with the addition of dynamic parallelism, allowing a \acs{CUDA} thread to spawn new threads, a feature not possible with previous \nvidia devices. This is a relevant feature for irregular algorithms. With Kepler we can also invoke multiple kernels for a single \gpu, transparently dividing them between the available \smxs.
 
@@ -52,9 +62,16 @@ This shows a clear evolution over the previous generation, and a response to the
 \section{MIC Architecture}
 
 \acf{MIC} \cite{Intel:MIC:QuickStartGuide} is an architecture proposed by \intel as a competitor to \gpus for general purpose high performance computing. This alterative device employs 61 cores with a micro-architecture similar to \textit{x86}, with a 1GHz frequency, and up to 16GB of GDDR5 memory, as well as two levels of cache. The last level is interconnected via a bidirectional ring among all cores, effectively sharing memory creating a last level cache with over 30MB.
-While the \acs{MIC} architecture is based on the \textit{x86} that is used in common \cpus. Extensions to the micro architecture provide support for 64-bit addressing, and SIMD instructions are possible using 512-bit registers. However, instruction sets such as \acf{SSE} or \acf{AVX} are not compatible.
+The \acs{MIC} is based on the \textit{x86} architecture that is used in common \cpus. Extensions to the micro architecture provide support for 64-bit addressing, and SIMD instructions are possible using 512-bit registers. However, instruction sets such as \acf{SSE} or \acf{AVX} are not compatible.
 
-a \acs{MIC} device internally uses a Linux-based micro operating system, thus being able to run independently from the rest of the system, as opposed to other accelerating devices. This allows the device to operate in one of three possible modes:
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=0.5\textwidth]{arch_mic}
+  \caption[Overview of the \acs{MIC} Architecture]{Overview of the \acs{MIC} Architecture (from \url{www.theregister.co.uk})}
+  \label{fig:mic}
+\end{figure}
+
+A \acs{MIC} device internally uses a Linux-based micro operating system, thus being able to run independently from the rest of the system, as opposed to other accelerating devices. This allows the device to operate in one of three possible modes:
 \begin{description}
 \item[Native] the device is used as an independent system, with applications running entirely on it;
 \item[Offload] the host system uses the device as a coprocessor, by offloading specific tasks to it. This is the usual mode accelerators such as \cuda devices work;
@@ -66,19 +83,19 @@ Initial claims suggest that this architecture has the ability of providing perfo
 
 \section{Heterogeneous Platforms}
 
-By combining multiple devices such as \cpus and \gpus, the obtained platform can obtain a much higher theoretical peak performance. But in practical terms, it becomes much harder, if not impossible at all, to achieve performances near this peak value.
+By combining multiple devices such as \cpus and \gpus, the obtained platform can obtain a much higher theoretical peak performance. But in practical terms, it becomes much harder, if not impossible at all, to achieve performance levels near this peak value.
 
 On a homogeneous machine, the actual peak performance is limited by additional factors such as pipeline bubbles\footnote{A delay in the instruction pipeline, required to solve data, structure or control hazards, and limiting \ac{ILP} }, or memory access times, which is aggravated in memory bound algorithms \cite{williams2009roofline}.
 
 When dealing with multiple devices with disjoint memory address spaces, an additional layer of complexity is introduced, as these different devices need a mean of communication between each other. Usually, a \hetplat, such as the one represented in \cref{fig:hetplat} can be seen as a distributed memory system, since each device has its own memory hierarchy. Communication is thus needed for synchronization between tasks, and for all required data transfers.
 
-\begin{figure}[!htp]
+In the case of \gpus, communication is done via a \acs{PCIe} bus. Although this technology has greatly evolved over the last recent years, this still proves to be a potential bottleneck for accelerating applications with a \gpu.
+
+\begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.3\textwidth]{visio/hetplats}
+  \includegraphics[width=0.4\textwidth]{visio/hetplats}
   \caption{Example diagram of a \hetplat \label{fig:hetplat}}
 \end{figure}
-
-In the case of \gpus, communication is done via a \acs{PCIe} bus. Although this technology has greatly evolved over the last recent years, this still proves to be a potential bottleneck for accelerating applications with a \gpu.
 
 Even disregarding \acs{PCIe} devices, a single computational node can also be composed of multiple \cpu sockets, connected to each other via a bus such as \ac{QPI}. This bus connects not only the multiple sockets but also the memory banks possibly associated with each one, as these types of machines are generally associated with a \acs{NUMA} memory hierarchy, where each \cpu is directly connected to a different memory bank. While access to all banks is shared between all \cpus, access costs are not uniform. They depend on the bus bandwidth used, and also on the actual path a request has to make from the socket it originated from until it reaches the desired memory bank.
 

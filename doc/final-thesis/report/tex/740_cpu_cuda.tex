@@ -1,7 +1,7 @@
 \documentclass[main.tex]{subfiles}
 
 \begin{document}
-\section{Performance Results Without a framework} \label{sec:prof:cpu}
+\section{Performance Results Without a Framework} \label{sec:prof:cpu}
 
 \subsection{\cpu}
 
@@ -30,11 +30,11 @@ Scalability is only fair when a single socket is used. The algorithm is clearly 
 
 Memory affinity tools such as \texttt{hwloc} could prove useful here, for example, by creating multiple copies of the input scene, and pinning each one to each \acs{NUMA} node. Each socket would then benefit from faster accesses to its own memory bank.
 
-\subsubsection{\gpu}
+\subsection{\gpu}
 
 When analysing the \gpu implementation, tests were made on both available \gpus, and compared against the base sequential \cpu implementation. The best execution time on \cpu was also included for comparison.
 
-It should be taken into account that, as explained in \cref{section:impl_cuda}, this is not a \gpu-only implementation, and requires in-loop memory transfers, and some \cpu computation to generate the lookup table. Since this was not implemented on \gpu, it should add an overhead to the execution. Still, \cref{fig:prof:cuda} shows the implementation is able to outperform the \cpu in two of the three cases, achieving a speedup of around 3 when compared to the sequential approach.
+It should be taken into account that, as explained in \cref{section:impl_cuda}, this is an almost \gpu-only implementation, and still requires a certain amount of in-loop memory transfers, and some \cpu computation to generate the lookup table. Since this was not implemented on \gpu, it should add an overhead to the execution. Still, \cref{fig:prof:cuda} shows the implementation is able to outperform the \cpu in two of the three cases, achieving a speedup of around 3 when compared to the sequential approach.
 
 \begin{figure}[!htp]
   \centering
@@ -48,7 +48,7 @@ It should be taken into account that, as explained in \cref{section:impl_cuda}, 
     \includegraphics[width=\linewidth]{profiling/gpu_speedup}
     \caption{Speedup vs sequential version} \label{fig:prof:cuda_speedup}
   \end{subfigure}
-  \caption{\cuda implementation measurements} \label{fig:prof:cuda}
+  \caption{\gpu implementation measurements} \label{fig:prof:cuda}
 \end{figure}
 
 \end{document}

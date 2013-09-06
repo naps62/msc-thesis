@@ -37,11 +37,16 @@ The photon map proves useful during this step, not only to increase performance,
 
 One particular case where photon mapping provides advantages over other methods is when light is being transported from a light source travels along a specular-to-diffuse path before reaching the eye (LSDE path), such as the one illustrated in \cref{fig:sdspath}, before reaching the eye. This is what is commonly known as a caustic, such as, for example, the shimmering light seen of the bottom of a pool, or any light source enclosed in glass. This scenario is very common since most artificial light sources are enclosed in glass, but is particularly hard to simulate, particularly when the light source is small, making the sampling probability very low when using Monte Carlo methods.
 
-\image{sds-path}{Illustration of a Specular to Diffuse to Specular path (SDS)}{fig:sdspath}
+\image{sds-path}{Specular to Diffuse to Specular path (SDS)}{fig:sdspath}
 
 Another example of a typically hard to simulate effect is Subsurface Scattering, which is observed when light enters the surface of a translucent object, is scattered when interacting with the material, and finally exits the surface at a different point. Generally, light will be reflected several times within the surface before backing out an angle different from the one it would have take had it been reflected by the surface. This is visible in materials such as marble, or skin, and can be seen in \cref{fig:subscat}.
 
-\image[width=0.3\textwidth]{subsurface-scattering}{Example of a scene displaying Subsurface Scattering}{fig:subscat}
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=0.3\textwidth]{subsurface-scattering}
+  \caption[Subsurface Scattering]{Subsurface Scattering (from \cite{fernando2004gpu})}
+  \label{fig:subscat}
+\end{figure}
 
 Both of these can be simulated well by Photon Mapping algorithms, although a high amount of caustics will hinder performance considerably.
 

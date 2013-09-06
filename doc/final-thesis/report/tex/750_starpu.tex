@@ -18,11 +18,11 @@ This was mostly a concern due to the scalability problems observed in \cref{sec:
 Additionally, \cref{fig:prof:starpu_cpu_dm_dmda} shows a comparison of the three sequential versions, namely the framework-less \cpu version with 1 thread, and the \starpu version with the \textbf{dm} and \textbf{dmda} schedulers using only \cpu devices. \textbf{dm} performs slightly worse than \textbf{dmda} in all cases. Since this is a \cpu-only test, it is executed using only the main system memory, so no memory transfers are actually required. The small performance gain from \textbf{dmda} can thus be attributed to the ability of asynchronously allocating requested memory needed in future tasks.
 
 
-\subsection{Performance with accelerators}
+\subsection{Performance with Accelerators}
 
-To test how \cuda devices influenced the algorithm, measurements were made for both individual \cuda devices, and with both available \gpus for \starpu to use.
-When using accelerators, all schedulers are able to speedup the implementation when compared to the best \cpu times (which were achieved with around 6 threads). However, as seen in \cref{fig:prof:starpu_scheds}, the gain difference between each scheduler is noticeable: \textbf{dmda}, which performs poorly on \cpu due to sequentializing tasks sees the largest improvement. This is expected since it is essentially a comparison between sequential \cpu tasks with massively parallel \cuda tasks. The fact to note here is that \textbf{dm} has much worse evolution under the same conditions.
-It should be noted here that only a single iteration is being processed at a time. This limits the amount of parallelism available, which results in small performance gains when going from one to two \cuda devices. The only gain that can be extracted from that is by concurrently executing multiple tasks of the same iteration, one on each device. As seen in \cref{fig:deps}, the number of dependencies is a limiting factor for this.
+To test how \gpu devices influenced the algorithm, measurements were made for both individual \gpu, and with both available \gpus for \starpu to use.
+When using accelerators, all schedulers are able to speedup the implementation when compared to the best \cpu times (which were achieved with around 6 threads). However, as seen in \cref{fig:prof:starpu_scheds}, the gain difference between each scheduler is noticeable: \textbf{dmda}, which performs poorly on \cpu due to sequentializing tasks sees the largest improvement. This is expected since it is essentially a comparison between sequential \cpu tasks with massively parallel \gpu tasks. The fact to note here is that \textbf{dm} has much worse evolution under the same conditions.
+It should be noted here that only a single iteration is being processed at a time. This limits the amount of parallelism available, which results in small performance gains when going from one to two \gpus. The only gain that can be extracted from that is by concurrently executing multiple tasks of the same iteration, one on each device. As seen in \cref{fig:deps}, the number of dependencies is a limiting factor for this.
 
 \begin{figure}[!htp]
   \centering
@@ -58,10 +58,10 @@ Unfortunately, when using \textbf{pheft} with the Fermi device, memory errors wo
 
 \subsection{Calibration} \label{sec:prof:calibration}
 
-\starpu builds a performance model for each task by calibrating them on the first executions. Once 10 executions are profiled, calibration is finished for that task and the performance model can start to be used. \Cref{fig:prof:starpu_calibrate} shows how calibration affects each scheduler. Each case consists of running 100 iterations of the algorithm with no performance model (deleted prior to the execution).
+\starpu builds a performance model for each task by calibrating them on the first executions. Once 10 executions are profiled, calibration is finished for that task and the performance model can start to be used. \Cref{fig:prof:starpu_calibrate} shows how calibration affects each scheduler. Each case consists of running 100 iterations of the algorithm with no performance model to start with (deleted prior to the execution). This performance model is then build in the initial stages of the algorithm, until a good amount of sampling is obtained (at least 10 executions for each different task on each different device).
 Results show very different behaviours between schedulers.
 
-\textbf{peager}, being a more naive algorithm, does not actually perform calibration, and does not seem to evolve very efficiently. A drop in execution time can be seen across time, but since all devices are eagerly used whenever possible, this results in more workload being assigned to the \cpus, which have worse performance when compared to the \cuda devices, as explained in previous sections. It should also be noted that \textbf{peager} was found to always employ 14 \openmp threads for each task, assigning it all available cores. This is not the best choice, as it was noted in \cref{sec:prof:cpu} that tasks do not scale beyond 6 threads. The apparent drop in \cpu time that can be observed in \cref{fig:prof:starpu_calibrate_peager} is not due to better thread pool size selection, but rather the result of more tasks being offloaded to \gpus.
+\textbf{peager}, being a more naive algorithm, does not actually perform calibration, and does not seem to evolve very efficiently. A drop in execution time can be seen across time, but since all devices are eagerly used whenever possible, this results in more workload being assigned to the \cpus, which have worse performance when compared to gpus, as explained in previous sections. It should also be noted that \textbf{peager} was found to always employ 14 \openmp threads for each task, assigning it all available cores. This is not the best choice, as it was noted in \cref{sec:prof:cpu} that tasks do not scale beyond 6 threads. The apparent drop in \cpu time that can be observed in \cref{fig:prof:starpu_calibrate_peager} is not due to better thread pool size selection, but rather the result of more tasks being offloaded to \gpus.
 
 \begin{figure}[!htp]
   \centering
@@ -85,14 +85,14 @@ Results show very different behaviours between schedulers.
     \includegraphics[width=\linewidth]{profiling/starpu_calibrate_dmda}
     \caption{dmda \label{fig:prof:starpu_calibrate_dmda}}
   \end{subfigure}
-  \caption{Calibration process with an empty performance model \label{fig:prof:starpu_calibrate}}
+  \caption{Calibration process starting with an empty performance model \label{fig:prof:starpu_calibrate}}
 \end{figure}
 
 For the remaining schedulers, calibration can be clearly noticed in the first 30 iterations of each one. Each calibration starts by running 10 iterations almost entirely on the Kepler device (an entire iteration would not be possible, since some tasks are \cpu-only), following the Fermi device, and finally the \cpu devices.
 
-After the initial calibration, \textbf{pheft} continues to calibrate the \cpu implementation, by successfully choosing different thread pool sizes, until the best one is found. After this process, all calibrations are finished, and the scheduler progresses normally.
+After the initial calibration, \textbf{pheft} continues to calibrate the \cpu implementation, by successfully choosing different thread pool sizes, until the best one is found. After this process, the initial calibration is finished, and the scheduler progresses normally.
 
-\textbf{Dm} and \textbf{dmda} do not support combined workers, so \cpu calibration is restricted to using only 1 \cpu thread at a time. Since \textbf{dmda} is a data-aware version of the original \textbf{dm}, it deals more efficiently with data transfers. This being the only difference, \textbf{dmda} seems to perform much better, offloading most computations to the Kepler device, while \textbf{dm} still runs some iterations on the \cpu. This is a result of \textbf{dm} not being able to asynchronously perform required data transfers, thus \cuda kernel execution costs (including the required communication) are much higher, ending up with a significant part of it being kept on the \cpu.
+\textbf{Dm} and \textbf{dmda} do not support combined workers, so \cpu calibration is restricted to using only 1 \cpu thread at a time. Since \textbf{dmda} is a data-aware version of the original \textbf{dm}, it deals more efficiently with data transfers. This being the only difference, \textbf{dmda} seems to perform much better, offloading most computations to the Kepler device, while \textbf{dm} still runs some iterations on the \cpu. This is a result of \textbf{dm} not being able to asynchronously perform required data transfers, thus \gpu task execution costs (including the required communication) are much higher, ending up with a significant part of it being kept on the \cpu.
 
 
 
@@ -118,7 +118,7 @@ The best case scenario for each approach is shown in \cref{fig:prof:overall}. Th
 \begin{table}[!htb]
   \begin{tabular}{|r|rrr|rrrr|}
     \hline
-            & Sequential & \cpu & \cuda & \textbf{peager} & \textbf{pheft} & \textbf{dm} & \textbf{dmda} \\ \hline
+            & Sequential & \cpu & \gpu & \textbf{peager} & \textbf{pheft} & \textbf{dm} & \textbf{dmda} \\ \hline
     cornell & 3.03       & 1.65 & 1.11  & 1.51            & 1.33           & 2.42        & 1.12 \\
     kitchen & 3.46       & 1.02 & 1.15  & 1.46            & 0.96           & 2.75        & 1.12 \\
     luxball & 5.91       & 2.35 & 1.76  & 2.15            & 2.06           & 4.55        & 1.71 \\
@@ -130,7 +130,7 @@ The best case scenario for each approach is shown in \cref{fig:prof:overall}. Th
 \begin{table}[!htb]
   \begin{tabular}{|r|rr|rrrr|}
     \hline
-            & \cpu & \cuda & \textbf{peager} & \textbf{pheft} & \textbf{dm} & \textbf{dmda} \\ \hline
+            & \cpu & \gpu & \textbf{peager} & \textbf{pheft} & \textbf{dm} & \textbf{dmda} \\ \hline
     cornell & 1.83 & 2.73  & 2.01            & 2.27           & 1.25        & 2.71 \\
     kitchen & 3.39 & 2.30  & 2.36            & 3.60           & 1.26        & 3.09 \\
     luxball & 2.52 & 3.36  & 2.75            & 2.87           & 1.30        & 3.45 \\
