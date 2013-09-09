@@ -57,14 +57,17 @@ Adding to this is the fact that \starpu might create additional copies of data b
   \begin{subfigure}[b]{.5\textwidth}
     \centering
     \includegraphics[width=0.2\linewidth]{visio/starpu_dep_rw}
-    \caption{A and B are executed in order \label{fig:deps_problem:a}}
+    \caption{A and B are executed in order, and the same buffer for $x$ is re-used}
+    \label{fig:deps_problem:a}
   \end{subfigure}%
   \begin{subfigure}[b]{.5\textwidth}
     \centering
-    \includegraphics[width=0.6\linewidth]{visio/starpu_dep_rw_caveat}
-    \caption{A and B are scheduled to different devices, creating a temporary copy of $x$, and running both tasks concurrently \label{fig:deps_problem:b}}
+    \includegraphics[width=0.5\linewidth]{visio/starpu_dep_rw_caveat}
+    \caption{A and B are scheduled to different devices, creating a temporary copy of $x$}
+    \label{fig:deps_problem:b}
   \end{subfigure}
-  \caption[\starpu dependency management caveat]{Illustration of a possible mistake due to dependency management. Both A and B have read-only access to $x$ \label{fig:deps_problem}}
+  \caption[\starpu dependency management caveat]{Illustration of a possible mistake due to dependency management. Both A and B have read-only access to $x$}
+  \label{fig:deps_problem}
 \end{figure}
 
 In \cref{fig:deps_problem:b}, the two tasks are scheduled to different devices. Since \starpu assumes $x$ to be read-only, a copy of it, $x'$ can immediately be created in the additional device. In this case, both tasks will run concurrently, with their own local copy of $x$. Task A will still write changes to this buffer, but task B will not see them.
