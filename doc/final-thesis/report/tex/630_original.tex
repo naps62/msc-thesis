@@ -1,0 +1,17 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\subsection{Original} \label{section:impl_original}
+
+The original implementation provides a few different versions of the algorithm, based on the multiple extensions on photon mapping described in \cref{chapter:case_study}. However, only PPM and SPPMPA are considered.
+
+In this approach, tasks are encapsulated within a CPUWorker class and a CUDAWorker class, which implements the ray tracing and photon mapping steps using \acs{OpenMP} and \cuda, respectively. While the initial PPM version, due to implicit dependency limitations (without the probabilistic approach for radius estimation, each photon mapping iteration is dependent on the previous one), can only run a single worker at a time, the later version (SPPMPA) allows the instantiation of multiple workers. In that case, each worker will share access to a centralized structure that keeps track of how many iterations have been finished in total.
+
+In practice, the SPPMPA version provided support for running one CPUWorker and two CUDAWorkers\footnote{This was not a limitation of the implementation. Actually, extending it to support more than two \cuda devices would be completely straightforward. However, there was no interesting in doing so, as all test machines used throughout the project had available at most two \cuda devices.}. Since the CPUWorker uses \acs{OpenMP} internally to take advantage of multi-threading, this approach effectively takes advantage of the full power of a multi-core machine with at most two \acs{CUDA} devices.
+
+When this implementation was first available, however, the \acs{CUDA} implementation was not yet fully finished, with only the implementation of the photon tracing steps being run on a \gpu. This means that the performance when using \cuda is limited by the necessary data transfers required during each iteration. Particularly, when using SPPMPA version, where new hit points are generated after each step, following the stochastic progressive photon mapping extension, an even greater amount of communication is required, since the \gpu has to wait for the new hit points before starting the computation of a new photon pass.
+
+This versions was used only for validation of later implementations, and an in-depth study of its performance was not considered interesting, as similar versions were to be produced, but with the advantage of being further structured and optimized, and not relying on a third-party code base.
+
+\end{document}

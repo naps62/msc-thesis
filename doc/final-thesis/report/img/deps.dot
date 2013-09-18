@@ -1,0 +1,27 @@
+digraph dependencies {
+  gen_eye [label="2. Generate Eye P.", width=1, height=1]
+  adv_eye [label="3. Advance Eye P.", width=1, height=1]
+  radius [label="4. Compute Radius", width=1, height=1]
+  rehash [label="5. Rebuild Lookup Table", width=1, height=1]
+  gen_photon [label="6. Generate Photon P.", width=1, height=1]
+  adv_photon [label="7. Advance Photon P.", width=1, height=1]
+  accum_flux [label="8. Accumulate Flux", width=1, height=1]
+  frame_buffer [label="9. Frame Buffer", width=1, height=1]
+  film [label="10. Update Film", width=1, height=1]
+
+  gen_eye -> adv_eye
+  radius -> rehash
+  adv_eye -> rehash
+  {gen_photon; rehash} -> adv_photon
+  adv_photon -> accum_flux
+  accum_flux -> frame_buffer
+  frame_buffer -> film
+
+  gen_eye -> adv_eye [color=red]
+  adv_eye -> gen_photon [color=red]
+  gen_photon -> adv_photon [color=red]
+
+  { rank=same; adv_eye rehash}
+  { rank=same; gen_photon adv_photon }
+  { rank=same; accum_flux frame_buffer film}
+}

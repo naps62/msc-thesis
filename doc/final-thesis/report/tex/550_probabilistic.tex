@@ -1,0 +1,29 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\section{A Probabilistic Approach for Radius Estimation} \label{section:ppmpa}
+
+Another evolution of photon mapping and progressive photon mapping comes from a probabilistic approach for the estimation of photon radius for each iteration, first presented in \cite{knaus2011progressive}. The proposed solution, much like original progressive photon mapping, is capable of of computing global illumination without bias, and with no theoretical limit in the amount of photons, allowing an arbitrary number of iterations to be computed.
+
+The new formulation, called PPMPA, includes a probabilistic approach that does not require local photon statistics to be stored. It is shown in the original work that each different photon mapping step of the progressive photon mapping approach can be performed with complete independence from other steps, by using a probabilistic model to compute an estimation of the photon radius for each iteration, instead of gradually reducing it after each photon tracing step (see \cref{fig:diagram_ppmpa}.
+
+\image[width=\textwidth]{visio/diagram_ppmpa}{Fluxogram of PPMPA}{fig:diagram_ppmpa}
+
+In summary, the probabilistic analysis in the original work shows that for a photon mapping step $i$, the radius for for a hit point for that step, $r_{i}$, can be estimated by \cref{eq:radius_prob}
+
+\begin{figure}[!htp]
+  \begin{equation}
+    r^{2}_{i} = r^{2}_{1} (\prod\limits^{i-1}_{k=1} \frac{k + \alpha}{k}) \frac{1}{i}
+  \label{eq:radius_prob}
+  \end{equation}
+\end{figure}
+
+
+The biggest benefit of this is that the radius computation kernel is not dependent on previous iterations, allowing for multiple photon mapping steps to be concurrently computed, as shown in \cref{fig:diagram_ppmpa_parallel}.
+
+\image[width=\textwidth]{visio/diagram_ppmpa_parallel}{Fluxogram of PPMPA with concurrent iterations}{fig:diagram_ppmpa_parallel}
+
+The result is a memoryless algorithm that does not require the maintenance of intermediate statistics and allows the possibility of computing multiple iterations, or photon mapping steps, in parallel.
+
+\end{document}

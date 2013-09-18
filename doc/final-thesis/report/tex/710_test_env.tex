@@ -1,0 +1,49 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\section{Testing Environment} \label{section:results:env}
+
+All tests were performed within the \search\footnote{\url{http://search.di.uminho.pt}} cluster, particularly using the most recent generation of hardware, in the node 711 (fully described in \cref{tab:node}).
+
+\begin{table}[!htb]
+    \centering
+    \begin{tabular}{|ll|}
+      \hline
+      \textbf{\cpu device:} & \textbf{\intel\xeon E5-2670} \\
+      \# \cpus: & 2  \\
+      \# Cores p/\cpu: & 8  \\
+      \# Threads p/Core: & 2 \\
+      Clock frequency: & 2.66 GHz \\
+      L1 cache: & 32 KB + 32 KB  \\
+      L2 cache: & 256 KB \\
+      L3 cache(shared): & 20 MB  \\
+      RAM: & 64 GB  \\
+
+      \hline
+      \textbf{\cuda Device 0:} & \textbf{Kepler K20m} \\
+      \# SMX:         & 13 \\
+      \# \cuda-cores p/ SMX & 192 (2496 total) \\
+      Clock frequency: & 706 MHz \\
+      L1 cache (p/SMX): & 64 KB \\
+      L2 cache shared: & 1.25 MB \\
+      Global memory: & 5GB \\
+
+      \hline
+      \textbf{\cuda Device 1:} & \textbf{Tesla M2090} \\
+      \# SM:          & 16 \\
+      \# \cuda-cores p/ SMX & 32 (512 total) \\
+      Clock frequency: & 1301 MHz \\
+      L1 cache (p/SM):   & 64 KB \\
+      L2 cache (shared):   & 0.75 MB \\
+      Global memory:   & 5GB \\
+      \hline
+    \end{tabular}
+  \caption{Hardware description of the \search computational node 711 \label{tab:node}}
+\end{table}
+
+%Later on, and partially due to availability issues, only the 711 was used for the final tests using the new implementation, both with and without \starpu.
+
+All tests were compiled with GCC 4.6.2 (latest major version with full \cuda support), the boost library 1.49.0, and version 5.0 of the official \cuda compiler. The latest available version of \starpu was used, 1.1.0rc2, as well as the hwloc 1.7 library for hardware topology, which \starpu internally uses.
+
+\end{document}

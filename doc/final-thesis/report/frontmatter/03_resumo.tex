@@ -1,0 +1,19 @@
+\documentclass[main.tex]{subfiles}
+
+\selectlanguage{portuguese}
+\begin{document}
+\cleardoublepage
+\phantomsection
+\pdfbookmark{Resumo}{resumo}
+\chapter*{\abstractname}
+  \section*{Uma avaliação das frameworks GAMA/StarPU para Plataformas Heterogéneas: O algoritmo de Progressive Photon Mapping}
+
+  A recente evolução da computação de alto desempenho é em direção ao uso de plataformas heterogéneas: múltiplos dispositivos com diferentes arquiteturas, características e modelos de programação, partilhando a carga computacional das aplicações. De modo a ajudar o programador a explorar eficientemente estas plataformas, várias frameworks têm sido desenvolvidas. Estas frameworks gerem os recursos computacionais disponíveis, tratando das dificuldades inerentes dos diferentes modelos de programação e acessos à memória. Entre outras frameworks, estas incluem o \gama e o \starpu.
+
+  O \gama tem o objetivo de unificar os múltiplos modelos de execução e memória de cada dispositivo diferente num sistema computacional, transformando-os num único modelo, independente do hardware utilizado. A framework foi desenhada de forma a gerir eficientemente os recursos, tanto para aplicações regulares como irregulares, e atualmente suporta apenas \cpus convencionais e aceleradores \cuda. O \starpu tem objetivos e funcionalidades idênticos, e também uma comunidade mais alargada, mas não possui um modelo de programação único
+
+  O objetivo principal desta dissertação foi uma avaliação profunda de uma framework heterogénea, usando uma aplicação complexa como caso de estudo. O \gama serviu como ponto de partida para treino e ambientação, enquanto que o \starpu foi a framework selecionada para uma avaliação mais profunda. O algoritmo irregular de \textit{progressive photon mapping} foi o caso de estudo escolhido. O objetivo da avaliação foi determinar a eficácia do \starpu com uma aplicação robusta, e fazer uma análise de alto nível com o \gama, que ainda está em desenvolvimento, para forma a providenciar algumas sugestões para o seu melhoramento.
+
+  Os resultados mostram que são dois os principais factores que contribuem para a performance de aplicação escritas com auxílio do \starpu: a avaliação dos tempos de transferência de dados no modelo de performance, e a escolha do escalonador. O estudo permitiu também avaliar algumas lacunas na API do \starpu. Embora estas não tenham efeitos visíveis na eficiencia da framework, eles tornam-se um desafio para recém-chegados ao \starpu. Ambas estas análisos resultaram numa melhor compreensão da framework, e numa análise comparativa com o \gama, onde são apontados os possíveis aspectos que o este tem a melhorar.
+
+\end{document}

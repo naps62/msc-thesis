@@ -1,0 +1,42 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Conclusions} \label{chapter:conclusions}
+
+This dissertation presents an analysis of two emerging frameworks that aim to ease the process of implementing or porting parallel applications to heterogeneous platforms. \gama was tested with a small case study, using a finite volume method based on an already existing application to compute the spread of a material in a surface.
+A more in-depth analysis was made of the \starpu framework, using a more robust algorithm as a case-study. The selected algorithm was the progressive photon mapping, a ray tracing technique, along with two extensions proposed for it: a stochastic approach that better estimates radiance accross unknown regions, and a probabilistic approach for radius estimation that makes it possible to run independent and concurrent photon mapping iterations. Framework-less versions were implemented (particularly in \cpu and \gpu devices) for comparison purposes, and \starpu approaches were tested against various of the available schedulers.
+
+ \gama is a relatively new product, still under development at University of Minho and University of Texas at Austin, that presents some promising features not present in competitor frameworks. \starpu, being a more developed product, provides a more solid API, backed by a relatively large user-base, but still with some problems to be solved.
+
+Design issues in the \starpu API allow simple developer errors to cause unexpected and hard-to-debug behaviour. This is a problem not directly related to the performance of the framework, but to its usage. With a user base composed not only of experienced developers, but also of scientists with less low-level knowledge about parallel programming practices or heterogeneous platforms, error-prone products may be a blocking factor. Additionally, using \starpu still requires some amount of knowledge regarding parallel computing. Questions such as ``Is it worth the effort to implement a given task using an accelerator?'' or ``What scheduling policy best suits a given algorithm?'' must be answered during implementation. From that comes that developers or scientists without a great understanding of such issues won't be able to take the best of the framework.
+The high-level \starpu API can be useful to solve these difficulties, but it does not seem to provide a large enough subset of the full range of \starpu features (although no actual hands-on test was done to assert this).
+
+\gama's API is still not as solid, but it seems to present a more consistent solution, in terms of API and programming model. This can be partially related to the use of $C++$ instead of plain $C$.
+
+
+For a practical analysis, \gama was tested with a small test case, to gain some knowledge about the framework and understand its usage. For the implementation of a more robust case study, the \starpu framework was the choice. The presented progressive photon mapping algorithm was implemented, using two extensions to it, namely the stochastic progressive photon mapping, and the probabilistic approach for radius estimation. This provided an algorithm with several possibilities to explore parallelism.
+
+Several versions were produced, starting with two simple, framework-less targeting \cpus and \gpus, respectively. An already available implementation was used as the basis for validating the correctness of the algorithm in those cases. Later, the same code of the two previous versions was re-used in a new implementation using the \starpu framework.
+
+Profiling results of these versions showed confirmed the assertion made by the \starpu team about data transfers being a key factor for the scheduler to make a decision. The \textbf{dmda} showed the best results in most cases, except when using no accelerators, due to the restriction of not supporting parallel workers.
+
+Results also indicate that performance with \starpu is greatly dependent on the selected scheduling policy, of which there are several available. While \gama currently only provides a single, \acs{HEFT}-like policy, profiling shows that this is not a one-fits-all solution, since less smart policies such as eager loading can provide better results under certain conditions. Thus, the fact that \starpu allows pluggable schedulers to be selected, and even programmed, can come as both a blessing and a drawback, depending on the degree of control one requires of the performance of an application. The requirement of manually choosing the best scheduler can sometimes be a tedious task, but it can also lead to better performance results. This trade-off between control and simplicity is not uncommon, and must be considered carefully when developing a product such as \starpu or \gama.
+
+Another factor that greatly differs between the two frameworks is the ability to control task granularity. \starpu requires the developer to manually divide tasks and data, and submit each one individually. \gama follows a more robust approach, attempting to automatically adjust task granularity to each device. This still requires some intervention from the developer, as the function required by \gama to divide the data must be manually defined. But it prevents the developer from having to manually calibrate task granularity, which can be a difficult task, given the heterogeneity of the system.
+
+Even though \gama shows promising features, some extensions could be considered when comparing it to \starpu. The most promiment factors are the \textbf{dmda} scheduler, the modularity of the framework, that can allow different components such as the scheduler to be replaced or changed, and the more consistent API. The definition of a unified programming and execution model can make it easier for developers to not have to worry about different architectural details (unless desired), but it can also present a new barrier for new developers, who will have to deal with yet another programming model in order to use the framework. Additionally, this model is one of the factors that makes it difficult for \gama to maintain compatibility with existing libraries and applications, making it a product targeted only at newly written parallel programs.
+
+
+\section{Future Work} \label{chapter:future}
+
+While this dissertation focused mostly on the implementation of a case study in \starpu, a similar effort should be made to produce a similar implementation with \gama, to actually compare the two in terms of performance. Without such implementation, only a more shallow comparison could be made, regarding mostly the features, usability, and a few problems with each solution.
+It would also be interesting to test the usability of the \texttt{pragma}-based API of \starpu
+
+Other possible points of improvement on top of this work are more related to the produced implementation. The first point is related to the random number generation, which could be further improved by using a different random number generator, that would not require an intermediate buffer, thus eliminating one dependency between tasks.
+
+In addition, a new approach to task parallelization could be attempted, which did not depend on \openmp, and as such would allow an efficient usage of other \starpu schedulers without support for combined workers, which are still under development by the framework's team.
+
+Finally, due to the observed results when attempting to use concurrent iterations to exploit more parallelism, a different approach might prove more viable, by using data partitions to split the domain, and submit multiple child tasks instead of a larger one, with granularity having to be manually controlled and tuned. This method might be a more efficient solution to extract parallelism from the application.
+
+\end{document}

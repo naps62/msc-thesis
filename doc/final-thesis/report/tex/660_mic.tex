@@ -1,0 +1,16 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\subsection{MIC} \label{section:impl_mic}
+
+The initial message transmitted by \intel regarding the new \acs{MIC} Architecture explains that the device is intended to provide performance to applications much like any other accelerator, without the need to learn a new programming model. It is also explained that existing code bases should have little problem compiling and running natively on it, providing additional performance for already existing \cpu code.
+If proved right, this would be a huge step forward in coprocessor technologies, as the usage of different programming models (such as \cuda) is currently one of the blocking factors of their usage, due to learning difficulties, and incompatibilities with existing code.
+
+Thus, some efforts were put into attempting to port the original implementation to compile and run natively on a \ac{MIC} device. Other execution modes (offload or message passing) would require a rewrite of the program, and as such, would not provide the ease of usage claimed by \intel.
+
+However, this was later abandoned as the code for the original implementation (as well as the later \cpu implementation produced for this work) proved to actually be incompatible with the device. This is mostly due to the implementation of the \acs{QBVH} accelerating structure (discussed in \cref{section:data_structures}). This structure is coded using compiler \acs{SSE} intrinsics\footnote{intrinsics: functions available in a programming language that are actually implemented by the compiler. More specifically, \acs{SSE} intrinsics expose the \acs{SSE} instruction set directly in the language} for the intersection functions of rays with the scene.
+These intrinsics render the intersection code completely incompatible, requiring a complete rewrite to remove coupling with \acs{SSE} functions, and use other vectorization methods. Such would require a larger refactoring effort to port the implementation, which was not towards the original goals of this dissertation. As a result, this implementation was abandoned.
+Other factors, such as difficulties regarding compatibility with external libraries, which usually also have to be compiled natively for the \acs{MIC} were also encountered, which would have increased the difficulty if a port was to be done.
+
+\end{document}

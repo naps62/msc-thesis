@@ -18,6 +18,8 @@ tags
 .tags
 .tags_sorted_by_file
 
+*.vsdx
+
 # Latex
 _inputs.tex
 _sections.tex
@@ -25,6 +27,7 @@ _appendixes.tex
 bash.out
 main-blx.bib
 *.pdf
+*.pyg
 *.aux
 *.bbl
 *.blg
@@ -41,6 +44,9 @@ main-blx.bib
 *.lof
 *.log
 *.lot
+*.loa
+*.lol
+*.tdo
 *.nav
 *.nlo
 *.out

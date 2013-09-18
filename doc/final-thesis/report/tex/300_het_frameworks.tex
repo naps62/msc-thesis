@@ -1,0 +1,15 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\chapter{Frameworks for Heterogeneous Platforms} \label{chapter:frameworks}
+
+The challenge of efficiently scheduling the workload of an application and its associated data across an entire heterogeneous system is an ambitious one. Usually scheduling involves history based sampling, and memory management. Some degree of complexity is added when trying to have the framework manage data and workload, which makes it sometimes difficult to use with existing code, and keep compatibility with external libraries
+
+Among the several frameworks that have been proposed to target this goal are \gama and \starpu, which are here presented in more detail.
+While both of them have common points in their design goals (\gama is to some degree inspired by \starpu), they followed slightly different approaches to manage \hetplats. In the case of \gama, a case study is also presented in this chapter. For \starpu, which was the chosen framework fore a more deep analysis, the case study used was the progressive photon mapping algorithm, which is presented later in \cref{chapter:case_study,chapter:impl}
+
+\subfile{tex/310_gama}
+\subfile{tex/320_starpu}
+\subfile{tex/330_comparison}
+
+\end{document}

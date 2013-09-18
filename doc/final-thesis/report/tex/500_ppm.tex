@@ -1,0 +1,21 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Case Study: the Progressive Photon Mapping Algorithm} \label{chapter:case_study}
+
+The selected case study is one of many algorithms from the ray tracing family, which are typically used in computer graphics for the purpose of realistic image rendering, by computing scene illumination with as much accuracy as possible, attempting to approximate the rendering equation, which is the basis for these algorithms. This chapter presents an overview of ray tracing algorithms, as well as the rendering equation, and follows with the description of the photon mapping algorithm, and its various evolutions until reaching the case study for this dissertation, which corresponds to the combination of all evolutions presented here.
+
+\subfile{tex/510_ray_tracing}
+\subfile{tex/520_original}
+\subfile{tex/530_progressive}
+\subfile{tex/540_stochastic}
+\subfile{tex/550_probabilistic}
+
+\section{Summary}
+
+Several techniques were presented, from the basic Photon Mapping algorithm, following a progressive approach that enables arbitrary accuracy without being memory limited. Further improvements include a stochastic version that enables additional accuracy in the final result, and a new formulation of the radius estimation that removes dependencies between iterations, effectively allowing their concurrency.
+
+The final result of this is the algorithm Stochastic Progressive Photon Mapping with a Probabilistic Approach, here shortly called SPPMPA, which is the case study employed during the rest of this work.
+
+\end{document}

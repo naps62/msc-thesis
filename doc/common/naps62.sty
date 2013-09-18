@@ -1,4 +1,4 @@
-\ProvidesPackage{naps62}
+\ProvidesPackage{../../common/naps62}
 
 \usepackage{kvoptions}
 
@@ -16,18 +16,16 @@
 %
 % page geometry
 %
-\usepackage[paper=a4paper,top=2cm,left=2cm,right=1.5cm,bottom=2cm,foot=1cm]{geometry}
+\usepackage[paper=a4paper]{geometry}
 
 %
 % random stuff
 %
+\usepackage{minted}
 \usepackage{subfiles}    % for modular documents awesomeness
 \usepackage{indentfirst} % indent first paragraph
 \usepackage{amsmath}     % math stuff
 \usepackage{fancyhdr}    % headers and footers
-\usepackage{verbatim}    % code include
-\usepackage{fancyvrb}    % verbatins
-\usepackage{listings}    % better than verbatins
 \usepackage{datetime}    % date and time
 \usepackage{xspace}      % spacing helper for macros
 \usepackage{suffix}      % for making multi-versioned commands
@@ -41,23 +39,27 @@
 \usepackage{acronym}     % list of acronyms
 \usepackage{booktabs}    % better tables
 
+\usepackage[labelfont=bf]{caption}
+\usepackage{subcaption}
+
 
 %
 % images and plots stuff
 %
 \usepackage{graphicx}    % images
 \usepackage{epstopdf}    % EPS images support
-\usepackage{gnuplottex}  % embed gnuplot in latex
+%\usepackage{gnuplottex}  % embed gnuplot in latex
 
 %
 % references
 %
 \usepackage{varioref}
 \usepackage[breaklinks,pdftex,bookmarks=true,colorlinks=true,citecolor=blue]{hyperref}
+\usepackage{bookmark}
 \usepackage[noabbrev,capitalise]{cleveref}
 %\usepackage[hyperpageref]{backref}
 \usepackage{csquotes} % biblatex asks for this
-\usepackage[hyperref=true,url=true,sorting=none]{biblatex}    % better references
+\usepackage[hyperref=true,url=true,sorting=none,backend=biber]{biblatex}    % better references
 
 %
 % pseudocode environments
@@ -93,8 +95,10 @@
 % different todos
 %
 \newcommand{\itodo}[2][orange]{\todo[inline,color=#1!40]{#2}}
+\newcommand{\td}[2][orange]{\todo[inline,color=#1!40]{#2}}
 \newcommand{\tododone}[1]{\itodo[green]{#1}}
 \newcommand{\itododone}[1]{\tododone{#1}}
+\newcommand{\tdg}[1]{\tododone{#1}}
 
 
 %
@@ -145,26 +149,32 @@
 \newcommand{\registered}{\textsuperscript{\smaller\textregistered}}
 \newcommand{\trademark}{\textsuperscript{\smaller\texttrademark}}
 \newcommand{\intel}{Intel\xspace}
+\newcommand{\amd}{AMD\xspace}
 \newcommand{\nvidia}{NVidia\xspace}
+\newcommand{\xeon}{Xeon\xspace}
+\newcommand{\opteron}{Opteron\xspace}
 
 \newcommand{\cuda}{\acs{CUDA}\xspace}
 \newcommand{\openmp}{\acs{OpenMP}\xspace}
 \newcommand{\openacc}{\acs{OpenACC}\xspace}
+\newcommand{\opencl}{\acs{OpenCL}\xspace}
 \newcommand{\mpi}{\acs{MPI}\xspace}
 \newcommand{\gama}{\acs{GAMA}\xspace}
+\newcommand{\starpu}{StarPU\xspace}
 \newcommand{\cpu}{\acs{CPU}\xspace}
 \newcommand{\cpus}{\acsp{CPU}\xspace}
-\newcommand{\gpu}{\ac{GPU}\xspace}
-\newcommand{\gpus}{\acp{GPU}\xspace}
+\newcommand{\gpu}{\acs{GPU}\xspace}
+\newcommand{\gpus}{\acsp{GPU}\xspace}
 \newcommand{\gpgpu}{\ac{GPGPU}\xspace}
 \newcommand{\gpgpus}{\acp{GPGPU}\xspace}
 \newcommand{\mic}{\ac{MIC}\xspace}
-\newcommand{\hetplat}{\ac{HetPlat}\xspace}
+\newcommand{\hetplat}{\acs{HetPlat}\xspace}
 \newcommand{\hetplats}{\acp{HetPlat}\xspace}
 \newcommand{\sm}{\ac{SM}\xspace}
 \newcommand{\sms}{\acp{SM}\xspace}
 \newcommand{\smx}{\acs{SMX}\xspace}
 \newcommand{\smxs}{\acsp{SMX}\xspace}
+\newcommand{\search}{SeARCH\xspace}
 
 %
 % roman numbers
