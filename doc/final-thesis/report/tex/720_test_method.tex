@@ -17,6 +17,26 @@ Whenever \cuda was employed, the \cuda Occupancy Calculator\footnote{A spreadshe
 
 \subsection{Input Scene}
 
-For simplicity, input reading was left to the LuxRender library, relying on the existing structures and parser to read all the data to render a scene. This limits all testing to the available scenes shipped with LuxRender as samples. From these scenes, only three scenes were selected, namely, \textbf{kitchen}, \textbf{cornell} and \textbf{luxball}.
+For simplicity, input reading was left to the LuxRender library, relying on the existing structures and parser to read all the data to render a scene. This limits all testing to the available scenes shipped with LuxRender as samples. From these scenes, only three were selected, namely, \textbf{kitchen}, \textbf{cornell} and \textbf{luxball}, shown in \cref{fig:scenes}.
+
+\begin{figure}[!htp]
+  \centering
+  \begin{subfigure}[b]{.33\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{cornell}
+    \caption{cornell \label{fig:cornell}}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.33\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{kitchen}
+    \caption{kitchen \label{fig:kitchen}}
+  \end{subfigure}%
+  \begin{subfigure}[b]{.33\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{luxball}
+    \caption{luxball \label{fig:luxball}}
+  \end{subfigure}
+  \caption{Input scenes \label{fig:scenes}}
+\end{figure}
 
 \end{document}
